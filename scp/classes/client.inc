@@ -23,6 +23,10 @@ methodmap Client < StringMap {
         return GetClientName(this.id, buffer, max_size);
     }
 
+    public void SetModel(char[] model) {
+        SetEntityModel(this.id, model);
+    }
+
     property int Health {
         public set(int health) { SetEntityHealth(this.id, health); }
         public get() { return GetClientHealth(this.id); }
