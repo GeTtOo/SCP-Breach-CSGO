@@ -150,7 +150,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
         }
     }
     
-    return Plugin_Stop;
+    return Plugin_Continue;
 }
 
 stock void LoadFileToDownload()
