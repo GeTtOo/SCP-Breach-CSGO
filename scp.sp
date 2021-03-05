@@ -15,15 +15,15 @@ public Plugin myinfo = {
     url = "none"
 };
 
-public void OnPluginStart() {
-    
-    //Declaration in "scp/classes.inc"
+public void OnPluginStart() 
+{
+    // Declaration in "scp/classes.inc"
     Clients = new ClientSingleton();
     Gamemode = new GameMode();
     
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_end", OnRoundEnd);
-
+    HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
 }
 
 public void OnClientJoin(Client ply) {
@@ -34,12 +34,14 @@ public void OnClientLeave(Client ply) {
     PrintToServer("Client disconnected: %i", ply.id);
 }
 
-public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) {
+public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) 
+{
     StringMapSnapshot gClassNameS = Gamemode.GetGlobalClassNames();
     int gClassCount, classCount, extra = 0;
     int keyLen;
 
-    for (int i=0; i < gClassNameS.Length; i++) {
+    for (int i=0; i < gClassNameS.Length; i++) 
+    {
         keyLen = gClassNameS.KeyBufferSize(i);
         char[] gClassKey = new char[keyLen];
         gClassNameS.GetKey(i, gClassKey, keyLen);
@@ -53,7 +55,8 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) {
         StringMapSnapshot classNameS = gclass.GetClassNames();
         int classKeyLen;
 
-        for (int v=0; v < classNameS.Length; v++) {
+        for (int v=0; v < classNameS.Length; v++) 
+        {
             classKeyLen = classNameS.KeyBufferSize(v);
             char[] classKey = new char[classKeyLen];
             classNameS.GetKey(v, classKey, classKeyLen);
@@ -64,7 +67,8 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) {
             classCount = gClassCount * class.percent / 100;
             classCount = (classCount != 0 || !class.priority) ? classCount : 1;
 
-            for (int scc=1; scc <= classCount; scc++) {
+            for (int scc=1; scc <= classCount; scc++) 
+            {
                 if (extra > Clients.InGame()) break;
                 Client player = Clients.GetRandomWithoutClass();
                 player.class(gClassKey);
@@ -76,7 +80,8 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) {
         }
     }
 
-    for (int i=1; i <= Clients.InGame() - extra; i++) {
+    for (int i=1; i <= Clients.InGame() - extra; i++) 
+    {
         Client player = Clients.GetRandomWithoutClass();
         char gclass[32], class[32];
         Gamemode.config.DefaultGlobalClass(gclass, sizeof(gclass));
@@ -87,9 +92,70 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) {
     }
 }
 
-public void OnRoundEnd(Event ev, const char[] name, bool dbroadcast) {
-    for (int cig=1; cig <= Clients.InGame(); cig++) {
+public void OnRoundEnd(Event ev, const char[] name, bool dbroadcast) 
+{
+    for (int cig=1; cig <= Clients.InGame(); cig++) 
+    {
         Client client = Clients.Get(cig);
         client.haveClass = false;
     }
+}
+
+public Action Event_OnButtonPressed(const char[] output, int caller, int activator, float delay)
+{
+    if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsCleintInSpec(activator))
+    {
+        Cleint ply = Clients.Get(activator);
+
+        if(g_ShowButtonID.BoolValue)
+        {
+            PrintToChatAll("B_ID: %i", GetEntProp(caller, Prop_Data, "m_iHammerID"));
+        }
+
+        for(int i = 0; i < 64; i++)
+        {
+            if(GetEntProp(caller, Prop_Data, "m_iHammerID") == g_ButtonsAcces[i][0])
+            {
+                if(g_IgnoreDoorAccess[activator] == true)
+                {
+                    return Plugin_Continue;
+                }
+                else if(ply.IsSCP)
+                {
+                    if(g_ButtonsAcces[i][2] == 0)
+                    {
+                        return Plugin_Stop;
+                    }
+                }
+                else if(g_PlayerCard[activator] >= g_ButtonsAcces[i][1])
+                {
+                    return Plugin_Continue;
+                }
+                else
+                {
+                    return Plugin_Stop;
+                }
+            }
+        }
+    }
+}
+
+stock bool IsClientExist(int client)
+{
+    if((0 < client < MaxClients) && IsClientInGame(client) && !IsFakeClient(client) && !IsClientSourceTV(client))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+stock bool IsWarmup()
+{
+    if(GameRules_GetProp("m_bWarmupPeriod"))
+    {
+        return true;
+    }
+
+    return false;
 }
