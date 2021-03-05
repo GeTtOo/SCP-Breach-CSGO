@@ -123,7 +123,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 continue;
 
             // ¯\_(ツ)_/¯
-            Door door = gamemmode.config.doors.get(doorKey);
+            Door door = gamemmode.config.doors.Get(doorKey);
 
             if(GetEntProp(caller, Prop_Data, "m_iHammerID" == doorKey))
             {
