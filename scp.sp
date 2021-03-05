@@ -105,10 +105,10 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
     {
         Client ply = Clients.Get(activator);
 
-        /*if(g_ShowButtonID.BoolValue)
+        if(true)
         {
             PrintToChatAll("B_ID: %i", GetEntProp(caller, Prop_Data, "m_iHammerID"));
-        }*/
+        }
 
         StringMapSnapshot doorsSnapshot = Gamemode.config.doors.GetAll();
         int doorKeyLen;
