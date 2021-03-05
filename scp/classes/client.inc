@@ -58,6 +58,10 @@ methodmap Client < StringMap {
             this.GetString("subclass", buffer, max_size);
     }
 
+    property bool IsSCP {
+        public get() { char class[32]; this.GetString("class", class, sizeof(class)); return StrEqual(class, "SCP"); }
+    }
+
     property int card {
         public set(int card) { this.SetValue("card", card); }
         public get() { int card; return this.GetValue("card", card) ? card : 0; }

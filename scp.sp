@@ -110,7 +110,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
             PrintToChatAll("B_ID: %i", GetEntProp(caller, Prop_Data, "m_iHammerID"));
         }*/
 
-        StringMapSnapshot doorsSnapshot = gamemode.config.doors.GetAll();
+        StringMapSnapshot doorsSnapshot = Gamemode.config.doors.GetAll();
         int doorKeyLen;
 
         for (int i = 0; i < doorsSnapshot.Length; i++)
@@ -123,9 +123,9 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 continue;
 
             // ¯\_(ツ)_/¯
-            Door door = gamemode.config.doors.Get(doorKey);
+            Door door = Gamemode.config.doors.Get(doorKey);
 
-            if(GetEntProp(caller, Prop_Data, "m_iHammerID" == doorKey))
+            if(GetEntProp(caller, Prop_Data, "m_iHammerID") == StringToInt(doorKey))
             {
                 /*if(g_IgnoreDoorAccess[activator] == true)
                 {
@@ -149,6 +149,8 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
             }
         }
     }
+    
+    return Plugin_Stop;
 }
 
 stock void LoadFileToDownload()
