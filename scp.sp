@@ -1,17 +1,16 @@
-#pragma semicolon 1
-#pragma newdecls required
-
 #include <sourcemod>
 #include <sdkhooks>
-
 #include "scp/classes"
+
+#pragma semicolon 1
+#pragma newdecls required
 
 public Plugin myinfo = {
     name = "SCP GameMode",
     author = "Andrey::Dono, GeTtOo",
     description = "SCP gamemmode for CS:GO",
     version = "0.1",
-    url = "none"
+    url = "https://github.com/GeTtOo/csgo_scp"
 };
 
 public void OnPluginStart() 
@@ -106,27 +105,40 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
     {
         Cleint ply = Clients.Get(activator);
 
-        if(g_ShowButtonID.BoolValue)
+        /*if(g_ShowButtonID.BoolValue)
         {
             PrintToChatAll("B_ID: %i", GetEntProp(caller, Prop_Data, "m_iHammerID"));
-        }
+        }*/
 
-        for(int i = 0; i < 64; i++)
+        StringMapSnapshot doorsSnapshot = gamemmode.config.doors.GetAll();
+        int doorKeyLen;
+
+        for (int i = 0; i < doorsSnapshot.Length; i++)
         {
-            if(GetEntProp(caller, Prop_Data, "m_iHammerID") == g_ButtonsAcces[i][0])
+            doorKeyLen = doorsSnapshot.KeyBufferSize(i);
+            char[] doorKey = new char[doorKeyLen];
+            doorsSnapshot.GetKey(i, doorKey, doorKeyLen);
+            
+            if (json_is_meta_key(doorKey)) 
+                continue;
+
+            // ¯\_(ツ)_/¯
+            Door door = gamemmode.config.doors.get(doorKey);
+
+            if(GetEntProp(caller, Prop_Data, "m_iHammerID" == doorKey))
             {
-                if(g_IgnoreDoorAccess[activator] == true)
+                /*if(g_IgnoreDoorAccess[activator] == true)
                 {
                     return Plugin_Continue;
-                }
-                else if(ply.IsSCP)
+                } */
+                if(ply.IsSCP)
                 {
-                    if(g_ButtonsAcces[i][2] == 0)
+                    if(door.scp)
                     {
                         return Plugin_Stop;
                     }
                 }
-                else if(g_PlayerCard[activator] >= g_ButtonsAcces[i][1])
+                else if(ply.card >= door.access)
                 {
                     return Plugin_Continue;
                 }
@@ -136,6 +148,46 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 }
             }
         }
+    }
+}
+
+stock void LoadFileToDownload()
+{
+    Handle hFile = OpenFile("addons/sourcemod/configs/scp/downloads.txt", "r");
+    
+    if(hFile)
+    {
+        char buffer[PLATFORM_MAX_PATH];
+        while(!IsEndOfFile(hFile) && ReadFileLine(hFile, buffer, sizeof(buffer)))
+        {
+            if(TrimString(buffer) > 2 && IsCharAlpha(buffer[0]))
+            {
+                AddFileToDownloadsTable(buffer);
+            }
+        }
+
+        CloseHandle(hFile);
+    }
+    else
+    {
+        LogError("Can't find downloads.txt");
+    }
+}
+
+stock void RemoveWeapons(int client)
+{
+    int m_hMyWeapons_size = GetEntPropArraySize(client, Prop_Send, "m_hMyWeapons");
+    int item; 
+
+    for(int index = 0; index < m_hMyWeapons_size; index++) 
+    { 
+        item = GetEntPropEnt(client, Prop_Send, "m_hMyWeapons", index); 
+
+        if(item != -1) 
+        { 
+            RemovePlayerItem(client, item);
+            AcceptEntityInput(item, "Kill");
+        } 
     }
 }
 
