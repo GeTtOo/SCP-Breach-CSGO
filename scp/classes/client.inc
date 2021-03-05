@@ -58,6 +58,11 @@ methodmap Client < StringMap {
             this.GetString("subclass", buffer, max_size);
     }
 
+    property int card {
+        public set(int card) { this.SetValue("card", card); }
+        public get() { int card; return this.GetValue("card", card) ? card : 0; }
+    }
+
     public void Kick(char[] reason) {
         KickClient(this.id, reason);
     }
