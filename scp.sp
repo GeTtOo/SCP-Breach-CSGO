@@ -2,7 +2,6 @@
 #pragma newdecls required
 
 #include <sourcemod>
-#include <json>
 #include <sdkhooks>
 
 #include "scp/classes"
