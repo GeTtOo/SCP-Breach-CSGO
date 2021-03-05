@@ -1,10 +1,6 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#include <sourcemod>
-#include <json>
-#include <sdkhooks>
-
 #include "scp/classes/client"
 #include "scp/classes/gm"
 
