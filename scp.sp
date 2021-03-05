@@ -103,14 +103,14 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
 {
     if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsCleintInSpec(activator))
     {
-        Cleint ply = Clients.Get(activator);
+        Client ply = Clients.Get(activator);
 
         /*if(g_ShowButtonID.BoolValue)
         {
             PrintToChatAll("B_ID: %i", GetEntProp(caller, Prop_Data, "m_iHammerID"));
         }*/
 
-        StringMapSnapshot doorsSnapshot = gamemmode.config.doors.GetAll();
+        StringMapSnapshot doorsSnapshot = gamemode.config.doors.GetAll();
         int doorKeyLen;
 
         for (int i = 0; i < doorsSnapshot.Length; i++)
@@ -123,7 +123,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 continue;
 
             // ¯\_(ツ)_/¯
-            Door door = gamemmode.config.doors.Get(doorKey);
+            Door door = gamemode.config.doors.Get(doorKey);
 
             if(GetEntProp(caller, Prop_Data, "m_iHammerID" == doorKey))
             {
@@ -199,6 +199,16 @@ stock bool IsClientExist(int client)
     }
 
     return false;
+}
+
+stock bool IsCleintInSpec(int client)
+{
+    if(GetClientTeam(client) != 1)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 stock bool IsWarmup()
