@@ -125,7 +125,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
             // ¯\_(ツ)_/¯
             Door door = gamemode.config.doors.Get(doorKey);
 
-            if(GetEntProp(caller, Prop_Data, "m_iHammerID" == doorKey))
+            if(GetEntProp(caller, Prop_Data, "m_iHammerID") == doorKey)
             {
                 /*if(g_IgnoreDoorAccess[activator] == true)
                 {
