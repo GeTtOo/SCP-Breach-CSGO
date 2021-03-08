@@ -5,6 +5,10 @@
 #pragma semicolon 1
 #pragma newdecls required
 
+#define HIDE_RADAR_CSGO 1<<12
+
+bool g_AllowRoundEnd = false;
+
 public Plugin myinfo = {
     name = "SCP GameMode",
     author = "Andrey::Dono, GeTtOo",
@@ -12,6 +16,12 @@ public Plugin myinfo = {
     version = "0.1",
     url = "https://github.com/GeTtOo/csgo_scp"
 };
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                                Main
+//
+//////////////////////////////////////////////////////////////////////////////
 
 public void OnPluginStart() 
 {
@@ -22,10 +32,21 @@ public void OnPluginStart()
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_end", OnRoundEnd);
     HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
+
+    LoadFileToDownload();
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                                Events
+//
+//////////////////////////////////////////////////////////////////////////////
 
 public void OnClientJoin(Client ply) {
     PrintToServer("Client connected: %i", ply.id);
+
+    SDKHook(client, SDKHook_SpawnPost, OnPlayerSpawnPost);
+    SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
 }
 
 public void OnClientLeave(Client ply) {
@@ -34,59 +55,64 @@ public void OnClientLeave(Client ply) {
 
 public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) 
 {
-    StringMapSnapshot gClassNameS = Gamemode.GetGlobalClassNames();
-    int gClassCount, classCount, extra = 0;
-    int keyLen;
-
-    for (int i=0; i < gClassNameS.Length; i++) 
+    if(!IsWarmup())
     {
-        keyLen = gClassNameS.KeyBufferSize(i);
-        char[] gClassKey = new char[keyLen];
-        gClassNameS.GetKey(i, gClassKey, keyLen);
-        if (json_is_meta_key(gClassKey)) continue;
-
-        GlobalClass gclass = Gamemode.gclass(gClassKey);
-
-        gClassCount = Clients.InGame() * gclass.percent / 100;
-        gClassCount = (gClassCount != 0 || !gclass.priority) ? gClassCount : 1;
+        g_AllowRoundEnd = false;
         
-        StringMapSnapshot classNameS = gclass.GetClassNames();
-        int classKeyLen;
+        StringMapSnapshot gClassNameS = Gamemode.GetGlobalClassNames();
+        int gClassCount, classCount, extra = 0;
+        int keyLen;
 
-        for (int v=0; v < classNameS.Length; v++) 
+        for (int i=0; i < gClassNameS.Length; i++) 
         {
-            classKeyLen = classNameS.KeyBufferSize(v);
-            char[] classKey = new char[classKeyLen];
-            classNameS.GetKey(v, classKey, classKeyLen);
-            if (json_is_meta_key(classKey)) continue;
+            keyLen = gClassNameS.KeyBufferSize(i);
+            char[] gClassKey = new char[keyLen];
+            gClassNameS.GetKey(i, gClassKey, keyLen);
+            if (json_is_meta_key(gClassKey)) continue;
 
-            Class class = gclass.class(classKey);
+            GlobalClass gclass = Gamemode.gclass(gClassKey);
 
-            classCount = gClassCount * class.percent / 100;
-            classCount = (classCount != 0 || !class.priority) ? classCount : 1;
+            gClassCount = Clients.InGame() * gclass.percent / 100;
+            gClassCount = (gClassCount != 0 || !gclass.priority) ? gClassCount : 1;
+            
+            StringMapSnapshot classNameS = gclass.GetClassNames();
+            int classKeyLen;
 
-            for (int scc=1; scc <= classCount; scc++) 
+            for (int v=0; v < classNameS.Length; v++) 
             {
-                if (extra > Clients.InGame()) break;
-                Client player = Clients.GetRandomWithoutClass();
-                player.class(gClassKey);
-                player.subclass(classKey);
-                player.haveClass = true;
+                classKeyLen = classNameS.KeyBufferSize(v);
+                char[] classKey = new char[classKeyLen];
+                classNameS.GetKey(v, classKey, classKeyLen);
+                if (json_is_meta_key(classKey)) continue;
 
-                extra++;
+                Class class = gclass.class(classKey);
+
+                classCount = gClassCount * class.percent / 100;
+                classCount = (classCount != 0 || !class.priority) ? classCount : 1;
+
+                for (int scc=1; scc <= classCount; scc++) 
+                {
+                    if (extra > Clients.InGame()) break;
+                    Client player = Clients.GetRandomWithoutClass();
+                    player.class(gClassKey);
+                    player.subclass(classKey);
+                    player.haveClass = true;
+
+                    extra++;
+                }
             }
         }
-    }
 
-    for (int i=1; i <= Clients.InGame() - extra; i++) 
-    {
-        Client player = Clients.GetRandomWithoutClass();
-        char gclass[32], class[32];
-        Gamemode.config.DefaultGlobalClass(gclass, sizeof(gclass));
-        Gamemode.config.DefaultClass(class, sizeof(class));
-        player.class(gclass);
-        player.subclass(class);
-        player.haveClass = true;
+        for (int i=1; i <= Clients.InGame() - extra; i++) 
+        {
+            Client player = Clients.GetRandomWithoutClass();
+            char gclass[32], class[32];
+            Gamemode.config.DefaultGlobalClass(gclass, sizeof(gclass));
+            Gamemode.config.DefaultClass(class, sizeof(class));
+            player.class(gclass);
+            player.subclass(class);
+            player.haveClass = true;
+        }
     }
 }
 
@@ -96,6 +122,22 @@ public void OnRoundEnd(Event ev, const char[] name, bool dbroadcast)
     {
         Client client = Clients.Get(cig);
         client.haveClass = false;
+    }
+}
+
+public Action CS_OnTerminateRound(float& delay, CSRoundEndReason& reason)
+{
+    if(IsWarmup())
+	{
+		return Plugin_Continue;
+	}
+    else if(g_AllowRoundEnd)
+    {
+        return Plugin_Continue;
+    }
+    else
+    {
+        return Plugin_Handled;
     }
 }
 
@@ -153,7 +195,70 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
     return Plugin_Continue;
 }
 
-stock void LoadFileToDownload()
+public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
+{
+    int client = GetClientOfUserId(GetEventInt(event, "userid"));
+
+    if(IsClientExist(client))
+    {
+        CreateTimer(0.2, OnPlayerSpawn, client, TIMER_FLAG_NO_MAPCHANGE);
+    }
+
+    return Plugin_Continue;
+}
+
+public Action OnPlayerSpawnPost(int client)
+{
+    SetEntProp(client, Prop_Send, "m_iHideHUD", HIDE_RADAR_CSGO);
+}
+
+public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
+{   
+    if(IsClientExist(victim) && IsClientExist(attacker))
+    {
+        Client vic = Clients.Get(victim);
+        Client atk = Clients.Get(attacker);
+        
+        if(vic.IsSCP() && atk.IsSCP())
+        {
+            return Plugin_Stop;
+        }
+    }
+
+    return Plugin_Continue;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                                 Timers
+//
+//////////////////////////////////////////////////////////////////////////////
+
+public Action OnPlayerSpawn(Handle hTimer, any client)
+{
+    if(IsClientExist(client) && IsPlayerAlive(client))
+    {
+        /*if(!g_AllowPlayerAppear && !g_RespawnProtect[client])
+        {
+            ForcePlayerSuicide(client);
+        }*/
+
+        RemoveWeapons(client);
+        SetEntData(client, g_offsCollisionGroup, 2, 4, true);
+        //g_PlayerCard[client] = CARD_LEVEL_NON;
+        //g_RespawnProtect[client] = false;
+        SpawnPlayer(client);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                               Load Configs 
+//
+//////////////////////////////////////////////////////////////////////////////
+
+void LoadFileToDownload()
 {
     Handle hFile = OpenFile("addons/sourcemod/configs/scp/downloads.txt", "r");
     
@@ -176,7 +281,36 @@ stock void LoadFileToDownload()
     }
 }
 
-stock void RemoveWeapons(int client)
+//////////////////////////////////////////////////////////////////////////////
+//
+//                                Functions
+//
+//////////////////////////////////////////////////////////////////////////////
+
+void SpawnPlayer(int client)
+{
+    if(IsClientExist(client) && !IsCleintInSpec(client))
+    {
+        Client ply = Client.Get(client);
+        
+        EquipPlayerWeapon(client, GivePlayerItem(client, "weapon_fists"));
+        
+        ply.health = Gamemode.class(ply.class).subclass(ply.subclass).helath;
+        //ply.speed = Gamemode.class(ply.class).subclass(ply.subclass).speed;
+        ply.armor = Gamemode.class(ply.class).subclass(ply.subclass).armor;
+
+        // ply.armor = Gamemode.class(ply.class).subclass(ply.subclass).model;
+        // ply.armor = Gamemode.class(ply.class).subclass(ply.subclass).hands;
+
+        // ply.armor = Gamemode.class(ply.class).subclass(ply.subclass).weapon_1;
+        // ply.armor = Gamemode.class(ply.class).subclass(ply.subclass).weapon_pistol;
+        // ply.armor = Gamemode.class(ply.class).subclass(ply.subclass).weapon_granade;
+
+        // Teleport player to pos 
+    }
+}
+
+void RemoveWeapons(int client)
 {
     int m_hMyWeapons_size = GetEntPropArraySize(client, Prop_Send, "m_hMyWeapons");
     int item; 
@@ -192,6 +326,12 @@ stock void RemoveWeapons(int client)
         } 
     }
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                              Event validation
+//
+//////////////////////////////////////////////////////////////////////////////
 
 stock bool IsClientExist(int client)
 {

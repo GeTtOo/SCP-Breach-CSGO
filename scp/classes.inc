@@ -8,7 +8,7 @@
 ClientSingleton Clients;
 GameMode Gamemode;
 
-public void OnClientConnected(int id) {
+public void OnClientPostAdminCheck(int id) {
     Clients.Add(id);
 
     OnClientJoin(Clients.Get(id)); //Hook call
