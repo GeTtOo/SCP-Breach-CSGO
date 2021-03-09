@@ -29,14 +29,23 @@ methodmap Client < StringMap {
         SetEntityModel(this.id, model);
     }
 
-    property int Health {
-        public set(int health) { SetEntityHealth(this.id, health); }
+    public void SetHandsModel(char[] model) {
+        SetEntPropString(this.id, Prop_Send, "m_szArmsModel", model);
+    }
+
+    property int health {
+        public set(int val) { SetEntityHealth(this.id, val); }
         public get() { return GetClientHealth(this.id); }
     }
 
-    property int Armor {
-        public set(int armor) { SetEntProp(this.id, Prop_Send, "m_ArmorValue", armor); }
+    property int armor {
+        public set(int val) { SetEntProp(this.id, Prop_Send, "m_ArmorValue", val); }
         public get() { return GetEntProp(this.id, Prop_Send, "m_ArmorValue"); }
+    }
+
+    property float speed {
+        public set(float val) { SetEntPropFloat(this.id, Prop_Send, "m_flLaggedMovementValue", val); }
+        public get() { return GetEntPropFloat(this.id, Prop_Send, "m_flLaggedMovementValue"); }
     }
 
     property bool haveClass {
@@ -44,18 +53,18 @@ methodmap Client < StringMap {
         public get() { bool value; return this.GetValue("haveClass", value) ? value : false; }
     }
 
+    public void gclass(char[] buffer, int max_size = 0) {
+        if (max_size == 0)
+            this.SetString("gclass", buffer);
+        else
+            this.GetString("gclass", buffer, max_size);
+    }
+
     public void class(char[] buffer, int max_size = 0) {
         if (max_size == 0)
             this.SetString("class", buffer);
         else
             this.GetString("class", buffer, max_size);
-    }
-
-    public void subclass(char[] buffer, int max_size = 0) {
-        if (max_size == 0)
-            this.SetString("subclass", buffer);
-        else
-            this.GetString("subclass", buffer, max_size);
     }
 
     property bool IsSCP {
@@ -112,9 +121,10 @@ methodmap ClientSingleton < StringMap {
     }
 
     public int InGame() {
-        int client = 0;
+        int client = 1;
         while (IsClientInGame(client) && GetClientTeam(client) > 1)
             client++;
+        client--;
         return client;
     }
 

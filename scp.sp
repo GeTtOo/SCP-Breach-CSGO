@@ -1,4 +1,5 @@
 #include <sourcemod>
+#include <cstrike>
 #include <sdkhooks>
 #include "scp/classes"
 
@@ -10,7 +11,7 @@
 bool g_AllowRoundEnd = false;
 
 public Plugin myinfo = {
-    name = "SCP GameMode",
+    name = "SCP gamemode",
     author = "Andrey::Dono, GeTtOo",
     description = "SCP gamemmode for CS:GO",
     version = "0.1",
@@ -27,7 +28,7 @@ public void OnPluginStart()
 {
     // Declaration in "scp/classes.inc"
     Clients = new ClientSingleton();
-    Gamemode = new GameMode();
+    gamemode = new GameMode();
     
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_end", OnRoundEnd);
@@ -45,8 +46,8 @@ public void OnPluginStart()
 public void OnClientJoin(Client ply) {
     PrintToServer("Client connected: %i", ply.id);
 
-    SDKHook(client, SDKHook_SpawnPost, OnPlayerSpawnPost);
-    SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
+    SDKHook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
+    SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
 }
 
 public void OnClientLeave(Client ply) {
@@ -59,7 +60,7 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
     {
         g_AllowRoundEnd = false;
         
-        StringMapSnapshot gClassNameS = Gamemode.GetGlobalClassNames();
+        StringMapSnapshot gClassNameS = gamemode.GetGlobalClassNames();
         int gClassCount, classCount, extra = 0;
         int keyLen;
 
@@ -70,7 +71,7 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
             gClassNameS.GetKey(i, gClassKey, keyLen);
             if (json_is_meta_key(gClassKey)) continue;
 
-            GlobalClass gclass = Gamemode.gclass(gClassKey);
+            GlobalClass gclass = gamemode.gclass(gClassKey);
 
             gClassCount = Clients.InGame() * gclass.percent / 100;
             gClassCount = (gClassCount != 0 || !gclass.priority) ? gClassCount : 1;
@@ -94,8 +95,8 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
                 {
                     if (extra > Clients.InGame()) break;
                     Client player = Clients.GetRandomWithoutClass();
-                    player.class(gClassKey);
-                    player.subclass(classKey);
+                    player.gclass(gClassKey);
+                    player.class(classKey);
                     player.haveClass = true;
 
                     extra++;
@@ -107,10 +108,10 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
         {
             Client player = Clients.GetRandomWithoutClass();
             char gclass[32], class[32];
-            Gamemode.config.DefaultGlobalClass(gclass, sizeof(gclass));
-            Gamemode.config.DefaultClass(class, sizeof(class));
-            player.class(gclass);
-            player.subclass(class);
+            gamemode.config.DefaultGlobalClass(gclass, sizeof(gclass));
+            gamemode.config.DefaultClass(class, sizeof(class));
+            player.gclass(gclass);
+            player.class(class);
             player.haveClass = true;
         }
     }
@@ -147,12 +148,13 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
     {
         Client ply = Clients.Get(activator);
 
-        if(true)
-        {
+        //????
+        //if(true)
+        //{
             PrintToChatAll("B_ID: %i", GetEntProp(caller, Prop_Data, "m_iHammerID"));
-        }
+        //}
 
-        StringMapSnapshot doorsSnapshot = Gamemode.config.doors.GetAll();
+        StringMapSnapshot doorsSnapshot = gamemode.config.doors.GetAll();
         int doorKeyLen;
 
         for (int i = 0; i < doorsSnapshot.Length; i++)
@@ -165,7 +167,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 continue;
 
             // ¯\_(ツ)_/¯
-            Door door = Gamemode.config.doors.Get(doorKey);
+            Door door = gamemode.config.doors.Get(doorKey);
 
             if(GetEntProp(caller, Prop_Data, "m_iHammerID") == StringToInt(doorKey))
             {
@@ -219,7 +221,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
         Client vic = Clients.Get(victim);
         Client atk = Clients.Get(attacker);
         
-        if(vic.IsSCP() && atk.IsSCP())
+        if(vic.IsSCP && atk.IsSCP)
         {
             return Plugin_Stop;
         }
@@ -239,14 +241,16 @@ public Action OnPlayerSpawn(Handle hTimer, any client)
 {
     if(IsClientExist(client) && IsPlayerAlive(client))
     {
+        Client ply = Clients.Get(client);
         /*if(!g_AllowPlayerAppear && !g_RespawnProtect[client])
         {
             ForcePlayerSuicide(client);
         }*/
 
         RemoveWeapons(client);
-        SetEntData(client, g_offsCollisionGroup, 2, 4, true);
+        //SetEntData(client, g_offsCollisionGroup, 2, 4, true);
         //g_PlayerCard[client] = CARD_LEVEL_NON;
+        ply.card = 0;
         //g_RespawnProtect[client] = false;
         SpawnPlayer(client);
     }
@@ -287,27 +291,31 @@ void LoadFileToDownload()
 //
 //////////////////////////////////////////////////////////////////////////////
 
-void SpawnPlayer(int client)
+public void PlayerSpawn(Client ply)
 {
-    if(IsClientExist(client) && !IsCleintInSpec(client))
-    {
-        Client ply = Client.Get(client);
-        
-        EquipPlayerWeapon(client, GivePlayerItem(client, "weapon_fists"));
-        
-        ply.health = Gamemode.class(ply.class).subclass(ply.subclass).helath;
-        //ply.speed = Gamemode.class(ply.class).subclass(ply.subclass).speed;
-        ply.armor = Gamemode.class(ply.class).subclass(ply.subclass).armor;
+    //EquipPlayerWeapon(client, GivePlayerItem(client, "weapon_fists"));
+    
+    //ply.Loadouts = [];
+    char gclass[32], class[32];
+    ply.gclass(gclass, sizeof(gclass));
+    ply.class(class, sizeof(class));
+    ply.health = gamemode.gclass(gclass).class(class).health;
+    ply.speed = gamemode.gclass(gclass).class(class).speed;
+    ply.armor = gamemode.gclass(gclass).class(class).armor;
 
-        // ply.armor = Gamemode.class(ply.class).subclass(ply.subclass).model;
-        // ply.armor = Gamemode.class(ply.class).subclass(ply.subclass).hands;
+    // Set player and hands model
+    char model[256], handsModel[256];
+    gamemode.gclass(gclass).class(class).Model(model, sizeof(model));
+    gamemode.gclass(gclass).class(class).HandsModel(handsModel, sizeof(handsModel));
+    
+    ply.SetModel(model);
+    ply.SetHandsModel(handsModel);
 
-        // ply.armor = Gamemode.class(ply.class).subclass(ply.subclass).weapon_1;
-        // ply.armor = Gamemode.class(ply.class).subclass(ply.subclass).weapon_pistol;
-        // ply.armor = Gamemode.class(ply.class).subclass(ply.subclass).weapon_granade;
+    // ply.armor = gamemode.class(ply.class).subclass(ply.subclass).weapon_1;
+    // ply.armor = gamemode.class(ply.class).subclass(ply.subclass).weapon_pistol;
+    // ply.armor = gamemode.class(ply.class).subclass(ply.subclass).weapon_granade;
 
-        // Teleport player to pos 
-    }
+    // Teleport player to pos 
 }
 
 void RemoveWeapons(int client)

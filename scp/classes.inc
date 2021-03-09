@@ -6,7 +6,7 @@
 
 
 ClientSingleton Clients;
-GameMode Gamemode;
+GameMode gamemode;
 
 public void OnClientPostAdminCheck(int id) {
     Clients.Add(id);
@@ -18,4 +18,9 @@ public void OnClientDisconnect(int id) {
     OnClientLeave(Clients.Get(id)); //Hook call
 
     Clients.Remove(id);
+}
+
+void SpawnPlayer(int id) {
+    if (IsClientExist(id) && GetClientTeam(id) == 3)
+        PlayerSpawn(Clients.Get(id)); //Hook call
 }

@@ -19,8 +19,12 @@ methodmap Class < JSON_Object {
         public get() { return this.GetBool("priority"); }
     }
 
-    public bool model(char[] buffer, int max_size) {
+    public bool Model(char[] buffer, int max_size) {
         this.GetString("model", buffer, max_size);
+    }
+
+    public bool HandsModel(char[] buffer, int max_size) {
+        this.GetString("handsmodel", buffer, max_size);
     }
 
     property int health {
@@ -29,6 +33,10 @@ methodmap Class < JSON_Object {
 
     property int armor {
         public get() { return this.GetInt("armor"); }
+    }
+
+    property float speed {
+        public get() { return this.GetFloat("speed"); }
     }
 
     public bool weapon(char[] buffer, int max_size) {
