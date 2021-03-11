@@ -33,6 +33,7 @@ public void OnPluginStart()
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_end", OnRoundEnd);
     HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
+    HookEntityOutput("trigger_teleport", "OnStartTouch", Event_OnTriggerActivation);
 
     LoadFileToDownload();
 }
@@ -53,6 +54,7 @@ public void OnClientJoin(Client ply) {
     if (gamemode.config.debug)
         PrintToServer("Client joined - localId: (%i), steamId: (%i)", ply.id, GetSteamAccountID(ply.id));
 
+    SDKHook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
     SDKHook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
 }
@@ -99,7 +101,7 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
                 classCount = gClassCount * class.percent / 100;
                 classCount = (classCount != 0 || !class.priority) ? classCount : 1;
 
-                for (int scc=1; scc <= classCount; scc++) 
+                for (int scc = 1; scc <= classCount; scc++) 
                 {
                     if (extra > Clients.InGame()) break;
                     Client player = Clients.GetRandomWithoutClass();
@@ -112,7 +114,7 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
             }
         }
 
-        for (int i=1; i <= Clients.InGame() - extra; i++) 
+        for (int i = 1; i <= Clients.InGame() - extra; i++) 
         {
             Client player = Clients.GetRandomWithoutClass();
             char gclass[32], class[32];
@@ -235,6 +237,49 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
     return Plugin_Continue;
 }
 
+public Action OnWeaponTake(int client, int iWeapon)
+{
+    Client ply = Client.get(client);
+    
+    if(ply.IsSCP)
+    {
+        return Plugin_Stop;
+    }
+    
+    char classname[64];
+    GetEntityClassname(iWeapon, classname, sizeof(classname));
+
+    if (StrEqual(classname, "weapon_melee") || StrEqual(classname, "weapon_knife"))
+    {
+        EquipPlayerWeapon(client, iWeapon);
+    }
+
+    return Plugin_Continue;
+}
+
+public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
+{
+    if(IsClientExist(client) && !IsCleintInSpec(client))
+    {
+        if(!IsClientSCP(client))
+        {
+            DisplayCardMenu(client);
+        }
+    }
+}
+
+public void Event_OnTriggerActivation(const char[] output, int caller, int activator, float delay)
+{
+    if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsCleintInSpec(activator))
+    {
+        int iTrigger = GetEntProp(caller, Prop_Data, "m_iHammerID");
+
+        if(gamemode.config.debug)
+        {
+            PrintToChatAll("T_ID: %i", iTrigger);
+        }
+    }
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -374,4 +419,15 @@ stock bool IsWarmup()
     }
 
     return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                                 Menu
+//
+//////////////////////////////////////////////////////////////////////////////
+
+void DisplayCardMenu(int client)
+{
+    PrintToChat(client, "Скоро тут будет меню (честно-честно!)");
 }
