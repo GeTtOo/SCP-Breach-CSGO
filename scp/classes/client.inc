@@ -137,8 +137,12 @@ methodmap ClientSingleton < StringMap {
 
     public Client GetRandomWithoutClass() {
         Client client = this.GetRandom();
-        while (view_as<int>(client) != 0 && client.haveClass)
+        int crutch = 0; // :c
+        while (view_as<int>(client) != 0 && client.haveClass) {
+            if (crutch == 500) break;
             client = this.GetRandom();
+            crutch++;
+        }
 
         return view_as<Client>(client);
     }

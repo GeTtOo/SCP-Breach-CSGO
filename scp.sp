@@ -43,15 +43,23 @@ public void OnPluginStart()
 //
 //////////////////////////////////////////////////////////////////////////////
 
+public void OnMapStart() {
+    char mapName[128];
+    GetCurrentMap(mapName, sizeof(mapName));
+    gamemode.config.SetDoorRules(mapName);
+}
+
 public void OnClientJoin(Client ply) {
-    PrintToServer("Client connected: %i", ply.id);
+    if (gamemode.config.debug)
+        PrintToServer("Client joined - localId: (%i), steamId: (%i)", ply.id, GetSteamAccountID(ply.id));
 
     SDKHook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
 }
 
 public void OnClientLeave(Client ply) {
-    PrintToServer("Client disconnected: %i", ply.id);
+    if (gamemode.config.debug)
+        PrintToServer("Client disconnected: %i", ply.id);
 }
 
 public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) 
@@ -148,11 +156,8 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
     {
         Client ply = Clients.Get(activator);
 
-        //????
-        //if(true)
-        //{
-            PrintToChatAll("B_ID: %i", GetEntProp(caller, Prop_Data, "m_iHammerID"));
-        //}
+        if (gamemode.config.debug)
+            PrintToChatAll("Door/Button id: (%i)", GetEntProp(caller, Prop_Data, "m_iHammerID"));
 
         StringMapSnapshot doorsSnapshot = gamemode.config.doors.GetAll();
         int doorKeyLen;

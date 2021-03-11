@@ -4,23 +4,26 @@
 #include "scp/classes/client"
 #include "scp/classes/gm"
 
-
 ClientSingleton Clients;
 GameMode gamemode;
 
-public void OnClientPostAdminCheck(int id) {
-    Clients.Add(id);
+//-----------Advanced hooks-----------//
 
-    OnClientJoin(Clients.Get(id)); //Hook call
+public void OnClientConnected(int id) {
+    Clients.Add(id);
+}
+
+public void OnClientPostAdminCheck(int id) {
+    OnClientJoin(Clients.Get(id));
 }
 
 public void OnClientDisconnect(int id) {
-    OnClientLeave(Clients.Get(id)); //Hook call
+    OnClientLeave(Clients.Get(id));
 
     Clients.Remove(id);
 }
 
-void SpawnPlayer(int id) {
-    if (IsClientExist(id) && GetClientTeam(id) == 3)
-        PlayerSpawn(Clients.Get(id)); //Hook call
+public void SpawnPlayer(int id) {
+    if (IsClientExist(id) && GetClientTeam(id) == 1)
+        PlayerSpawn(Clients.Get(id));
 }
