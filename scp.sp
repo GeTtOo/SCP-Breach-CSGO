@@ -234,50 +234,6 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
     return Plugin_Continue;
 }
 
-public Action OnWeaponTake(int client, int iWeapon)
-{
-    Client ply = Client.get(client);
-    
-    if(ply.IsSCP)
-    {
-        return Plugin_Stop;
-    }
-    
-    char classname[64];
-    GetEntityClassname(iWeapon, classname, sizeof(classname));
-
-    if (StrEqual(classname, "weapon_melee") || StrEqual(classname, "weapon_knife"))
-    {
-        EquipPlayerWeapon(client, iWeapon);
-    }
-
-    return Plugin_Continue;
-}
-
-public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
-{
-    if(IsClientExist(client) && !IsCleintInSpec(client))
-    {
-        if(!IsClientSCP(client))
-        {
-            DisplayCardMenu(client);
-        }
-    }
-}
-
-public void Event_OnTriggerActivation(const char[] output, int caller, int activator, float delay)
-{
-    if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsCleintInSpec(activator))
-    {
-        int iTrigger = GetEntProp(caller, Prop_Data, "m_iHammerID");
-
-        if(gamemode.config.debug)
-        {
-            PrintToChatAll("T_ID: %i", iTrigger);
-        }
-    }
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
 //                                 Timers
@@ -318,3 +274,58 @@ void LoadFileToDownload()
 //                                Functions
 //
 //////////////////////////////////////////////////////////////////////////////
+
+public Action OnWeaponTake(int client, int iWeapon)
+{
+    Client ply = Client.get(client);
+
+    if(ply.IsSCP)
+    {
+        return Plugin_Stop;
+    }
+
+    char classname[64];
+    GetEntityClassname(iWeapon, classname, sizeof(classname));
+
+    if (StrEqual(classname, "weapon_melee") || StrEqual(classname, "weapon_knife"))
+    {
+        EquipPlayerWeapon(client, iWeapon);
+    }
+
+    return Plugin_Continue;
+}
+
+public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
+{
+    if(IsClientExist(client) && !IsCleintInSpec(client))
+    {
+        if(!IsClientSCP(client))
+        {
+            DisplayCardMenu(client);
+        }
+    }
+}
+
+public void Event_OnTriggerActivation(const char[] output, int caller, int activator, float delay)
+{
+    if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsCleintInSpec(activator))
+    {
+        int iTrigger = GetEntProp(caller, Prop_Data, "m_iHammerID");
+
+        if(gamemode.config.debug)
+        {
+            PrintToChatAll("T_ID: %i", iTrigger);
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                                 Menu
+//
+//////////////////////////////////////////////////////////////////////////////
+
+void DisplayCardMenu(int client)
+{
+    PrintToChat(client, "Скоро тут будет меню (честно-честно!)");
+} 
