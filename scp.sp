@@ -28,6 +28,8 @@ public Plugin myinfo = {
 
 public void OnPluginLoad() 
 {   
+    AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
+    
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_end", OnRoundEnd);
     HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
