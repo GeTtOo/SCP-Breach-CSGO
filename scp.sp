@@ -297,16 +297,16 @@ public Action OnWeaponTake(int client, int iWeapon)
     return Plugin_Continue;
 }
 
-//public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
-//{
-//    if(IsClientExist(client) && !IsCleintInSpec(client))
-//    {
-//        if(!IsClientSCP(client))
-//        {
-//            DisplayCardMenu(client);
-//        }
-//    }
-//}
+public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
+{
+    if(IsClientExist(client) && !IsCleintInSpec(client))
+    {
+        if(!IsClientSCP(client))
+        {
+            DisplayCardMenu(client);
+        }
+    }
+}
 
 public void Event_OnTriggerActivation(const char[] output, int caller, int activator, float delay)
 {
@@ -327,7 +327,7 @@ public void Event_OnTriggerActivation(const char[] output, int caller, int activ
 //
 //////////////////////////////////////////////////////////////////////////////
 
-//void DisplayCardMenu(int client)
-//{
-//    PrintToChat(client, "Скоро тут будет меню (честно-честно!)");
-//} 
+void DisplayCardMenu(int client)
+{
+    PrintToChat(client, "Скоро тут будет меню (честно-честно!)");
+} 
