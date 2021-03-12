@@ -301,7 +301,9 @@ public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
 {
     if(IsClientExist(client) && !IsCleintInSpec(client))
     {
-        if(!IsClientSCP(client))
+        Client ply = Client.get(client);
+        
+        if(!ply.IsSCP)
         {
             DisplayCardMenu(client);
         }
