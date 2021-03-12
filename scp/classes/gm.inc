@@ -8,10 +8,10 @@
 
 methodmap Class < JSON_Object {
     
-    public Class(JSON_Object class) {
-        Class self = view_as<Class>(class);
-        return self;
-    }
+    //public Class(JSON_Object class) {
+    //    Class self = view_as<Class>(class);
+    //    return self;
+    //}
 
     property int percent {
         public get() { return this.GetInt("percent"); }

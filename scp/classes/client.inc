@@ -3,6 +3,7 @@
 /*----------------------------------------------------------------------------------------------------------------------*/
 
 #include <sdktools>
+#include <json>
 
 methodmap Client < StringMap {
 
@@ -60,20 +61,18 @@ methodmap Client < StringMap {
             this.GetString("gclass", buffer, max_size);
     }
 
-    public void class(char[] buffer, int max_size = 0) {
-        if (max_size == 0)
-            this.SetString("class", buffer);
-        else
-            this.GetString("class", buffer, max_size);
+    property Class class {
+        public set(Class val) { this.SetValue("class", val); }
+        public get() { Class obj; return this.GetValue("class", obj) ? obj : null; }
     }
 
     property bool IsSCP {
         public get() { char class[32]; this.GetString("class", class, sizeof(class)); return StrEqual(class, "SCP"); }
     }
 
-    property int card {
-        public set(int card) { this.SetValue("card", card); }
-        public get() { int card; return this.GetValue("card", card) ? card : 0; }
+    property int access {
+        public set(int card) { this.SetValue("access", card); }
+        public get() { int card; return this.GetValue("access", card) ? card : 0; }
     }
 
     public void Kick(char[] reason) {
@@ -81,6 +80,24 @@ methodmap Client < StringMap {
     }
 
     public void GetPos(float[3] pos) { GetClientAbsOrigin(this.GetInt("id"), pos); }
+
+    public void Spawn() {
+        Class class = this.class;
+
+        if (class != null) {
+            this.health = class.health;
+            this.armor = class.armor;
+            this.speed = class.speed;
+
+            char playerModel[128], playerHandsModel[128];
+
+            class.Model(playerModel, sizeof(playerModel));
+            class.HandsModel(playerHandsModel, sizeof(playerHandsModel));
+
+            //this.SetModel(playerModel);
+            //this.SetHandsModel(playerHandsModel);
+        }
+    }
 }
 
 methodmap ClientSingleton < StringMap {

@@ -1,7 +1,8 @@
 #include <sourcemod>
 #include <cstrike>
 #include <sdkhooks>
-#include "scp/classes"
+
+#include "scp/core"
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -24,12 +25,8 @@ public Plugin myinfo = {
 //
 //////////////////////////////////////////////////////////////////////////////
 
-public void OnPluginStart() 
-{
-    // Declaration in "scp/classes.inc"
-    Clients = new ClientSingleton();
-    gamemode = new GameMode();
-    
+public void OnPluginLoad() 
+{   
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_end", OnRoundEnd);
     HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
@@ -104,7 +101,8 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
                     if (extra > Clients.InGame()) break;
                     Client player = Clients.GetRandomWithoutClass();
                     player.gclass(gClassKey);
-                    player.class(classKey);
+                    //player.class(classKey);
+                    player.class = class;
                     player.haveClass = true;
 
                     extra++;
@@ -119,10 +117,21 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
             gamemode.config.DefaultGlobalClass(gclass, sizeof(gclass));
             gamemode.config.DefaultClass(class, sizeof(class));
             player.gclass(gclass);
-            player.class(class);
+            //player.class(class);
+            player.class = gamemode.gclass(gclass).class(class);
             player.haveClass = true;
         }
     }
+}
+
+public void OnPlayerSpawn(Client ply)
+{
+    
+    //SetEntData(ply.id, g_offsCollisionGroup, 2, 4, true);
+    EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
+    ply.Spawn();
+
+    PrintToChat(ply.id, "Ты заспавнился, yay!");
 }
 
 public void OnRoundEnd(Event ev, const char[] name, bool dbroadcast) 
@@ -187,7 +196,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                         return Plugin_Stop;
                     }
                 }
-                else if(ply.card >= door.access)
+                else if(ply.access >= door.access)
                 {
                     return Plugin_Continue;
                 }
@@ -199,18 +208,6 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
         }
     }
     
-    return Plugin_Continue;
-}
-
-public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
-{
-    int client = GetClientOfUserId(GetEventInt(event, "userid"));
-
-    if(IsClientExist(client))
-    {
-        CreateTimer(0.2, OnPlayerSpawn, client, TIMER_FLAG_NO_MAPCHANGE);
-    }
-
     return Plugin_Continue;
 }
 
@@ -241,25 +238,6 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 //                                 Timers
 //
 //////////////////////////////////////////////////////////////////////////////
-
-public Action OnPlayerSpawn(Handle hTimer, any client)
-{
-    if(IsClientExist(client) && IsPlayerAlive(client))
-    {
-        Client ply = Clients.Get(client);
-        /*if(!g_AllowPlayerAppear && !g_RespawnProtect[client])
-        {
-            ForcePlayerSuicide(client);
-        }*/
-
-        RemoveWeapons(client);
-        //SetEntData(client, g_offsCollisionGroup, 2, 4, true);
-        //g_PlayerCard[client] = CARD_LEVEL_NON;
-        ply.card = 0;
-        //g_RespawnProtect[client] = false;
-        SpawnPlayer(client);
-    }
-}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -295,83 +273,3 @@ void LoadFileToDownload()
 //                                Functions
 //
 //////////////////////////////////////////////////////////////////////////////
-
-public void PlayerSpawn(Client ply)
-{
-    //EquipPlayerWeapon(client, GivePlayerItem(client, "weapon_fists"));
-    
-    //ply.Loadouts = [];
-    char gclass[32], class[32];
-    ply.gclass(gclass, sizeof(gclass));
-    ply.class(class, sizeof(class));
-    ply.health = gamemode.gclass(gclass).class(class).health;
-    ply.speed = gamemode.gclass(gclass).class(class).speed;
-    ply.armor = gamemode.gclass(gclass).class(class).armor;
-
-    // Set player and hands model
-    char model[256], handsModel[256];
-    gamemode.gclass(gclass).class(class).Model(model, sizeof(model));
-    gamemode.gclass(gclass).class(class).HandsModel(handsModel, sizeof(handsModel));
-    
-    ply.SetModel(model);
-    ply.SetHandsModel(handsModel);
-
-    // ply.armor = gamemode.class(ply.class).subclass(ply.subclass).weapon_1;
-    // ply.armor = gamemode.class(ply.class).subclass(ply.subclass).weapon_pistol;
-    // ply.armor = gamemode.class(ply.class).subclass(ply.subclass).weapon_granade;
-
-    // Teleport player to pos 
-}
-
-void RemoveWeapons(int client)
-{
-    int m_hMyWeapons_size = GetEntPropArraySize(client, Prop_Send, "m_hMyWeapons");
-    int item; 
-
-    for(int index = 0; index < m_hMyWeapons_size; index++) 
-    { 
-        item = GetEntPropEnt(client, Prop_Send, "m_hMyWeapons", index); 
-
-        if(item != -1) 
-        { 
-            RemovePlayerItem(client, item);
-            AcceptEntityInput(item, "Kill");
-        } 
-    }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-//                              Event validation
-//
-//////////////////////////////////////////////////////////////////////////////
-
-stock bool IsClientExist(int client)
-{
-    if((0 < client < MaxClients) && IsClientInGame(client) && !IsFakeClient(client) && !IsClientSourceTV(client))
-    {
-        return true;
-    }
-
-    return false;
-}
-
-stock bool IsCleintInSpec(int client)
-{
-    if(GetClientTeam(client) != 1)
-    {
-        return false;
-    }
-
-    return true;
-}
-
-stock bool IsWarmup()
-{
-    if(GameRules_GetProp("m_bWarmupPeriod"))
-    {
-        return true;
-    }
-
-    return false;
-}
