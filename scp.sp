@@ -303,7 +303,7 @@ public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
 {
     if(IsClientExist(client) && !IsCleintInSpec(client))
     {
-        Client ply = Client.get(client);
+        Client ply = Clients.Get(client);
         
         if(!ply.IsSCP)
         {
