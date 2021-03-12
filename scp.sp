@@ -10,6 +10,7 @@
 #define HIDE_RADAR_CSGO 1<<12
 
 bool g_AllowRoundEnd = false;
+int g_offsCollisionGroup;
 
 public Plugin myinfo = {
     name = "SCP gamemode",
@@ -31,6 +32,8 @@ public void OnPluginLoad()
     HookEvent("round_end", OnRoundEnd);
     HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
     HookEntityOutput("trigger_teleport", "OnStartTouch", Event_OnTriggerActivation);
+
+    g_offsCollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
 
     LoadFileToDownload();
 }
@@ -59,6 +62,15 @@ public void OnClientJoin(Client ply) {
 public void OnClientLeave(Client ply) {
     if (gamemode.config.debug)
         PrintToServer("Client disconnected: %i", ply.id);
+}
+
+public void OnPlayerSpawn(Client ply)
+{
+    SetEntData(ply.id, g_offsCollisionGroup, 2, 4, true);
+    EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
+    ply.Spawn();
+
+    PrintToChat(ply.id, "Ты заспавнился, yay!");
 }
 
 public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) 
@@ -124,16 +136,6 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
             player.haveClass = true;
         }
     }
-}
-
-public void OnPlayerSpawn(Client ply)
-{
-    
-    //SetEntData(ply.id, g_offsCollisionGroup, 2, 4, true);
-    EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
-    ply.Spawn();
-
-    PrintToChat(ply.id, "Ты заспавнился, yay!");
 }
 
 public void OnRoundEnd(Event ev, const char[] name, bool dbroadcast) 
@@ -277,7 +279,7 @@ void LoadFileToDownload()
 
 public Action OnWeaponTake(int client, int iWeapon)
 {
-    Client ply = Client.get(client);
+    Client ply = Clients.Get(client);
 
     if(ply.IsSCP)
     {
@@ -295,16 +297,16 @@ public Action OnWeaponTake(int client, int iWeapon)
     return Plugin_Continue;
 }
 
-public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
-{
-    if(IsClientExist(client) && !IsCleintInSpec(client))
-    {
-        if(!IsClientSCP(client))
-        {
-            DisplayCardMenu(client);
-        }
-    }
-}
+//public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
+//{
+//    if(IsClientExist(client) && !IsCleintInSpec(client))
+//    {
+//        if(!IsClientSCP(client))
+//        {
+//            DisplayCardMenu(client);
+//        }
+//    }
+//}
 
 public void Event_OnTriggerActivation(const char[] output, int caller, int activator, float delay)
 {
@@ -325,7 +327,7 @@ public void Event_OnTriggerActivation(const char[] output, int caller, int activ
 //
 //////////////////////////////////////////////////////////////////////////////
 
-void DisplayCardMenu(int client)
-{
-    PrintToChat(client, "Скоро тут будет меню (честно-честно!)");
-} 
+//void DisplayCardMenu(int client)
+//{
+//    PrintToChat(client, "Скоро тут будет меню (честно-честно!)");
+//} 
