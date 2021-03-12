@@ -12,6 +12,12 @@
 bool g_AllowRoundEnd = false;
 int g_offsCollisionGroup;
 
+Handle OnClientJoinForward;
+Handle OnClientLeaveForward;
+Handle OnClientSpawnForward;
+Handle OnTakeDamageForward;
+Handle OnButtonPressedForward;
+
 public Plugin myinfo = {
     name = "SCP gamemode",
     author = "Andrey::Dono, GeTtOo",
@@ -40,6 +46,14 @@ public void OnPluginLoad()
     LoadFileToDownload();
 }
 
+public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) {
+    OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_Cell);
+    OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_Cell);
+    OnClientSpawnForward = CreateGlobalForward("SCP_OnPlayerSpawn", ET_Event, Param_Cell);
+    OnTakeDamageForward = CreateGlobalForward("SCP_OnTakeDamage", ET_Event, Param_Cell, Param_Cell, Param_Float);
+    OnButtonPressedForward = CreateGlobalForward("SCP_OnButtonPressed", ET_Event, Param_Cell, Param_Cell);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 //                                Events
@@ -59,20 +73,31 @@ public void OnClientJoin(Client ply) {
     SDKHook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
     SDKHook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
+
+    Call_StartForward(OnClientJoinForward);
+    Call_PushCell(ply);
+    Call_Finish();
 }
 
 public void OnClientLeave(Client ply) {
     if (gamemode.config.debug)
         PrintToServer("Client disconnected: %i", ply.id);
+
+    Call_StartForward(OnClientLeaveForward);
+    Call_PushCell(ply);
+    Call_Finish();
 }
 
 public void OnPlayerSpawn(Client ply)
 {
     SetEntData(ply.id, g_offsCollisionGroup, 2, 4, true);
     EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
-    ply.Spawn();
 
-    PrintToChat(ply.id, "Ты заспавнился, yay!");
+    Call_StartForward(OnClientSpawnForward);
+    Call_PushCell(ply);
+    Call_Finish();
+
+    ply.Spawn();
 }
 
 public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) 
@@ -170,9 +195,10 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
     if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsCleintInSpec(activator))
     {
         Client ply = Clients.Get(activator);
+        int doorId = GetEntProp(caller, Prop_Data, "m_iHammerID");
 
         if (gamemode.config.debug)
-            PrintToChatAll("Door/Button id: (%i)", GetEntProp(caller, Prop_Data, "m_iHammerID"));
+            PrintToChatAll("Door/Button id: (%i)", doorId);
 
         StringMapSnapshot doorsSnapshot = gamemode.config.doors.GetAll();
         int doorKeyLen;
@@ -189,7 +215,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
             // ¯\_(ツ)_/¯
             Door door = gamemode.config.doors.Get(doorKey);
 
-            if(GetEntProp(caller, Prop_Data, "m_iHammerID") == StringToInt(doorKey))
+            if(doorId == StringToInt(doorKey))
             {
                 /*if(g_IgnoreDoorAccess[activator] == true)
                 {
@@ -212,6 +238,11 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 }
             }
         }
+
+        Call_StartForward(OnButtonPressedForward);
+        Call_PushCell(ply);
+        Call_PushCell(doorId);
+        Call_Finish();
     }
     
     return Plugin_Continue;
@@ -233,6 +264,12 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
         {
             return Plugin_Stop;
         }
+        
+        Call_StartForward(OnTakeDamageForward);
+        Call_PushCell(vic);
+        Call_PushCell(atk);
+        Call_PushFloat(damage);
+        Call_Finish();
     }
 
     return Plugin_Continue;
