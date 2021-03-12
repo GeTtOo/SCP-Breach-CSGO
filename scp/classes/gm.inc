@@ -13,6 +13,13 @@ methodmap Class < JSON_Object {
     //    return self;
     //}
 
+    public void Name(char[] buffer, int max_size = 0) {
+        if (max_size == 0)
+            this.SetString("name", buffer);
+        else
+            this.GetString("name", buffer, max_size);
+    }
+
     property int percent {
         public get() { return this.GetInt("percent"); }
     }
@@ -53,7 +60,7 @@ methodmap Classes < JSON_Object {
         return self;
     }
 
-    public Class get(char[] name) { return view_as<Class>(this.GetObject(name)); }
+    public Class get(char[] name) { Class class = view_as<Class>(this.GetObject(name)); class.Name(name); return class; }
 }
 
 methodmap GlobalClass < JSON_Object {

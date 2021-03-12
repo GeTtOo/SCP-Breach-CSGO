@@ -93,11 +93,20 @@ public void OnPlayerSpawn(Client ply)
     SetEntData(ply.id, g_offsCollisionGroup, 2, 4, true);
     EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
 
-    Call_StartForward(OnClientSpawnForward);
-    Call_PushCell(ply);
-    Call_Finish();
+    if (ply.class != null) {
+        Call_StartForward(OnClientSpawnForward);
+        Call_PushCell(ply);
+        Call_Finish();
 
-    ply.Spawn();
+        ply.Spawn();
+
+        if (gamemode.config.debug) {
+            char gClassName[32], className[32];
+            ply.gclass(gClassName, sizeof(gClassName));
+            ply.class.Name(className, sizeof(className));
+            PrintToChat(ply.id, "Твой класс %s-%s", gClassName, className);
+        }
+    }
 }
 
 public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) 
@@ -170,6 +179,7 @@ public void OnRoundEnd(Event ev, const char[] name, bool dbroadcast)
     for (int cig=1; cig <= Clients.InGame(); cig++) 
     {
         Client client = Clients.Get(cig);
+        client.class = null;
         client.haveClass = false;
     }
 }
@@ -215,20 +225,21 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
             // ¯\_(ツ)_/¯
             Door door = gamemode.config.doors.Get(doorKey);
 
-            if(doorId == StringToInt(doorKey))
+            if (doorId == StringToInt(doorKey))
             {
                 /*if(g_IgnoreDoorAccess[activator] == true)
                 {
                     return Plugin_Continue;
                 } */
-                if(ply.IsSCP)
+                if (IsWarmup()) return Plugin_Continue;
+                if (ply.IsSCP)
                 {
                     if(door.scp)
                     {
                         return Plugin_Stop;
                     }
                 }
-                else if(ply.access >= door.access)
+                else if (ply.access >= door.access)
                 {
                     return Plugin_Continue;
                 }

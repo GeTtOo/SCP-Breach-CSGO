@@ -67,7 +67,7 @@ methodmap Client < StringMap {
     }
 
     property bool IsSCP {
-        public get() { char class[32]; this.GetString("class", class, sizeof(class)); return StrEqual(class, "SCP"); }
+        public get() { char gclass[32]; this.GetString("gclass", gclass, sizeof(gclass)); return StrEqual(gclass, "SCP"); }
     }
 
     property int access {
@@ -84,19 +84,17 @@ methodmap Client < StringMap {
     public void Spawn() {
         Class class = this.class;
 
-        if (class != null) {
-            this.health = class.health;
-            this.armor = class.armor;
-            this.speed = class.speed;
+        this.health = class.health;
+        this.armor = class.armor;
+        this.speed = class.speed;
 
-            char playerModel[128], playerHandsModel[128];
+        char playerModel[128], playerHandsModel[128];
 
-            class.Model(playerModel, sizeof(playerModel));
-            class.HandsModel(playerHandsModel, sizeof(playerHandsModel));
+        class.Model(playerModel, sizeof(playerModel));
+        class.HandsModel(playerHandsModel, sizeof(playerHandsModel));
 
-            //this.SetModel(playerModel);
-            //this.SetHandsModel(playerHandsModel);
-        }
+        //this.SetModel(playerModel);
+        //this.SetHandsModel(playerHandsModel);
     }
 }
 
