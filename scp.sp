@@ -85,7 +85,7 @@ public Action TpTo914(int client, const char[] command, int argc)
 public void OnMapStart() {
     char mapName[128];
     GetCurrentMap(mapName, sizeof(mapName));
-    gamemode.config.SetDoorRules(mapName);
+    gamemode = new GameMode(mapName);
 }
 
 public void OnClientJoin(Client ply) {

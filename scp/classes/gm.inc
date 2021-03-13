@@ -36,20 +36,8 @@ methodmap GlobalClass < JSON_Object {
 
 methodmap GlobalClasses < JSON_Object {
     
-    public GlobalClasses() {
-        char path[PLATFORM_MAX_PATH];
-        GlobalClasses self;
-        BuildPath(Path_SM, path, PLATFORM_MAX_PATH, "configs/scp/classes.json");
-        if (FileExists(path)) {
-            char buffer[8192];
-            Handle file = OpenFile(path,"r+");
-            ReadFileString(file, buffer, sizeof(buffer));
-            self = view_as<GlobalClasses>(json_decode(buffer));
-        } else {
-            self = view_as<GlobalClasses>(new JSON_Object());
-        }
-
-        return self;
+    public GlobalClasses(char[] mapname) {
+        return view_as<GlobalClasses>(ReadConfig(mapname, "classes"));
     }
 
     public void Add(char[] name, Class class) {
@@ -61,10 +49,10 @@ methodmap GlobalClasses < JSON_Object {
 
 methodmap GameMode < JSON_Object {
     
-    public GameMode() {
+    public GameMode(char[] mapname) {
         GameMode self = view_as<GameMode>(new JSON_Object());
-        self.SetObject("GlobalClasses", view_as<GlobalClasses>(new GlobalClasses()));
-        self.SetObject("Config", view_as<Config>(new Config()));
+        self.SetObject("GlobalClasses", new GlobalClasses(mapname));
+        self.SetObject("Config", new Config(mapname));
         return self;
     }
 
@@ -79,4 +67,21 @@ methodmap GameMode < JSON_Object {
     public StringMapSnapshot GetGlobalClassNames() {
         return this.GetObject("GlobalClasses").Snapshot();
     }
+}
+
+public JSON_Object ReadConfig(char[] mapname, char[] filename) {
+    char path[PLATFORM_MAX_PATH];
+    JSON_Object obj;
+    Format(path, sizeof(path), "%s%s%s%s%s", "configs/scp/", mapname, "/", filename, ".json");
+    BuildPath(Path_SM, path, PLATFORM_MAX_PATH, path);
+    if (FileExists(path)) {
+        char buffer[8192];
+        Handle file = OpenFile(path,"r+");
+        ReadFileString(file, buffer, sizeof(buffer));
+        obj = json_decode(buffer);
+    } else {
+        obj = new JSON_Object();
+    }
+
+    return obj;
 }

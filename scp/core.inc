@@ -11,7 +11,7 @@ public void OnPluginStart()
 {
     // Declaration in "scp/classes.inc"
     Clients = new ClientSingleton();
-    gamemode = new GameMode();
+    //gamemode = new GameMode();
 
     HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
 
