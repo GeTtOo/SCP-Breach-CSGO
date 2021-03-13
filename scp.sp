@@ -35,6 +35,8 @@ public Plugin myinfo = {
 public void OnPluginLoad() 
 {   
     AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
+    AddCommandListener(GetClientPos, "getmypos");
+    AddCommandListener(TpTo914, "tp914");
     
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_end", OnRoundEnd);
@@ -47,11 +49,31 @@ public void OnPluginLoad()
 }
 
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) {
+    CreateNative("SCP_GetClient", NativeGetClient);
+    
     OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_Cell);
     OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_Cell);
     OnClientSpawnForward = CreateGlobalForward("SCP_OnPlayerSpawn", ET_Event, Param_Cell);
     OnTakeDamageForward = CreateGlobalForward("SCP_OnTakeDamage", ET_Event, Param_Cell, Param_Cell, Param_Float);
     OnButtonPressedForward = CreateGlobalForward("SCP_OnButtonPressed", ET_Event, Param_Cell, Param_Cell);
+}
+
+public any NativeGetClient(Handle plugin, int numArgs) { return Clients.Get(GetNativeCell(1)); }
+
+public Action GetClientPos(int client, const char[] command, int argc)
+{
+    Client ply = Clients.Get(client);
+
+    float pos[3];
+    ply.GetPos(pos);
+    PrintToChat(ply.id, "Your pos is: %f, %f, %f", pos[0], pos[1], pos[2]);
+}
+
+public Action TpTo914(int client, const char[] command, int argc)
+{
+    float pos[3] = {3223.215576,-2231.152587,0.031250};
+    float ang[3] = {0.0,0.0,0.0};
+    TeleportEntity(client, pos, ang, NULL_VECTOR);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -104,7 +126,7 @@ public void OnPlayerSpawn(Client ply)
             char gClassName[32], className[32];
             ply.gclass(gClassName, sizeof(gClassName));
             ply.class.Name(className, sizeof(className));
-            PrintToChat(ply.id, "Твой класс %s-%s", gClassName, className);
+            PrintToChat(ply.id, "Твой класс %s - %s", gClassName, className);
         }
     }
 }
@@ -232,12 +254,9 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                     return Plugin_Continue;
                 } */
                 if (IsWarmup()) return Plugin_Continue;
-                if (ply.IsSCP)
+                if (ply.IsSCP && door.scp)
                 {
-                    if(door.scp)
-                    {
-                        return Plugin_Stop;
-                    }
+                    return Plugin_Continue;
                 }
                 else if (ply.access >= door.access)
                 {

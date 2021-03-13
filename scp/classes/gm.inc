@@ -5,70 +5,13 @@
 #include <json>
 
 #include "scp/classes/config"
-
-methodmap Class < JSON_Object {
-    
-    //public Class(JSON_Object class) {
-    //    Class self = view_as<Class>(class);
-    //    return self;
-    //}
-
-    public void Name(char[] buffer, int max_size = 0) {
-        if (max_size == 0)
-            this.SetString("name", buffer);
-        else
-            this.GetString("name", buffer, max_size);
-    }
-
-    property int percent {
-        public get() { return this.GetInt("percent"); }
-    }
-
-    property bool priority {
-        public get() { return this.GetBool("priority"); }
-    }
-
-    public bool Model(char[] buffer, int max_size) {
-        this.GetString("model", buffer, max_size);
-    }
-
-    public bool HandsModel(char[] buffer, int max_size) {
-        this.GetString("handsmodel", buffer, max_size);
-    }
-
-    property int health {
-        public get() { return this.GetInt("health"); }
-    }
-
-    property int armor {
-        public get() { return this.GetInt("armor"); }
-    }
-
-    property float speed {
-        public get() { return this.GetFloat("speed"); }
-    }
-
-    public bool weapon(char[] buffer, int max_size) {
-        this.GetString("weapon", buffer, max_size);
-    }
-}
+#include "scp/classes/player_class"
 
 methodmap Classes < JSON_Object {
-    
-    public Classes(JSON_Object class_arr) {
-        Classes self = view_as<Classes>(class_arr);
-        return self;
-    }
-
     public Class get(char[] name) { Class class = view_as<Class>(this.GetObject(name)); class.Name(name); return class; }
 }
 
 methodmap GlobalClass < JSON_Object {
-    
-    public GlobalClass(JSON_Object globalclass) {
-        GlobalClass self = view_as<GlobalClass>(globalclass);
-        return self;
-    }
 
     property int percent {
         public get() { return this.GetInt("percent"); }

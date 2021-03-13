@@ -1,6 +1,8 @@
 /*----------------------------------------------------------------------------------------------------------------------*/
 /*----------------------------------------------------Player classes----------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
+#pragma semicolon 1
+#pragma newdecls required
 
 #include <sdktools>
 #include <json>
@@ -79,7 +81,7 @@ methodmap Client < StringMap {
         KickClient(this.id, reason);
     }
 
-    public void GetPos(float[3] pos) { GetClientAbsOrigin(this.GetInt("id"), pos); }
+    public void GetPos(float[3] pos) { GetEntPropVector(this.GetInt("id"), Prop_Send, "m_vecOrigin", pos); }
 
     public void Spawn() {
         Class class = this.class;

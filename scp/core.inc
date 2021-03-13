@@ -24,15 +24,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 {
     Client ply = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
 
-    if (IsClientExist(ply.id))
-        CreateTimer(0.2, Timer_PlayerSpawn, ply, TIMER_FLAG_NO_MAPCHANGE);
-
-    return Plugin_Continue;
-}
-
-public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
-{
-    if(IsClientExist(ply.id)) {
+    if (IsClientExist(ply.id)) {
         int m_hMyWeapons_size = GetEntPropArraySize(ply.id, Prop_Send, "m_hMyWeapons");
         int item; 
 
@@ -47,8 +39,16 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
             } 
         }
 
-        OnPlayerSpawn(ply);
+        CreateTimer(0.2, Timer_PlayerSpawn, ply, TIMER_FLAG_NO_MAPCHANGE);
     }
+
+    return Plugin_Continue;
+}
+
+public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
+{
+    if(IsClientExist(ply.id))
+        OnPlayerSpawn(ply);
 }
 
 //-----------Advanced hooks-----------//
