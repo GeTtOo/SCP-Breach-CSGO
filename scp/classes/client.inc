@@ -81,7 +81,7 @@ methodmap Client < StringMap {
         KickClient(this.id, reason);
     }
 
-    public void GetPos(float[3] pos) { GetEntPropVector(this.GetInt("id"), Prop_Send, "m_vecOrigin", pos); }
+    public Vector GetPos() { float pos[3]; GetEntPropVector(this.GetInt("id"), Prop_Send, "m_vecOrigin", pos); return new Vector(pos[0], pos[1], pos[2]); }
 
     public void Spawn() {
         Class class = this.class;

@@ -64,9 +64,18 @@ public Action GetClientPos(int client, const char[] command, int argc)
 {
     Client ply = Clients.Get(client);
 
-    float pos[3];
-    ply.GetPos(pos);
-    PrintToChat(ply.id, "Your pos is: %f, %f, %f", pos[0], pos[1], pos[2]);
+    Vector plyPos = ply.GetPos();
+    PrintToChat(ply.id, "Your pos is: %f, %f, %f", plyPos.x, plyPos.y, plyPos.z);
+
+    Vector vec1 = new Vector(plyPos.x - 200.0, plyPos.y - 200.0, plyPos.z - 200.0);
+    Vector vec2 = new Vector(plyPos.x + 200.0, plyPos.y + 200.0, plyPos.z + 200.0);
+
+    ArrayList entArr = Ents.FindInBox(vec1, vec2);
+
+    for(int i=0; i < entArr.Length; i++) {
+        Entity ent = GetArrayCell(entArr, i, 0);
+        PrintToServer("%i", ent.id);
+    }
 }
 
 public Action TpTo914(int client, const char[] command, int argc)

@@ -2,7 +2,9 @@
 #pragma newdecls required
 
 #include "scp/classes/gm"
+#include "scp/classes/structs"
 #include "scp/classes/client"
+#include "scp/classes/entity"
 
 ClientSingleton Clients;
 GameMode gamemode;
