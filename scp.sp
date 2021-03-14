@@ -491,6 +491,11 @@ void SCP_NukeActivation()
     }
 }
 
+void FakePrecacheSound(const char[] szPath)
+{
+    AddToStringTable(FindStringTable( "soundprecache" ), szPath);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 //                                Commands
