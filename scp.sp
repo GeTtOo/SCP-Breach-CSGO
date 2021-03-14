@@ -9,6 +9,7 @@
 
 #define HIDE_RADAR_CSGO 1<<12
 
+bool g_IgnoreDoorAccess[MAXPLAYERS+1];
 bool g_AllowRoundEnd = false;
 int g_offsCollisionGroup;
 
@@ -19,10 +20,10 @@ Handle OnTakeDamageForward;
 Handle OnButtonPressedForward;
 
 public Plugin myinfo = {
-    name = "SCP gamemode",
+    name = "[SCP] GameMode",
     author = "Andrey::Dono, GeTtOo",
     description = "SCP gamemmode for CS:GO",
-    version = "0.1",
+    version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
@@ -37,6 +38,8 @@ public void OnPluginLoad()
     AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
     AddCommandListener(GetClientPos, "getmypos");
     AddCommandListener(TpTo914, "tp914");
+
+    RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_BAN);
     
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_end", OnRoundEnd);
@@ -57,9 +60,15 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) 
     OnClientSpawnForward = CreateGlobalForward("SCP_OnPlayerSpawn", ET_Event, Param_Cell);
     OnTakeDamageForward = CreateGlobalForward("SCP_OnTakeDamage", ET_Event, Param_Cell, Param_Cell, Param_Float);
     OnButtonPressedForward = CreateGlobalForward("SCP_OnButtonPressed", ET_Event, Param_Cell, Param_Cell);
+
+    RegPluginLibrary("scp_core");
+    return APLRes_Success;
 }
 
-public any NativeGetClient(Handle plugin, int numArgs) { return Clients.Get(GetNativeCell(1)); }
+public any NativeGetClient(Handle plugin, int numArgs)
+{ 
+    return Clients.Get(GetNativeCell(1)); 
+}
 
 public Action GetClientPos(int client, const char[] command, int argc)
 {
@@ -67,7 +76,7 @@ public Action GetClientPos(int client, const char[] command, int argc)
 
     float pos[3];
     ply.GetPos(pos);
-    PrintToChat(ply.id, "Your pos is: %f, %f, %f", pos[0], pos[1], pos[2]);
+    PrintToChat(ply.id, " \x07[SCP] \x01Your pos is: %f, %f, %f", pos[0], pos[1], pos[2]);
 }
 
 public Action TpTo914(int client, const char[] command, int argc)
@@ -83,15 +92,21 @@ public Action TpTo914(int client, const char[] command, int argc)
 //
 //////////////////////////////////////////////////////////////////////////////
 
-public void OnMapStart() {
+public void OnMapStart() 
+{
     char mapName[128];
     GetCurrentMap(mapName, sizeof(mapName));
     gamemode = new GameMode(mapName);
 }
 
-public void OnClientJoin(Client ply) {
+public void OnClientJoin(Client ply) 
+{
     if (gamemode.config.debug)
+    {
         PrintToServer("Client joined - localId: (%i), steamId: (%i)", ply.id, GetSteamAccountID(ply.id));
+    }
+
+    g_IgnoreDoorAccess[client] = false;
 
     SDKHook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
     SDKHook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
@@ -102,9 +117,12 @@ public void OnClientJoin(Client ply) {
     Call_Finish();
 }
 
-public void OnClientLeave(Client ply) {
+public void OnClientLeave(Client ply) 
+{
     if (gamemode.config.debug)
+    {
         PrintToServer("Client disconnected: %i", ply.id);
+    }
 
     Call_StartForward(OnClientLeaveForward);
     Call_PushCell(ply);
@@ -116,18 +134,20 @@ public void OnPlayerSpawn(Client ply)
     SetEntData(ply.id, g_offsCollisionGroup, 2, 4, true);
     EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
 
-    if (ply.class != null) {
+    if (ply.class != null) 
+    {
         Call_StartForward(OnClientSpawnForward);
         Call_PushCell(ply);
         Call_Finish();
 
         ply.Spawn();
 
-        if (gamemode.config.debug) {
+        if (gamemode.config.debug) 
+        {
             char gClassName[32], className[32];
             ply.gclass(gClassName, sizeof(gClassName));
             ply.class.Name(className, sizeof(className));
-            PrintToChat(ply.id, "Твой класс %s - %s", gClassName, className);
+            PrintToChat(ply.id, " \x07[SCP] \x01Твой класс %s - %s", gClassName, className);
         }
     }
 }
@@ -263,7 +283,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
         int doorId = GetEntProp(caller, Prop_Data, "m_iHammerID");
 
         if (gamemode.config.debug)
-            PrintToChatAll("Door/Button id: (%i)", doorId);
+            PrintToChatAll(" \x07[SCP] \x01Door/Button id: (%i)", doorId);
 
         StringMapSnapshot doorsSnapshot = gamemode.config.doors.GetAll();
         int doorKeyLen;
@@ -282,12 +302,15 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
 
             if (doorId == StringToInt(doorKey))
             {
-                /*if(g_IgnoreDoorAccess[activator] == true)
+                if (IsWarmup())
                 {
                     return Plugin_Continue;
-                } */
-                if (IsWarmup()) return Plugin_Continue;
-                if (ply.IsSCP && door.scp)
+                }
+                else if(g_IgnoreDoorAccess[activator] == true)
+                {
+                    return Plugin_Continue;
+                }
+                else if (ply.IsSCP && door.scp)
                 {
                     return Plugin_Continue;
                 }
@@ -346,7 +369,7 @@ public void Event_OnTriggerActivation(const char[] output, int caller, int activ
 
         if(gamemode.config.debug)
         {
-            PrintToChatAll("T_ID: %i", iTrigger);
+            PrintToChatAll(" \x07[SCP] \x01T_ID: %i", iTrigger);
         }
     }
 }
@@ -426,12 +449,26 @@ void SCP_EndRound(const char[] team)
     if(StrEqual("nuke_explosion", team))
     {
         CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TargetBombed, false);
-        PrintToChatAll("Комплекс уничтожен! Выживших не обнаружено...");
+        PrintToChatAll(" \x07[SCP] \x01Комплекс уничтожен! Выживших не обнаружено...");
     }
     else
     {
         CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TerroristWin, false);
-        PrintToChatAll("%s победили!", team);
+        PrintToChatAll(" \x07[SCP] \x01%s победили!", team);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                                Commands
+//
+//////////////////////////////////////////////////////////////////////////////
+
+public Action Command_AdminMenu(int client, int args)
+{
+    if(IsClientExist(client))
+    {
+        DisplayAdminMenu(client);
     }
 }
 
@@ -443,5 +480,53 @@ void SCP_EndRound(const char[] team)
 
 void DisplayCardMenu(int client)
 {
-    PrintToChat(client, "Скоро тут будет меню (честно-честно!)");
-} 
+    PrintToChat(client, " \x07[SCP] \x01Скоро тут будет меню (честно-честно!)");
+}
+
+void DisplayAdminMenu(int client)
+{
+    if(IsClientExist(client))
+    {
+        Menu hMenu = new Menu(MenuHandler_ScpAdminMenu);
+        hMenu.SetTitle("Меню администратора");
+
+        hMenu.AddItem("item1", "Просмотреть классы игроков", ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item2", "Возродить игрока", ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item3", "Телепортировать игрока", ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item4", "Переместить в наблюдатели", ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item5", "Провести беседу с игроком", ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item6", "Игнорирование карт доступа", ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item7", "Выдать предмет", ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item8", "Перезапустить раунд", ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item9", "Взорвать комплекс", ITEMDRAW_DEFAULT);
+
+        hMenu.Display(client, 30);
+    }
+}
+
+public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, int item)
+{
+    if (action == MenuAction_Select)
+    {
+        switch(item)
+        {
+            case 5:
+            {
+                if(g_IgnoreDoorAccess[client] == false)
+                {
+                    PrintToChat(client, " \x07[SCP] \x01Игнорирование карт доступа \x06включено");
+                    g_IgnoreDoorAccess[client] = true;
+                }
+                else
+                {
+                    PrintToChat(client, " \x07[SCP] \x01Игнорирование карт доступа \x06отключено");
+                    g_IgnoreDoorAccess[client] = false;
+                }
+            }
+            default:
+            {
+                PrintToChat(client, "Да.");
+            }
+        }
+    }
+}
