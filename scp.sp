@@ -11,6 +11,7 @@
 
 bool g_IgnoreDoorAccess[MAXPLAYERS+1];
 bool g_AllowRoundEnd = false;
+bool g_IsNuckExpl = false;
 int g_offsCollisionGroup;
 
 Handle OnClientJoinForward;
@@ -97,6 +98,8 @@ public void OnMapStart()
     char mapName[128];
     GetCurrentMap(mapName, sizeof(mapName));
     gamemode = new GameMode(mapName);
+
+    FakePrecacheSound(gamemode.config.NukeSound);
 }
 
 public void OnClientJoin(Client ply) 
@@ -189,6 +192,7 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
     if(!IsWarmup())
     {
         g_AllowRoundEnd = false;
+        g_IsNuckExpl = false;
         
         StringMapSnapshot gClassNameS = gamemode.GetGlobalClassNames();
         int gClassCount, classCount, extra = 0;
@@ -458,6 +462,26 @@ void SCP_EndRound(const char[] team)
     }
 }
 
+void SCP_NukeActivation()
+{
+    for(int client = 0; client < MAXPLAYERS; client++)
+    {
+        if(IsClientExist(client))
+        {
+            EmitSoundToClient(client, gamemode.config.NukeSound, SOUND_FROM_WORLD, SNDLEVEL_NORMAL);
+        }
+    }
+
+    CreateTimer(gamemode.config.NukeTime, NukeExplosion);
+
+    int ent;
+    
+    while((ent = FindEntityByClassname(ent, "func_door")) != -1)
+    {
+        AcceptEntityInput(ent, "Open");
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 //                                Commands
@@ -470,6 +494,18 @@ public Action Command_AdminMenu(int client, int args)
     {
         DisplayAdminMenu(client);
     }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                                 Timers
+//
+//////////////////////////////////////////////////////////////////////////////
+
+public Action NukeExplosion(Handle hTimer)
+{
+    g_IsNuckExpl = true;
+    PrintToChatAll("Boom!");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -522,6 +558,10 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
                     PrintToChat(client, " \x07[SCP] \x01Игнорирование карт доступа \x06отключено");
                     g_IgnoreDoorAccess[client] = false;
                 }
+            }
+            case 9:
+            {
+                SCP_NukeActivation();
             }
             default:
             {

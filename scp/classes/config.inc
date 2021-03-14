@@ -33,6 +33,10 @@ methodmap Config < JSON_Object {
         public get() { return this.GetFloat("NukeTime"); }
     }
 
+    property void NukeSound {
+        public get() { return this.GetString("NukeSound"); }
+    }
+
     property bool debug {
         public get() { return this.GetBool("debug"); }
     }
