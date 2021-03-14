@@ -81,7 +81,7 @@ stock bool IsClientExist(int client)
     return false;
 }
 
-stock bool IsCleintInSpec(int client)
+stock bool IsClientInSpec(int client)
 {
     if(GetClientTeam(client) != 1)
     {
