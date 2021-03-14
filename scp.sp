@@ -40,6 +40,7 @@ public void OnPluginLoad()
     
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_end", OnRoundEnd);
+    HookEvent("player_death", Event_PlayerDeath, EventHookMode_Pre);
     HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
     HookEntityOutput("trigger_teleport", "OnStartTouch", Event_OnTriggerActivation);
 
@@ -131,6 +132,38 @@ public void OnPlayerSpawn(Client ply)
     }
 }
 
+public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
+{
+    if(!IsWarmup())
+    {
+        StringMap players = new StringMap();
+        Client ply;
+        
+        for(int client = 0; client < MAXPLAYERS; client++)
+        {
+            if(IsClientExist(client) && IsPlayerAlive(client) && !IsClientInSpec(client))
+            {
+                ply = Clients.Get(client);
+                player.SetValue(ply.class.Name(), 1);
+            }
+        }
+
+        if(players.Length == 0)
+        {
+            SCP_EndRound("nuke_explosion");
+        } 
+        else if(players.Length <= 1) 
+        {
+            char key[64];
+            players.GetKey(i, key, sizeof(key);
+
+            SCP_EndRound(key);
+        }
+
+        delete players;
+    }
+}
+
 public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) 
 {
     if(!IsWarmup())
@@ -141,7 +174,7 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
         int gClassCount, classCount, extra = 0;
         int keyLen;
 
-        for (int i=0; i < gClassNameS.Length; i++) 
+        for (int i = 0; i < gClassNameS.Length; i++) 
         {
             keyLen = gClassNameS.KeyBufferSize(i);
             char[] gClassKey = new char[keyLen];
@@ -156,7 +189,7 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
             StringMapSnapshot classNameS = gclass.GetClassNames();
             int classKeyLen;
 
-            for (int v=0; v < classNameS.Length; v++) 
+            for (int v = 0; v < classNameS.Length; v++) 
             {
                 classKeyLen = classNameS.KeyBufferSize(v);
                 char[] classKey = new char[classKeyLen];
@@ -224,7 +257,7 @@ public Action CS_OnTerminateRound(float& delay, CSRoundEndReason& reason)
 
 public Action Event_OnButtonPressed(const char[] output, int caller, int activator, float delay)
 {
-    if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsCleintInSpec(activator))
+    if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsClientInSpec(activator))
     {
         Client ply = Clients.Get(activator);
         int doorId = GetEntProp(caller, Prop_Data, "m_iHammerID");
@@ -305,11 +338,51 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
     return Plugin_Continue;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//
-//                                 Timers
-//
-//////////////////////////////////////////////////////////////////////////////
+public void Event_OnTriggerActivation(const char[] output, int caller, int activator, float delay)
+{
+    if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsClientInSpec(activator))
+    {
+        int iTrigger = GetEntProp(caller, Prop_Data, "m_iHammerID");
+
+        if(gamemode.config.debug)
+        {
+            PrintToChatAll("T_ID: %i", iTrigger);
+        }
+    }
+}
+
+public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
+{
+    if(IsClientExist(client) && !IsClientInSpec(client))
+    {
+        Client ply = Clients.Get(client);
+        
+        if(!ply.IsSCP)
+        {
+            DisplayCardMenu(client);
+        }
+    }
+}
+
+public Action OnWeaponTake(int client, int iWeapon)
+{
+    Client ply = Clients.Get(client);
+
+    if(ply.IsSCP)
+    {
+        return Plugin_Stop;
+    }
+
+    char classname[64];
+    GetEntityClassname(iWeapon, classname, sizeof(classname));
+
+    if (StrEqual(classname, "weapon_melee") || StrEqual(classname, "weapon_knife"))
+    {
+        EquipPlayerWeapon(client, iWeapon);
+    }
+
+    return Plugin_Continue;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -346,49 +419,19 @@ void LoadFileToDownload()
 //
 //////////////////////////////////////////////////////////////////////////////
 
-public Action OnWeaponTake(int client, int iWeapon)
+void SCP_EndRound(const char[] team)
 {
-    Client ply = Clients.Get(client);
-
-    if(ply.IsSCP)
+    g_AllowRoundEnd = true;
+    
+    if(StrEqual("nuke_explosion", team))
     {
-        return Plugin_Stop;
+        CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TargetBombed, false);
+        PrintToChatAll("Комплекс уничтожен! Выживших не обнаружено...");
     }
-
-    char classname[64];
-    GetEntityClassname(iWeapon, classname, sizeof(classname));
-
-    if (StrEqual(classname, "weapon_melee") || StrEqual(classname, "weapon_knife"))
+    else
     {
-        EquipPlayerWeapon(client, iWeapon);
-    }
-
-    return Plugin_Continue;
-}
-
-public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
-{
-    if(IsClientExist(client) && !IsCleintInSpec(client))
-    {
-        Client ply = Clients.Get(client);
-        
-        if(!ply.IsSCP)
-        {
-            DisplayCardMenu(client);
-        }
-    }
-}
-
-public void Event_OnTriggerActivation(const char[] output, int caller, int activator, float delay)
-{
-    if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsCleintInSpec(activator))
-    {
-        int iTrigger = GetEntProp(caller, Prop_Data, "m_iHammerID");
-
-        if(gamemode.config.debug)
-        {
-            PrintToChatAll("T_ID: %i", iTrigger);
-        }
+        CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TerroristWin, false);
+        PrintToChatAll("%s победили!", team);
     }
 }
 
