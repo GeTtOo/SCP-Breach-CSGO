@@ -107,11 +107,15 @@ public Action TpTo914(int client, const char[] command, int argc)
 
 public void OnMapStart() 
 {
-    char mapName[128];
+    char mapName[128], sound[128];
+
     GetCurrentMap(mapName, sizeof(mapName));
     gamemode = new GameMode(mapName);
 
     gamemode.mngr.PlayerCollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
+    gamemode.config.NukeSound(sound, sizeof(sound));
+
+    FakePrecacheSound(sound);
 }
 
 public void OnClientConnected(int id) {
@@ -486,7 +490,7 @@ void SCP_EndRound(const char[] team)
 void SCP_NukeActivation()
 {
     char sound[128];
-    gamemode.config.NukeSound(sound, sizeof(sound);
+    gamemode.config.NukeSound(sound, sizeof(sound));
 
     for(int client = 0; client < MAXPLAYERS; client++)
     {
