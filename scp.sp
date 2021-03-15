@@ -65,8 +65,6 @@ public void OnPluginStart()
     HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
     HookEntityOutput("trigger_teleport", "OnStartTouch", Event_OnTriggerActivation);
 
-    //gamemode.mngr.PlayerCollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
-
     LoadFileToDownload();
 }
 
@@ -111,6 +109,8 @@ public void OnMapStart()
     char mapName[128];
     GetCurrentMap(mapName, sizeof(mapName));
     gamemode = new GameMode(mapName);
+
+    gamemode.mngr.PlayerCollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
 }
 
 public void OnClientConnected(int id) {
@@ -175,7 +175,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
 {
     if(IsClientExist(ply.id)) {
-        SetEntData(ply.id, FindSendPropInfo("CBaseEntity", "m_CollisionGroup"), 2, 4, true);
+        SetEntData(ply.id, gamemode.mngr.PlayerCollisionGroup, 2, 4, true);
         EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
 
         if (ply.class != null) {

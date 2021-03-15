@@ -63,7 +63,7 @@ methodmap GameMode < JSON_Object {
     }
 
     property Manager mngr {
-        public get() { Manager self; return view_as<Manager>(this.GetValue("Manager", self) ? self : null); }
+        public get() { return view_as<Manager>(this.GetObject("Manager")); }
     }
 
     public GlobalClass gclass(char[] name) {
