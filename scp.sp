@@ -630,7 +630,7 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
             }
             default:
             {
-                PrintToChat(client, "Да.");
+                delete hMenu;
             }
         }
     }
