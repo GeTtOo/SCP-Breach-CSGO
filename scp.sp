@@ -1,18 +1,19 @@
+#pragma semicolon 1
+#pragma newdecls required
+
 #include <sourcemod>
 #include <cstrike>
 #include <sdkhooks>
 
-#include "scp/core"
-
-#pragma semicolon 1
-#pragma newdecls required
+#include "scp/classes/gamemode"
+#include "scp/structures/vector"
+#include "scp/classes/client"
+#include "scp/classes/entity"
 
 #define HIDE_RADAR_CSGO 1<<12
 
-bool g_IgnoreDoorAccess[MAXPLAYERS+1];
-bool g_AllowRoundEnd = false;
-bool g_IsNuckExpl = false;
-int g_offsCollisionGroup;
+ClientSingleton Clients;
+GameMode gamemode;
 
 Handle OnClientJoinForward;
 Handle OnClientLeaveForward;
@@ -34,25 +35,6 @@ public Plugin myinfo = {
 //
 //////////////////////////////////////////////////////////////////////////////
 
-public void OnPluginLoad() 
-{   
-    AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
-    AddCommandListener(GetClientPos, "getmypos");
-    AddCommandListener(TpTo914, "tp914");
-
-    RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_BAN);
-    
-    HookEvent("round_start", OnRoundStart);
-    HookEvent("round_end", OnRoundEnd);
-    HookEvent("player_death", Event_PlayerDeath, EventHookMode_Pre);
-    HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
-    HookEntityOutput("trigger_teleport", "OnStartTouch", Event_OnTriggerActivation);
-
-    g_offsCollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
-
-    LoadFileToDownload();
-}
-
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) {
     CreateNative("SCP_GetClient", NativeGetClient);
     
@@ -64,6 +46,28 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) 
 
     RegPluginLibrary("scp_core");
     return APLRes_Success;
+}
+
+public void OnPluginStart()
+{   
+    Clients = new ClientSingleton();
+
+    AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
+    AddCommandListener(GetClientPos, "getmypos");
+    AddCommandListener(TpTo914, "tp914");
+
+    RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_BAN);
+    
+    HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
+    HookEvent("round_start", OnRoundStart);
+    HookEvent("round_end", OnRoundEnd);
+    HookEvent("player_death", Event_PlayerDeath, EventHookMode_Pre);
+    HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
+    HookEntityOutput("trigger_teleport", "OnStartTouch", Event_OnTriggerActivation);
+
+    //gamemode.mngr.PlayerCollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
+
+    LoadFileToDownload();
 }
 
 public any NativeGetClient(Handle plugin, int numArgs)
@@ -107,18 +111,19 @@ public void OnMapStart()
     char mapName[128];
     GetCurrentMap(mapName, sizeof(mapName));
     gamemode = new GameMode(mapName);
-
-    FakePrecacheSound(gamemode.config.NukeSound);
 }
 
-public void OnClientJoin(Client ply) 
-{
+public void OnClientConnected(int id) {
+    Clients.Add(id);
+}
+
+public void OnClientPostAdminCheck(int id) {
+    Client ply = Clients.Get(id);
+
     if (gamemode.config.debug)
     {
         PrintToServer("Client joined - localId: (%i), steamId: (%i)", ply.id, GetSteamAccountID(ply.id));
     }
-
-    g_IgnoreDoorAccess[client] = false;
 
     SDKHook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
     SDKHook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
@@ -129,44 +134,71 @@ public void OnClientJoin(Client ply)
     Call_Finish();
 }
 
-public void OnClientLeave(Client ply) 
-{
+public void OnClientDisconnect(int id) {
+    Client ply = Clients.Get(id);
+
     if (gamemode.config.debug)
-    {
         PrintToServer("Client disconnected: %i", ply.id);
-    }
 
     Call_StartForward(OnClientLeaveForward);
     Call_PushCell(ply);
     Call_Finish();
+
+    Clients.Remove(id);
 }
 
-public void OnPlayerSpawn(Client ply)
+public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
 {
-    SetEntData(ply.id, g_offsCollisionGroup, 2, 4, true);
-    EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
+    Client ply = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
 
-    if (ply.class != null) 
-    {
-        Call_StartForward(OnClientSpawnForward);
-        Call_PushCell(ply);
-        Call_Finish();
+    if (IsClientExist(ply.id)) {
+        int m_hMyWeapons_size = GetEntPropArraySize(ply.id, Prop_Send, "m_hMyWeapons");
+        int item; 
 
-        ply.Spawn();
+        for(int index = 0; index < m_hMyWeapons_size; index++) 
+        { 
+            item = GetEntPropEnt(ply.id, Prop_Send, "m_hMyWeapons", index);
 
-        if (gamemode.config.debug) 
-        {
-            char gClassName[32], className[32];
-            ply.gclass(gClassName, sizeof(gClassName));
-            ply.class.Name(className, sizeof(className));
-            PrintToChat(ply.id, " \x07[SCP] \x01Твой класс %s - %s", gClassName, className);
+            if(item != -1) 
+            { 
+                RemovePlayerItem(ply.id, item);
+                AcceptEntityInput(item, "Kill");
+            } 
+        }
+
+        CreateTimer(0.2, Timer_PlayerSpawn, ply, TIMER_FLAG_NO_MAPCHANGE);
+    }
+
+    return Plugin_Continue;
+}
+
+public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
+{
+    if(IsClientExist(ply.id)) {
+        SetEntData(ply.id, FindSendPropInfo("CBaseEntity", "m_CollisionGroup"), 2, 4, true);
+        EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
+
+        if (ply.class != null) {
+            Call_StartForward(OnClientSpawnForward);
+            Call_PushCell(ply);
+            Call_Finish();
+
+            ply.Spawn();
+
+            if (gamemode.config.debug) 
+            {
+                char gClassName[32], className[32];
+                ply.gclass(gClassName, sizeof(gClassName));
+                ply.class.Name(className, sizeof(className));
+                PrintToChat(ply.id, " \x07[SCP] \x01Твой класс %s - %s", gClassName, className);
+            }
         }
     }
 }
 
 public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
-    if(!IsWarmup())
+    /*if(!IsWarmup())
     {
         StringMap players = new StringMap();
         Client ply;
@@ -193,15 +225,18 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         }
 
         delete players;
-    }
+    }*/
+
+    if(Clients.Alive() == 0)
+        SCP_EndRound("nuke_explosion");
 }
 
 public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) 
 {
     if(!IsWarmup())
     {
-        g_AllowRoundEnd = false;
-        g_IsNuckExpl = false;
+        gamemode.mngr.RoundComplete = false;
+        gamemode.mngr.IsNuked = false;
         
         StringMapSnapshot gClassNameS = gamemode.GetGlobalClassNames();
         int gClassCount, classCount, extra = 0;
@@ -278,7 +313,7 @@ public Action CS_OnTerminateRound(float& delay, CSRoundEndReason& reason)
 	{
 		return Plugin_Continue;
 	}
-    else if(g_AllowRoundEnd)
+    else if(gamemode.mngr.RoundComplete)
     {
         return Plugin_Continue;
     }
@@ -319,7 +354,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 {
                     return Plugin_Continue;
                 }
-                else if(g_IgnoreDoorAccess[activator] == true)
+                else if(ply.FullAccess)
                 {
                     return Plugin_Continue;
                 }
@@ -457,7 +492,7 @@ void LoadFileToDownload()
 
 void SCP_EndRound(const char[] team)
 {
-    g_AllowRoundEnd = true;
+    gamemode.mngr.RoundComplete = true;
     
     if(StrEqual("nuke_explosion", team))
     {
@@ -477,7 +512,7 @@ void SCP_NukeActivation()
     {
         if(IsClientExist(client))
         {
-            EmitSoundToClient(client, gamemode.config.NukeSound, SOUND_FROM_WORLD, SNDLEVEL_NORMAL);
+            //EmitSoundToClient(client, gamemode.config.NukeSound, SOUND_FROM_WORLD, SNDLEVEL_NORMAL);
         }
     }
 
@@ -494,6 +529,36 @@ void SCP_NukeActivation()
 void FakePrecacheSound(const char[] szPath)
 {
     AddToStringTable(FindStringTable( "soundprecache" ), szPath);
+}
+
+stock bool IsClientExist(int client)
+{
+    if((0 < client < MaxClients) && IsClientInGame(client) && !IsClientSourceTV(client))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+stock bool IsClientInSpec(int client)
+{
+    if(GetClientTeam(client) != 1)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+stock bool IsWarmup()
+{
+    if(GameRules_GetProp("m_bWarmupPeriod"))
+    {
+        return true;
+    }
+
+    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -518,7 +583,7 @@ public Action Command_AdminMenu(int client, int args)
 
 public Action NukeExplosion(Handle hTimer)
 {
-    g_IsNuckExpl = true;
+    gamemode.mngr.IsNuked = true;
     PrintToChatAll("Boom!");
 }
 
@@ -556,21 +621,23 @@ void DisplayAdminMenu(int client)
 
 public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, int item)
 {
+    Client ply = Clients.Get(client);
+    
     if (action == MenuAction_Select)
     {
         switch(item)
         {
             case 5:
             {
-                if(g_IgnoreDoorAccess[client] == false)
+                if(!ply.FullAccess)
                 {
                     PrintToChat(client, " \x07[SCP] \x01Игнорирование карт доступа \x06включено");
-                    g_IgnoreDoorAccess[client] = true;
+                    ply.FullAccess = true;
                 }
                 else
                 {
                     PrintToChat(client, " \x07[SCP] \x01Игнорирование карт доступа \x06отключено");
-                    g_IgnoreDoorAccess[client] = false;
+                    ply.FullAccess = false;
                 }
             }
             case 9:

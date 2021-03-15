@@ -62,7 +62,6 @@ methodmap Ents < Handle {
                 Vector vecEnt = ent.GetPos();
 
                 if ((vecMin.x < vecEnt.x < vecMax.x) && (vecMin.y < vecEnt.y < vecMax.y) && (vecMin.z < vecEnt.z < vecMax.z)) {
-                    PrintToServer("%s Pos: %f, %f, %f", className, vecEnt.x, vecEnt.y, vecEnt.z);
                     PushArrayCell(entArr, ent);
                 }
             }

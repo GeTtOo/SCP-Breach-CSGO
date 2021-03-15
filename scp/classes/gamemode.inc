@@ -5,7 +5,8 @@
 #include <json>
 
 #include "scp/classes/config"
-#include "scp/classes/player_class"
+#include "scp/classes/TClass"
+#include "scp/classes/Manager"
 
 methodmap Classes < JSON_Object {
     public Class get(char[] name) { Class class = view_as<Class>(this.GetObject(name)); class.Name(name); return class; }
@@ -53,11 +54,16 @@ methodmap GameMode < JSON_Object {
         GameMode self = view_as<GameMode>(new JSON_Object());
         self.SetObject("GlobalClasses", new GlobalClasses(mapname));
         self.SetObject("Config", new Config(mapname));
+        self.SetValue("Manager", new Manager());
         return self;
     }
 
     property Config config {
         public get() { return view_as<Config>(this.GetObject("Config")); }
+    }
+
+    property Manager mngr {
+        public get() { Manager self; return view_as<Manager>(this.GetValue("Manager", self) ? self : null); }
     }
 
     public GlobalClass gclass(char[] name) {

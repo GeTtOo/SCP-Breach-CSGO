@@ -77,6 +77,11 @@ methodmap Client < StringMap {
         public get() { int card; return this.GetValue("access", card) ? card : 0; }
     }
 
+    property bool FullAccess {
+        public set(bool card) { this.SetValue("fullaccess", card); }
+        public get() { bool card; return this.GetValue("fullaccess", card) ? card : false; }
+    }
+
     public void Kick(char[] reason) {
         KickClient(this.id, reason);
     }
@@ -140,6 +145,14 @@ methodmap ClientSingleton < StringMap {
     public int InGame() {
         int client = 1;
         while (IsClientInGame(client) && GetClientTeam(client) > 1)
+            client++;
+        client--;
+        return client;
+    }
+
+    public int Alive() {
+        int client = 1;
+        while (IsClientInGame(client) && GetClientTeam(client) > 1 && IsPlayerAlive(client))
             client++;
         client--;
         return client;
