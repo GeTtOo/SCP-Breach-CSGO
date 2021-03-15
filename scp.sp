@@ -85,7 +85,8 @@ public Action GetClientPos(int client, const char[] command, int argc)
 
     ArrayList entArr = Ents.FindInBox(vec1, vec2);
 
-    for(int i=0; i < entArr.Length; i++) {
+    for(int i=0; i < entArr.Length; i++) 
+    {
         Entity ent = GetArrayCell(entArr, i, 0);
         PrintToServer("%i", ent.id);
     }
@@ -198,37 +199,13 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
 
 public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
-    /*if(!IsWarmup())
+    if(!IsWarmup())
     {
-        StringMap players = new StringMap();
-        Client ply;
-        
-        for(int client = 0; client < MAXPLAYERS; client++)
-        {
-            if(IsClientExist(client) && IsPlayerAlive(client) && !IsClientInSpec(client))
-            {
-                ply = Clients.Get(client);
-                player.SetValue(ply.class.Name(), 1);
-            }
-        }
-
-        if(players.Length == 0)
+        if(Clients.Alive() == 0)
         {
             SCP_EndRound("nuke_explosion");
-        } 
-        else if(players.Length <= 1) 
-        {
-            char key[64];
-            players.GetKey(i, key, sizeof(key);
-
-            SCP_EndRound(key);
         }
-
-        delete players;
-    }*/
-
-    if(Clients.Alive() == 0)
-        SCP_EndRound("nuke_explosion");
+    }
 }
 
 public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) 
@@ -512,7 +489,7 @@ void SCP_NukeActivation()
     {
         if(IsClientExist(client))
         {
-            //EmitSoundToClient(client, gamemode.config.NukeSound, SOUND_FROM_WORLD, SNDLEVEL_NORMAL);
+            EmitSoundToClient(client, gamemode.config.NukeSound, SOUND_FROM_WORLD, SNDLEVEL_NORMAL);
         }
     }
 
