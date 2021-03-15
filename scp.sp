@@ -485,11 +485,14 @@ void SCP_EndRound(const char[] team)
 
 void SCP_NukeActivation()
 {
+    char sound[128];
+    gamemode.config.NukeSound(sound, sizeof(sound);
+
     for(int client = 0; client < MAXPLAYERS; client++)
     {
         if(IsClientExist(client))
         {
-            EmitSoundToClient(client, gamemode.config.NukeSound, SOUND_FROM_WORLD, SNDLEVEL_NORMAL);
+            EmitSoundToClient(client, sound, SOUND_FROM_WORLD, SNDLEVEL_NORMAL);
         }
     }
 
