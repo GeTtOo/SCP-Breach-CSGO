@@ -21,6 +21,12 @@ methodmap Vector < StringMap {
     property float z {
         public get() { float z; return this.GetValue("z", z) ? z : 0.0; }
     }
+
+    public void GetArr(float[3] vec) {
+        vec[0] = this.x;
+        vec[1] = this.y;
+        vec[2] = this.z;
+    }
 }
 
 methodmap Angle < Vector {}

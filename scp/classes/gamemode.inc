@@ -4,9 +4,10 @@
 
 #include <json>
 
-#include "scp/classes/config"
-#include "scp/classes/TClass"
-#include "scp/classes/Manager"
+#include "scp/classes/gamemode/config"
+#include "scp/classes/gamemode/class"
+#include "scp/classes/gamemode/entities"
+#include "scp/classes/gamemode/manager"
 
 methodmap Classes < JSON_Object {
     public Class get(char[] name) { Class class = view_as<Class>(this.GetObject(name)); class.Name(name); return class; }
@@ -53,6 +54,7 @@ methodmap GameMode < JSON_Object {
     public GameMode(char[] mapname) {
         GameMode self = view_as<GameMode>(new JSON_Object());
         self.SetObject("GlobalClasses", new GlobalClasses(mapname));
+        self.SetObject("Entities", new Entities(mapname));
         self.SetObject("Config", new Config(mapname));
         self.SetValue("Manager", new Manager());
         return self;
@@ -68,6 +70,10 @@ methodmap GameMode < JSON_Object {
 
     public GlobalClass gclass(char[] name) {
         return view_as<GlobalClasses>(this.GetObject("GlobalClasses")).get(name);
+    }
+
+    property Entities entities {
+        public get() { return view_as<Entities>(this.GetObject("Entities")); }
     }
 
     public StringMapSnapshot GetGlobalClassNames() {

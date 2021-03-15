@@ -13,6 +13,7 @@ methodmap Entity < StringMap {
         Entity entity = view_as<Entity>(new StringMap());
 
         entity.SetValue("id", id);
+        entity.SetValue("active", true);
 
         return entity;
     }
@@ -21,10 +22,29 @@ methodmap Entity < StringMap {
         public get() { int id; return this.GetValue("id", id) ? id : -1; }
     }
 
+    property bool active {
+        public set(bool value) { this.SetValue("active", value); }
+        public get() { bool value; return this.GetValue("active", value) ? value : true; }
+    }
+
     public void GetClass(char[] name, int max_size) {
         int id;
         this.GetValue("id", id);
         GetEntityClassname(id, name, max_size);
+    }
+    
+    public void SetPos(Vector vec) {
+        float vectorArr[3];
+        vec.GetArr(vectorArr);
+        
+        if (this.active)
+            TeleportEntity(this.id, vectorArr, NULL_VECTOR, NULL_VECTOR);
+        else
+            DispatchKeyValueVector(this.id, "origin", vectorArr);
+    }
+
+    public void Spawn() {
+        DispatchSpawn(this.id);
     }
 
     public Vector GetPos() {
@@ -45,6 +65,32 @@ methodmap Entity < StringMap {
 }
 
 methodmap Ents < Handle {
+
+    public static Entity Create(char[] EntName, char[] model = "models/props/cs_office/cardboard_box01.mdl") {
+        Entity entity;
+        if (gamemode.entities.HasKey(EntName))
+        {
+            EntConfig entcfg = gamemode.entities.get(EntName);
+            entity = new Entity(CreateEntityByName("prop_physics"));
+
+            char modelName[128], mass[12];
+            entcfg.model(modelName, sizeof(modelName));
+            entcfg.mass(mass, sizeof(mass));
+
+            DispatchKeyValue(entity.id, "model", modelName);
+            DispatchKeyValue(entity.id, "physicsmode", "2");
+            DispatchKeyValue(entity.id, "massScale", mass);
+            DispatchKeyValue(entity.id, "Solid", "6");
+        }
+        else
+        {
+            entity = new Entity(CreateEntityByName(EntName));
+        }
+
+        entity.active = false;
+
+        return entity;
+    }
 
     public static ArrayList FindInBox(Vector vecMin, Vector vecMax) {
         int entId = 0;

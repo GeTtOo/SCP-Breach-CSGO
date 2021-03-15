@@ -5,15 +5,16 @@
 #include <cstrike>
 #include <sdkhooks>
 
-#include "scp/classes/gamemode"
 #include "scp/structures/vector"
+#include "scp/classes/gamemode"
 #include "scp/classes/client"
-#include "scp/classes/entity"
-
-#define HIDE_RADAR_CSGO 1<<12
 
 ClientSingleton Clients;
 GameMode gamemode;
+
+#include "scp/classes/entity"
+
+#define HIDE_RADAR_CSGO 1<<12
 
 Handle OnClientJoinForward;
 Handle OnClientLeaveForward;
@@ -88,7 +89,7 @@ public Action GetClientPos(int client, const char[] command, int argc)
     for(int i=0; i < entArr.Length; i++) 
     {
         Entity ent = GetArrayCell(entArr, i, 0);
-        PrintToServer("%i", ent.id);
+        PrintToChat(ply.id, "%i", ent.id);
     }
 }
 
@@ -97,6 +98,10 @@ public Action TpTo914(int client, const char[] command, int argc)
     float pos[3] = {3223.215576,-2231.152587,0.031250};
     float ang[3] = {0.0,0.0,0.0};
     TeleportEntity(client, pos, ang, NULL_VECTOR);
+
+    Entity ent = Ents.Create("card_o5");
+    ent.SetPos(new Vector(3223.215576,-2231.152587,0.031250));
+    ent.Spawn();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -104,6 +109,7 @@ public Action TpTo914(int client, const char[] command, int argc)
 //                                Events
 //
 //////////////////////////////////////////////////////////////////////////////
+bool fixCache = false;
 
 public void OnMapStart() 
 {
@@ -115,7 +121,15 @@ public void OnMapStart()
     gamemode.mngr.PlayerCollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
     gamemode.config.NukeSound(sound, sizeof(sound));
 
+    Ents.Create("card_o5");
+
     FakePrecacheSound(sound);
+    
+    // ¯\_(ツ)_/¯
+    if (!fixCache) {
+        ForceChangeLevel(mapName, "Fix sound cached");
+        fixCache = true;
+    }
 }
 
 public void OnClientConnected(int id) {
@@ -492,13 +506,7 @@ void SCP_NukeActivation()
     char sound[128];
     gamemode.config.NukeSound(sound, sizeof(sound));
 
-    for(int client = 0; client < MAXPLAYERS; client++)
-    {
-        if(IsClientExist(client))
-        {
-            EmitSoundToClient(client, sound, SOUND_FROM_WORLD, SNDLEVEL_NORMAL);
-        }
-    }
+    EmitSoundToAll(sound);
 
     CreateTimer(gamemode.config.NukeTime, NukeExplosion);
 
@@ -605,32 +613,35 @@ void DisplayAdminMenu(int client)
 
 public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, int item)
 {
-    Client ply = Clients.Get(client);
-    
     if (action == MenuAction_Select)
     {
-        switch(item)
+        if (IsClientExist(client))
         {
-            case 5:
+            Client ply = Clients.Get(client);
+            
+            switch(item)
             {
-                if(!ply.FullAccess)
+                case 5:
                 {
-                    PrintToChat(client, " \x07[SCP] \x01Игнорирование карт доступа \x06включено");
-                    ply.FullAccess = true;
+                    if(!ply.FullAccess)
+                    {
+                        PrintToChat(client, " \x07[SCP] \x01Игнорирование карт доступа \x06включено");
+                        ply.FullAccess = true;
+                    }
+                    else
+                    {
+                        PrintToChat(client, " \x07[SCP] \x01Игнорирование карт доступа \x06отключено");
+                        ply.FullAccess = false;
+                    }
                 }
-                else
+                case 8:
                 {
-                    PrintToChat(client, " \x07[SCP] \x01Игнорирование карт доступа \x06отключено");
-                    ply.FullAccess = false;
+                    SCP_NukeActivation();
                 }
-            }
-            case 9:
-            {
-                SCP_NukeActivation();
-            }
-            default:
-            {
-                delete hMenu;
+                default:
+                {
+                    delete hMenu;
+                }
             }
         }
     }
