@@ -15,27 +15,34 @@ public Plugin myinfo = {
 	url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void SCP_OnPlayerSpawn(Client ply)
+public void SCP_OnPlayerJoin(Client &ply) {
+    SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
+}
+
+public void SCP_OnPlayerSpawn(Client &ply)
 {
     char class[32];
     ply.class.Name(class, sizeof(class));
 
     if(StrEqual(class, "457"))
     {
-        SetEntityRenderMode(ply.id, RENDER_TRANSCOLOR);
-        SetEntityRenderColor(ply.id, 255, 255, 255, 0);
+        SetEntityRenderMode(ply.id, RENDER_NONE);
+        //SetEntityRenderColor(ply.id, 255, 255, 255, 0);
         IgniteEntity(ply.id, 3600.0);
     }
 }
 
-public Action SCP_OnTakeDamage(Client vic, Client atk, int &inflictor, float &damage, int &damagetype)
+public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
 {
+    Client vic = SCP_GetClient(victim), atk = SCP_GetClient(attacker);
+    
     char victimClass[32], attackerClass[32];
-    vic.class.Name(victimClass, sizeof(victimClass)); 
+    vic.class.Name(victimClass, sizeof(victimClass));
     
     if(StrEqual(victimClass, "457") && damagetype == DMG_BURN)
     {
-        return Plugin_Stop;
+        damage = 0.0;
+        return Plugin_Handled;
     }
     else if(atk != null)
     {
@@ -47,5 +54,5 @@ public Action SCP_OnTakeDamage(Client vic, Client atk, int &inflictor, float &da
         }
     }
 
-    return Plugin_Continue;
+    return Plugin_Handled;
 }
