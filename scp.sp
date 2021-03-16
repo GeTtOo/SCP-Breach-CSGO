@@ -379,12 +379,12 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 {   
     if(IsClientExist(victim))
     {
-        Client vic = Clients.Get(victim);
+        Client atk, vic = Clients.Get(victim);
 
         if(IsClientExist(attacker))
-            Client atk = Clients.Get(attacker);
+            atk = Clients.Get(attacker);
         else
-            Client atk = null;
+            atk = null;
         
         if(vic.IsSCP && atk.IsSCP)
         {
@@ -394,7 +394,9 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
         Call_StartForward(OnTakeDamageForward);
         Call_PushCell(vic);
         Call_PushCell(atk);
+        Call_PushCell(inflictor);
         Call_PushFloat(damage);
+        Call_PushCell(damagetype);
         Call_Finish();
     }
 
