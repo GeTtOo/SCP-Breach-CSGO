@@ -15,4 +15,8 @@ GameMode gamemode;
 
 native any SCP_GetClient(int client);
 
-forward SCP_OnPlayerJoin()
+forward void SCP_OnPlayerJoin(Client ply)
+forward void SCP_OnPlayerLeave(Client ply)
+forward void SCP_OnPlayerSpawn(Client ply)
+forward void SCP_OnTakeDamage(Client vic, Client atk, float damage)
+forward void SCP_OnButtonPressed(Client ply, int doorId)
