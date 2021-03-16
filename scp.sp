@@ -4,12 +4,8 @@
 #include <sourcemod>
 #include <cstrike>
 #include <sdkhooks>
+// ¯\_(ツ)_/¯
 #include <scpcore>
-
-ClientSingleton Clients;
-GameMode gamemode;
-
-#include "scp/classes/entity"
 
 #define HIDE_RADAR_CSGO 1<<12
 
