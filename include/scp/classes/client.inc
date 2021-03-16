@@ -152,10 +152,14 @@ methodmap ClientSingleton < StringMap {
 
     public int Alive() {
         int client = 1;
-        while (IsClientInGame(client) && GetClientTeam(client) > 1 && IsPlayerAlive(client))
+        int clientAlive = 1;
+        while (IsClientInGame(client) && GetClientTeam(client) > 1) {
+            if (IsPlayerAlive(client))
+                clientAlive++;
             client++;
-        client--;
-        return client;
+        }
+        clientAlive--;
+        return clientAlive;
     }
 
     public Client GetRandom() {

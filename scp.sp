@@ -32,10 +32,10 @@ public Plugin myinfo = {
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) {
     CreateNative("SCP_GetClient", NativeGetClient);
     
-    OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_Cell);
-    OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_Cell);
-    OnClientSpawnForward = CreateGlobalForward("SCP_OnPlayerSpawn", ET_Event, Param_Cell);
-    OnTakeDamageForward = CreateGlobalForward("SCP_OnTakeDamage", ET_Event, Param_Cell, Param_Cell, Param_Float);
+    OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_CellByRef);
+    OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_CellByRef);
+    OnClientSpawnForward = CreateGlobalForward("SCP_OnPlayerSpawn", ET_Event, Param_CellByRef);
+    OnTakeDamageForward = CreateGlobalForward("SCP_OnTakeDamage", ET_Event, Param_Cell, Param_Cell, Param_FloatByRef, Param_CellByRef);
     OnButtonPressedForward = CreateGlobalForward("SCP_OnButtonPressed", ET_Event, Param_Cell, Param_Cell);
 
     RegPluginLibrary("scp_core");
@@ -142,7 +142,7 @@ public void OnClientPostAdminCheck(int id) {
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
 
     Call_StartForward(OnClientJoinForward);
-    Call_PushCell(ply);
+    Call_PushCellRef(ply);
     Call_Finish();
 }
 
@@ -153,7 +153,7 @@ public void OnClientDisconnect(int id) {
         PrintToServer("Client disconnected: %i", ply.id);
 
     Call_StartForward(OnClientLeaveForward);
-    Call_PushCell(ply);
+    Call_PushCellRef(ply);
     Call_Finish();
 
     Clients.Remove(id);
@@ -192,7 +192,7 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
 
         if (ply.class != null) {
             Call_StartForward(OnClientSpawnForward);
-            Call_PushCell(ply);
+            Call_PushCellRef(ply);
             Call_Finish();
 
             ply.Spawn();
@@ -212,7 +212,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 {
     if(!IsWarmup())
     {
-        if(Clients.Alive() == 0)
+        if(Clients.Alive() == 0 && Clients.InGame() != 0)
         {
             SCP_EndRound("nuke_explosion");
         }
@@ -380,24 +380,27 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
     if(IsClientExist(victim))
     {
         Client atk, vic = Clients.Get(victim);
+        Action result;
 
         if(IsClientExist(attacker))
+        {
             atk = Clients.Get(attacker);
+            if(vic.IsSCP && atk.IsSCP)
+            {
+                return Plugin_Stop;
+            }
+        }
         else
             atk = null;
-        
-        if(vic.IsSCP && atk.IsSCP)
-        {
-            return Plugin_Stop;
-        }
         
         Call_StartForward(OnTakeDamageForward);
         Call_PushCell(vic);
         Call_PushCell(atk);
-        Call_PushCell(inflictor);
-        Call_PushFloat(damage);
-        Call_PushCell(damagetype);
-        Call_Finish();
+        Call_PushFloatRef(damage);
+        Call_PushCellRef(damagetype);
+        Call_Finish(result);
+
+        return result;
     }
 
     return Plugin_Continue;
