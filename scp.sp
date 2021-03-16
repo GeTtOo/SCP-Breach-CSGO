@@ -377,10 +377,14 @@ public Action OnPlayerSpawnPost(int client)
 
 public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
 {   
-    if(IsClientExist(victim) && IsClientExist(attacker))
+    if(IsClientExist(victim))
     {
         Client vic = Clients.Get(victim);
-        Client atk = Clients.Get(attacker);
+
+        if(IsClientExist(attacker))
+            Client atk = Clients.Get(attacker);
+        else
+            Client atk = null;
         
         if(vic.IsSCP && atk.IsSCP)
         {
