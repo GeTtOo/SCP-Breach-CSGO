@@ -51,7 +51,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 		Client atk = Clients.Get(attacker);
 		atk.class.Name(attackerClass, sizeof(attackerClass));
 
-		if(StrEqual(attackerClass, "SCP_049"))
+		if(StrEqual(attackerClass, "049"))
 		{
 			int victim = GetClientOfUserId(GetEventInt(event, "userid"));
 
@@ -83,7 +83,7 @@ public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
 			Client ply = Clients.Get(client);
 			ply.class.Name(class, sizeof(class));
 			
-			if(StrEqual(class, "SCP_049"))
+			if(StrEqual(class, "049"))
 			{
 				g_MusicPlay = true;
 				
@@ -103,12 +103,12 @@ public Action SCP_OnTakeDamage(Client vic, Client atk, int &inflictor, float &da
 	char attackerClass[32];
 	atk.class.Name(attackerClass, sizeof(attackerClass)); 
 
-	if(StrEqual(attackerClass, "SCP_049"))
+	if(StrEqual(attackerClass, "049"))
 	{
 		damage += 180;
 		return Plugin_Changed;
 	}
-	else if(StrEqual(attackerClass, "SCP_049_2"))
+	else if(StrEqual(attackerClass, "049_2"))
 	{
 		damage += 70;
 		return Plugin_Changed;

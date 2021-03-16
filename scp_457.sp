@@ -1,4 +1,5 @@
 #include <sourcemod>
+#include <sdkhooks>
 #include <scpcore>
 
 #pragma semicolon 1
@@ -19,7 +20,7 @@ public void SCP_OnPlayerSpawn(Client ply)
     char class[32];
     ply.class.Name(class, sizeof(class));
 
-    if(StrEqual(class, "SCP_457"))
+    if(StrEqual(class, "457"))
     {
         SetEntityRenderMode(ply.id, RENDER_TRANSCOLOR);
         SetEntityRenderColor(ply.id, 255, 255, 255, 0);
@@ -32,7 +33,7 @@ public Action SCP_OnTakeDamage(Client vic, Client atk, int &inflictor, float &da
     char victimClass[32], attackerClass[32];
     vic.class.Name(victimClass, sizeof(victimClass)); 
     
-    if(StrEqual(victimClass, "SCP_457") && damagetype == DMG_BURN)
+    if(StrEqual(victimClass, "457") && damagetype == DMG_BURN)
     {
         return Plugin_Stop;
     }
@@ -40,7 +41,7 @@ public Action SCP_OnTakeDamage(Client vic, Client atk, int &inflictor, float &da
     {
         atk.class.Name(attackerClass, sizeof(attackerClass));
 
-        if(StrEqual(attackerClass, "SCP_457"))
+        if(StrEqual(attackerClass, "457"))
         {
             IgniteEntity(vic.id, 20.0);
         }
