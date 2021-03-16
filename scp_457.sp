@@ -1,5 +1,4 @@
 #include <sourcemod>
-#include <sdkhooks>
 #include <scpcore>
 
 #pragma semicolon 1

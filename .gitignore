@@ -5,3 +5,4 @@
 /include/json
 !/include/scpcore.inc
 !scp.sp
+!scp_049.sp
