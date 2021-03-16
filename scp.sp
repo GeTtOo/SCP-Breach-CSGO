@@ -4,10 +4,7 @@
 #include <sourcemod>
 #include <cstrike>
 #include <sdkhooks>
-
-#include "scp/structures/vector"
-#include "scp/classes/gamemode"
-#include "scp/classes/client"
+#include <scpcore>
 
 ClientSingleton Clients;
 GameMode gamemode;

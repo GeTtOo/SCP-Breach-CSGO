@@ -1,4 +1,5 @@
 /*
 !.gitignore
 !scp.sp
-!/scp/
+!/include/scp/
+!/include/scpcore.inc
