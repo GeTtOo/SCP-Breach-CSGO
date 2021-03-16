@@ -1,7 +1,5 @@
 /*
 !.gitignore
-!/include
-/include/*.inc
-/include/json
-!/include/scpcore.inc
 !scp.sp
+!/include/scp/
+!/include/scpcore.inc
