@@ -8,7 +8,7 @@
 // Время горения в конфиг
 
 public Plugin myinfo = {
-	name = "[Siberian SCP] SCP 457",
+	name = "[SCP] SCP 457",
 	author = "GeTtOo",
 	description = "SCP 457",
 	version = "1.0",
@@ -22,18 +22,18 @@ public void SCP_OnPlayerSpawn(Client ply)
 
     if(StrEqual(class, "SCP_457"))
     {
-        SetEntityRenderMode(client, RENDER_TRANSCOLOR);
-        SetEntityRenderColor(client, 255, 255, 255, 0);
-        IgniteEntity(victim, 3600.0);
+        SetEntityRenderMode(ply.id, RENDER_TRANSCOLOR);
+        SetEntityRenderColor(ply.id, 255, 255, 255, 0);
+        IgniteEntity(ply.id, 3600.0);
     }
 }
 
-public void SCP_OnTakeDamage(Client vic, Client atk, float damage)
+public Action SCP_OnTakeDamage(Client vic, Client atk, int &inflictor, float &damage, int &damagetype)
 {
     char victimClass[32], attackerClass[32];
     vic.class.Name(victimClass, sizeof(victimClass)); 
     
-    if(StrEqual(class, "SCP_457") && damagetype == DMG_BURN))
+    if(StrEqual(victimClass, "SCP_457") && damagetype == DMG_BURN)
     {
         return Plugin_Stop;
     }
@@ -46,4 +46,6 @@ public void SCP_OnTakeDamage(Client vic, Client atk, float damage)
             IgniteEntity(vic.id, 20.0);
         }
     }
+
+    return Plugin_Continue;
 }
