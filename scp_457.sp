@@ -54,5 +54,5 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
         }
     }
 
-    return Plugin_Continue;
+    return Plugin_Handled;
 }
