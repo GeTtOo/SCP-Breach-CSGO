@@ -41,7 +41,6 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
     
     if(StrEqual(victimClass, "457") && damagetype == DMG_BURN)
     {
-        damage = 0.0;
         return Plugin_Handled;
     }
     else if(atk != null)
