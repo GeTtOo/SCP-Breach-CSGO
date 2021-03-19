@@ -115,14 +115,7 @@ methodmap ClientSingleton < StringMap {
         return self;
     }
     
-    public Client Get(int id) {
-        Client clients[MAXPLAYERS + 1];
-        this.GetArray("Clients", clients, sizeof(clients));
-        if (id <= MAXPLAYERS)
-            return view_as<Client>(clients[id]);
-        else
-            return null;
-    }
+    public native Client Get(int id);
 
     public Client Add(int id) {
         Client clients[MAXPLAYERS + 1];
@@ -142,32 +135,11 @@ methodmap ClientSingleton < StringMap {
         public get() { return MAXPLAYERS + 1; }
     }
 
-    public int InGame() {
-        int client = 1;
-        while (IsClientInGame(client) && GetClientTeam(client) > 1)
-            client++;
-        client--;
-        return client;
-    }
+    public native int InGame();
 
-    public int Alive() {
-        int client = 1;
-        int clientAlive = 1;
-        while (IsClientInGame(client) && GetClientTeam(client) > 1) {
-            if (IsPlayerAlive(client))
-                clientAlive++;
-            client++;
-        }
-        clientAlive--;
-        return clientAlive;
-    }
+    public native int Alive();
 
-    public Client GetRandom() {
-        Client clients[MAXPLAYERS + 1];
-        this.GetArray("Clients", clients, sizeof(clients));
-        int random = GetRandomInt(1, this.InGame());
-        return view_as<Client>(clients[random]);
-    }
+    public native Client GetRandom();
 
     public Client GetRandomWithoutClass() {
         Client client = this.GetRandom();
