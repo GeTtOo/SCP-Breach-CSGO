@@ -525,6 +525,18 @@ void FakePrecacheSound(const char[] szPath)
     AddToStringTable(FindStringTable( "soundprecache" ), szPath);
 }
 
+void Shake(int client)
+{
+    Handle message = StartMessageOne("Shake", client, USERMSG_RELIABLE);
+
+    PbSetInt(message, "command", 0);
+    PbSetFloat(message, "local_amplitude", 50.0);
+    PbSetFloat(message, "frequency", 10.0);
+    PbSetFloat(message, "duration", 5.0);
+
+    EndMessage();
+}
+
 stock bool IsClientExist(int client)
 {
     if((0 < client < MaxClients) && IsClientInGame(client) && !IsClientSourceTV(client))
@@ -578,7 +590,14 @@ public Action Command_AdminMenu(int client, int args)
 public Action NukeExplosion(Handle hTimer)
 {
     gamemode.mngr.IsNuked = true;
-    PrintToChatAll("Boom!");
+
+    for(int client = 0; client < MAXPLAYERS; client++)
+    {
+        if(IsClientExist(client))
+        {
+            Shake(client);
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
