@@ -31,7 +31,10 @@ public Plugin myinfo = {
 //////////////////////////////////////////////////////////////////////////////
 
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) {
-    CreateNative("SCP_GetClient", NativeGetClient);
+    CreateNative("ClientSingleton.Get", NativeClients_Get);
+    CreateNative("ClientSingleton.GetRandom", NativeClients_GetRandom);
+    CreateNative("ClientSingleton.InGame", NativeClients_InGame);
+    CreateNative("ClientSingleton.Alive", NativeClients_Alive);
     
     OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_CellByRef);
     OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_CellByRef);

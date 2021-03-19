@@ -33,6 +33,11 @@ methodmap Config < JSON_Object {
         public get() { return this.GetFloat("NukeTime"); }
     }
 
+    property float NukeKillPos {
+        public set(float level) { this.SetFloat("NukeKillPos", level); }
+        public get() { return this.GetFloat("NukeKillPos"); }
+    }
+
     public void NukeSound(char[] buffer, int max_size) {
         this.GetString("NukeSound", buffer, max_size);
     }
