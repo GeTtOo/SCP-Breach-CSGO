@@ -616,7 +616,7 @@ public Action NukeExplosion(Handle hTimer)
                 char name[16];
                 GetEntPropString(ent, Prop_Data, "m_iName", name, sizeof(name));
                 
-                if(StrContains("DoorGate", name, false))
+                if(StrContains("DoorGate", name, false) != -1)
                 {
                     AcceptEntityInput(ent, "Close");
                     AcceptEntityInput(ent, "Lock");
