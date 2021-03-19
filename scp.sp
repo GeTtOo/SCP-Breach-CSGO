@@ -8,6 +8,7 @@
 #include <scpcore>
 
 #define HIDE_RADAR_CSGO 1<<12
+#define NUKE_EXPLOSION_SOUND "weapons/c4/c4_exp_deb1.wav"
 
 Handle OnClientJoinForward;
 Handle OnClientLeaveForward;
@@ -116,6 +117,7 @@ public void OnMapStart()
 
     Ents.Create("card_o5");
 
+    PrecacheSound(NUKE_EXPLOSION_SOUND);
     FakePrecacheSound(sound);
     
     // ¯\_(ツ)_/¯
@@ -589,13 +591,37 @@ public Action Command_AdminMenu(int client, int args)
 
 public Action NukeExplosion(Handle hTimer)
 {
+    float pos[3];
     gamemode.mngr.IsNuked = true;
 
     for(int client = 0; client < MAXPLAYERS; client++)
     {
         if(IsClientExist(client))
         {
-            Shake(client);
+            GetClientAbsOrigin(client, pos);
+
+            if(pos[2] <= gamemode.config.NukeKillPos)
+            {
+                ForcePlayerSuicide(client);
+            }
+            else
+            {
+                EmitSoundToClient(client, NUKE_EXPLOSION_SOUND);
+                Shake(client);
+            }
+
+            int ent;
+            while((ent = FindEntityByClassname(ent, "func_door")) != -1)
+            {
+                char name[16];
+                GetEntPropString(ent, Prop_Data, "m_iName", name, sizeof(name));
+                
+                if(StrContains("DoorGate", name, false))
+                {
+                    AcceptEntityInput(ent, "Close");
+                    AcceptEntityInput(ent, "Lock");
+                }
+            }
         }
     }
 }
