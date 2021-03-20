@@ -1,2 +1,2 @@
-# csgo_scp
+# SCP Breach CS:GO
 SCP mod for CSGO
