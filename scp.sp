@@ -92,13 +92,22 @@ public Action GetClientPos(int client, const char[] command, int argc)
 
 public Action TpTo914(int client, const char[] command, int argc)
 {
-    float pos[3] = {3223.215576,-2231.152587,0.031250};
+    float pos[3] = {3100.215576,-2231.152587,0.031250};
     float ang[3] = {0.0,0.0,0.0};
     TeleportEntity(client, pos, ang, NULL_VECTOR);
 
     Entity ent = Ents.Create("card_o5");
     ent.SetPos(new Vector(3223.215576,-2231.152587,0.031250));
+    ent.UseCB(view_as<SDKHookCB>(Callback_EntUse));
     ent.Spawn();
+}
+
+public SDKHookCB Callback_EntUse(int eid, int cid) {
+    Client ply = Clients.Get(cid);
+    Entity ent = new Entity(eid);
+
+    ply.health = 1;
+    PrintToChat(ply.id, "Ent id:%i", ent.id);
 }
 
 //////////////////////////////////////////////////////////////////////////////

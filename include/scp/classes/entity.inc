@@ -62,16 +62,21 @@ methodmap Entity < StringMap {
         this.GetValue("id", id);
         GetEntPropVector(id, Prop_Send, "m_angRotation", ang);
     }
+
+    public void UseCB(SDKHookCB cb) {
+        SDKHook(this.id, SDKHook_Use, cb);
+        DispatchKeyValue(this.id, "spawnflags", "264");
+    }
 }
 
 methodmap Ents < Handle {
 
-    public static Entity Create(char[] EntName, char[] model = "models/props/cs_office/cardboard_box01.mdl") {
+    public static Entity Create(char[] EntName) {
         Entity entity;
         if (gamemode.entities.HasKey(EntName))
         {
             EntConfig entcfg = gamemode.entities.get(EntName);
-            entity = new Entity(CreateEntityByName("prop_physics"));
+            entity = new Entity(CreateEntityByName("prop_physics_override"));
 
             char modelName[128], mass[12];
             entcfg.model(modelName, sizeof(modelName));
