@@ -15,7 +15,9 @@ public Plugin myinfo = {
 	url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void SCP_OnPlayerJoin(Client &ply) {
+public void SCP_OnPlayerJoin(Client &ply) 
+{
+    HookEvent("player_death", Event_PlayerDeath);
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
 }
 
@@ -27,8 +29,7 @@ public void SCP_OnPlayerSpawn(Client &ply)
     if(StrEqual(class, "457"))
     {
         SetEntityRenderMode(ply.id, RENDER_NONE);
-        //SetEntityRenderColor(ply.id, 255, 255, 255, 0);
-        IgniteEntity(ply.id, 3600.0);
+        IgniteEffect(ply.id);
     }
 }
 
@@ -54,4 +55,50 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
     }
 
     return Plugin_Continue;
+}
+
+public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
+{
+    int client = GetClientOfUserId(GetEventInt(event, "userid"));
+    Client ply = Clients.Get(client);
+
+    char class[32];
+    ply.class.Name(class, sizeof(class));
+
+    if(StrEqual(class, "457"))
+    {
+        SetEntityRenderMode(ply.id, RENDER_NORMAL);
+
+        int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
+        if (ent > MaxClients && IsValidEdict(ent))
+        {
+            AcceptEntityInput(ent, "Kill");
+        }
+    }
+}
+
+stock void IgniteEffect(int client)
+{
+    int particle = CreateEntityByName("info_particle_system");
+
+    if(IsValidEdict(particle))
+    {
+        char name[64];
+        float position[3];
+        
+        GetEntPropVector(client, Prop_Send, "m_vecOrigin", position);
+        TeleportEntity(particle, position, NULL_VECTOR, NULL_VECTOR);
+        
+        GetEntPropString(client, Prop_Data, "m_iName", name, sizeof(name));
+
+        DispatchKeyValue(particle, "targetname", "tf2particle");
+        DispatchKeyValue(particle, "parentname", name);
+        DispatchKeyValue(particle, "effect_name", "env_fire_large");
+        DispatchSpawn(particle);
+        
+        SetVariantString("!activator");
+        AcceptEntityInput(particle, "SetParent", client);
+        ActivateEntity(particle);
+        AcceptEntityInput(particle, "Start");
+    }
 }
