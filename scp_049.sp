@@ -1,6 +1,7 @@
 #include <sourcemod>
 #include <cstrike>
 #include <scpcore>
+#include <sdkhooks>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -31,6 +32,11 @@ public Plugin myinfo = {
 public void OnPluginStart()
 {
 	HookEvent("player_death", Event_PlayerDeath, EventHookMode_Post);
+}
+
+public void SCP_OnPlayerJoin(Client &ply) 
+{
+    SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
 }
 
 public void OnMapStart()
@@ -98,9 +104,10 @@ public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
 	}
 }
 
-public Action SCP_OnTakeDamage(Client vic, Client atk, int &inflictor, float &damage, int &damagetype)
+public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
 {
 	char attackerClass[32];
+	Client atk = Clients.Get(attacker);
 	atk.class.Name(attackerClass, sizeof(attackerClass)); 
 
 	if(StrEqual(attackerClass, "049"))
