@@ -114,30 +114,6 @@ public SDKHookCB Callback_EntUse(int eid, int cid) {
     PrintToChat(ply.id, "Ent id:%i", ent.id);
 }
 
-public void SpawnItemsOnMap() {
-    JSON_Object spawnmap = gamemode.config.spawnmap;
-    StringMapSnapshot snapshot = spawnmap.Snapshot();
-
-    for (int i=0; i < snapshot.Length; i++) {
-        int itemlen = snapshot.KeyBufferSize(i);
-        char[] item = new char[itemlen];
-        snapshot.GetKey(i, item, itemlen);
-
-        if (json_is_meta_key(item)) continue;
-        
-        JSON_Array rawPosArr = view_as<JSON_Array>(spawnmap.GetObject(item));
-
-        for (int v=0; v < rawPosArr.Length; v++) {
-            JSON_Array rawPos = view_as<JSON_Array>(rawPosArr.GetObject(v));
-
-            Ents.Create(item)
-            .SetPos(new Vector(rawPos.GetFloat(0),rawPos.GetFloat(1),rawPos.GetFloat(2)))
-            .UseCB(view_as<SDKHookCB>(Callback_EntUse))
-            .Spawn();
-        }
-    }
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
 //                                Events
@@ -339,6 +315,8 @@ public void OnRoundEnd(Event ev, const char[] name, bool dbroadcast)
         client.class = null;
         client.haveClass = false;
     }
+
+    Ents.Clear();
 }
 
 public Action CS_OnTerminateRound(float& delay, CSRoundEndReason& reason)
@@ -532,6 +510,32 @@ void LoadFileToDownload()
 //                                Functions
 //
 //////////////////////////////////////////////////////////////////////////////
+
+public void SpawnItemsOnMap() {
+    JSON_Object spawnmap = gamemode.config.spawnmap;
+    StringMapSnapshot snapshot = spawnmap.Snapshot();
+
+    for (int i=0; i < snapshot.Length; i++) {
+        int itemlen = snapshot.KeyBufferSize(i);
+        char[] item = new char[itemlen];
+        snapshot.GetKey(i, item, itemlen);
+
+        if (json_is_meta_key(item)) continue;
+        
+        JSON_Array rawDataArr = view_as<JSON_Array>(spawnmap.GetObject(item));
+
+        for (int v=0; v < rawDataArr.Length; v++) {
+            JSON_Object data = rawDataArr.GetObject(v);
+            JSON_Array pos = view_as<JSON_Array>(data.GetObject("pos"));
+
+            if (GetRandomInt(1, 100) <= data.GetInt("chance"))
+                Ents.Create(item)
+                .SetPos(new Vector(pos.GetFloat(0),pos.GetFloat(1),pos.GetFloat(2)))
+                .UseCB(view_as<SDKHookCB>(Callback_EntUse))
+                .Spawn();
+        }
+    }
+}
 
 void SCP_EndRound(const char[] team)
 {

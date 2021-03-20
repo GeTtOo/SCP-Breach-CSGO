@@ -77,7 +77,7 @@ methodmap EntitySingleton < StringMap {
 
     public EntitySingleton() {
         EntitySingleton self = view_as<EntitySingleton>(new StringMap());
-        ArrayList entArr = new ArrayList(2048);
+        ArrayList entArr = new ArrayList();
         self.SetValue("Entities", entArr);
         return self;
     }
@@ -118,6 +118,16 @@ methodmap EntitySingleton < StringMap {
         PushArrayCell(entArr, entity);
 
         return entity;
+    }
+
+    public void Clear() {
+        ArrayList entArr;
+        this.GetValue("Entities", entArr);
+
+        for(int i=0; i < entArr.Length; i++)
+            delete view_as<Entity>(entArr.Get(i, 0));
+
+        entArr.Clear();
     }
 
     public ArrayList FindInBox(Vector vecMin, Vector vecMax) {
