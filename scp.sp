@@ -6,6 +6,7 @@
 #include <sdkhooks>
 // ¯\_(ツ)_/¯
 #include <scpcore>
+#include "include/scp/scp_admin.sp"
 
 #define HIDE_RADAR_CSGO 1<<12
 #define NUKE_EXPLOSION_SOUND "weapons/c4/c4_exp_deb1.wav"
@@ -581,6 +582,16 @@ stock bool IsWarmup()
     return false;
 }
 
+stock bool IsCleintInSpec(int client)
+{
+    if(GetClientTeam(client) != 1)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 //                                Commands
@@ -647,61 +658,4 @@ public Action NukeExplosion(Handle hTimer)
 void DisplayCardMenu(int client)
 {
     PrintToChat(client, " \x07[SCP] \x01Скоро тут будет меню (честно-честно!)");
-}
-
-void DisplayAdminMenu(int client)
-{
-    if(IsClientExist(client))
-    {
-        Menu hMenu = new Menu(MenuHandler_ScpAdminMenu);
-        hMenu.SetTitle("Меню администратора");
-
-        hMenu.AddItem("item1", "Просмотреть классы игроков", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item2", "Возродить игрока", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item3", "Телепортировать игрока", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item4", "Переместить в наблюдатели", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item5", "Провести беседу с игроком", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item6", "Игнорирование карт доступа", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item7", "Выдать предмет", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item8", "Перезапустить раунд", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item9", "Взорвать комплекс", ITEMDRAW_DEFAULT);
-
-        hMenu.Display(client, 30);
-    }
-}
-
-public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, int item)
-{
-    if (action == MenuAction_Select)
-    {
-        if (IsClientExist(client))
-        {
-            Client ply = Clients.Get(client);
-            
-            switch(item)
-            {
-                case 5:
-                {
-                    if(!ply.FullAccess)
-                    {
-                        PrintToChat(client, " \x07[SCP] \x01Игнорирование карт доступа \x06включено");
-                        ply.FullAccess = true;
-                    }
-                    else
-                    {
-                        PrintToChat(client, " \x07[SCP] \x01Игнорирование карт доступа \x06отключено");
-                        ply.FullAccess = false;
-                    }
-                }
-                case 8:
-                {
-                    SCP_NukeActivation();
-                }
-                default:
-                {
-                    delete hMenu;
-                }
-            }
-        }
-    }
 }

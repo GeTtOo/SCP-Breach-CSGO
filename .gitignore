@@ -4,5 +4,6 @@
 /include/*.inc
 /include/json
 !/include/scpcore.inc
+!/include/scp/scp_admin.sp
 !scp.sp
 !scp_049.sp
