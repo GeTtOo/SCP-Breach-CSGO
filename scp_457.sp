@@ -15,7 +15,7 @@ public Plugin myinfo = {
 	url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void SCP_OnPlayerJoin(Client &ply) 
+public void SCP_OnPlayerJoin(Client &ply)
 {
     HookEvent("player_death", Event_PlayerDeath);
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
@@ -35,7 +35,7 @@ public void SCP_OnPlayerSpawn(Client &ply)
 
 public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
 {
-    Client vic = SCP_GetClient(victim), atk = SCP_GetClient(attacker);
+    Client vic = Clients.Get(victim), atk = Clients.Get(attacker);
     
     char victimClass[32], attackerClass[32];
     vic.class.Name(victimClass, sizeof(victimClass));
