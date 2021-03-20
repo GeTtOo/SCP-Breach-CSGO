@@ -12,6 +12,7 @@ methodmap Config < JSON_Object {
         Config self = view_as<Config>(ReadConfig(mapname, "config"));
 
         self.SetObject("Doors", view_as<Doors>(ReadConfig(mapname, "doors")));
+        self.SetObject("SpawnMap", view_as<JSON_Object>(ReadConfig(mapname, "spawn_map")));
 
         return self;
     }
@@ -28,6 +29,10 @@ methodmap Config < JSON_Object {
         public get() { return view_as<Doors>(this.GetObject("Doors")); }
     }
 
+    property JSON_Object spawnmap { 
+        public get() { return view_as<JSON_Object>(this.GetObject("SpawnMap")); }
+    }
+
     property float NukeTime {
         public set(float time) { this.SetFloat("NukeTime", time); }
         public get() { return this.GetFloat("NukeTime"); }
@@ -40,6 +45,14 @@ methodmap Config < JSON_Object {
 
     public void NukeSound(char[] buffer, int max_size) {
         this.GetString("NukeSound", buffer, max_size);
+    }
+    
+    property Vector AdminRoomPos {
+        public get() {
+            JSON_Object rawPos = this.GetObject("AdminRoom");
+            Vector pos = new Vector(rawPos.GetFloat("x"), rawPos.GetFloat("y"), rawPos.GetFloat("z"));
+            return pos;
+        }
     }
 
     property bool debug {

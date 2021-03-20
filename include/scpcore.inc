@@ -7,9 +7,10 @@
 #include "scp/structures/vector"
 #include "scp/classes/gamemode"
 #include "scp/classes/client"
-ClientSingleton Clients;
 GameMode gamemode;
 #include "scp/classes/entity"
+ClientSingleton Clients;
+EntitySingleton Ents;
 
 forward void SCP_OnPlayerJoin(Client &ply);
 
@@ -56,4 +57,15 @@ public any NativeClients_Alive(Handle Plugin, int numArgs) {
     }
     clientAlive--;
     return clientAlive;
+}
+
+public any NativeEntities_Get(Handle Plugin, int numArgs) {
+    int id = GetNativeCell(2);
+    ArrayList entArr;
+    Ents.GetValue("Entities", entArr);
+
+    for(int i=0; i < entArr.Length; i++)
+        if (view_as<Entity>(entArr.Get(i, 0)).id == id)
+            return view_as<Entity>(entArr.Get(i, 0));
+    return view_as<Entity>(null);
 }

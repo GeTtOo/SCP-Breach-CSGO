@@ -33,7 +33,7 @@ methodmap Entity < StringMap {
         GetEntityClassname(id, name, max_size);
     }
     
-    public void SetPos(Vector vec) {
+    public Entity SetPos(Vector vec) {
         float vectorArr[3];
         vec.GetArr(vectorArr);
         
@@ -41,10 +41,14 @@ methodmap Entity < StringMap {
             TeleportEntity(this.id, vectorArr, NULL_VECTOR, NULL_VECTOR);
         else
             DispatchKeyValueVector(this.id, "origin", vectorArr);
+
+        delete vec;
+        return this;
     }
 
-    public void Spawn() {
+    public Entity Spawn() {
         DispatchSpawn(this.id);
+        return this;
     }
 
     public Vector GetPos() {
@@ -63,15 +67,24 @@ methodmap Entity < StringMap {
         GetEntPropVector(id, Prop_Send, "m_angRotation", ang);
     }
 
-    public void UseCB(SDKHookCB cb) {
+    public Entity UseCB(SDKHookCB cb) {
         SDKHook(this.id, SDKHook_Use, cb);
-        DispatchKeyValue(this.id, "spawnflags", "264");
+        return this;
     }
 }
 
-methodmap Ents < Handle {
+methodmap EntitySingleton < StringMap {
 
-    public static Entity Create(char[] EntName) {
+    public EntitySingleton() {
+        EntitySingleton self = view_as<EntitySingleton>(new StringMap());
+        ArrayList entArr = new ArrayList(2048);
+        self.SetValue("Entities", entArr);
+        return self;
+    }
+    
+    public native Entity Get(int id);
+
+    public Entity Create(char[] EntName) {
         Entity entity;
         if (gamemode.entities.HasKey(EntName))
         {
@@ -86,6 +99,11 @@ methodmap Ents < Handle {
             DispatchKeyValue(entity.id, "physicsmode", "2");
             DispatchKeyValue(entity.id, "massScale", mass);
             DispatchKeyValue(entity.id, "Solid", "6");
+            if (entcfg.spawnflags != 0) {
+                char flags[8];
+                IntToString(entcfg.spawnflags, flags, sizeof(flags));
+                DispatchKeyValue(entity.id, "spawnflags", flags);
+            }
         }
         else
         {
@@ -94,10 +112,15 @@ methodmap Ents < Handle {
 
         entity.active = false;
 
+        ArrayList entArr;
+        this.GetValue("Entities", entArr);
+
+        PushArrayCell(entArr, entity);
+
         return entity;
     }
 
-    public static ArrayList FindInBox(Vector vecMin, Vector vecMax) {
+    public ArrayList FindInBox(Vector vecMin, Vector vecMax) {
         int entId = 0;
         ArrayList entArr = new ArrayList(128);
         

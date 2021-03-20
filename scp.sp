@@ -35,6 +35,8 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) 
     CreateNative("ClientSingleton.GetRandom", NativeClients_GetRandom);
     CreateNative("ClientSingleton.InGame", NativeClients_InGame);
     CreateNative("ClientSingleton.Alive", NativeClients_Alive);
+
+    CreateNative("EntitySingleton.Get", NativeEntities_Get);
     
     OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_CellByRef);
     OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_CellByRef);
@@ -49,6 +51,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) 
 public void OnPluginStart()
 {   
     Clients = new ClientSingleton();
+    Ents = new EntitySingleton();
 
     AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
     AddCommandListener(GetClientPos, "getmypos");
@@ -85,21 +88,21 @@ public Action GetClientPos(int client, const char[] command, int argc)
 
     for(int i=0; i < entArr.Length; i++) 
     {
-        Entity ent = GetArrayCell(entArr, i, 0);
+        Entity ent = entArr.Get(i, 0);
         PrintToChat(ply.id, "%i", ent.id);
     }
 }
 
 public Action TpTo914(int client, const char[] command, int argc)
 {
-    float pos[3] = {3100.215576,-2231.152587,0.031250};
-    float ang[3] = {0.0,0.0,0.0};
+    float pos[3] = {3100.0, -2231.0, 0.0};
+    float ang[3] = {0.0, 0.0, 0.0};
     TeleportEntity(client, pos, ang, NULL_VECTOR);
 
-    Entity ent = Ents.Create("card_o5");
-    ent.SetPos(new Vector(3223.215576,-2231.152587,0.031250));
-    ent.UseCB(view_as<SDKHookCB>(Callback_EntUse));
-    ent.Spawn();
+    Ents.Create("card_o5")
+    .SetPos(new Vector(3223.0,-2231.0,50.0))
+    .UseCB(view_as<SDKHookCB>(Callback_EntUse))
+    .Spawn();
 }
 
 public SDKHookCB Callback_EntUse(int eid, int cid) {
@@ -108,6 +111,30 @@ public SDKHookCB Callback_EntUse(int eid, int cid) {
 
     ply.health = 1;
     PrintToChat(ply.id, "Ent id:%i", ent.id);
+}
+
+public void SpawnItemsOnMap() {
+    JSON_Object spawnmap = gamemode.config.spawnmap;
+    StringMapSnapshot snapshot = spawnmap.Snapshot();
+
+    for (int i=0; i < snapshot.Length; i++) {
+        int itemlen = snapshot.KeyBufferSize(i);
+        char[] item = new char[itemlen];
+        snapshot.GetKey(i, item, itemlen);
+
+        if (json_is_meta_key(item)) continue;
+        
+        JSON_Array rawPosArr = view_as<JSON_Array>(spawnmap.GetObject(item));
+
+        for (int v=0; v < rawPosArr.Length; v++) {
+            JSON_Array rawPos = view_as<JSON_Array>(rawPosArr.GetObject(v));
+
+            Ents.Create(item)
+            .SetPos(new Vector(rawPos.GetFloat(0),rawPos.GetFloat(1),rawPos.GetFloat(2)))
+            .UseCB(view_as<SDKHookCB>(Callback_EntUse))
+            .Spawn();
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -137,6 +164,8 @@ public void OnMapStart()
         ForceChangeLevel(mapName, "Fix sound cached");
         fixCache = true;
     }
+
+    PrecacheModel("models/props/sl_physics/keycard5.mdl");
 }
 
 public void OnClientConnected(int id) {
@@ -297,6 +326,8 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
             player.haveClass = true;
         }
     }
+
+    SpawnItemsOnMap();
 }
 
 public void OnRoundEnd(Event ev, const char[] name, bool dbroadcast) 

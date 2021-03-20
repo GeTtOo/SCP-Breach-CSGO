@@ -7,6 +7,10 @@ methodmap EntConfig < JSON_Object {
     public void mass(char[] buffer, int max_size) {
         this.GetString("mass", buffer, max_size);
     }
+
+    property int spawnflags {
+        public get() { return this.GetInt("spawnflags"); }
+    }
 }
 
 methodmap Entities < JSON_Object {
