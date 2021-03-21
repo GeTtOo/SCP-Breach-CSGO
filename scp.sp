@@ -106,14 +106,6 @@ public Action TpTo914(int client, const char[] command, int argc)
     .Spawn();
 }
 
-public SDKHookCB Callback_EntUse(int eid, int cid) {
-    Client ply = Clients.Get(cid);
-    Entity ent = new Entity(eid);
-
-    ply.health = 1;
-    PrintToChat(ply.id, "Ent id:%i", ent.id);
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
 //                                Events
@@ -130,8 +122,6 @@ public void OnMapStart()
 
     gamemode.mngr.PlayerCollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
     gamemode.config.NukeSound(sound, sizeof(sound));
-
-    Ents.Create("card_o5");
 
     PrecacheSound(NUKE_EXPLOSION_SOUND);
     FakePrecacheSound(sound);
@@ -314,6 +304,7 @@ public void OnRoundEnd(Event ev, const char[] name, bool dbroadcast)
         Client client = Clients.Get(cig);
         client.class = null;
         client.haveClass = false;
+        client.inventory.Clear();
     }
 
     Ents.Clear();
@@ -451,7 +442,7 @@ public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
         
         if(!ply.IsSCP)
         {
-            DisplayCardMenu(client);
+            DisplayFMenu(ply);
         }
     }
 }
@@ -502,6 +493,32 @@ void LoadFileToDownload()
     else
     {
         LogError("Can't find downloads.txt");
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                                Callbacks
+//
+//////////////////////////////////////////////////////////////////////////////
+
+public SDKHookCB Callback_EntUse(int eid, int cid) {
+    Client ply = Clients.Get(cid);
+    Entity ent = Ents.Get(eid);
+
+    PrintToChat(ply.id, "Ent id:%i", ent.id);
+
+    char entClass[32];
+    ent.GetClass(entClass, sizeof(entClass));
+
+    PrintToChat(ply.id, "Ent class: %s", entClass);
+
+
+    if (StrContains(entClass, "card") > 0) {//Bugged?
+        if (ply.inventory.TryAdd(ent))
+            Ents.Remove(ent.id);
+        else
+            PrintToChat(ply.id, "Твой инвентарь полон");
     }
 }
 
@@ -690,7 +707,8 @@ public Action NukeExplosion(Handle hTimer)
 //
 //////////////////////////////////////////////////////////////////////////////
 
-void DisplayCardMenu(int client)
+void DisplayFMenu(Client ply)
 {
-    PrintToChat(client, " \x07[SCP] \x01Скоро тут будет меню (честно-честно!)");
+    //PrintToChat(client, " \x07[SCP] \x01Скоро тут будет меню (честно-честно!)");
+    ply.inventory.Display();
 }

@@ -6,9 +6,12 @@
 // ¯\_(ツ)_/¯
 #include "scp/structures/vector"
 #include "scp/classes/gamemode"
-#include "scp/classes/client"
+
 GameMode gamemode;
+
 #include "scp/classes/entity"
+#include "scp/classes/client"
+
 ClientSingleton Clients;
 EntitySingleton Ents;
 
@@ -64,8 +67,12 @@ public any NativeEntities_Get(Handle Plugin, int numArgs) {
     ArrayList entArr;
     Ents.GetValue("Entities", entArr);
 
-    for(int i=0; i < entArr.Length; i++)
+    for(int i=0; i < entArr.Length; i++) {
+        PrintToServer("In Arr ent: %i", view_as<Entity>(entArr.Get(i, 0)).id);
         if (view_as<Entity>(entArr.Get(i, 0)).id == id)
             return view_as<Entity>(entArr.Get(i, 0));
-    return view_as<Entity>(null);
+    }
+
+    PrintToServer("Ent id: %i", id);
+    return view_as<Entity>(0);
 }

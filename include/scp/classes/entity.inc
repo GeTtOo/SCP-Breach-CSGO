@@ -28,9 +28,8 @@ methodmap Entity < StringMap {
     }
 
     public void GetClass(char[] name, int max_size) {
-        int id;
-        this.GetValue("id", id);
-        GetEntityClassname(id, name, max_size);
+        this.GetString("class", name, max_size);
+        //GetEntityClassname(id, name, max_size);
     }
     
     public Entity SetPos(Vector vec) {
@@ -65,6 +64,11 @@ methodmap Entity < StringMap {
         int id;
         this.GetValue("id", id);
         GetEntPropVector(id, Prop_Send, "m_angRotation", ang);
+    }
+
+    public void Remove() {
+        RemoveEntity(this.id);
+        delete this;
     }
 
     public Entity UseCB(SDKHookCB cb) {
@@ -111,6 +115,7 @@ methodmap EntitySingleton < StringMap {
         }
 
         entity.active = false;
+        entity.SetString("class", EntName);
 
         ArrayList entArr;
         this.GetValue("Entities", entArr);
@@ -118,6 +123,17 @@ methodmap EntitySingleton < StringMap {
         PushArrayCell(entArr, entity);
 
         return entity;
+    }
+
+    public void Remove(int id) {
+        ArrayList entArr;
+        this.GetValue("Entities", entArr);
+
+        for(int i=0; i < entArr.Length; i++)
+            if (view_as<Entity>(entArr.Get(i, 0)).id == id) {
+                view_as<Entity>(entArr.Get(i, 0)).Remove();
+                entArr.Erase(i);
+            }
     }
 
     public void Clear() {

@@ -7,12 +7,15 @@
 #include <sdktools>
 #include <json>
 
+#include "scp/classes/inventory"
+
 methodmap Client < StringMap {
 
     public Client(int id) {
         Client self = view_as<Client>(new StringMap());
         self.SetValue("id", id);
         self.SetValue("haveClass", false);
+        self.SetValue("inventory", new Inventory(id));
 
         return self;
     }
@@ -80,6 +83,11 @@ methodmap Client < StringMap {
     property bool FullAccess {
         public set(bool card) { this.SetValue("fullaccess", card); }
         public get() { bool card; return this.GetValue("fullaccess", card) ? card : false; }
+    }
+
+    property Inventory inventory {
+        public set(Inventory inv) { this.SetValue("inventory", inv); }
+        public get() { Inventory inv; return this.GetValue("inventory", inv) ? inv : null; }
     }
 
     public void Kick(char[] reason) {
