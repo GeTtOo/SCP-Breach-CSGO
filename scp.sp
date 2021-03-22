@@ -8,7 +8,6 @@
 #include <scpcore>
 #include "include/scp/scp_admin.sp"
 
-#define HIDE_RADAR_CSGO 1<<12
 #define NUKE_EXPLOSION_SOUND "weapons/c4/c4_exp_deb1.wav"
 
 Handle OnClientJoinForward;
@@ -62,7 +61,7 @@ public void OnPluginStart()
     
     HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
     HookEvent("round_start", OnRoundStart);
-    HookEvent("round_end", OnRoundEnd);
+    HookEvent("round_prestart", OnRoundPreStart);
     HookEvent("player_death", Event_PlayerDeath, EventHookMode_Pre);
     HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
     HookEntityOutput("trigger_teleport", "OnStartTouch", Event_OnTriggerActivation);
@@ -292,19 +291,19 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
             player.class = gamemode.gclass(gclass).class(class);
             player.haveClass = true;
         }
-    }
 
-    SpawnItemsOnMap();
+        SpawnItemsOnMap();
+    }
 }
 
-public void OnRoundEnd(Event ev, const char[] name, bool dbroadcast) 
+public void OnRoundPreStart(Event ev, const char[] name, bool dbroadcast) 
 {
     for (int cig=1; cig <= Clients.InGame(); cig++) 
     {
         Client client = Clients.Get(cig);
         client.class = null;
         client.haveClass = false;
-        client.inventory.Clear();
+        client.inv.Clear();
     }
 
     Ents.Clear();
@@ -387,7 +386,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
 
 public Action OnPlayerSpawnPost(int client)
 {
-    SetEntProp(client, Prop_Send, "m_iHideHUD", HIDE_RADAR_CSGO);
+    SetEntProp(client, Prop_Send, "m_iHideHUD", 1<<12);
 }
 
 public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
@@ -506,19 +505,28 @@ public SDKHookCB Callback_EntUse(int eid, int cid) {
     Client ply = Clients.Get(cid);
     Entity ent = Ents.Get(eid);
 
-    PrintToChat(ply.id, "Ent id:%i", ent.id);
+    char entClassName[32];
+    ent.GetClass(entClassName, sizeof(entClassName));
 
-    char entClass[32];
-    ent.GetClass(entClass, sizeof(entClass));
-
-    PrintToChat(ply.id, "Ent class: %s", entClass);
-
-
-    if (StrContains(entClass, "card") > 0) {//Bugged?
-        if (ply.inventory.TryAdd(ent))
+    if (gamemode.entities.HasKey(entClassName))
+        if (ply.inv.TryAdd(ent))
             Ents.Remove(ent.id);
         else
-            PrintToChat(ply.id, "Твой инвентарь полон");
+            PrintToChat(ply.id, " \x07[SCP] \x01Твой инвентарь переполнен");
+}
+
+public int InventoryHandler(Menu menu, MenuAction action, int client, int item) {
+    if (action == MenuAction_Select) {
+        Client ply = Clients.Get(client);
+        Item itm = ply.inv.Get(item);
+
+        char entclass[32];
+        itm.GetEntClass(entclass, sizeof(entclass));
+
+        Ents.Create(entclass)
+        .SetPos(ply.GetPos())
+        .UseCB(view_as<SDKHookCB>(Callback_EntUse))
+        .Spawn();
     }
 }
 
@@ -710,5 +718,5 @@ public Action NukeExplosion(Handle hTimer)
 void DisplayFMenu(Client ply)
 {
     //PrintToChat(client, " \x07[SCP] \x01Скоро тут будет меню (честно-честно!)");
-    ply.inventory.Display();
+    ply.inv.Display();
 }

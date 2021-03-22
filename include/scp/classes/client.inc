@@ -85,7 +85,7 @@ methodmap Client < StringMap {
         public get() { bool card; return this.GetValue("fullaccess", card) ? card : false; }
     }
 
-    property Inventory inventory {
+    property Inventory inv {
         public set(Inventory inv) { this.SetValue("inventory", inv); }
         public get() { Inventory inv; return this.GetValue("inventory", inv) ? inv : null; }
     }

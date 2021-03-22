@@ -22,6 +22,13 @@ methodmap Entity < StringMap {
         public get() { int id; return this.GetValue("id", id) ? id : -1; }
     }
 
+    public void name(char[] buffer, int max_size = 0) {
+        if (max_size == 0)
+            this.SetString("name", buffer);
+        else
+            this.GetString("name", buffer, max_size);
+    }
+
     property bool active {
         public set(bool value) { this.SetValue("active", value); }
         public get() { bool value; return this.GetValue("active", value) ? value : true; }
@@ -93,11 +100,15 @@ methodmap EntitySingleton < StringMap {
         if (gamemode.entities.HasKey(EntName))
         {
             EntConfig entcfg = gamemode.entities.get(EntName);
+
             entity = new Entity(CreateEntityByName("prop_physics_override"));
 
-            char modelName[128], mass[12];
+            char modelName[128], mass[12], name[32];
             entcfg.model(modelName, sizeof(modelName));
             entcfg.mass(mass, sizeof(mass));
+            entcfg.name(name, sizeof(name));
+            
+            entity.name(name);
 
             DispatchKeyValue(entity.id, "model", modelName);
             DispatchKeyValue(entity.id, "physicsmode", "2");
