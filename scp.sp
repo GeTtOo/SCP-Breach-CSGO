@@ -214,6 +214,8 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
                 ply.gclass(gClassName, sizeof(gClassName));
                 ply.class.Name(className, sizeof(className));
                 PrintToChat(ply.id, " \x07[SCP] \x01Твой класс %s - %s", gClassName, className);
+
+                if (!IsFakeClient(ply.id)) SendConVarValue(ply.id, FindConVar("game_type"), "6");
             }
         }
     }
@@ -234,7 +236,6 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
 {
     if(!IsWarmup())
     {
-        ServerCommand("game_type 6");
         gamemode.mngr.RoundComplete = false;
         gamemode.mngr.IsNuked = false;
         
@@ -274,7 +275,6 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
                     if (extra > Clients.InGame()) break;
                     Client player = Clients.GetRandomWithoutClass();
                     player.gclass(gClassKey);
-                    //player.class(classKey);
                     player.class = class;
                     player.haveClass = true;
 
@@ -290,7 +290,6 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
             gamemode.config.DefaultGlobalClass(gclass, sizeof(gclass));
             gamemode.config.DefaultClass(class, sizeof(class));
             player.gclass(gclass);
-            //player.class(class);
             player.class = gamemode.gclass(gclass).class(class);
             player.haveClass = true;
         }
@@ -567,7 +566,6 @@ public void SpawnItemsOnMap() {
 
 void SCP_EndRound(const char[] team)
 {
-    ServerCommand("game_type 3");
     gamemode.mngr.RoundComplete = true;
     
     if(StrEqual("nuke_explosion", team))
