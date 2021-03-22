@@ -85,30 +85,4 @@ methodmap Inventory < StringMap {
         inv.Clear();
         this.SetValue("inventory", inv);
     }
-
-    public void Display() {
-        Menu InvMenu = new Menu(InventoryHandler);
-
-        InvMenu.SetTitle("Инвентарь");
-        
-        ArrayList inv;
-        this.GetValue("inventory", inv);
-
-        if (inv.Length)
-            for (int i=0; i < inv.Length; i++) {
-                char itemid[8], itemName[32];
-
-                IntToString(i, itemid, sizeof(itemid));
-                view_as<Item>(inv.Get(i, 0)).name(itemName, sizeof(itemName));
-                
-                InvMenu.AddItem(itemid, itemName, ITEMDRAW_DEFAULT);
-            }
-        else
-            InvMenu.AddItem("item1", "Предметов нет", ITEMDRAW_DISABLED);
-
-        int id;
-        this.GetValue("id", id);
-
-        InvMenu.Display(id, 30);
-    }
 }

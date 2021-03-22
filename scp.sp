@@ -132,6 +132,8 @@ public void OnMapStart()
     }
 
     PrecacheModel("models/props/sl_physics/keycard5.mdl");
+    PrecacheModel("models/props_survival/upgrades/upgrade_dz_armor.mdl");
+    PrecacheModel("models/props_survival/upgrades/upgrade_dz_helmet.mdl");
 }
 
 public void OnClientConnected(int id) {
@@ -715,8 +717,32 @@ public Action NukeExplosion(Handle hTimer)
 //
 //////////////////////////////////////////////////////////////////////////////
 
+public void InventoryDisplay(Client ply) {
+    Menu InvMenu = new Menu(InventoryHandler);
+
+    InvMenu.SetTitle("Инвентарь");
+    
+    ArrayList inv;
+    ply.inv.GetValue("inventory", inv);
+
+    if (inv.Length)
+        for (int i=0; i < inv.Length; i++) {
+            char itemid[8], itemName[32];
+
+            IntToString(i, itemid, sizeof(itemid));
+            view_as<Item>(inv.Get(i, 0)).name(itemName, sizeof(itemName));
+            
+            InvMenu.AddItem(itemid, itemName, ITEMDRAW_DEFAULT);
+        }
+    else
+        //InvMenu.AddItem("item1", "Предметов нет", ITEMDRAW_DISABLED);
+        PrintToChat(ply.id, " \x07[SCP] \x01В твоём инвентаре нет предметов");
+
+    InvMenu.Display(ply.id, 30);
+}
+
 void DisplayFMenu(Client ply)
 {
     //PrintToChat(client, " \x07[SCP] \x01Скоро тут будет меню (честно-честно!)");
-    ply.inv.Display();
+    InventoryDisplay(ply);
 }

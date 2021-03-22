@@ -17,31 +17,31 @@ methodmap Class < JSON_Object {
     }
 
     property bool priority {
-        public get() { return this.GetBool("priority"); }
+        public get() { return this.GetBool("priority", false); }
     }
 
     property bool escape {
-        public get() { return this.GetBool("escape"); }
+        public get() { return this.GetBool("escape", false); }
+    }
+
+    property int health {
+        public get() { return this.GetInt("health", 100); }
+    }
+
+    property int armor {
+        public get() { return this.GetInt("armor", 0); }
+    }
+
+    property float speed {
+        public get() { return this.GetFloat("speed", 1.0); }
     }
 
     public bool Model(char[] buffer, int max_size) {
-        this.GetString("model", buffer, max_size);
+    this.GetString("model", buffer, max_size);
     }
 
     public bool HandsModel(char[] buffer, int max_size) {
         this.GetString("handsmodel", buffer, max_size);
-    }
-
-    property int health {
-        public get() { return this.GetInt("health"); }
-    }
-
-    property int armor {
-        public get() { return this.GetInt("armor"); }
-    }
-
-    property float speed {
-        public get() { return this.GetFloat("speed"); }
     }
 
     public bool weapon(char[] buffer, int max_size) {

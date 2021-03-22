@@ -67,12 +67,9 @@ public any NativeEntities_Get(Handle Plugin, int numArgs) {
     ArrayList entArr;
     Ents.GetValue("Entities", entArr);
 
-    for(int i=0; i < entArr.Length; i++) {
-        PrintToServer("In Arr ent: %i", view_as<Entity>(entArr.Get(i, 0)).id);
+    for(int i=0; i < entArr.Length; i++)
         if (view_as<Entity>(entArr.Get(i, 0)).id == id)
             return view_as<Entity>(entArr.Get(i, 0));
-    }
 
-    PrintToServer("Ent id: %i", id);
     return view_as<Entity>(0);
 }
