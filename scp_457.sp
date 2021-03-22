@@ -72,8 +72,12 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         if(StrEqual(class, "457"))
         {
             SetEntityRenderMode(ply.id, RENDER_NORMAL);
-            AcceptEntityInput(particle, "Kill");
-            particle = -1;
+
+            if(particle != -1)
+            {
+                AcceptEntityInput(particle, "Kill");
+                particle = -1;
+            }
 
             int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
             if (ent > MaxClients && IsValidEdict(ent))
