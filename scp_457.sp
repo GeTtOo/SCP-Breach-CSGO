@@ -6,6 +6,7 @@
 #pragma newdecls required
 
 // Время горения в конфиг
+int particle = -1;
 
 public Plugin myinfo = {
 	name = "[SCP] SCP 457",
@@ -60,26 +61,32 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
-    Client ply = Clients.Get(client);
-
-    char class[32];
-    ply.class.Name(class, sizeof(class));
-
-    if(StrEqual(class, "457"))
+    
+    if(IsClientExist(client))
     {
-        SetEntityRenderMode(ply.id, RENDER_NORMAL);
+        Client ply = Clients.Get(client);
 
-        int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
-        if (ent > MaxClients && IsValidEdict(ent))
+        char class[32];
+        ply.class.Name(class, sizeof(class));
+
+        if(StrEqual(class, "457"))
         {
-            AcceptEntityInput(ent, "Kill");
+            SetEntityRenderMode(ply.id, RENDER_NORMAL);
+            AcceptEntityInput(particle, "Kill");
+            particle = -1;
+
+            int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
+            if (ent > MaxClients && IsValidEdict(ent))
+            {
+                AcceptEntityInput(ent, "Kill");
+            }
         }
     }
 }
 
 stock void IgniteEffect(int client)
 {
-    int particle = CreateEntityByName("info_particle_system");
+    particle = CreateEntityByName("info_particle_system");
 
     if(IsValidEdict(particle))
     {
@@ -101,4 +108,14 @@ stock void IgniteEffect(int client)
         ActivateEntity(particle);
         AcceptEntityInput(particle, "Start");
     }
+}
+
+stock bool IsClientExist(int client)
+{
+    if((0 < client < MaxClients) && IsClientInGame(client) && !IsClientSourceTV(client))
+    {
+        return true;
+    }
+
+    return false;
 }
