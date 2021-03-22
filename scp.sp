@@ -234,6 +234,7 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
 {
     if(!IsWarmup())
     {
+        ServerCommand("game_type 6");
         gamemode.mngr.RoundComplete = false;
         gamemode.mngr.IsNuked = false;
         
@@ -566,6 +567,7 @@ public void SpawnItemsOnMap() {
 
 void SCP_EndRound(const char[] team)
 {
+    ServerCommand("game_type 3");
     gamemode.mngr.RoundComplete = true;
     
     if(StrEqual("nuke_explosion", team))
