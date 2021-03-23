@@ -60,32 +60,27 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 
 public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
-    int client = GetClientOfUserId(GetEventInt(event, "userid"));
-    
-    if(IsClientExist(client))
+    Client ply = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
+
+    if (ply != null && ply.class != null)
     {
-        Client ply = Clients.Get(client);
+        char class[32];
+        ply.class.Name(class, sizeof(class));
 
-        if (ply.class != null)
+        if(StrEqual(class, "457"))
         {
-            char class[32];
-            ply.class.Name(class, sizeof(class));
+            SetEntityRenderMode(ply.id, RENDER_NORMAL);
 
-            if(StrEqual(class, "457"))
+            if(particle != -1)
             {
-                SetEntityRenderMode(ply.id, RENDER_NORMAL);
+                AcceptEntityInput(particle, "Kill");
+                particle = -1;
+            }
 
-                if(particle != -1)
-                {
-                    AcceptEntityInput(particle, "Kill");
-                    particle = -1;
-                }
-
-                int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
-                if (ent > MaxClients && IsValidEdict(ent))
-                {
-                    AcceptEntityInput(ent, "Kill");
-                }
+            int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
+            if (ent > MaxClients && IsValidEdict(ent))
+            {
+                AcceptEntityInput(ent, "Kill");
             }
         }
     }
