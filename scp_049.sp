@@ -1,7 +1,7 @@
 #include <sourcemod>
 #include <cstrike>
-#include <scpcore>
 #include <sdkhooks>
+#include <scpcore>
 
 #pragma semicolon 1
 #pragma newdecls required
