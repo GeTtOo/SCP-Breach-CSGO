@@ -215,6 +215,9 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
                 ply.class.Name(className, sizeof(className));
                 PrintToChat(ply.id, " \x07[SCP] \x01Твой класс %s - %s", gClassName, className);
 
+                if (ply.class.GetPos() != null)
+                    ply.SetPos(ply.class.GetPos());
+
                 if (!IsFakeClient(ply.id)) SendConVarValue(ply.id, FindConVar("game_type"), "6");
             }
         }

@@ -94,6 +94,13 @@ methodmap Client < StringMap {
         KickClient(this.id, reason);
     }
 
+    public void SetPos(Vector vec) {
+        float vectorArr[3];
+        vec.GetArr(vectorArr);
+        TeleportEntity(this.id, vectorArr, NULL_VECTOR, NULL_VECTOR);
+        delete vec;
+    }
+
     public Vector GetPos() { float pos[3]; GetEntPropVector(this.GetInt("id"), Prop_Send, "m_vecOrigin", pos); return new Vector(pos[0], pos[1], pos[2]); }
 
     public void Spawn() {

@@ -12,6 +12,12 @@ methodmap Class < JSON_Object {
             this.GetString("name", buffer, max_size);
     }
 
+    public Vector GetPos() {
+        JSON_Array pos = view_as<JSON_Array>(this.GetObject("pos", new JSON_Array()));
+        if (pos.Length == 0) return null;
+        return new Vector(pos.GetFloat(0),pos.GetFloat(1),pos.GetFloat(2));
+    }
+
     property int percent {
         public get() { return this.GetInt("percent"); }
     }
