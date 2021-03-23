@@ -65,8 +65,6 @@ public void OnPluginStart()
     HookEvent("player_death", Event_PlayerDeath, EventHookMode_Pre);
     HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
     HookEntityOutput("trigger_teleport", "OnStartTouch", Event_OnTriggerActivation);
-
-    LoadFileToDownload();
 }
 
 public any NativeGetClient(Handle plugin, int numArgs)
@@ -128,16 +126,13 @@ public void OnMapStart()
 
     PrecacheSound(NUKE_EXPLOSION_SOUND);
     FakePrecacheSound(sound);
+    LoadFileToDownload();
     
     // ¯\_(ツ)_/¯
     if (!fixCache) {
         ForceChangeLevel(mapName, "Fix sound cached");
         fixCache = true;
     }
-
-    PrecacheModel("models/props/sl_physics/keycard5.mdl");
-    PrecacheModel("models/props_survival/upgrades/upgrade_dz_armor.mdl");
-    PrecacheModel("models/props_survival/upgrades/upgrade_dz_helmet.mdl");
 }
 
 public void OnClientConnected(int id) {
@@ -248,6 +243,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
             SCP_EndRound("nuke_explosion");
         }
     }
+
+    return Plugin_Handled;
 }
 
 public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) 
@@ -498,12 +495,24 @@ void LoadFileToDownload()
     
     if(hFile)
     {
+        int size = 0;
         char buffer[PLATFORM_MAX_PATH];
+        
         while(!IsEndOfFile(hFile) && ReadFileLine(hFile, buffer, sizeof(buffer)))
         {
             if(TrimString(buffer) > 2 && IsCharAlpha(buffer[0]))
             {
                 AddFileToDownloadsTable(buffer);
+                size = strlen(buffer);
+
+                if(StrContains(buffer, ".mdl", false) == (size - 4))
+                {
+                    PrecacheModel(buffer);
+                }
+                else if(StrContains(buffer, ".wav", false) == (size - 4) || StrContains(buffer, ".mp3", false) == (size - 4))
+                {
+                    FakePrecacheSound(buffer);
+                }
             }
         }
 
