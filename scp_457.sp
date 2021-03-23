@@ -66,23 +66,26 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
     {
         Client ply = Clients.Get(client);
 
-        char class[32];
-        ply.class.Name(class, sizeof(class));
-
-        if(StrEqual(class, "457"))
+        if (ply.class != null)
         {
-            SetEntityRenderMode(ply.id, RENDER_NORMAL);
+            char class[32];
+            ply.class.Name(class, sizeof(class));
 
-            if(particle != -1)
+            if(StrEqual(class, "457"))
             {
-                AcceptEntityInput(particle, "Kill");
-                particle = -1;
-            }
+                SetEntityRenderMode(ply.id, RENDER_NORMAL);
 
-            int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
-            if (ent > MaxClients && IsValidEdict(ent))
-            {
-                AcceptEntityInput(ent, "Kill");
+                if(particle != -1)
+                {
+                    AcceptEntityInput(particle, "Kill");
+                    particle = -1;
+                }
+
+                int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
+                if (ent > MaxClients && IsValidEdict(ent))
+                {
+                    AcceptEntityInput(ent, "Kill");
+                }
             }
         }
     }
