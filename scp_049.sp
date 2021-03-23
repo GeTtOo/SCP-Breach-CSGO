@@ -67,7 +67,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 				GetClientAbsOrigin(victim, pos);
 
 				Client vic = Clients.Get(victim);
-				//Тут меняем класс игроку и делаем туц туц туц 
+				vic.class = gamemode.gclass("SCP").class("049_2");
 				
 				CS_RespawnPlayer(victim);
 				TeleportEntity(victim, pos, NULL_VECTOR, NULL_VECTOR);
