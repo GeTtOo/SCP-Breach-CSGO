@@ -36,28 +36,32 @@ methodmap Inventory < StringMap {
         return self;
     }
 
-    public void Add(Entity ent) {
+    public void Add(char[] entclass) {
         ArrayList inv;
         this.GetValue("inventory", inv);
 
-        char class[32];
-        ent.GetClass(class, sizeof(class));
+        EntConfig entcfg = gamemode.entities.get(entclass);
 
-        Item itm = new Item(class);
+        char name[32];
+        entcfg.name(name, sizeof(name));
+
+        Item itm = new Item(entclass);
+        itm.name(name);
 
         inv.Push(itm);
     }
 
-    public bool TryAdd(Entity ent) {
+    public bool TryAdd(char[] entclass) {
         ArrayList inv;
         this.GetValue("inventory", inv);
 
         if (inv.Length <= 4) {
-            char class[32], name[32];
-            ent.GetClass(class, sizeof(class));
-            ent.name(name, sizeof(name));
+            EntConfig entcfg = gamemode.entities.get(entclass);
 
-            Item itm = new Item(class);
+            char name[32];
+            entcfg.name(name, sizeof(name));
+
+            Item itm = new Item(entclass);
             itm.name(name);
 
             inv.Push(itm);
