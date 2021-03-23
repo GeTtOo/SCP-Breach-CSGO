@@ -15,7 +15,7 @@ methodmap Client < StringMap {
         Client self = view_as<Client>(new StringMap());
         self.SetValue("id", id);
         self.SetValue("haveClass", false);
-        self.SetValue("inventory", new Inventory(id));
+        self.SetValue("inventory", new Inventory());
 
         return self;
     }
@@ -103,6 +103,8 @@ methodmap Client < StringMap {
 
     public Vector GetPos() { float pos[3]; GetEntPropVector(this.GetInt("id"), Prop_Send, "m_vecOrigin", pos); return new Vector(pos[0], pos[1], pos[2]); }
 
+    public void Give(char[] item) { GivePlayerItem(this.id, item); }
+
     public void Spawn() {
         Class class = this.class;
 
@@ -135,14 +137,14 @@ methodmap ClientSingleton < StringMap {
     public Client Add(int id) {
         Client clients[MAXPLAYERS + 1];
         this.GetArray("Clients", clients, sizeof(clients));
-        view_as<Client>(clients[id]) = view_as<Client>(new Client(id));
+        clients[id] = view_as<Client>(new Client(id));
         this.SetArray("Clients", clients, sizeof(clients));
     }
 
     public Client Remove(int id) {
         Client clients[MAXPLAYERS + 1];
         this.GetArray("Clients", clients, sizeof(clients));
-        delete view_as<Client>(clients[id]);
+        delete clients[id];
         this.SetArray("Clients", clients, sizeof(clients));
     }
 

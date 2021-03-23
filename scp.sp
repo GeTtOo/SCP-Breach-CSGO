@@ -84,12 +84,16 @@ public Action GetClientPos(int client, const char[] command, int argc)
     Vector vec1 = new Vector(plyPos.x - 200.0, plyPos.y - 200.0, plyPos.z - 200.0);
     Vector vec2 = new Vector(plyPos.x + 200.0, plyPos.y + 200.0, plyPos.z + 200.0);
 
-    ArrayList entArr = Ents.FindInBox(vec1, vec2);
+    ArrayList entArr = Ents.FindInBox(vec1, vec2, "func_");
 
     for(int i=0; i < entArr.Length; i++) 
     {
         Entity ent = entArr.Get(i, 0);
-        PrintToChat(ply.id, "%i", ent.id);
+
+        char entclass[32];
+        ent.GetClass(entclass, sizeof(entclass));
+        
+        PrintToChat(ply.id, "class: %s, id: %i", entclass, ent.id);
     }
 }
 
@@ -189,7 +193,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
             } 
         }
 
-        CreateTimer(0.2, Timer_PlayerSpawn, ply, TIMER_FLAG_NO_MAPCHANGE);
+        CreateTimer(0.004, Timer_PlayerSpawn, ply, TIMER_FLAG_NO_MAPCHANGE);
     }
 
     return Plugin_Continue;
@@ -217,6 +221,17 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
 
                 if (ply.class.GetPos() != null)
                     ply.SetPos(ply.class.GetPos());
+
+                if (ply.class.weapons != null)
+                    for (int i=0; i < ply.class.weapons.Length; i++) {
+                        char weapon[32];
+                        ply.class.weapons.GetString(i, weapon, sizeof(weapon));
+                        ply.Give(weapon);
+                    }
+                
+                if (ply.class.doors != null)
+                    for (int i=0; i < ply.class.doors.Length; i++)
+                        AcceptEntityInput(ply.class.doors.GetInt(i), "Open");
 
                 if (!IsFakeClient(ply.id)) SendConVarValue(ply.id, FindConVar("game_type"), "6");
             }

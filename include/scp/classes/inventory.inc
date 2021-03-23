@@ -30,9 +30,8 @@ methodmap Item < StringMap {
 
 methodmap Inventory < StringMap {
 
-    public Inventory(int id) {
+    public Inventory() {
         Inventory self = view_as<Inventory>(new StringMap());
-        self.SetValue("id", id);
         self.SetValue("inventory", new ArrayList());
         return self;
     }
@@ -83,6 +82,5 @@ methodmap Inventory < StringMap {
         ArrayList inv;
         this.GetValue("inventory", inv);
         inv.Clear();
-        this.SetValue("inventory", inv);
     }
 }

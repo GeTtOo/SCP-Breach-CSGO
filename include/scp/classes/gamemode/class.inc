@@ -42,6 +42,14 @@ methodmap Class < JSON_Object {
         public get() { return this.GetFloat("speed", 1.0); }
     }
 
+    property JSON_Array doors {
+        public get() { return view_as<JSON_Array>(this.GetObject("doors")); }
+    }
+
+    property JSON_Array weapons {
+        public get() { return view_as<JSON_Array>(this.GetObject("weapons")); }
+    }
+
     public bool Model(char[] buffer, int max_size) {
     this.GetString("model", buffer, max_size);
     }

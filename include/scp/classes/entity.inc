@@ -35,8 +35,8 @@ methodmap Entity < StringMap {
     }
 
     public void GetClass(char[] name, int max_size) {
-        this.GetString("class", name, max_size);
-        //GetEntityClassname(id, name, max_size);
+        if (!this.GetString("class", name, max_size))
+            GetEntityClassname(this.id, name, max_size);
     }
     
     public Entity SetPos(Vector vec) {
@@ -157,7 +157,7 @@ methodmap EntitySingleton < StringMap {
         entArr.Clear();
     }
 
-    public ArrayList FindInBox(Vector vecMin, Vector vecMax) {
+    public ArrayList FindInBox(Vector vecMin, Vector vecMax, char[] filter = "disable") {
         int entId = 0;
         ArrayList entArr = new ArrayList(128);
         
@@ -166,7 +166,7 @@ methodmap EntitySingleton < StringMap {
 
             char className[32];
             GetEntityClassname(entId, className, sizeof(className));
-            if ((StrContains(className, "prop_") != -1) || (StrContains(className, "weapon_") != -1)) {
+            if ((StrContains(className, "prop_") != -1) || (StrContains(className, "weapon_") != -1) || (StrContains(className, filter) != -1)) {
 
                 Entity ent = new Entity(entId);
 
