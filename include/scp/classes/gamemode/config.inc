@@ -13,6 +13,7 @@ methodmap Config < JSON_Object {
 
         self.SetObject("Doors", view_as<Doors>(ReadConfig(mapname, "doors")));
         self.SetObject("SpawnMap", view_as<JSON_Object>(ReadConfig(mapname, "spawn_map")));
+        self.SetObject("Regions", view_as<JSON_Array>(ReadConfig(mapname, "regions")));
 
         return self;
     }
@@ -31,6 +32,10 @@ methodmap Config < JSON_Object {
 
     property JSON_Object spawnmap { 
         public get() { return view_as<JSON_Object>(this.GetObject("SpawnMap")); }
+    }
+
+    property JSON_Array regions { 
+        public get() { return view_as<JSON_Array>(this.GetObject("Regions")); }
     }
 
     property float NukeTime {

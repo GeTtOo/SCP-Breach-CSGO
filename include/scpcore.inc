@@ -38,6 +38,12 @@ forward Action SCP_OnTakeDamage(Client vic, Client atk, float &damage, int &dama
 
 forward void SCP_OnButtonPressed(Client ply, int doorId);
 
+public any NativeGameMode_GetGClass(Handle Plugin, int numArgs) {
+    char name[32];
+    GetNativeString(2, name, sizeof(name));
+    return view_as<GlobalClasses>(gamemode.GetObject("GlobalClasses")).get(name);
+}
+
 public any NativeClients_Get(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
     Client clients[MAXPLAYERS + 1];

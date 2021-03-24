@@ -94,6 +94,4 @@ methodmap Manager < Base {
         this.GetValue("teams", teams);
         teams.Clear();
     }
-
-    
 }

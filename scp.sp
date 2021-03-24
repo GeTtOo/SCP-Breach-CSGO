@@ -31,6 +31,8 @@ public Plugin myinfo = {
 //////////////////////////////////////////////////////////////////////////////
 
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) {
+    CreateNative("GameMode.gclass", NativeGameMode_GetGClass);
+    
     CreateNative("ClientSingleton.Get", NativeClients_Get);
     CreateNative("ClientSingleton.GetRandom", NativeClients_GetRandom);
     CreateNative("ClientSingleton.InGame", NativeClients_InGame);
@@ -344,6 +346,7 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
             gamemode.mngr.TeamGet(gclass).count++;
         }
 
+        SetMapRegions();
         SpawnItemsOnMap();
     }
 }
@@ -599,6 +602,23 @@ public int InventoryHandler(Menu menu, MenuAction action, int client, int item) 
 //                                Functions
 //
 //////////////////////////////////////////////////////////////////////////////
+
+public void SetMapRegions() {
+    JSON_Array regions = gamemode.config.regions;
+
+    for (int i=0; i < regions.Length; i++) {
+        JSON_Object region = regions.GetObject(i);
+        JSON_Array pos = view_as<JSON_Array>(region.GetObject("pos"));
+        char radius[5], name[128];
+        IntToString(region.GetInt("radius"),radius,sizeof(radius));
+        region.GetString("name",name,sizeof(name));
+
+        Entity ent = Ents.Create("info_map_region").SetPos(new Vector(pos.GetFloat(0),pos.GetFloat(1),pos.GetFloat(2)));
+        DispatchKeyValue(ent.id,"radius",radius);
+        DispatchKeyValue(ent.id,"token",name);
+        ent.Spawn();
+    }
+}
 
 public void SpawnItemsOnMap() {
     JSON_Object spawnmap = gamemode.config.spawnmap;
