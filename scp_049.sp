@@ -31,7 +31,7 @@ public Plugin myinfo = {
 
 public void OnPluginStart()
 {
-	HookEvent("player_death", Event_PlayerDeath, EventHookMode_Post);
+	HookEvent("player_death", Event_PlayerDeath);
 }
 
 public void SCP_OnPlayerJoin(Client &ply) 
@@ -49,33 +49,29 @@ public void OnMapStart()
 
 public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
-	int attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
+	Client atk = Clients.Get(GetClientOfUserId(GetEventInt(event, "attacker")));
 
-	if(IsClientExist(attacker))
+	if(atk != null && atk.class != null)
 	{
 		char attackerClass[32];
-		Client atk = Clients.Get(attacker);
 		atk.class.Name(attackerClass, sizeof(attackerClass));
 
 		if(StrEqual(attackerClass, "049"))
 		{
-			int victim = GetClientOfUserId(GetEventInt(event, "userid"));
+			Client vic = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
 
-			if(IsClientExist(victim) && !IsPlayerAlive(victim) && !IsClientInSpec(victim))
+			if(atk != null && atk.class != null && IsClientExist(vic.id) && !IsPlayerAlive(vic.id) && !IsClientInSpec(vic.id))
 			{
 				float pos[3];
-				GetClientAbsOrigin(victim, pos);
+				GetClientAbsOrigin(vic.id, pos);
 
-				Client vic = Clients.Get(victim);
 				vic.class = gamemode.gclass("SCP").class("049_2");
 				
-				CS_RespawnPlayer(victim);
-				TeleportEntity(victim, pos, NULL_VECTOR, NULL_VECTOR);
+				CS_RespawnPlayer(vic.id);
+				TeleportEntity(vic.id, pos, NULL_VECTOR, NULL_VECTOR);
 			}
 		}
 	}
-
-	return Plugin_Continue;
 }
 
 public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
