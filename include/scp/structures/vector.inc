@@ -1,4 +1,4 @@
-methodmap Vector < StringMap {
+methodmap Vector < Base {
 
     public Vector(float x, float y, float z) {
         Vector vec = view_as<Vector>(new StringMap());
@@ -11,21 +11,40 @@ methodmap Vector < StringMap {
     }
 
     property float x {
-        public get() { float x; return this.GetValue("x", x) ? x : 0.0; }
+        public set(float x) { this.SetFloat("x", x); }
+        public get() { return this.GetFloat("x"); }
     }
 
     property float y {
-        public get() { float y; return this.GetValue("y", y) ? y : 0.0; }
+        public set(float y) { this.SetFloat("y", y); }
+        public get() { return this.GetFloat("y"); }
     }
 
     property float z {
-        public get() { float z; return this.GetValue("z", z) ? z : 0.0; }
+        public set(float z) { this.SetFloat("z", z); }
+        public get() { return this.GetFloat("z"); }
     }
 
     public void GetArr(float[3] vec) {
         vec[0] = this.x;
         vec[1] = this.y;
         vec[2] = this.z;
+    }
+
+    public Vector Plus(Vector vec2) {
+        this.x += vec2.x;
+        this.y += vec2.y;
+        this.z += vec2.z;
+
+        return this;
+    }
+
+    public Vector Minus(Vector vec2) {
+        this.x -= vec2.x;
+        this.y -= vec2.y;
+        this.z -= vec2.z;
+
+        return this;
     }
 }
 
