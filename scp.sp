@@ -93,6 +93,12 @@ public Action GetClientPos(int client, const char[] command, int argc)
         
         PrintToChat(ply.id, "class: %s, id: %i", entclass, ent.id);
     }
+
+    for (int i=0; i < gamemode.mngr.teams.Length; i++) {
+        char ClassName[32];
+        view_as<Item>(gamemode.mngr.teams.Get(i)).GetString("name", ClassName, sizeof(ClassName));
+        PrintToChat(ply.id, "Class: %s, count: %i", ClassName, gamemode.mngr.TeamGet(ClassName).count);
+    }
 }
 
 public Action TpTo914(int client, const char[] command, int argc)
@@ -217,6 +223,13 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
                 if (ply.class.GetPos() != null)
                     ply.SetPos(ply.class.GetPos());
 
+                if (ply.class.items != null)
+                    for (int i=0; i < ply.class.items.Length; i++) {
+                        char entclass[32];
+                        ply.class.items.GetString(i, entclass, sizeof(entclass));
+                        ply.inv.TryAdd(entclass);
+                    }
+
                 if (ply.class.weapons != null)
                     for (int i=0; i < ply.class.weapons.Length; i++) {
                         char weapon[32];
@@ -242,6 +255,21 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         {
             SCP_EndRound("nuke_explosion");
         }
+        else
+        {
+            Client ply = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
+
+            if (ply != null && ply.class != null)
+            {
+                char gclass[32];
+                ply.gclass(gclass, sizeof(gclass));
+                gamemode.mngr.TeamGet(gclass).count--;
+                
+                char winTeam[32];
+                if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
+                    SCP_EndRound(winTeam);
+            }
+        }
     }
 
     return Plugin_Handled;
@@ -253,6 +281,7 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
     {
         gamemode.mngr.RoundComplete = false;
         gamemode.mngr.IsNuked = false;
+        gamemode.mngr.Reset();
         
         StringMapSnapshot gClassNameS = gamemode.GetGlobalClassNames();
         int gClassCount, classCount, extra = 0;
@@ -264,6 +293,8 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
             char[] gClassKey = new char[keyLen];
             gClassNameS.GetKey(i, gClassKey, keyLen);
             if (json_is_meta_key(gClassKey)) continue;
+
+            gamemode.mngr.RegisterTeam(gClassKey);
 
             GlobalClass gclass = gamemode.gclass(gClassKey);
 
@@ -293,6 +324,8 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
                     player.class = class;
                     player.haveClass = true;
 
+                    gamemode.mngr.TeamGet(gClassKey).count++;
+
                     extra++;
                 }
             }
@@ -307,6 +340,8 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
             player.gclass(gclass);
             player.class = gamemode.gclass(gclass).class(class);
             player.haveClass = true;
+
+            gamemode.mngr.TeamGet(gclass).count++;
         }
 
         SpawnItemsOnMap();
@@ -538,7 +573,7 @@ public SDKHookCB Callback_EntUse(int eid, int cid) {
     ent.GetClass(entClassName, sizeof(entClassName));
 
     if (gamemode.entities.HasKey(entClassName))
-        if (ply.inv.TryAdd(ent))
+        if (ply.inv.TryAdd(entClassName))
             Ents.Remove(ent.id);
         else
             PrintToChat(ply.id, " \x07[SCP] \x01Твой инвентарь переполнен");

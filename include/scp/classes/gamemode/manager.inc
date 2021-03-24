@@ -2,17 +2,27 @@
 /*----------------------------------------------------Round Manager-----------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
-methodmap Statistics < JSON_Object {
+methodmap Team < Base {
     
-    public Statistics() {
-        return view_as<Statistics>(new JSON_Object());
+    public Team(char[] name) {
+        Team t = view_as<Team>(new StringMap());
+        t.SetString("name", name);
+        return t;
     }
+
+    property int count {
+        public set(int val) { this.SetInt("count", val); }
+        public get() { return this.GetInt("count", 0); }
+    }
+    
 }
 
-methodmap Manager < JSON_Object {
+methodmap Manager < Base {
 
     public Manager() {
-        return view_as<Manager>(new JSON_Object());
+        Manager mngr = view_as<Manager>(new StringMap());
+        mngr.SetValue("teams", new ArrayList());
+        return mngr;
     }
 
     property int PlayerCollisionGroup {
@@ -29,9 +39,61 @@ methodmap Manager < JSON_Object {
         public set(bool value) { this.SetBool("roundcomplete", value); }
         public get() { return this.GetBool("roundcomplete"); }
     }
-
-    property Statistics stats {
-        public set(Statistics value) { this.SetObject("statistics", value); }
-        public get() { return view_as<Statistics>(this.GetObject("statistics")); }
+    
+    public bool RegisterTeam(char[] name) {
+        ArrayList teams;
+        this.GetValue("teams", teams);
+        teams.Push(new Team(name));
     }
+
+    property ArrayList teams {
+        public get() { ArrayList teams; return this.GetValue("teams", teams) ? teams : null; }
+    }
+
+    public Team TeamGet(char[] name) {
+        ArrayList teams;
+        this.GetValue("teams", teams);
+
+        for (int i=0; i < teams.Length; i++) {
+            char teamName[32];
+            Team cur = teams.Get(i);
+            cur.GetString("name", teamName, sizeof(teamName));
+
+            if (StrEqual(teamName, name))
+                return cur;
+        }
+
+        return null;
+    }
+
+    public bool CheckTeamStatus(char[] buffer, int max_size) {
+        ArrayList teams;
+        this.GetValue("teams", teams);
+
+        int TeamAlive = 0;
+        char winTeam[32];
+        
+        for (int i=0; i < teams.Length; i++) {
+            Team team = teams.Get(i);
+            if (team.count > 0) {
+                TeamAlive++;
+                team.GetString("name", winTeam, sizeof(winTeam));
+            }
+        }
+        
+        if (TeamAlive == 1) {
+            Format(buffer, max_size, winTeam);
+            return true;
+        }
+
+        return false;
+    }
+
+    public void Reset() {
+        ArrayList teams;
+        this.GetValue("teams", teams);
+        teams.Clear();
+    }
+
+    
 }

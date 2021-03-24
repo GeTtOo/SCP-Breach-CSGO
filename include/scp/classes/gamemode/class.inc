@@ -46,6 +46,10 @@ methodmap Class < JSON_Object {
         public get() { return view_as<JSON_Array>(this.GetObject("doors")); }
     }
 
+    property JSON_Array items {
+        public get() { return view_as<JSON_Array>(this.GetObject("items")); }
+    }
+
     property JSON_Array weapons {
         public get() { return view_as<JSON_Array>(this.GetObject("weapons")); }
     }
