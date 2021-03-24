@@ -31,7 +31,7 @@ public Plugin myinfo = {
 
 public void OnPluginStart()
 {
-	HookEvent("player_death", Event_PlayerDeath);
+	HookEvent("player_death", Event_PlayerDeath, EventHookMode_Post);
 }
 
 public void SCP_OnPlayerJoin(Client &ply) 
@@ -104,6 +104,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 {
 	char attackerClass[32];
 	Client atk = Clients.Get(attacker);
+	if (atk == null) return Plugin_Continue;
 	atk.class.Name(attackerClass, sizeof(attackerClass)); 
 
 	if(StrEqual(attackerClass, "049"))

@@ -38,6 +38,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 {
     Client vic = Clients.Get(victim), atk = Clients.Get(attacker);
     
+    if (atk == null) return Plugin_Continue;
     char victimClass[32], attackerClass[32];
     vic.class.Name(victimClass, sizeof(victimClass));
     
