@@ -31,7 +31,7 @@ public Plugin myinfo = {
 //////////////////////////////////////////////////////////////////////////////
 
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) {
-    CreateNative("GameMode.gclass", NativeGameMode_GetGClass);
+    CreateNative("GameMode.team", NativeGameMode_GetTeam);
     
     CreateNative("ClientSingleton.Get", NativeClients_Get);
     CreateNative("ClientSingleton.GetRandom", NativeClients_GetRandom);
@@ -59,6 +59,7 @@ public void OnPluginStart()
     AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
     AddCommandListener(GetClientPos, "getmypos");
     AddCommandListener(TpTo914, "tp914");
+    
     RegServerCmd("ents", CmdEnts);
     RegServerCmd("scp", CmdSCP);
 
@@ -244,10 +245,10 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
 
             if (gamemode.config.debug) 
             {
-                char gClassName[32], className[32];
-                ply.gclass(gClassName, sizeof(gClassName));
+                char teamName[32], className[32];
+                ply.team(teamName, sizeof(teamName));
                 ply.class.Name(className, sizeof(className));
-                PrintToChat(ply.id, " \x07[SCP] \x01Твой класс %s - %s", gClassName, className);
+                PrintToChat(ply.id, " \x07[SCP] \x01Твой класс %s - %s", teamName, className);
 
                 if (ply.class.GetPos() != null)
                     ply.SetPos(ply.class.GetPos());
@@ -290,9 +291,9 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
             if (ply != null && ply.class != null)
             {
-                char gclass[32];
-                ply.gclass(gclass, sizeof(gclass));
-                gamemode.mngr.TeamGet(gclass).count--;
+                char team[32];
+                ply.team(team, sizeof(team));
+                gamemode.mngr.TeamGet(team).count--;
                 
                 char winTeam[32];
                 if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
@@ -312,25 +313,25 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
         gamemode.mngr.IsNuked = false;
         gamemode.mngr.Reset();
         
-        StringMapSnapshot gClassNameS = gamemode.GetGlobalClassNames();
-        int gClassCount, classCount, extra = 0;
+        StringMapSnapshot teamNameS = gamemode.GetGlobalClassNames();
+        int teamCount, classCount, extra = 0;
         int keyLen;
 
-        for (int i = 0; i < gClassNameS.Length; i++) 
+        for (int i = 0; i < teamNameS.Length; i++) 
         {
-            keyLen = gClassNameS.KeyBufferSize(i);
-            char[] gClassKey = new char[keyLen];
-            gClassNameS.GetKey(i, gClassKey, keyLen);
-            if (json_is_meta_key(gClassKey)) continue;
+            keyLen = teamNameS.KeyBufferSize(i);
+            char[] teamKey = new char[keyLen];
+            teamNameS.GetKey(i, teamKey, keyLen);
+            if (json_is_meta_key(teamKey)) continue;
 
-            gamemode.mngr.RegisterTeam(gClassKey);
+            gamemode.mngr.RegisterTeam(teamKey);
 
-            GlobalClass gclass = gamemode.gclass(gClassKey);
+            GlobalClass team = gamemode.team(teamKey);
 
-            gClassCount = Clients.InGame() * gclass.percent / 100;
-            gClassCount = (gClassCount != 0 || !gclass.priority) ? gClassCount : 1;
+            teamCount = Clients.InGame() * team.percent / 100;
+            teamCount = (teamCount != 0 || !team.priority) ? teamCount : 1;
             
-            StringMapSnapshot classNameS = gclass.GetClassNames();
+            StringMapSnapshot classNameS = team.GetClassNames();
             int classKeyLen;
 
             for (int v = 0; v < classNameS.Length; v++) 
@@ -340,20 +341,20 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
                 classNameS.GetKey(v, classKey, classKeyLen);
                 if (json_is_meta_key(classKey)) continue;
 
-                Class class = gclass.class(classKey);
+                Class class = team.class(classKey);
 
-                classCount = gClassCount * class.percent / 100;
+                classCount = teamCount * class.percent / 100;
                 classCount = (classCount != 0 || !class.priority) ? classCount : 1;
 
                 for (int scc = 1; scc <= classCount; scc++) 
                 {
                     if (extra > Clients.InGame()) break;
                     Client player = Clients.GetRandomWithoutClass();
-                    player.gclass(gClassKey);
+                    player.team(teamKey);
                     player.class = class;
                     player.haveClass = true;
 
-                    gamemode.mngr.TeamGet(gClassKey).count++;
+                    gamemode.mngr.TeamGet(teamKey).count++;
 
                     extra++;
                 }
@@ -363,14 +364,14 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
         for (int i = 1; i <= Clients.InGame() - extra; i++) 
         {
             Client player = Clients.GetRandomWithoutClass();
-            char gclass[32], class[32];
-            gamemode.config.DefaultGlobalClass(gclass, sizeof(gclass));
+            char team[32], class[32];
+            gamemode.config.DefaultGlobalClass(team, sizeof(team));
             gamemode.config.DefaultClass(class, sizeof(class));
-            player.gclass(gclass);
-            player.class = gamemode.gclass(gclass).class(class);
+            player.team(team);
+            player.class = gamemode.team(team).class(class);
             player.haveClass = true;
 
-            gamemode.mngr.TeamGet(gclass).count++;
+            gamemode.mngr.TeamGet(team).count++;
         }
 
         SetMapRegions();

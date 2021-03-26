@@ -57,11 +57,11 @@ methodmap Client < Base {
         public get() { return this.GetBool("haveClass", false); }
     }
 
-    public void gclass(char[] buffer, int max_size = 0) {
+    public void team(char[] buffer, int max_size = 0) {
         if (max_size == 0)
-            this.SetString("gclass", buffer);
+            this.SetString("team", buffer);
         else
-            this.GetString("gclass", buffer, max_size);
+            this.GetString("team", buffer, max_size);
     }
 
     property Class class {
@@ -70,7 +70,7 @@ methodmap Client < Base {
     }
 
     property bool IsSCP {
-        public get() { char gclass[32]; this.GetString("gclass", gclass, sizeof(gclass)); return StrEqual(gclass, "SCP"); }
+        public get() { char team[32]; this.GetString("team", team, sizeof(team)); return StrEqual(team, "SCP"); }
     }
 
     property int access {

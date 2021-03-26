@@ -38,7 +38,7 @@ forward Action SCP_OnTakeDamage(Client vic, Client atk, float &damage, int &dama
 
 forward void SCP_OnButtonPressed(Client &ply, int doorId);
 
-public any NativeGameMode_GetGClass(Handle Plugin, int numArgs) {
+public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
     char name[32];
     GetNativeString(2, name, sizeof(name));
     return view_as<GlobalClasses>(gamemode.GetObject("GlobalClasses")).get(name);

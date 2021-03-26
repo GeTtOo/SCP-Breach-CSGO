@@ -65,7 +65,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 				float pos[3];
 				GetClientAbsOrigin(vic.id, pos);
 
-				vic.class = gamemode.gclass("SCP").class("049_2");
+				vic.class = gamemode.team("SCP").class("049_2");
 				
 				CS_RespawnPlayer(vic.id);
 				TeleportEntity(vic.id, pos, NULL_VECTOR, NULL_VECTOR);

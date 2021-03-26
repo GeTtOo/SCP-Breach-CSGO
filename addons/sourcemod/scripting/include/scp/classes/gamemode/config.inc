@@ -18,8 +18,8 @@ methodmap Config < JSON_Object {
         return self;
     }
     
-    public void DefaultGlobalClass(char[] gclass, int max_size) {
-        this.GetString("DefaultGlobalClass", gclass, max_size);
+    public void DefaultGlobalClass(char[] team, int max_size) {
+        this.GetString("DefaultGlobalClass", team, max_size);
     }
 
     public void DefaultClass(char[] class, int max_size) {

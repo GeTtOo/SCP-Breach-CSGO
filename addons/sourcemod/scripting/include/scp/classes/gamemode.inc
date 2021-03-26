@@ -68,7 +68,7 @@ methodmap GameMode < JSON_Object {
         public get() { return view_as<Manager>(this.GetObject("Manager")); }
     }
 
-    public native GlobalClass gclass(char[] name);
+    public native GlobalClass team(char[] name);
 
     property Entities entities {
         public get() { return view_as<Entities>(this.GetObject("Entities")); }

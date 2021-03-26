@@ -47,13 +47,13 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
                             }
                             else if(IsPlayerAlive(target))
                             {
-                                char gclass[32], subclass[32];
+                                char team[32], subclass[32];
 
                                 ply = Clients.Get(target);
-                                ply.gclass(gclass, sizeof(gclass));
+                                ply.team(team, sizeof(team));
                                 ply.class.Name(subclass, sizeof(subclass));
                                 
-                                PrintToChat(client, " \x07[SCP] \x01%N: \x07%s: %s", target, gclass, subclass);
+                                PrintToChat(client, " \x07[SCP] \x01%N: \x07%s: %s", target, team, subclass);
                             }
                             else
                             {
