@@ -41,7 +41,7 @@ forward void SCP_OnButtonPressed(Client &ply, int doorId);
 public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
     char name[32];
     GetNativeString(2, name, sizeof(name));
-    return view_as<GlobalClasses>(gamemode.GetObject("GlobalClasses")).get(name);
+    return view_as<Teams>(gamemode.GetObject("Teams")).get(name);
 }
 
 public any NativeClients_Get(Handle Plugin, int numArgs) {

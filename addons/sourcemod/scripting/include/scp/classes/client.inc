@@ -5,6 +5,7 @@
 #pragma newdecls required
 
 #include <sdktools>
+#include <cstrike>
 #include <json>
 
 #include "scp/classes/inventory"
@@ -104,19 +105,41 @@ methodmap Client < Base {
     public void Give(char[] item) { GivePlayerItem(this.id, item); }
 
     public void Spawn() {
-        Class class = this.class;
+        this.health = this.class.health;
+        this.armor = this.class.armor;
+        this.speed = this.class.speed;
 
-        this.health = class.health;
-        this.armor = class.armor;
-        this.speed = class.speed;
+        if (this.class.GetPos() != null)
+            this.SetPos(this.class.GetPos());
+
+        if (this.class.items != null)
+            for (int i=0; i < this.class.items.Length; i++) {
+                char entclass[32];
+                this.class.items.GetString(i, entclass, sizeof(entclass));
+                this.inv.TryAdd(entclass);
+            }
+
+        if (this.class.weapons != null)
+            for (int i=0; i < this.class.weapons.Length; i++) {
+                char weapon[32];
+                this.class.weapons.GetString(i, weapon, sizeof(weapon));
+                this.Give(weapon);
+            }
+        
+        if (this.class.doors != null)
+            for (int i=0; i < this.class.doors.Length; i++)
+                AcceptEntityInput(this.class.doors.GetInt(i), "Open");
 
         char playerModel[128], playerHandsModel[128];
 
-        class.Model(playerModel, sizeof(playerModel));
-        class.HandsModel(playerHandsModel, sizeof(playerHandsModel));
+        this.class.Model(playerModel, sizeof(playerModel));
+        this.class.HandsModel(playerHandsModel, sizeof(playerHandsModel));
 
         //this.SetModel(playerModel);
         //this.SetHandsModel(playerHandsModel);
+
+        if (!IsPlayerAlive(this.id))
+            CS_RespawnPlayer(this.id);
     }
 }
 

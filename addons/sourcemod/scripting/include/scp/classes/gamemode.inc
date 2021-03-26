@@ -13,7 +13,7 @@ methodmap Classes < JSON_Object {
     public Class get(char[] name) { Class class = view_as<Class>(this.GetObject(name)); class.Name(name); return class; }
 }
 
-methodmap GlobalClass < JSON_Object {
+methodmap GTeam < JSON_Object {
 
     property int percent {
         public get() { return this.GetInt("percent"); }
@@ -36,24 +36,24 @@ methodmap GlobalClass < JSON_Object {
     }
 }
 
-methodmap GlobalClasses < JSON_Object {
+methodmap Teams < JSON_Object {
     
-    public GlobalClasses(char[] mapname) {
-        return view_as<GlobalClasses>(ReadConfig(mapname, "classes"));
+    public Teams(char[] mapname) {
+        return view_as<Teams>(ReadConfig(mapname, "classes"));
     }
 
     public void Add(char[] name, Class class) {
         this.SetObject(name, class);
     }
 
-    public GlobalClass get(char[] name) { return view_as<GlobalClass>(this.GetObject(name)); }
+    public GTeam get(char[] name) { return view_as<GTeam>(this.GetObject(name)); }
 }
 
 methodmap GameMode < JSON_Object {
     
     public GameMode(char[] mapname) {
         GameMode self = view_as<GameMode>(new JSON_Object());
-        self.SetObject("GlobalClasses", new GlobalClasses(mapname));
+        self.SetObject("Teams", new Teams(mapname));
         self.SetObject("Entities", new Entities(mapname));
         self.SetObject("Config", new Config(mapname));
         self.SetValue("Manager", new Manager());
@@ -68,14 +68,14 @@ methodmap GameMode < JSON_Object {
         public get() { return view_as<Manager>(this.GetObject("Manager")); }
     }
 
-    public native GlobalClass team(char[] name);
+    public native GTeam team(char[] name);
 
     property Entities entities {
         public get() { return view_as<Entities>(this.GetObject("Entities")); }
     }
 
     public StringMapSnapshot GetGlobalClassNames() {
-        return this.GetObject("GlobalClasses").Snapshot();
+        return this.GetObject("Teams").Snapshot();
     }
 }
 

@@ -55,15 +55,16 @@ public void OnPluginStart()
 {   
     Clients = new ClientSingleton();
     Ents = new EntitySingleton();
-
-    AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
-    AddCommandListener(GetClientPos, "getmypos");
-    AddCommandListener(TpTo914, "tp914");
     
     RegServerCmd("ents", CmdEnts);
     RegServerCmd("scp", CmdSCP);
 
     RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_BAN);
+    RegAdminCmd("respawn", PlayerRespawn, ADMFLAG_BAN);
+
+    AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
+    AddCommandListener(GetClientPos, "getmypos");
+    AddCommandListener(TpTo914, "tp914");
     
     HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
     HookEvent("round_start", OnRoundStart);
@@ -141,6 +142,28 @@ public Action TpTo914(int client, const char[] command, int argc)
     float pos[3] = {3100.0, -2231.0, 0.0};
     float ang[3] = {0.0, 0.0, 0.0};
     TeleportEntity(client, pos, ang, NULL_VECTOR);
+}
+
+public Action PlayerRespawn(int client,int args)
+{
+    char teamName[32], className[32];
+    GetCmdArg(1, teamName, sizeof(teamName));
+    GetCmdArg(2, className, sizeof(className));
+    
+    Client ply = Clients.Get(client);
+
+    GTeam gteam = gamemode.team(teamName);
+
+    if (gteam != null && gteam.classes.HasKey(className)) {
+        ply.team(teamName);
+        ply.class = gteam.class(className);
+
+        ply.Spawn();
+    } else {
+        PrintToConsole(ply.id, "Ошибка в идентификаторе команды/класса");
+    }
+    
+    return Plugin_Stop;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -236,12 +259,15 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
         SetEntData(ply.id, gamemode.mngr.PlayerCollisionGroup, 2, 4, true);
         EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
 
-        if (ply.class != null) {
+        if (ply != null && ply.class != null) {
             Call_StartForward(OnClientSpawnForward);
             Call_PushCellRef(ply);
             Call_Finish();
 
             ply.Spawn();
+
+            if (!IsFakeClient(ply.id))
+                SendConVarValue(ply.id, FindConVar("game_type"), "6");
 
             if (gamemode.config.debug) 
             {
@@ -249,29 +275,6 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
                 ply.team(teamName, sizeof(teamName));
                 ply.class.Name(className, sizeof(className));
                 PrintToChat(ply.id, " \x07[SCP] \x01Твой класс %s - %s", teamName, className);
-
-                if (ply.class.GetPos() != null)
-                    ply.SetPos(ply.class.GetPos());
-
-                if (ply.class.items != null)
-                    for (int i=0; i < ply.class.items.Length; i++) {
-                        char entclass[32];
-                        ply.class.items.GetString(i, entclass, sizeof(entclass));
-                        ply.inv.TryAdd(entclass);
-                    }
-
-                if (ply.class.weapons != null)
-                    for (int i=0; i < ply.class.weapons.Length; i++) {
-                        char weapon[32];
-                        ply.class.weapons.GetString(i, weapon, sizeof(weapon));
-                        ply.Give(weapon);
-                    }
-                
-                if (ply.class.doors != null)
-                    for (int i=0; i < ply.class.doors.Length; i++)
-                        AcceptEntityInput(ply.class.doors.GetInt(i), "Open");
-
-                if (!IsFakeClient(ply.id)) SendConVarValue(ply.id, FindConVar("game_type"), "6");
             }
         }
     }
@@ -326,7 +329,7 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
 
             gamemode.mngr.RegisterTeam(teamKey);
 
-            GlobalClass team = gamemode.team(teamKey);
+            GTeam team = gamemode.team(teamKey);
 
             teamCount = Clients.InGame() * team.percent / 100;
             teamCount = (teamCount != 0 || !team.priority) ? teamCount : 1;
