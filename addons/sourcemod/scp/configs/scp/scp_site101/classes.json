@@ -1,0 +1,103 @@
+{
+    "MOG": {
+        "percent":40,
+        "priority":false,
+        "Classes": {
+            "Commander": {
+                "pos":[-10740.0,-5950.0,1715.0],
+                "percent":10,
+                "priority":true,
+                "escape":false,
+                "model":".mdl",
+                "health":100,
+                "armor":100,
+                "speed":1.2,
+                "items":["card_o5"],
+                "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer", "weapon_tablet"],
+                "comment":"test"
+            },
+            "Operator": {
+                "pos":[-10800.0,-5950.0,1715.0],
+                "percent":40,
+                "model":".mdl",
+                "items":["card_o5"],
+                "weapons":["weapon_m4a1", "weapon_hkp2000", "weapon_tablet"]
+            },
+            "Security": {
+                "pos":[-11040.0,-1735.0,2.0],
+                "percent":30,
+                "escape":true,
+                "model":".mdl",
+                "items":["card_o5"],
+                "weapons":["weapon_usp_silencer"]
+            },
+            "Scientist": {
+                "percent":20,
+                "escape":true,
+                "model":".mdl",
+                "items":["card_o5"]
+            }
+        }
+    },
+    "Chaos": {
+        "percent":40,
+        "priority":false,
+        "Classes": {
+            "Soldier": {
+                "percent":20,
+                "model":".mdl",
+                "health":180,
+                "armor":200,
+                "speed":0.9,
+                "items":["card_o5"],
+                "weapons":["weapon_ak47"]
+            },
+            "D Class": {
+                "percent":80,
+                "priority":true,
+                "escape":true,
+                "model":".mdl",
+                "health":100,
+                "comment":"test"
+            }
+        }
+    },
+    "SCP": {
+        "percent":20,
+        "priority":true,
+        "Classes": {
+            "049": {
+                "pos":[-8455.0,975.0,2.0],
+                "percent":50,
+                "model":".mdl",
+                "health":7800,
+                "doors":[81,82],
+                "comment":"The Doctor :d"
+            },
+            "049_2": {
+                "percent":0,
+                "model":".mdl",
+                "health":7800,
+                "comment":"049-2"
+            },
+            "173": {
+                "percent":25,
+                "model":".mdl",
+                "health":8000,
+                "speed":4.2,
+                "comment":"173"
+            },
+            "457": {
+                "pos":[-5200.0,-3030.0,2.0],
+                "percent":25,
+                "priority":true,
+                "model":".mdl",
+                "health":4000,
+                "armor":2000,
+                "speed":1.2,
+                "doors":[379],
+                "comment":"Fire man"
+            }
+        }
+    }
+}

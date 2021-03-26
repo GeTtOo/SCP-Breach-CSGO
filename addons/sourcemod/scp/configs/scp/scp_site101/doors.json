@@ -1,0 +1,67 @@
+{
+    "274319": {
+        "location":"Main Gate",
+        "access":0,
+        "scp":false
+    },
+    "311463": {
+        "location":"A Gate Hall",
+        "access":3,
+        "scp":false
+    },
+    "311460": {
+        "location":"A Gate Hall",
+        "access":3,
+        "scp":false
+    },
+    "337582": {
+        "location":"A Gate Lift escape zone side",
+        "access":1,
+        "scp":false
+    },
+    "329820": {
+        "location":"B Gate",
+        "access":3,
+        "scp":false
+    },
+    "329781": {
+        "location":"B Gate",
+        "access":3,
+        "scp":false
+    },
+    "312244": {
+        "location":"079 door",
+        "access":2,
+        "scp":true
+    },
+    "310622": {
+        "location":"049 hall",
+        "access":2,
+        "scp":true
+    },
+    "370644": {
+        "location":"049 camera",
+        "access":4,
+        "scp":true
+    },
+    "286411": {
+        "location":"457 hall",
+        "access":2,
+        "scp":true
+    },
+    "286460": {
+        "location":"457 camera",
+        "access":4,
+        "scp":true
+    },
+    "302597": {
+        "location":"SCP 996 hall",
+        "access":2,
+        "scp":true
+    },
+    "302774": {
+        "location":"SCP 996 camera",
+        "access":4,
+        "scp":true
+    }
+}
