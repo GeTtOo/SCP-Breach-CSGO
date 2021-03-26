@@ -36,7 +36,7 @@ forward void SCP_OnPlayerSpawn(Client &ply);
 
 forward Action SCP_OnTakeDamage(Client vic, Client atk, float &damage, int &damagetype);
 
-forward void SCP_OnButtonPressed(Client ply, int doorId);
+forward void SCP_OnButtonPressed(Client &ply, int doorId);
 
 public any NativeGameMode_GetGClass(Handle Plugin, int numArgs) {
     char name[32];
@@ -90,5 +90,17 @@ public any NativeEntities_Get(Handle Plugin, int numArgs) {
         if (view_as<Entity>(entArr.Get(i, 0)).id == id)
             return view_as<Entity>(entArr.Get(i, 0));
 
-    return view_as<Entity>(0);
+    return view_as<Entity>(null);
+}
+
+public any NativeEntities_TryGetOrAdd(Handle Plugin, int numArgs) {
+    int id = GetNativeCell(2);
+    ArrayList entArr;
+    Ents.GetValue("Entities", entArr);
+
+    for(int i=0; i < entArr.Length; i++)
+        if (view_as<Entity>(entArr.Get(i, 0)).id == id)
+            return view_as<Entity>(entArr.Get(i, 0));
+
+    return view_as<Entity>(Ents.Add(id));
 }

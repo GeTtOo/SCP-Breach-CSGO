@@ -9,7 +9,7 @@
 
 #include "scp/classes/inventory"
 
-methodmap Client < StringMap {
+methodmap Client < Base {
 
     public Client(int id) {
         Client self = view_as<Client>(new StringMap());
@@ -19,8 +19,6 @@ methodmap Client < StringMap {
 
         return self;
     }
-
-    public int GetInt(char[] index) { int buf; return this.GetValue(index, buf) ? buf : 0; }
     ///////////////////////////Logic in player object/////////////////////////////////
 
     property int id {
@@ -55,8 +53,8 @@ methodmap Client < StringMap {
     }
 
     property bool haveClass {
-        public set(bool value) { this.SetValue("haveClass", value); }
-        public get() { bool value; return this.GetValue("haveClass", value) ? value : false; }
+        public set(bool value) { this.SetBool("haveClass", value); }
+        public get() { return this.GetBool("haveClass", false); }
     }
 
     public void gclass(char[] buffer, int max_size = 0) {
@@ -76,13 +74,13 @@ methodmap Client < StringMap {
     }
 
     property int access {
-        public set(int card) { this.SetValue("access", card); }
-        public get() { int card; return this.GetValue("access", card) ? card : 0; }
+        public set(int card) { this.SetInt("access", card); }
+        public get() { return this.GetInt("access", 0); }
     }
 
     property bool FullAccess {
-        public set(bool card) { this.SetValue("fullaccess", card); }
-        public get() { bool card; return this.GetValue("fullaccess", card) ? card : false; }
+        public set(bool card) { this.SetBool("fullaccess", card); }
+        public get() { return this.GetBool("fullaccess", false); }
     }
 
     property Inventory inv {

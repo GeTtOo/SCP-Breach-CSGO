@@ -92,8 +92,52 @@ methodmap EntitySingleton < StringMap {
         self.SetValue("Entities", entArr);
         return self;
     }
+
+    public ArrayList GetAll() {
+        ArrayList entArr;
+        this.GetValue("Entities", entArr);
+        return entArr;
+    }
+
+    public Entity Add(int id) {
+        ArrayList entArr;
+        this.GetValue("Entities", entArr);
+
+        Entity ent = new Entity(id);
+        ent.active = true;
+
+        char entName[32];
+        
+        switch (GetEntProp(ent.id, Prop_Send, "m_iItemDefinitionIndex")) {
+            case 60: {
+                entName = "weapon_m4a1_silencer";
+            }
+            case 61: {
+                entName = "weapon_usp_silencer";
+            }
+            case 63: {
+                entName = "weapon_cz75a";
+            }
+            case 64: {
+                entName = "weapon_revolver";
+            }
+            case 23: {
+                entName = "weapon_mp5sd";
+            }
+            default: {
+                GetEntityClassname(id, entName, sizeof(entName));
+            }
+        }
+
+        ent.SetString("class", entName);
+
+        entArr.Push(ent);
+
+        return ent;
+    }
     
     public native Entity Get(int id);
+    public native Entity TryGetOrAdd(int id);
 
     public Entity Create(char[] EntName) {
         Entity entity;
@@ -157,7 +201,7 @@ methodmap EntitySingleton < StringMap {
         entArr.Clear();
     }
 
-    public ArrayList FindInBox(Vector vecMin, Vector vecMax, char[] filter = "disable") {
+    public ArrayList FindInBox(Vector vecMin, Vector vecMax, char[][] filter, int filter_size) {
         int entId = 0;
         ArrayList entArr = new ArrayList(128);
         
@@ -166,17 +210,24 @@ methodmap EntitySingleton < StringMap {
 
             char className[32];
             GetEntityClassname(entId, className, sizeof(className));
-            if ((StrContains(className, "prop_") != -1) || (StrContains(className, "weapon_") != -1) || (StrContains(className, filter) != -1)) {
 
-                Entity ent = new Entity(entId);
+            for (int i=0; i < filter_size; i++) {
+                if (StrContains(className, filter[i]) != -1) {
+                    float vec[3];
+                    GetEntPropVector(entId, Prop_Send, "m_vecOrigin", vec);
+                    Vector vecEnt = new Vector(vec[0], vec[1], vec[2]);
 
-                Vector vecEnt = ent.GetPos();
+                    if ((vecMin.x < vecEnt.x < vecMax.x) && (vecMin.y < vecEnt.y < vecMax.y) && (vecMin.z < vecEnt.z < vecMax.z)) {
+                        PushArrayCell(entArr, this.TryGetOrAdd(entId));
+                    }
 
-                if ((vecMin.x < vecEnt.x < vecMax.x) && (vecMin.y < vecEnt.y < vecMax.y) && (vecMin.z < vecEnt.z < vecMax.z)) {
-                    PushArrayCell(entArr, ent);
+                    delete vecEnt;
                 }
             }
         }
+
+        delete vecMin;
+        delete vecMax;
 
         return entArr;
     }

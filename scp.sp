@@ -39,12 +39,13 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) 
     CreateNative("ClientSingleton.Alive", NativeClients_Alive);
 
     CreateNative("EntitySingleton.Get", NativeEntities_Get);
+    CreateNative("EntitySingleton.TryGetOrAdd", NativeEntities_TryGetOrAdd);
     
     OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_CellByRef);
     OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_CellByRef);
     OnClientSpawnForward = CreateGlobalForward("SCP_OnPlayerSpawn", ET_Event, Param_CellByRef);
     OnTakeDamageForward = CreateGlobalForward("SCP_OnTakeDamage", ET_Event, Param_Cell, Param_Cell, Param_FloatByRef, Param_CellByRef);
-    OnButtonPressedForward = CreateGlobalForward("SCP_OnButtonPressed", ET_Event, Param_Cell, Param_Cell);
+    OnButtonPressedForward = CreateGlobalForward("SCP_OnButtonPressed", ET_Event, Param_CellByRef, Param_Cell);
 
     RegPluginLibrary("scp_core");
     return APLRes_Success;
@@ -58,6 +59,7 @@ public void OnPluginStart()
     AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
     AddCommandListener(GetClientPos, "getmypos");
     AddCommandListener(TpTo914, "tp914");
+    RegServerCmd("ents", CmdEnts);
 
     RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_BAN);
     
@@ -69,9 +71,24 @@ public void OnPluginStart()
     HookEntityOutput("trigger_teleport", "OnStartTouch", Event_OnTriggerActivation);
 }
 
-public any NativeGetClient(Handle plugin, int numArgs)
-{ 
-    return Clients.Get(GetNativeCell(1)); 
+public Action CmdEnts(int args) {
+    char command[32];
+    GetCmdArgString(command, sizeof(command));
+
+    if (StrEqual(command, "getall", false)) {
+        ArrayList ents = Ents.GetAll();
+
+        for (int i=0; i < ents.Length; i++) {
+            Entity ent = ents.Get(i);
+            char name[32];
+
+            ent.GetClass(name, sizeof(name));
+            
+            PrintToServer("%s id: %i", name, ent.id);
+        }
+
+        PrintToServer("Count: %i", ents.Length);
+    }
 }
 
 public Action GetClientPos(int client, const char[] command, int argc)
@@ -84,7 +101,11 @@ public Action GetClientPos(int client, const char[] command, int argc)
     Vector vec1 = new Vector(plyPos.x - 200.0, plyPos.y - 200.0, plyPos.z - 200.0);
     Vector vec2 = new Vector(plyPos.x + 200.0, plyPos.y + 200.0, plyPos.z + 200.0);
 
-    ArrayList entArr = Ents.FindInBox(vec1, vec2, "func_");
+    char filter[2][32];
+    filter[0] = "prop_";
+    filter[1] = "weapon_";
+
+    ArrayList entArr = Ents.FindInBox(vec1, vec2, filter, sizeof(filter));
 
     for(int i=0; i < entArr.Length; i++) 
     {
@@ -95,6 +116,9 @@ public Action GetClientPos(int client, const char[] command, int argc)
         
         PrintToChat(ply.id, "class: %s, id: %i", entclass, ent.id);
     }
+
+    delete plyPos;
+    delete entArr;
 
     for (int i=0; i < gamemode.mngr.teams.Length; i++) {
         char ClassName[32];
@@ -431,7 +455,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
         }
 
         Call_StartForward(OnButtonPressedForward);
-        Call_PushCell(ply);
+        Call_PushCellRef(ply);
         Call_PushCell(doorId);
         Call_Finish();
     }
