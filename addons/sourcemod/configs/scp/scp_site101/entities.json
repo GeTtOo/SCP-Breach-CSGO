@@ -4,6 +4,55 @@
         "model":"models/props/sl_physics/keycard5.mdl",
         "mass":"5.0",
         "spawnflags":4372,
+        "access":2
+    },
+    "card_bg": {
+        "name":"Карта бойца MOG",
+        "model":"models/props/sl_physics/keycardbg.mdl",
+        "mass":"5.0",
+        "spawnflags":4372,
+        "access":2
+    },
+    "card_bs": {
+        "name":"Карта н.персонала",
+        "model":"models/props/sl_physics/keycardbs.mdl",
+        "mass":"5.0",
+        "spawnflags":4372,
+        "access":2
+    },
+    "card_en": {
+        "name":"Карта охраны",
+        "model":"models/props/sl_physics/keycarden.mdl",
+        "mass":"5.0",
+        "spawnflags":4372,
+        "access":2
+    },
+    "card_fm": {
+        "name":"Коды Alpha Warhead",
+        "model":"models/props/sl_physics/keycardfm.mdl",
+        "mass":"5.0",
+        "spawnflags":4372,
+        "access":2
+    },
+    "card_j": {
+        "name":"Карта лаборанта",
+        "model":"models/props/sl_physics/keycardj.mdl",
+        "mass":"5.0",
+        "spawnflags":4372,
+        "access":2
+    },
+    "card_lt": {
+        "name":"Карта капрала MOG",
+        "model":"models/props/sl_physics/keycardlt.mdl",
+        "mass":"5.0",
+        "spawnflags":4372,
+        "access":5
+    },
+    "card_zm": {
+        "name":"Карта Хаоса",
+        "model":"models/props/sl_physics/keycardzm.mdl",
+        "mass":"5.0",
+        "spawnflags":4372,
         "access":5
     }
 }

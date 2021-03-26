@@ -60,6 +60,7 @@ public void OnPluginStart()
     AddCommandListener(GetClientPos, "getmypos");
     AddCommandListener(TpTo914, "tp914");
     RegServerCmd("ents", CmdEnts);
+    RegServerCmd("scp", CmdSCP);
 
     RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_BAN);
     
@@ -91,6 +92,19 @@ public Action CmdEnts(int args) {
     }
 }
 
+public Action CmdSCP(int args) {
+    char command[32];
+    GetCmdArgString(command, sizeof(command));
+
+    if (StrEqual(command, "status", false)) {
+        for (int i=0; i < gamemode.mngr.teams.Length; i++) {
+            char ClassName[32];
+            view_as<Item>(gamemode.mngr.teams.Get(i)).GetString("name", ClassName, sizeof(ClassName));
+            PrintToServer("Class: %s, count: %i", ClassName, gamemode.mngr.TeamGet(ClassName).count);
+        }
+    }
+}
+
 public Action GetClientPos(int client, const char[] command, int argc)
 {
     Client ply = Clients.Get(client);
@@ -119,12 +133,6 @@ public Action GetClientPos(int client, const char[] command, int argc)
 
     delete plyPos;
     delete entArr;
-
-    for (int i=0; i < gamemode.mngr.teams.Length; i++) {
-        char ClassName[32];
-        view_as<Item>(gamemode.mngr.teams.Get(i)).GetString("name", ClassName, sizeof(ClassName));
-        PrintToChat(ply.id, "Class: %s, count: %i", ClassName, gamemode.mngr.TeamGet(ClassName).count);
-    }
 }
 
 public Action TpTo914(int client, const char[] command, int argc)
@@ -132,11 +140,6 @@ public Action TpTo914(int client, const char[] command, int argc)
     float pos[3] = {3100.0, -2231.0, 0.0};
     float ang[3] = {0.0, 0.0, 0.0};
     TeleportEntity(client, pos, ang, NULL_VECTOR);
-
-    Ents.Create("card_o5")
-    .SetPos(new Vector(3223.0,-2231.0,50.0))
-    .UseCB(view_as<SDKHookCB>(Callback_EntUse))
-    .Spawn();
 }
 
 //////////////////////////////////////////////////////////////////////////////
