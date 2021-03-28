@@ -12,7 +12,7 @@
                 "health":100,
                 "armor":100,
                 "speed":1.2,
-                "items":["card_o5"],
+                "items":["card_lt"],
                 "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer", "weapon_tablet"],
                 "comment":"test"
             },
@@ -20,7 +20,7 @@
                 "pos":[-10800.0,-5950.0,1715.0],
                 "percent":40,
                 "model":".mdl",
-                "items":["card_o5"],
+                "items":["card_bg"],
                 "weapons":["weapon_m4a1", "weapon_hkp2000", "weapon_tablet"]
             },
             "Security": {
@@ -28,14 +28,14 @@
                 "percent":30,
                 "escape":true,
                 "model":".mdl",
-                "items":["card_o5"],
+                "items":["card_en"],
                 "weapons":["weapon_usp_silencer"]
             },
             "Scientist": {
                 "percent":20,
                 "escape":true,
                 "model":".mdl",
-                "items":["card_o5"]
+                "items":["card_bs"]
             }
         }
     },
@@ -49,8 +49,8 @@
                 "health":180,
                 "armor":200,
                 "speed":0.9,
-                "items":["card_o5"],
-                "weapons":["weapon_ak47"]
+                "items":["card_zm"],
+                "weapons":["weapon_m249", "weapon_revolver"]
             },
             "D Class": {
                 "percent":80,
