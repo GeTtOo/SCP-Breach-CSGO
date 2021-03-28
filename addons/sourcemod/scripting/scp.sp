@@ -14,6 +14,7 @@ Handle OnClientJoinForward;
 Handle OnClientLeaveForward;
 Handle OnClientSpawnForward;
 Handle OnTakeDamageForward;
+Handle OnPlayerDeathForward;
 Handle OnButtonPressedForward;
 
 public Plugin myinfo = {
@@ -32,6 +33,8 @@ public Plugin myinfo = {
 
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) {
     CreateNative("GameMode.team", NativeGameMode_GetTeam);
+    CreateNative("GameMode.config.get", NativeGameMode_Config);
+    CreateNative("GameMode.mngr.get", NativeGameMode_Manager);
     
     CreateNative("ClientSingleton.Get", NativeClients_Get);
     CreateNative("ClientSingleton.GetRandom", NativeClients_GetRandom);
@@ -45,6 +48,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) 
     OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_CellByRef);
     OnClientSpawnForward = CreateGlobalForward("SCP_OnPlayerSpawn", ET_Event, Param_CellByRef);
     OnTakeDamageForward = CreateGlobalForward("SCP_OnTakeDamage", ET_Event, Param_Cell, Param_Cell, Param_FloatByRef, Param_CellByRef);
+    OnPlayerDeathForward = CreateGlobalForward("SCP_OnPlayerDeath", ET_Event, Param_CellByRef, Param_CellByRef);
     OnButtonPressedForward = CreateGlobalForward("SCP_OnButtonPressed", ET_Event, Param_CellByRef, Param_Cell);
 
     RegPluginLibrary("scp_core");
@@ -99,10 +103,17 @@ public Action CmdSCP(int args) {
     GetCmdArgString(command, sizeof(command));
 
     if (StrEqual(command, "status", false)) {
-        for (int i=0; i < gamemode.mngr.teams.Length; i++) {
-            char ClassName[32];
-            view_as<Item>(gamemode.mngr.teams.Get(i)).GetString("name", ClassName, sizeof(ClassName));
-            PrintToServer("Class: %s, count: %i", ClassName, gamemode.mngr.TeamGet(ClassName).count);
+        StringMapSnapshot snapshot = gamemode.mngr.teams.Snapshot();
+
+        PrintToServer("Class: Dead, count: %i", gamemode.mngr.DeadPlayers);
+        
+        for (int i=0; i < snapshot.Length; i++) {
+            int teamlen = snapshot.KeyBufferSize(i);
+            char[] teamname = new char[teamlen];
+            snapshot.GetKey(i, teamname, teamlen);
+            if (json_is_meta_key(teamname)) continue;
+
+            PrintToServer("Class: %s, count: %i", teamname, gamemode.mngr.team(teamname).count);
         }
     }
 }
@@ -155,10 +166,16 @@ public Action PlayerRespawn(int client,int args)
     GTeam gteam = gamemode.team(teamName);
 
     if (gteam != null && gteam.classes.HasKey(className)) {
+        char curTeam[32];
+
+        ply.team(curTeam, sizeof(curTeam));
         ply.team(teamName);
         ply.class = gteam.class(className);
 
         ply.Spawn();
+
+        gamemode.mngr.team(curTeam).count--;
+        gamemode.mngr.team(teamName).count++;
     } else {
         PrintToConsole(ply.id, "Ошибка в идентификаторе команды/класса");
     }
@@ -284,25 +301,33 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 {
     if(!IsWarmup())
     {
+        Client vic = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
+        Client atk = Clients.Get(GetClientOfUserId(GetEventInt(event, "attacker")));
+
         if(Clients.Alive() == 0 && Clients.InGame() != 0)
         {
             SCP_EndRound("nuke_explosion");
         }
         else
         {
-            Client ply = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
-
-            if (ply != null && ply.class != null)
+            if (vic != null && vic.class != null)
             {
                 char team[32];
-                ply.team(team, sizeof(team));
-                gamemode.mngr.TeamGet(team).count--;
+                vic.team(team, sizeof(team));
+                
+                gamemode.mngr.team(team).count--;
+                gamemode.mngr.DeadPlayers++;
                 
                 char winTeam[32];
                 if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
                     SCP_EndRound(winTeam);
             }
         }
+
+        Call_StartForward(OnPlayerDeathForward);
+        Call_PushCellRef(vic);
+        Call_PushCellRef(atk);
+        Call_Finish();
     }
 
     return Plugin_Handled;
@@ -326,8 +351,6 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
             char[] teamKey = new char[keyLen];
             teamNameS.GetKey(i, teamKey, keyLen);
             if (json_is_meta_key(teamKey)) continue;
-
-            gamemode.mngr.RegisterTeam(teamKey);
 
             GTeam team = gamemode.team(teamKey);
 
@@ -356,8 +379,7 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
                     player.team(teamKey);
                     player.class = class;
                     player.haveClass = true;
-
-                    gamemode.mngr.TeamGet(teamKey).count++;
+                    gamemode.mngr.team(teamKey).count++;
 
                     extra++;
                 }
@@ -373,8 +395,8 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
             player.team(team);
             player.class = gamemode.team(team).class(class);
             player.haveClass = true;
+            gamemode.mngr.team(team).count++;
 
-            gamemode.mngr.TeamGet(team).count++;
         }
 
         SetMapRegions();

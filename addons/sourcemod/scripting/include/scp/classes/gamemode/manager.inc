@@ -2,26 +2,11 @@
 /*----------------------------------------------------Round Manager-----------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
-methodmap Team < Base {
-    
-    public Team(char[] name) {
-        Team t = view_as<Team>(new StringMap());
-        t.SetString("name", name);
-        return t;
-    }
-
-    property int count {
-        public set(int val) { this.SetInt("count", val); }
-        public get() { return this.GetInt("count", 0); }
-    }
-    
-}
-
 methodmap Manager < Base {
 
-    public Manager() {
+    public Manager(Teams teams) {
         Manager mngr = view_as<Manager>(new StringMap());
-        mngr.SetValue("teams", new ArrayList());
+        mngr.SetValue("teams", teams);
         return mngr;
     }
 
@@ -39,45 +24,47 @@ methodmap Manager < Base {
         public set(bool value) { this.SetBool("roundcomplete", value); }
         public get() { return this.GetBool("roundcomplete"); }
     }
-    
-    public bool RegisterTeam(char[] name) {
-        ArrayList teams;
-        this.GetValue("teams", teams);
-        teams.Push(new Team(name));
+
+    property int DeadPlayers {
+        public set(int val) { this.SetInt("deadplayers", val); }
+        public get() { return this.GetInt("deadplayers", 0); }
     }
 
-    property ArrayList teams {
-        public get() { ArrayList teams; return this.GetValue("teams", teams) ? teams : null; }
-    }
-
-    public Team TeamGet(char[] name) {
-        ArrayList teams;
-        this.GetValue("teams", teams);
-
-        for (int i=0; i < teams.Length; i++) {
-            char teamName[32];
-            Team cur = teams.Get(i);
-            cur.GetString("name", teamName, sizeof(teamName));
-
-            if (StrEqual(teamName, name))
-                return cur;
+    property Teams teams {
+        public get() {
+            Teams teams;
+            this.GetValue("teams", teams);
+            return teams;
         }
+    }
 
-        return null;
+    public GTeam team(char[] name) {
+        Teams teams;
+        this.GetValue("teams", teams);
+
+        return teams.get(name);
     }
 
     public bool CheckTeamStatus(char[] buffer, int max_size) {
-        ArrayList teams;
+        Teams teams;
         this.GetValue("teams", teams);
+        
+        StringMapSnapshot snapshot = teams.Snapshot();
 
         int TeamAlive = 0;
         char winTeam[32];
         
-        for (int i=0; i < teams.Length; i++) {
-            Team team = teams.Get(i);
-            if (team.count > 0) {
+        for (int i=0; i < snapshot.Length; i++) {
+            int teamlen = snapshot.KeyBufferSize(i);
+            char[] teamname = new char[teamlen];
+            snapshot.GetKey(i, teamname, teamlen);
+            if (json_is_meta_key(teamname)) continue;
+
+            GTeam team = teams.get(teamname);
+
+            if (team.count > 0 && !StrEqual(teamname, "Dead")) {
                 TeamAlive++;
-                team.GetString("name", winTeam, sizeof(winTeam));
+                Format(winTeam, sizeof(winTeam), teamname);
             }
         }
         
@@ -90,8 +77,20 @@ methodmap Manager < Base {
     }
 
     public void Reset() {
-        ArrayList teams;
+        Teams teams;
         this.GetValue("teams", teams);
-        teams.Clear();
+        
+        StringMapSnapshot snapshot = teams.Snapshot();
+        
+        for (int i=0; i < snapshot.Length; i++) {
+            int teamlen = snapshot.KeyBufferSize(i);
+            char[] teamname = new char[teamlen];
+            snapshot.GetKey(i, teamname, teamlen);
+            if (json_is_meta_key(teamname)) continue;
+            
+            teams.get(teamname).count = 0;
+        }
+
+        this.DeadPlayers = 0;
     }
 }

@@ -36,7 +36,17 @@ forward void SCP_OnPlayerSpawn(Client &ply);
 
 forward Action SCP_OnTakeDamage(Client vic, Client atk, float &damage, int &damagetype);
 
+forward void SCP_OnPlayerDeath(Client &vic, Client &atk);
+
 forward void SCP_OnButtonPressed(Client &ply, int doorId);
+
+public any NativeGameMode_Config(Handle Plugin, int numArgs) {
+    return view_as<Config>(gamemode.GetObject("Config"));
+}
+
+public any NativeGameMode_Manager(Handle Plugin, int numArgs) {
+    return view_as<Manager>(gamemode.GetObject("Manager"));
+}
 
 public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
     char name[32];
