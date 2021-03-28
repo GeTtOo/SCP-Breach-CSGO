@@ -7,7 +7,6 @@
 #include "scp/classes/gamemode/config"
 #include "scp/classes/gamemode/class"
 #include "scp/classes/gamemode/entities"
-#include "scp/classes/gamemode/manager"
 
 methodmap Classes < JSON_Object {
     public Class get(char[] name) { Class class = view_as<Class>(this.GetObject(name)); class.Name(name); return class; }
@@ -27,8 +26,13 @@ methodmap GTeam < JSON_Object {
         public get() { return view_as<Classes>(this.GetObject("Classes")); }
     }
 
+    property int count {
+        public set(int val) { this.SetInt("count", val); }
+        public get() { return this.GetInt("count", 0); }
+    }
+
     public Class class(char[] name) {
-        return view_as<Classes>(this.GetObject("Classes")).get(name);
+        return this.classes.get(name);
     }
 
     public StringMapSnapshot GetClassNames() {
@@ -49,6 +53,8 @@ methodmap Teams < JSON_Object {
     public GTeam get(char[] name) { return view_as<GTeam>(this.GetObject(name)); }
 }
 
+#include "scp/classes/gamemode/manager"
+
 methodmap GameMode < JSON_Object {
     
     public GameMode(char[] mapname) {
@@ -56,16 +62,16 @@ methodmap GameMode < JSON_Object {
         self.SetObject("Teams", new Teams(mapname));
         self.SetObject("Entities", new Entities(mapname));
         self.SetObject("Config", new Config(mapname));
-        self.SetValue("Manager", new Manager());
+        self.SetValue("Manager", new Manager(view_as<Teams>(self.GetObject("Teams"))));
         return self;
     }
 
     property Config config {
-        public get() { return view_as<Config>(this.GetObject("Config")); }
+        public native get();
     }
 
     property Manager mngr {
-        public get() { return view_as<Manager>(this.GetObject("Manager")); }
+        public native get();
     }
 
     public native GTeam team(char[] name);
