@@ -29,11 +29,6 @@ public Plugin myinfo = {
 	url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void OnPluginStart()
-{
-	HookEvent("player_death", Event_PlayerDeath, EventHookMode_Post);
-}
-
 public void SCP_OnPlayerJoin(Client &ply) 
 {
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
@@ -47,10 +42,8 @@ public void OnMapStart()
     }
 }
 
-public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
+public void SCP_OnPlayerDeath(Client &vic, Client &atk)
 {
-	Client atk = Clients.Get(GetClientOfUserId(GetEventInt(event, "attacker")));
-
 	if(atk != null && atk.class != null)
 	{
 		char attackerClass[32];
@@ -58,16 +51,18 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
 		if(StrEqual(attackerClass, "049"))
 		{
-			Client vic = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
-
-			if(atk != null && atk.class != null && IsClientExist(vic.id) && !IsPlayerAlive(vic.id) && !IsClientInSpec(vic.id))
+			if(vic != null && vic.class != null && vic != atk)
 			{
 				float pos[3];
 				GetClientAbsOrigin(vic.id, pos);
 
+				vic.team("SCP");
 				vic.class = gamemode.team("SCP").class("049_2");
+
+				gamemode.mngr.DeadPlayers--;
+				gamemode.mngr.team("SCP").count++;
 				
-				CS_RespawnPlayer(vic.id);
+				vic.Spawn();
 				TeleportEntity(vic.id, pos, NULL_VECTOR, NULL_VECTOR);
 			}
 		}
