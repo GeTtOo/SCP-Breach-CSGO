@@ -1,0 +1,23 @@
+{
+    "config": {
+        "button": 355153,
+        "runtime": 15
+    },
+    "recipes": {
+        "very_rought": [
+            ["card_o5", "card_lt"]
+        ],
+        "rough": [
+            
+        ],
+        "one_by_one": [
+            
+        ],
+        "fine": [
+            
+        ],
+        "very_fine": [
+            ["card_lt", "card_o5"]
+        ]
+    }
+}
