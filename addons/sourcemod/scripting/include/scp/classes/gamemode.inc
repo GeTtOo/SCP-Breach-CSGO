@@ -7,6 +7,7 @@
 #include "scp/classes/gamemode/config"
 #include "scp/classes/gamemode/class"
 #include "scp/classes/gamemode/entities"
+#include "scp/classes/timers"
 
 methodmap Classes < JSON_Object {
     public Class get(char[] name) { Class class = view_as<Class>(this.GetObject(name)); class.Name(name); return class; }
@@ -63,6 +64,7 @@ methodmap GameMode < JSON_Object {
         self.SetObject("Entities", new Entities(mapname));
         self.SetObject("Config", new Config(mapname));
         self.SetValue("Manager", new Manager(view_as<Teams>(self.GetObject("Teams"))));
+        self.SetValue("Timers", new Timers());
         return self;
     }
 
@@ -71,6 +73,10 @@ methodmap GameMode < JSON_Object {
     }
 
     property Manager mngr {
+        public native get();
+    }
+
+    property Timers timers {
         public native get();
     }
 

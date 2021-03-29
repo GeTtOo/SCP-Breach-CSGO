@@ -35,6 +35,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) 
     CreateNative("GameMode.team", NativeGameMode_GetTeam);
     CreateNative("GameMode.config.get", NativeGameMode_Config);
     CreateNative("GameMode.mngr.get", NativeGameMode_Manager);
+    CreateNative("GameMode.timers.get", NativeGameMode_Timers);
     
     CreateNative("ClientSingleton.Get", NativeClients_Get);
     CreateNative("ClientSingleton.GetRandom", NativeClients_GetRandom);
@@ -64,7 +65,7 @@ public void OnPluginStart()
     RegServerCmd("scp", CmdSCP);
 
     RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_BAN);
-    RegAdminCmd("respawn", PlayerRespawn, ADMFLAG_BAN);
+    RegAdminCmd("spawn", PlayerSpawn, ADMFLAG_BAN);
 
     AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
     AddCommandListener(GetClientPos, "getmypos");
@@ -155,7 +156,7 @@ public Action TpTo914(int client, const char[] command, int argc)
     TeleportEntity(client, pos, ang, NULL_VECTOR);
 }
 
-public Action PlayerRespawn(int client,int args)
+public Action PlayerSpawn(int client,int args)
 {
     char teamName[32], className[32];
     GetCmdArg(1, teamName, sizeof(teamName));
@@ -209,6 +210,10 @@ public void OnMapStart()
         ForceChangeLevel(mapName, "Fix sound cached");
         fixCache = true;
     }
+}
+
+public void OnGameFrame() {
+    gamemode.timers.Update();
 }
 
 public void OnClientConnected(int id) {

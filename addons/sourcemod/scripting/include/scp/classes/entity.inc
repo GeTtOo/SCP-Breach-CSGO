@@ -107,27 +107,26 @@ methodmap EntitySingleton < StringMap {
         ent.active = true;
 
         char entName[32];
-        
-        switch (GetEntProp(ent.id, Prop_Send, "m_iItemDefinitionIndex")) {
-            case 60: {
-                entName = "weapon_m4a1_silencer";
+        GetEntityClassname(id, entName, sizeof(entName));
+
+        if (StrContains(entName, "weapon") != -1)
+            switch (GetEntProp(ent.id, Prop_Send, "m_iItemDefinitionIndex")) {
+                case 60: {
+                    entName = "weapon_m4a1_silencer";
+                }
+                case 61: {
+                    entName = "weapon_usp_silencer";
+                }
+                case 63: {
+                    entName = "weapon_cz75a";
+                }
+                case 64: {
+                    entName = "weapon_revolver";
+                }
+                case 23: {
+                    entName = "weapon_mp5sd";
+                }
             }
-            case 61: {
-                entName = "weapon_usp_silencer";
-            }
-            case 63: {
-                entName = "weapon_cz75a";
-            }
-            case 64: {
-                entName = "weapon_revolver";
-            }
-            case 23: {
-                entName = "weapon_mp5sd";
-            }
-            default: {
-                GetEntityClassname(id, entName, sizeof(entName));
-            }
-        }
 
         ent.SetString("class", entName);
 
@@ -212,7 +211,7 @@ methodmap EntitySingleton < StringMap {
             GetEntityClassname(entId, className, sizeof(className));
 
             for (int i=0; i < filter_size; i++) {
-                if (StrContains(className, filter[i]) != -1) {
+                if (StrContains(className, filter[i]) == 0) {
                     float vec[3];
                     GetEntPropVector(entId, Prop_Send, "m_vecOrigin", vec);
                     Vector vecEnt = new Vector(vec[0], vec[1], vec[2]);

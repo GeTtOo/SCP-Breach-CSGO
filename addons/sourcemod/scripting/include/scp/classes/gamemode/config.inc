@@ -17,6 +17,10 @@ methodmap Config < JSON_Object {
 
         return self;
     }
+
+    public void Add(char[] name, any value) {
+        this.SetValue(name, value);
+    }
     
     public void DefaultGlobalClass(char[] team, int max_size) {
         this.GetString("DefaultGlobalClass", team, max_size);

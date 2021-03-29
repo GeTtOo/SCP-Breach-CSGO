@@ -48,6 +48,10 @@ public any NativeGameMode_Manager(Handle Plugin, int numArgs) {
     return view_as<Manager>(gamemode.GetObject("Manager"));
 }
 
+public any NativeGameMode_Timers(Handle Plugin, int numArgs) {
+    return view_as<Timers>(gamemode.GetObject("Timers"));
+}
+
 public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
     char name[32];
     GetNativeString(2, name, sizeof(name));
