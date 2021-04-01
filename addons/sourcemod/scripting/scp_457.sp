@@ -61,33 +61,15 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 
 public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
-    Client ply = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
-
-    if (ply != null && ply.class != null)
-    {
-        char class[32];
-        ply.class.Name(class, sizeof(class));
-
-        if(StrEqual(class, "457"))
-        {
-            SetEntityRenderMode(ply.id, RENDER_NORMAL);
-
-            if(particle != -1)
-            {
-                AcceptEntityInput(particle, "Kill");
-                particle = -1;
-            }
-
-            int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
-            if (ent > MaxClients && IsValidEdict(ent))
-            {
-                AcceptEntityInput(ent, "Kill");
-            }
-        }
-    }
+    DeleteEffect(GetClientOfUserId(GetEventInt(event, "userid")));
 }
 
-stock void IgniteEffect(int client)
+public void OnClientDisconnect(int client)
+{
+    DeleteEffect(client);
+}
+
+void IgniteEffect(int client)
 {
     particle = CreateEntityByName("info_particle_system");
 
@@ -110,6 +92,34 @@ stock void IgniteEffect(int client)
         AcceptEntityInput(particle, "SetParent", client);
         ActivateEntity(particle);
         AcceptEntityInput(particle, "Start");
+    }
+}
+
+void DeleteEffect(int client)
+{
+    Client ply = Clients.Get(client);
+
+    if (ply != null && ply.class != null)
+    {
+        char class[32];
+        ply.class.Name(class, sizeof(class));
+
+        if(StrEqual(class, "457"))
+        {
+            SetEntityRenderMode(ply.id, RENDER_NORMAL);
+
+            if(particle != -1)
+            {
+                AcceptEntityInput(particle, "Kill");
+                particle = -1;
+            }
+
+            int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
+            if (ent > MaxClients && IsValidEdict(ent))
+            {
+                AcceptEntityInput(ent, "Kill");
+            }
+        }
     }
 }
 
