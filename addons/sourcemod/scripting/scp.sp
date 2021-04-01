@@ -138,6 +138,8 @@ public void OnClientDisconnect(int id) {
     if (gamemode.config.debug)
         PrintToServer("Client disconnected: %i", ply.id);
 
+    EndRoundCount(ply);
+
     Call_StartForward(OnClientLeaveForward);
     Call_PushCellRef(ply);
     Call_Finish();
@@ -204,25 +206,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         Client vic = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
         Client atk = Clients.Get(GetClientOfUserId(GetEventInt(event, "attacker")));
 
-        if(Clients.Alive() == 0 && Clients.InGame() != 0)
-        {
-            SCP_EndRound("nuke_explosion");
-        }
-        else
-        {
-            if (vic != null && vic.class != null)
-            {
-                char team[32];
-                vic.team(team, sizeof(team));
-                
-                gamemode.mngr.team(team).count--;
-                gamemode.mngr.DeadPlayers++;
-                
-                char winTeam[32];
-                if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
-                    SCP_EndRound(winTeam);
-            }
-        }
+        EndRoundCount(vic);
 
         Call_StartForward(OnPlayerDeathForward);
         Call_PushCellRef(vic);
@@ -629,6 +613,29 @@ void SCP_NukeActivation()
     while((ent = FindEntityByClassname(ent, "func_door")) != -1)
     {
         AcceptEntityInput(ent, "Open");
+    }
+}
+
+void EndRoundCount(Client ply)
+{
+    if(Clients.Alive() == 0 && Clients.InGame() != 0)
+    {
+        SCP_EndRound("nuke_explosion");
+    }
+    else
+    {
+        if (ply != null && ply.class != null)
+        {
+            char team[32];
+            ply.team(team, sizeof(team));
+            
+            gamemode.mngr.team(team).count--;
+            gamemode.mngr.DeadPlayers++;
+            
+            char winTeam[32];
+            if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
+                SCP_EndRound(winTeam);
+        }
     }
 }
 
