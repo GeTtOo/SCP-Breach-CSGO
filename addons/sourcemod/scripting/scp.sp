@@ -35,7 +35,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) 
     CreateNative("GameMode.team", NativeGameMode_GetTeam);
     CreateNative("GameMode.config.get", NativeGameMode_Config);
     CreateNative("GameMode.mngr.get", NativeGameMode_Manager);
-    CreateNative("GameMode.timers.get", NativeGameMode_Timers);
+    CreateNative("GameMode.timer.get", NativeGameMode_Timers);
     
     CreateNative("ClientSingleton.Get", NativeClients_Get);
     CreateNative("ClientSingleton.GetRandom", NativeClients_GetRandom);
@@ -108,7 +108,7 @@ public void OnMapStart()
 }
 
 public void OnGameFrame() {
-    gamemode.timers.Update();
+    gamemode.timer.Update();
 }
 
 public void OnClientConnected(int id) {

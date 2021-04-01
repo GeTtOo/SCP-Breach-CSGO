@@ -76,7 +76,7 @@ methodmap GameMode < JSON_Object {
         public native get();
     }
 
-    property Timers timers {
+    property Timers timer {
         public native get();
     }
 
