@@ -18,6 +18,12 @@ methodmap Class < JSON_Object {
         return new Vector(pos.GetFloat(0),pos.GetFloat(1),pos.GetFloat(2));
     }
 
+    public Angle GetAng() {
+        JSON_Array ang = view_as<JSON_Array>(this.GetObject("ang", new JSON_Array()));
+        if (ang.Length == 0) return null;
+        return new Angle(ang.GetFloat(0),ang.GetFloat(1),ang.GetFloat(2));
+    }
+
     property int percent {
         public get() { return this.GetInt("percent"); }
     }
