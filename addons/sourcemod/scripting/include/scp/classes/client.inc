@@ -93,11 +93,14 @@ methodmap Client < Base {
         KickClient(this.id, reason);
     }
 
-    public void SetPos(Vector vec) {
-        float vectorArr[3];
+    public void SetPos(Vector vec, Angle ang = null) {
+        float vectorArr[3], angleArr[3];
         vec.GetArr(vectorArr);
-        TeleportEntity(this.id, vectorArr, NULL_VECTOR, NULL_VECTOR);
+        if (ang != null)
+            ang.GetArr(angleArr);
+        TeleportEntity(this.id, vectorArr, (ang == null) ? NULL_VECTOR : angleArr, NULL_VECTOR);
         delete vec;
+        delete ang;
     }
 
     public Vector GetPos() { float pos[3]; GetEntPropVector(this.GetInt("id"), Prop_Send, "m_vecOrigin", pos); return new Vector(pos[0], pos[1], pos[2]); }
@@ -110,7 +113,7 @@ methodmap Client < Base {
         this.speed = this.class.speed;
 
         if (this.class.GetPos() != null)
-            this.SetPos(this.class.GetPos());
+            this.SetPos(this.class.GetPos(), this.class.GetAng());
 
         if (this.class.items != null)
             for (int i=0; i < this.class.items.Length; i++) {
