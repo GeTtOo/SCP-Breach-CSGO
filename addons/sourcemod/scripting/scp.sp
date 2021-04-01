@@ -57,7 +57,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) 
 }
 
 public void OnPluginStart()
-{   
+{
     Clients = new ClientSingleton();
     Ents = new EntitySingleton();
     
@@ -77,111 +77,6 @@ public void OnPluginStart()
     HookEvent("player_death", Event_PlayerDeath, EventHookMode_Pre);
     HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
     HookEntityOutput("trigger_teleport", "OnStartTouch", Event_OnTriggerActivation);
-}
-
-public Action CmdEnts(int args) {
-    char command[32];
-    GetCmdArgString(command, sizeof(command));
-
-    if (StrEqual(command, "getall", false)) {
-        ArrayList ents = Ents.GetAll();
-
-        for (int i=0; i < ents.Length; i++) {
-            Entity ent = ents.Get(i);
-            char name[32];
-
-            ent.GetClass(name, sizeof(name));
-            
-            PrintToServer("%s id: %i", name, ent.id);
-        }
-
-        PrintToServer("Count: %i", ents.Length);
-    }
-}
-
-public Action CmdSCP(int args) {
-    char command[32];
-    GetCmdArgString(command, sizeof(command));
-
-    if (StrEqual(command, "status", false)) {
-        StringMapSnapshot snapshot = gamemode.mngr.teams.Snapshot();
-
-        PrintToServer("Class: Dead, count: %i", gamemode.mngr.DeadPlayers);
-        
-        for (int i=0; i < snapshot.Length; i++) {
-            int teamlen = snapshot.KeyBufferSize(i);
-            char[] teamname = new char[teamlen];
-            snapshot.GetKey(i, teamname, teamlen);
-            if (json_is_meta_key(teamname)) continue;
-
-            PrintToServer("Class: %s, count: %i", teamname, gamemode.mngr.team(teamname).count);
-        }
-    }
-}
-
-public Action GetClientPos(int client, const char[] command, int argc)
-{
-    Client ply = Clients.Get(client);
-
-    Vector plyPos = ply.GetPos();
-    PrintToChat(ply.id, "Your pos is: %f, %f, %f", plyPos.x, plyPos.y, plyPos.z);
-
-    Vector vec1 = new Vector(plyPos.x - 200.0, plyPos.y - 200.0, plyPos.z - 200.0);
-    Vector vec2 = new Vector(plyPos.x + 200.0, plyPos.y + 200.0, plyPos.z + 200.0);
-
-    char filter[2][32];
-    filter[0] = "prop_";
-    filter[1] = "weapon_";
-
-    ArrayList entArr = Ents.FindInBox(vec1, vec2, filter, sizeof(filter));
-
-    for(int i=0; i < entArr.Length; i++) 
-    {
-        Entity ent = entArr.Get(i, 0);
-
-        char entclass[32];
-        ent.GetClass(entclass, sizeof(entclass));
-        
-        PrintToChat(ply.id, "class: %s, id: %i", entclass, ent.id);
-    }
-
-    delete plyPos;
-    delete entArr;
-}
-
-public Action TpTo914(int client, const char[] command, int argc)
-{
-    float pos[3] = {3100.0, -2231.0, 0.0};
-    float ang[3] = {0.0, 0.0, 0.0};
-    TeleportEntity(client, pos, ang, NULL_VECTOR);
-}
-
-public Action PlayerSpawn(int client,int args)
-{
-    char teamName[32], className[32];
-    GetCmdArg(1, teamName, sizeof(teamName));
-    GetCmdArg(2, className, sizeof(className));
-    
-    Client ply = Clients.Get(client);
-
-    GTeam gteam = gamemode.team(teamName);
-
-    if (gteam != null && gteam.classes.HasKey(className)) {
-        char curTeam[32];
-
-        ply.team(curTeam, sizeof(curTeam));
-        ply.team(teamName);
-        ply.class = gteam.class(className);
-
-        ply.Spawn();
-
-        gamemode.mngr.team(curTeam).count--;
-        gamemode.mngr.team(teamName).count++;
-    } else {
-        PrintToConsole(ply.id, "Ошибка в идентификаторе команды/класса");
-    }
-    
-    return Plugin_Stop;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -849,6 +744,123 @@ public Action NukeExplosion(Handle hTimer)
             }
         }
     }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                                Commands
+//
+//////////////////////////////////////////////////////////////////////////////
+
+//-----------------------------Server-----------------------------//
+
+public Action CmdEnts(int args) {
+    char command[32];
+    GetCmdArgString(command, sizeof(command));
+
+    if (StrEqual(command, "getall", false)) {
+        ArrayList ents = Ents.GetAll();
+
+        for (int i=0; i < ents.Length; i++) {
+            Entity ent = ents.Get(i);
+            char name[32];
+
+            ent.GetClass(name, sizeof(name));
+            
+            PrintToServer("%s id: %i", name, ent.id);
+        }
+
+        PrintToServer("Count: %i", ents.Length);
+    }
+}
+
+public Action CmdSCP(int args) {
+    char command[32];
+    GetCmdArgString(command, sizeof(command));
+
+    if (StrEqual(command, "status", false)) {
+        StringMapSnapshot snapshot = gamemode.mngr.teams.Snapshot();
+
+        PrintToServer("Class: Dead, count: %i", gamemode.mngr.DeadPlayers);
+        
+        for (int i=0; i < snapshot.Length; i++) {
+            int teamlen = snapshot.KeyBufferSize(i);
+            char[] teamname = new char[teamlen];
+            snapshot.GetKey(i, teamname, teamlen);
+            if (json_is_meta_key(teamname)) continue;
+
+            PrintToServer("Class: %s, count: %i", teamname, gamemode.mngr.team(teamname).count);
+        }
+    }
+}
+
+//-----------------------------Client-----------------------------//
+
+public Action GetClientPos(int client, const char[] command, int argc)
+{
+    Client ply = Clients.Get(client);
+
+    Vector plyPos = ply.GetPos();
+    PrintToChat(ply.id, "Your pos is: %f, %f, %f", plyPos.x, plyPos.y, plyPos.z);
+
+    delete plyPos;
+
+    PrintEntInBox(client, command, argc);
+}
+
+public Action PrintEntInBox(int client, const char[] command, int argc)
+{
+    Client ply = Clients.Get(client);
+
+    char filter[2][32] = {"prop_physics", "weapon_"};
+
+    ArrayList entArr = Ents.FindInBox(ply.GetPos() - new Vector(200.0, 200.0, 200.0), ply.GetPos() + new Vector(200.0, 200.0, 200.0), filter, sizeof(filter));
+
+    for(int i=0; i < entArr.Length; i++) 
+    {
+        Entity ent = entArr.Get(i, 0);
+
+        char entclass[32];
+        ent.GetClass(entclass, sizeof(entclass));
+        
+        PrintToChat(ply.id, "class: %s, id: %i", entclass, ent.id);
+    }
+
+    delete entArr;
+}
+
+public Action TpTo914(int client, const char[] command, int argc)
+{
+    Client ply = Clients.Get(client);
+    ply.SetPos(new Vector(3100.0, -2231.0, 0.0), new Angle(0.0, 0.0, 0.0));
+}
+
+public Action PlayerSpawn(int client,int args)
+{
+    char teamName[32], className[32];
+    GetCmdArg(1, teamName, sizeof(teamName));
+    GetCmdArg(2, className, sizeof(className));
+    
+    Client ply = Clients.Get(client);
+
+    GTeam gteam = gamemode.team(teamName);
+
+    if (gteam != null && gteam.classes.HasKey(className)) {
+        char curTeam[32];
+
+        ply.team(curTeam, sizeof(curTeam));
+        ply.team(teamName);
+        ply.class = gteam.class(className);
+
+        ply.Spawn();
+
+        gamemode.mngr.team(curTeam).count--;
+        gamemode.mngr.team(teamName).count++;
+    } else {
+        PrintToConsole(ply.id, "Ошибка в идентификаторе команды/класса");
+    }
+    
+    return Plugin_Stop;
 }
 
 //////////////////////////////////////////////////////////////////////////////

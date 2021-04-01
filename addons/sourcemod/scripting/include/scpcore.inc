@@ -101,8 +101,8 @@ public any NativeEntities_Get(Handle Plugin, int numArgs) {
     Ents.GetValue("Entities", entArr);
 
     for(int i=0; i < entArr.Length; i++)
-        if (view_as<Entity>(entArr.Get(i, 0)).id == id)
-            return view_as<Entity>(entArr.Get(i, 0));
+        if (view_as<Entity>(entArr.Get(i)).id == id)
+            return view_as<Entity>(entArr.Get(i));
 
     return view_as<Entity>(null);
 }
@@ -113,8 +113,8 @@ public any NativeEntities_TryGetOrAdd(Handle Plugin, int numArgs) {
     Ents.GetValue("Entities", entArr);
 
     for(int i=0; i < entArr.Length; i++)
-        if (view_as<Entity>(entArr.Get(i, 0)).id == id)
-            return view_as<Entity>(entArr.Get(i, 0));
+        if (view_as<Entity>(entArr.Get(i)).id == id)
+            return view_as<Entity>(entArr.Get(i));
 
     return view_as<Entity>(Ents.Add(id));
 }
