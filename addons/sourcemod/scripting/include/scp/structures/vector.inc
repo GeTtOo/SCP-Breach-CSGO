@@ -36,6 +36,8 @@ methodmap Vector < Base {
         this.y += vec2.y;
         this.z += vec2.z;
 
+        delete vec2;
+
         return this;
     }
 
@@ -44,8 +46,33 @@ methodmap Vector < Base {
         this.y -= vec2.y;
         this.z -= vec2.z;
 
+        delete vec2;
+
         return this;
     }
 }
 
-methodmap Angle < Vector {}
+stock Vector operator+(Vector first, Vector second) {
+    Vector result = new Vector(first.x + second.x, first.y + second.y, first.z + second.z);
+    delete first; delete second;
+    return result;
+}
+
+stock Vector operator-(Vector first, Vector second) {
+    Vector result = new Vector(first.x - second.x, first.y - second.y, first.z - second.z);
+    delete first; delete second;
+    return result;
+}
+
+methodmap Angle < Vector {
+    
+    public Angle(float x, float y, float z) {
+        Angle ang = view_as<Angle>(new StringMap());
+
+        ang.SetValue("x", x);
+        ang.SetValue("y", y);
+        ang.SetValue("z", z);
+        
+        return ang;
+    }
+}
