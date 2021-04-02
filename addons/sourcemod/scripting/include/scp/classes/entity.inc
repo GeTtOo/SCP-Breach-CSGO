@@ -138,57 +138,9 @@ methodmap EntitySingleton < StringMap {
     public native Entity Get(int id);
     public native Entity TryGetOrAdd(int id);
 
-    public Entity Create(char[] EntName) {
-        Entity entity;
-        if (gamemode.entities.HasKey(EntName))
-        {
-            EntConfig entcfg = gamemode.entities.get(EntName);
+    public native Entity Create(char[] EntName);
 
-            entity = new Entity(CreateEntityByName("prop_physics_override"));
-
-            char modelName[128], mass[12], name[32];
-            entcfg.model(modelName, sizeof(modelName));
-            entcfg.mass(mass, sizeof(mass));
-            entcfg.name(name, sizeof(name));
-            
-            entity.name(name);
-
-            DispatchKeyValue(entity.id, "model", modelName);
-            DispatchKeyValue(entity.id, "physicsmode", "2");
-            DispatchKeyValue(entity.id, "massScale", mass);
-            DispatchKeyValue(entity.id, "Solid", "6");
-            if (entcfg.spawnflags != 0) {
-                char flags[8];
-                IntToString(entcfg.spawnflags, flags, sizeof(flags));
-                DispatchKeyValue(entity.id, "spawnflags", flags);
-            }
-        }
-        else
-        {
-            entity = new Entity(CreateEntityByName(EntName));
-        }
-
-        entity.active = false;
-        entity.SetString("class", EntName);
-
-        ArrayList entArr;
-        this.GetValue("Entities", entArr);
-
-        PushArrayCell(entArr, entity);
-
-        return entity;
-    }
-
-    public void Remove(int id) {
-        ArrayList entArr;
-        this.GetValue("Entities", entArr);
-
-        for(int i=0; i < entArr.Length; i++)
-            if (view_as<Entity>(entArr.Get(i, 0)).id == id) {
-                view_as<Entity>(entArr.Get(i, 0)).Remove();
-                entArr.Erase(i);
-            }
-    }
+    public native void Remove(int id);
 
     public void Clear() {
         ArrayList entArr;

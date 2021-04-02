@@ -96,6 +96,63 @@ public any NativeClients_Alive(Handle Plugin, int numArgs) {
     return clientAlive;
 }
 
+public any NativeEntities_Create(Handle Plugin, int numArgs) {
+    char EntName[32];
+    GetNativeString(2, EntName, sizeof(EntName));
+    
+    Entity entity;
+    if (gamemode.entities.HasKey(EntName))
+    {
+        EntConfig entcfg = gamemode.entities.get(EntName);
+
+        entity = new Entity(CreateEntityByName("prop_physics_override"));
+
+        char modelName[128], mass[12], name[32];
+        entcfg.model(modelName, sizeof(modelName));
+        entcfg.mass(mass, sizeof(mass));
+        entcfg.name(name, sizeof(name));
+        
+        entity.name(name);
+
+        DispatchKeyValue(entity.id, "model", modelName);
+        DispatchKeyValue(entity.id, "physicsmode", "2");
+        DispatchKeyValue(entity.id, "massScale", mass);
+        DispatchKeyValue(entity.id, "Solid", "6");
+        if (entcfg.spawnflags != 0) {
+            char flags[8];
+            IntToString(entcfg.spawnflags, flags, sizeof(flags));
+            DispatchKeyValue(entity.id, "spawnflags", flags);
+        }
+    }
+    else
+    {
+        entity = new Entity(CreateEntityByName(EntName));
+    }
+
+    entity.active = false;
+    entity.SetString("class", EntName);
+
+    ArrayList entArr;
+    Ents.GetValue("Entities", entArr);
+
+    PushArrayCell(entArr, entity);
+
+    return entity;
+}
+
+public any NativeEntities_Remove(Handle Plugin, int numArgs) {
+    int id = GetNativeCell(2);
+
+    ArrayList entArr;
+    Ents.GetValue("Entities", entArr);
+
+    for(int i=0; i < entArr.Length; i++)
+        if (view_as<Entity>(entArr.Get(i, 0)).id == id) {
+            view_as<Entity>(entArr.Get(i, 0)).Remove();
+            entArr.Erase(i);
+        }
+}
+
 public any NativeEntities_Get(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
     ArrayList entArr;

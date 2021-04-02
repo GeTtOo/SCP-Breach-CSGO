@@ -1,13 +1,15 @@
 {
     "config": {
-        "button": 355153,
+        "countername": "scp_914_logic_counter",
+        "switchbutton": 443873,
+        "runbutton": 355153,
         "runtime": 15
     },
     "recipes": {
-        "very_rought": [
-            ["card_o5", "card_lt"]
-        ],
-        "rough": [
+        "rough": {
+            "card_o5": ["card_lt", 100]
+        },
+        "coarse": [
             
         ],
         "one_by_one": [
@@ -16,8 +18,8 @@
         "fine": [
             
         ],
-        "very_fine": [
-            ["card_lt", "card_o5"]
-        ]
+        "very_fine": {
+            "card_o5" : ["card_lt"]
+        }
     }
 }

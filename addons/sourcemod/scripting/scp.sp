@@ -42,6 +42,8 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) 
     CreateNative("ClientSingleton.InGame", NativeClients_InGame);
     CreateNative("ClientSingleton.Alive", NativeClients_Alive);
 
+    CreateNative("EntitySingleton.Create", NativeEntities_Create);
+    CreateNative("EntitySingleton.Remove", NativeEntities_Remove);
     CreateNative("EntitySingleton.Get", NativeEntities_Get);
     CreateNative("EntitySingleton.TryGetOrAdd", NativeEntities_TryGetOrAdd);
     
