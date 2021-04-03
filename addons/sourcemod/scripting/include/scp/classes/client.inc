@@ -15,7 +15,7 @@ methodmap Client < Entity {
     public Client(int id) {
         Client self = view_as<Client>(CreateTrie());
         self.SetValue("id", id);
-        self.SetValue("haveClass", false);
+        self.SetValue("haveсlass", false);
         self.SetValue("inventory", new Inventory());
 
         return self;
@@ -37,8 +37,8 @@ methodmap Client < Entity {
     }
 
     property bool haveclass {
-        public set(bool value) { this.SetBool("haveClass", value); }
-        public get() { return this.GetBool("haveClass", false); }
+        public set(bool value) { this.SetBool("haveсlass", value); }
+        public get() { return this.GetBool("haveсlass", false); }
     }
 
     property Class class {
@@ -65,6 +65,12 @@ methodmap Client < Entity {
         public get() { Inventory inv; return this.GetValue("inventory", inv) ? inv : null; }
     }
 
+    public void SetupBaseStats(Class class) {
+        this.health = class.health;
+        this.armor = class.armor;
+        this.speed = class.speed;
+    }
+
     public bool GetName(char[] buffer, int max_size = 0) { return GetClientName(this.id, buffer, max_size); }
 
     public void SetModel(char[] model) { SetEntityModel(this.id, model); }
@@ -78,9 +84,7 @@ methodmap Client < Entity {
     public void Kick(char[] reason) { KickClient(this.id, reason); }
 
     public void Spawn() {
-        this.health = this.class.health;
-        this.armor = this.class.armor;
-        this.speed = this.class.speed;
+        this.SetupBaseStats(this.class);
 
         if (this.class.GetPos() != null)
             this.SetPos(this.class.GetPos(), this.class.GetAng());
