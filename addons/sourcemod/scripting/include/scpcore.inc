@@ -26,6 +26,8 @@ GameMode gamemode;
 #include "scp/classes/entity"
 #include "scp/classes/client"
 
+#include "scp/classes/singletons"
+
 ClientSingleton Clients;
 EntitySingleton Ents;
 
@@ -43,6 +45,10 @@ forward void SCP_OnButtonPressed(Client &ply, int doorId);
 
 public any NativeGameMode_Config(Handle Plugin, int numArgs) {
     return view_as<Config>(gamemode.GetObject("Config"));
+}
+
+public any NativeGameMode_Entities(Handle Plugin, int numArgs) {
+    return view_as<Entities>(gamemode.GetObject("Entities"));
 }
 
 public any NativeGameMode_Manager(Handle Plugin, int numArgs) {
@@ -112,7 +118,7 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
         entcfg.mass(mass, sizeof(mass));
         entcfg.name(name, sizeof(name));
         
-        entity.name(name);
+        entity.InvName(name);
 
         DispatchKeyValue(entity.id, "model", modelName);
         DispatchKeyValue(entity.id, "physicsmode", "2");

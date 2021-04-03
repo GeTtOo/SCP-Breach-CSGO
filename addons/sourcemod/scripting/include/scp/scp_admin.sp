@@ -50,7 +50,7 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
                                 char team[32], subclass[32];
 
                                 ply = Clients.Get(target);
-                                ply.team(team, sizeof(team));
+                                ply.Team(team, sizeof(team));
                                 ply.class.Name(subclass, sizeof(subclass));
                                 
                                 PrintToChat(client, " \x07[SCP] \x01%N: \x07%s: %s", target, team, subclass);
@@ -91,15 +91,15 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
                 {
                     Client ply = Clients.Get(client);
                     
-                    if(!ply.FullAccess)
+                    if(!ply.fullaccess)
                     {
                         PrintToChat(client, " \x07[SCP] \x01Игнорирование карт доступа \x06включено");
-                        ply.FullAccess = true;
+                        ply.fullaccess = true;
                     }
                     else
                     {
                         PrintToChat(client, " \x07[SCP] \x01Игнорирование карт доступа \x06отключено");
-                        ply.FullAccess = false;
+                        ply.fullaccess = false;
                     }
                 }
                 // Give player item

@@ -56,7 +56,7 @@ public void SCP_OnPlayerDeath(Client &vic, Client &atk)
 				float pos[3];
 				GetClientAbsOrigin(vic.id, pos);
 
-				vic.team("SCP");
+				vic.Team("SCP");
 				vic.class = gamemode.team("SCP").class("049_2");
 
 				gamemode.mngr.DeadPlayers--;

@@ -34,6 +34,7 @@ public Plugin myinfo = {
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) {
     CreateNative("GameMode.team", NativeGameMode_GetTeam);
     CreateNative("GameMode.config.get", NativeGameMode_Config);
+    CreateNative("GameMode.entities.get", NativeGameMode_Entities);
     CreateNative("GameMode.mngr.get", NativeGameMode_Manager);
     CreateNative("GameMode.timer.get", NativeGameMode_Timers);
     
@@ -193,7 +194,7 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
             if (gamemode.config.debug) 
             {
                 char teamName[32], className[32];
-                ply.team(teamName, sizeof(teamName));
+                ply.Team(teamName, sizeof(teamName));
                 ply.class.Name(className, sizeof(className));
                 PrintToChat(ply.id, " \x07[SCP] \x01Твой класс %s - %s", teamName, className);
             }
@@ -262,9 +263,9 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
                 {
                     if (extra > Clients.InGame()) break;
                     Client player = Clients.GetRandomWithoutClass();
-                    player.team(teamKey);
+                    player.Team(teamKey);
                     player.class = class;
-                    player.haveClass = true;
+                    player.haveclass = true;
                     gamemode.mngr.team(teamKey).count++;
 
                     extra++;
@@ -278,9 +279,9 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
             char team[32], class[32];
             gamemode.config.DefaultGlobalClass(team, sizeof(team));
             gamemode.config.DefaultClass(class, sizeof(class));
-            player.team(team);
+            player.Team(team);
             player.class = gamemode.team(team).class(class);
-            player.haveClass = true;
+            player.haveclass = true;
             gamemode.mngr.team(team).count++;
 
         }
@@ -296,7 +297,7 @@ public void OnRoundPreStart(Event ev, const char[] name, bool dbroadcast)
     {
         Client client = Clients.Get(cig);
         client.class = null;
-        client.haveClass = false;
+        client.haveclass = false;
         client.inv.Clear();
     }
 
@@ -350,7 +351,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 {
                     return Plugin_Continue;
                 }
-                else if(ply.FullAccess)
+                else if(ply.fullaccess)
                 {
                     return Plugin_Continue;
                 }
@@ -629,7 +630,7 @@ void EndRoundCount(Client ply)
         if (ply != null && ply.class != null)
         {
             char team[32];
-            ply.team(team, sizeof(team));
+            ply.Team(team, sizeof(team));
             
             gamemode.mngr.team(team).count--;
             gamemode.mngr.DeadPlayers++;
@@ -857,8 +858,8 @@ public Action PlayerSpawn(int client,int args)
     if (gteam != null && gteam.classes.HasKey(className)) {
         char curTeam[32];
 
-        ply.team(curTeam, sizeof(curTeam));
-        ply.team(teamName);
+        ply.Team(curTeam, sizeof(curTeam));
+        ply.Team(teamName);
         ply.class = gteam.class(className);
 
         ply.Spawn();

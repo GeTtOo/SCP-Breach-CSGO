@@ -10,32 +10,15 @@
 
 #include "scp/classes/inventory"
 
-methodmap Client < Base {
+methodmap Client < Entity {
 
     public Client(int id) {
-        Client self = view_as<Client>(new StringMap());
+        Client self = view_as<Client>(CreateTrie());
         self.SetValue("id", id);
         self.SetValue("haveClass", false);
         self.SetValue("inventory", new Inventory());
 
         return self;
-    }
-    ///////////////////////////Logic in player object/////////////////////////////////
-
-    property int id {
-        public get() { return this.GetInt("id"); }
-    }
-
-    public bool GetName(char[] buffer, int max_size = 0) {
-        return GetClientName(this.id, buffer, max_size);
-    }
-
-    public void SetModel(char[] model) {
-        SetEntityModel(this.id, model);
-    }
-
-    public void SetHandsModel(char[] model) {
-        SetEntPropString(this.id, Prop_Send, "m_szArmsModel", model);
     }
 
     property int health {
@@ -53,21 +36,14 @@ methodmap Client < Base {
         public get() { return GetEntPropFloat(this.id, Prop_Send, "m_flLaggedMovementValue"); }
     }
 
-    property bool haveClass {
+    property bool haveclass {
         public set(bool value) { this.SetBool("haveClass", value); }
         public get() { return this.GetBool("haveClass", false); }
     }
 
-    public void team(char[] buffer, int max_size = 0) {
-        if (max_size == 0)
-            this.SetString("team", buffer);
-        else
-            this.GetString("team", buffer, max_size);
-    }
-
     property Class class {
         public set(Class val) { this.SetValue("class", val); }
-        public get() { Class obj; return this.GetValue("class", obj) ? obj : null; }
+        public get() { Class val; return this.GetValue("class", val) ? val : null; }
     }
 
     property bool IsSCP {
@@ -79,7 +55,7 @@ methodmap Client < Base {
         public get() { return this.GetInt("access", 0); }
     }
 
-    property bool FullAccess {
+    property bool fullaccess {
         public set(bool card) { this.SetBool("fullaccess", card); }
         public get() { return this.GetBool("fullaccess", false); }
     }
@@ -89,23 +65,17 @@ methodmap Client < Base {
         public get() { Inventory inv; return this.GetValue("inventory", inv) ? inv : null; }
     }
 
-    public void Kick(char[] reason) {
-        KickClient(this.id, reason);
-    }
+    public bool GetName(char[] buffer, int max_size = 0) { return GetClientName(this.id, buffer, max_size); }
 
-    public void SetPos(Vector vec, Angle ang = null) {
-        float vectorArr[3], angleArr[3];
-        vec.GetArr(vectorArr);
-        if (ang != null)
-            ang.GetArr(angleArr);
-        TeleportEntity(this.id, vectorArr, (ang == null) ? NULL_VECTOR : angleArr, NULL_VECTOR);
-        delete vec;
-        delete ang;
-    }
+    public void SetModel(char[] model) { SetEntityModel(this.id, model); }
 
-    public Vector GetPos() { float pos[3]; GetEntPropVector(this.GetInt("id"), Prop_Send, "m_vecOrigin", pos); return new Vector(pos[0], pos[1], pos[2]); }
+    public void SetHandsModel(char[] model) { SetEntPropString(this.id, Prop_Send, "m_szArmsModel", model); }
+
+    public void Team(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("team", buffer) : this.GetString("team", buffer, max_size); }
 
     public void Give(char[] item) { GivePlayerItem(this.id, item); }
+
+    public void Kick(char[] reason) { KickClient(this.id, reason); }
 
     public void Spawn() {
         this.health = this.class.health;
@@ -143,54 +113,5 @@ methodmap Client < Base {
 
         if (!IsPlayerAlive(this.id))
             CS_RespawnPlayer(this.id);
-    }
-}
-
-methodmap ClientSingleton < StringMap {
-
-    public ClientSingleton() {
-        ClientSingleton self = view_as<ClientSingleton>(new StringMap());
-        Client clients[MAXPLAYERS + 1];
-        self.SetArray("Clients", clients, sizeof(clients));
-        
-        return self;
-    }
-    
-    public native Client Get(int id);
-
-    public Client Add(int id) {
-        Client clients[MAXPLAYERS + 1];
-        this.GetArray("Clients", clients, sizeof(clients));
-        clients[id] = view_as<Client>(new Client(id));
-        this.SetArray("Clients", clients, sizeof(clients));
-    }
-
-    public Client Remove(int id) {
-        Client clients[MAXPLAYERS + 1];
-        this.GetArray("Clients", clients, sizeof(clients));
-        delete clients[id];
-        this.SetArray("Clients", clients, sizeof(clients));
-    }
-
-    property int len { 
-        public get() { return MAXPLAYERS + 1; }
-    }
-
-    public native int InGame();
-
-    public native int Alive();
-
-    public native Client GetRandom();
-
-    public Client GetRandomWithoutClass() {
-        Client client = this.GetRandom();
-        int crutch = 0; // :c
-        while (view_as<int>(client) != 0 && client.haveClass) {
-            if (crutch == 500) break;
-            client = this.GetRandom();
-            crutch++;
-        }
-
-        return view_as<Client>(client);
     }
 }

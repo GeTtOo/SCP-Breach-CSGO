@@ -7,10 +7,10 @@
 
 #include <sdktools>
 
-methodmap Entity < StringMap {
+methodmap Entity < Base {
 
     public Entity(int id) {
-        Entity entity = view_as<Entity>(new StringMap());
+        Entity entity = view_as<Entity>(CreateTrie());
 
         entity.SetValue("id", id);
         entity.SetValue("active", true);
@@ -19,14 +19,7 @@ methodmap Entity < StringMap {
     }
 
     property int id {
-        public get() { int id; return this.GetValue("id", id) ? id : -1; }
-    }
-
-    public void name(char[] buffer, int max_size = 0) {
-        if (max_size == 0)
-            this.SetString("name", buffer);
-        else
-            this.GetString("name", buffer, max_size);
+        public get() { return this.GetInt("id"); }
     }
 
     property bool active {
@@ -34,21 +27,33 @@ methodmap Entity < StringMap {
         public get() { bool value; return this.GetValue("active", value) ? value : true; }
     }
 
-    public void GetClass(char[] name, int max_size) {
-        if (!this.GetString("class", name, max_size))
-            GetEntityClassname(this.id, name, max_size);
-    }
+    public void InvName(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("invname", buffer) : this.GetString("invname", buffer, max_size); }
+
+    public void GetClass(char[] name, int max_size) { if (!this.GetString("class", name, max_size)) GetEntityClassname(this.id, name, max_size); }
+
+    public Vector GetPos() { float pos[3]; GetEntPropVector(this.id, Prop_Send, "m_vecOrigin", pos); return new Vector(pos[0], pos[1], pos[2]); }
+
+    public Angle GetAng() { float ang[3]; GetEntPropVector(this.id, Prop_Send, "m_angRotation", ang); return new Angle(ang[0], ang[1], ang[2]); }
     
-    public Entity SetPos(Vector vec) {
-        float vectorArr[3];
+    public Entity SetPos(Vector vec, Angle ang = null) {
+        float vectorArr[3], angleArr[3];
         vec.GetArr(vectorArr);
+        if (ang != null)
+            ang.GetArr(angleArr);
         
         if (this.active)
-            TeleportEntity(this.id, vectorArr, NULL_VECTOR, NULL_VECTOR);
+            TeleportEntity(this.id, vectorArr, (ang == null) ? NULL_VECTOR : angleArr, NULL_VECTOR);
         else
+        {
             DispatchKeyValueVector(this.id, "origin", vectorArr);
+        }
 
         delete vec;
+        return this;
+    }
+
+    public Entity UseCB(SDKHookCB cb) {
+        SDKHook(this.id, SDKHook_Use, cb);
         return this;
     }
 
@@ -57,129 +62,8 @@ methodmap Entity < StringMap {
         return this;
     }
 
-    public Vector GetPos() {
-        int id;
-        this.GetValue("id", id);
-
-        float vec[3];
-        GetEntPropVector(id, Prop_Send, "m_vecOrigin", vec);
-
-        return new Vector(vec[0], vec[1], vec[2]);
-    }
-
-    public void GetAng(float[3] ang) {
-        int id;
-        this.GetValue("id", id);
-        GetEntPropVector(id, Prop_Send, "m_angRotation", ang);
-    }
-
     public void Remove() {
         RemoveEntity(this.id);
         delete this;
-    }
-
-    public Entity UseCB(SDKHookCB cb) {
-        SDKHook(this.id, SDKHook_Use, cb);
-        return this;
-    }
-}
-
-methodmap EntitySingleton < StringMap {
-
-    public EntitySingleton() {
-        EntitySingleton self = view_as<EntitySingleton>(new StringMap());
-        ArrayList entArr = new ArrayList();
-        self.SetValue("Entities", entArr);
-        return self;
-    }
-
-    public ArrayList GetAll() {
-        ArrayList entArr;
-        this.GetValue("Entities", entArr);
-        return entArr;
-    }
-
-    public Entity Add(int id) {
-        ArrayList entArr;
-        this.GetValue("Entities", entArr);
-
-        Entity ent = new Entity(id);
-        ent.active = true;
-
-        char entName[32];
-        GetEntityClassname(id, entName, sizeof(entName));
-
-        if (StrContains(entName, "weapon") != -1)
-            switch (GetEntProp(ent.id, Prop_Send, "m_iItemDefinitionIndex")) {
-                case 60: {
-                    entName = "weapon_m4a1_silencer";
-                }
-                case 61: {
-                    entName = "weapon_usp_silencer";
-                }
-                case 63: {
-                    entName = "weapon_cz75a";
-                }
-                case 64: {
-                    entName = "weapon_revolver";
-                }
-                case 23: {
-                    entName = "weapon_mp5sd";
-                }
-            }
-
-        ent.SetString("class", entName);
-
-        entArr.Push(ent);
-
-        return ent;
-    }
-    
-    public native Entity Get(int id);
-    public native Entity TryGetOrAdd(int id);
-
-    public native Entity Create(char[] EntName);
-
-    public native void Remove(int id);
-
-    public void Clear() {
-        ArrayList entArr;
-        this.GetValue("Entities", entArr);
-
-        for(int i=0; i < entArr.Length; i++)
-            delete view_as<Entity>(entArr.Get(i, 0));
-
-        entArr.Clear();
-    }
-
-    public ArrayList FindInBox(Vector vecMin, Vector vecMax, char[][] filter, int filter_size) {
-        int entId = 0;
-        ArrayList entArr = new ArrayList(128);
-        
-        while ((entId = FindEntityByClassname(entId, "*")) != -1) {
-            if (!IsValidEntity(entId)) continue;
-
-            char className[32];
-            GetEntityClassname(entId, className, sizeof(className));
-
-            for (int i=0; i < filter_size; i++) {
-                if (StrContains(className, filter[i]) == 0) {
-                    float vec[3];
-                    GetEntPropVector(entId, Prop_Send, "m_vecOrigin", vec);
-                    Vector vecEnt = new Vector(vec[0], vec[1], vec[2]);
-
-                    if ((vecMin.x < vecEnt.x < vecMax.x) && (vecMin.y < vecEnt.y < vecMax.y) && (vecMin.z < vecEnt.z < vecMax.z)) {
-                        PushArrayCell(entArr, this.TryGetOrAdd(entId));
-                    }
-
-                    delete vecEnt;
-                }
-            }
-        }
-
-        delete vecMin;
-        delete vecMax;
-
-        return entArr;
     }
 }

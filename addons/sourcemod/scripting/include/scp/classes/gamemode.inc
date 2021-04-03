@@ -83,7 +83,7 @@ methodmap GameMode < JSON_Object {
     public native GTeam team(char[] name);
 
     property Entities entities {
-        public get() { return view_as<Entities>(this.GetObject("Entities")); }
+        public native get();
     }
 
     public StringMapSnapshot GetGlobalClassNames() {
