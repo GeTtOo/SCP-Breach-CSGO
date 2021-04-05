@@ -56,7 +56,7 @@ methodmap Config < JSON_OBJECT {
         this.GetString("NukeSound", buffer, max_size);
     }
     
-    property Vector AdminRoomPos {
+    property Vector AdminRoom {
         public get() {
             this.GetVector("AdminRoom");
         }
