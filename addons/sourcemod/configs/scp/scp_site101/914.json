@@ -1,25 +1,63 @@
 {
     "config": {
+        "usemathcounter":false,
         "countername": "scp_914_logic_counter",
         "switchbutton": 443873,
         "runbutton": 355153,
-        "runtime": 15
+        "runtime": 15,
+        "decsription": [
+            "Recipe template <itemname> [chance critical failed craft] [chance successful craft].",
+            "Player status effect list: regeneration, speed, berserk, death."
+        ]
     },
     "recipes": {
         "rough": {
-            "card_o5": ["card_lt", 100]
+            "card_o5": [
+                ["card_fm", 10, 5]
+            ]
         },
-        "coarse": [
-            
-        ],
-        "one_by_one": [
-            
-        ],
-        "fine": [
-            
-        ],
+        "coarse": {
+            "card_o5": [
+                ["card_fm", 100, 10]
+            ],
+            "weapon_m4a1_silencer": [
+                ["weapon_m4a1", 100, 100]
+            ],
+            "weapon_usp_silencer": [
+                ["weapon_hkp2000", 100, 100]
+            ]
+        },
+        "one_by_one": {
+            "card_o5": [
+                ["card_fm", 100, 0]
+            ]
+        },
+        "fine": {
+            "card_o5": [
+                ["card_fm", 100, 0]
+            ],
+            "weapon_m4a1": [
+                ["weapon_m4a1_silencer", 100, 100]
+            ],
+            "weapon_hkp2000": [
+                ["weapon_usp_silencer", 100, 100]
+            ],
+            "player": [
+                ["Regeneration", 100],
+                ["Speed", 100]
+            ]
+        },
         "very_fine": {
-            "card_o5" : ["card_lt"]
+            "card_o5": [
+                ["card_fm", 100, 0]
+            ],
+            "card_lt": [
+                ["card_o5", 100, 70]
+            ],
+            "weapon_usp_silencer": [
+                ["weapon_deagle", 70, 70],
+                ["weapon_deagle", 60, 90]
+            ]
         }
     }
 }
