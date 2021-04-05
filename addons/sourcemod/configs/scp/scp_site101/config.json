@@ -5,9 +5,5 @@
     "NukeTime":110.0,
     "NukeKillPos":400.0,
     "NukeSound":"*/ttt_foundation/warhead_announcement.wav",
-    "AdminRoom": {
-        "x":0.0,
-        "y":0.0,
-        "z":0.0
-    }
+    "AdminRoom": [0,0,0]
 }

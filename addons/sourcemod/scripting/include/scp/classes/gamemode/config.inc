@@ -58,9 +58,7 @@ methodmap Config < JSON_OBJECT {
     
     property Vector AdminRoomPos {
         public get() {
-            JSON_OBJECT rawPos = this.GetObject("AdminRoom");
-            Vector pos = new Vector(rawPos.GetFloat("x"), rawPos.GetFloat("y"), rawPos.GetFloat("z"));
-            return pos;
+            this.GetVector("AdminRoom");
         }
     }
 
