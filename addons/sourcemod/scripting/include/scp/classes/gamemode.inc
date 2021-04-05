@@ -86,7 +86,7 @@ methodmap GameMode < JSON_OBJECT {
         public native get();
     }
 
-    public StringMapSnapshot GetGlobalClassNames() {
+    public StringMapSnapshot GetTeamNames() {
         return this.GetObject("Teams").Snapshot();
     }
 }

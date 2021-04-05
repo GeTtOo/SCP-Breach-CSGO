@@ -228,7 +228,7 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
         gamemode.mngr.IsNuked = false;
         gamemode.mngr.Reset();
         
-        StringMapSnapshot teamNameS = gamemode.GetGlobalClassNames();
+        StringMapSnapshot teamNameS = gamemode.GetTeamNames();
         int teamCount, classCount, extra = 0;
         int keyLen;
 
