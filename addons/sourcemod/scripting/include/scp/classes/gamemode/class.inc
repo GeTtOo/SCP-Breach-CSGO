@@ -3,7 +3,7 @@
 
 #include <json>
 
-methodmap Class < JSON_Object {
+methodmap Class < JSON_OBJECT {
 
     public void Name(char[] buffer, int max_size = 0) {
         if (max_size == 0)
@@ -13,15 +13,11 @@ methodmap Class < JSON_Object {
     }
 
     public Vector GetPos() {
-        JSON_Array pos = view_as<JSON_Array>(this.GetObject("pos", new JSON_Array()));
-        if (pos.Length == 0) return null;
-        return new Vector(pos.GetFloat(0),pos.GetFloat(1),pos.GetFloat(2));
+        return this.GetVector("pos");
     }
 
     public Angle GetAng() {
-        JSON_Array ang = view_as<JSON_Array>(this.GetObject("ang", new JSON_Array()));
-        if (ang.Length == 0) return null;
-        return new Angle(ang.GetFloat(0),ang.GetFloat(1),ang.GetFloat(2));
+        return view_as<Angle>(this.GetVector("ang"));
     }
 
     property int percent {
@@ -48,16 +44,16 @@ methodmap Class < JSON_Object {
         public get() { return this.GetFloat("speed", 1.0); }
     }
 
-    property JSON_Array doors {
-        public get() { return view_as<JSON_Array>(this.GetObject("doors")); }
+    property JSON_ARRAY doors {
+        public get() { return view_as<JSON_ARRAY>(this.GetObject("doors")); }
     }
 
-    property JSON_Array items {
-        public get() { return view_as<JSON_Array>(this.GetObject("items")); }
+    property JSON_ARRAY items {
+        public get() { return view_as<JSON_ARRAY>(this.GetObject("items")); }
     }
 
-    property JSON_Array weapons {
-        public get() { return view_as<JSON_Array>(this.GetObject("weapons")); }
+    property JSON_ARRAY weapons {
+        public get() { return view_as<JSON_ARRAY>(this.GetObject("weapons")); }
     }
 
     public bool Model(char[] buffer, int max_size) {

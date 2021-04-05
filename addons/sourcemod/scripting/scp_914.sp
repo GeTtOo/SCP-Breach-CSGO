@@ -7,6 +7,8 @@
 
 #define MATH_COUNTER_VALUE_OFFSET 924
 
+JSON_OBJECT config;
+
 int Counter = 0;
 
 char modes[5][32] = {"rough", "coarse", "one_by_one", "fine", "very_fine"};
@@ -33,15 +35,16 @@ public void OnMapStart() {
     GetCurrentMap(mapName, sizeof(mapName));
 
     gamemode.config.Add("914", ReadConfig(mapName, "914"));
+    config = gamemode.config.GetObject("914").GetObject("config");
 }
 
 public Action OnRoundStart(Event ev, const char[] name, bool dbroadcast) {
-    if (gamemode.config.GetObject("914").GetObject("config").GetBool("usemathcounter")) {
+    if (config.GetBool("usemathcounter")) {
         int entId = 0;
         while ((entId = FindEntityByClassname(entId, "math_counter")) != -1) {
             char findedCounterName[32], configCounterName[32];
             GetEntPropString(entId, Prop_Data, "m_iName", findedCounterName, sizeof(findedCounterName));
-            gamemode.config.GetObject("914").GetObject("config").GetString("countername", configCounterName, sizeof(configCounterName));
+            config.GetString("countername", configCounterName, sizeof(configCounterName));
             if (StrEqual(findedCounterName, configCounterName))
                 Counter = entId;
         }
@@ -50,15 +53,25 @@ public Action OnRoundStart(Event ev, const char[] name, bool dbroadcast) {
     {
         Counter = 0;
     }
+
+    gamemode.timer.PluginClear();
 }
 
-public void SCP_OnPlayerSpawn(Client &ply) {
-    //Client client = Clients.Get(ply.id);
+public SDKHookCB Callback_EntUse(int eid, int cid) {
+    Client ply = Clients.Get(cid);
+    Entity ent = Ents.Get(eid);
+
+    char entClassName[32];
+    ent.GetClass(entClassName, sizeof(entClassName));
+
+    if (gamemode.entities.HasKey(entClassName))
+        if (ply.inv.TryAdd(entClassName))
+            Ents.Remove(ent.id);
+        else
+            PrintToChat(ply.id, " \x07[SCP] \x01Твой инвентарь переполнен");
 }
 
 public void SCP_OnButtonPressed(Client &ply, int doorId) {
-    JSON_Object config = gamemode.config.GetObject("914").GetObject("config");
-    
     if (doorId == config.GetInt("runbutton"))
         gamemode.timer.Simple(config.GetInt("runtime"), "Transform", ply);
     
@@ -78,10 +91,11 @@ public void SCP_OnButtonPressed(Client &ply, int doorId) {
 }
 
 public void Transform(Client ply) {
-    JSON_Object recipes = gamemode.config.GetObject("914").GetObject("recipes").GetObject(curmode);
+    JSON_OBJECT recipes = gamemode.config.GetObject("914").GetObject("recipes").GetObject(curmode);
 
     char filter[3][32] = {"prop_physics", "weapon_", "player"};
-    ArrayList ents = Ents.FindInBox(new Vector(3630.0, -2072.0, 20.0), new Vector(3762.0, -1947.0, 90.0), filter, sizeof(filter));
+    
+    ArrayList ents = Ents.FindInBox(config.GetArray("searchzone").GetVector(0), config.GetArray("searchzone").GetVector(1), filter, sizeof(filter));
 
     if (gamemode.config.debug)
         PrintToChatAll("Ents count: %i", ents.Length);
@@ -111,8 +125,8 @@ public void Transform(Client ply) {
             if (StrEqual(entclass, ientclass)) {
                 Vector oitempos = ent.GetPos() - new Vector(0.0, 425.0, 0.0);
 
-                JSON_Array oentdata = view_as<JSON_Array>(recipes.GetObject(ientclass));
-                JSON_Array recipe = view_as<JSON_Array>(oentdata.GetObject(GetRandomInt(0, oentdata.Length - 1)));
+                JSON_ARRAY oentdata = recipes.GetArray(ientclass);
+                JSON_ARRAY recipe = oentdata.GetArray(GetRandomInt(0, oentdata.Length - 1));
 
                 char oentclass[32];
                 recipe.GetString(0, oentclass, sizeof(oentclass));
@@ -132,7 +146,7 @@ public void Transform(Client ply) {
                 }
                 else
                 {
-                    if (recipe.GetInt(1) >= GetRandomInt(1, 100))
+                    if (recipe.GetInt(1) <= GetRandomInt(1, 100))
                     {
                         if (recipe.GetInt(2) >= GetRandomInt(1, 100))
                         {
@@ -158,25 +172,22 @@ public void Transform(Client ply) {
             }
         }
 
-        if (!upgraded)
-            ent.SetPos(ent.GetPos() - new Vector(0.0, 425.0, 0.0));
+        if (!upgraded) {
+            Vector oitempos = ent.GetPos() - new Vector(0.0, 425.0, 0.0);
+
+            if (StrEqual(entclass, "player"))
+            {
+                ent.SetPos(oitempos);
+            }
+            else
+            {
+                Ents.Create(entclass).SetPos(oitempos, ent.GetAng()).UseCB(view_as<SDKHookCB>(Callback_EntUse)).Spawn();
+                Ents.Remove(ent.id);
+            }
+        }
     }
 
     delete ents;
-}
-
-public SDKHookCB Callback_EntUse(int eid, int cid) {
-    Client ply = Clients.Get(cid);
-    Entity ent = Ents.Get(eid);
-
-    char entClassName[32];
-    ent.GetClass(entClassName, sizeof(entClassName));
-
-    if (gamemode.entities.HasKey(entClassName))
-        if (ply.inv.TryAdd(entClassName))
-            Ents.Remove(ent.id);
-        else
-            PrintToChat(ply.id, " \x07[SCP] \x01Твой инвентарь переполнен");
 }
 
 public void Regeneration(Client ply) {

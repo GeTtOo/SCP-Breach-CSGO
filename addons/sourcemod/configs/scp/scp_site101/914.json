@@ -5,6 +5,8 @@
         "switchbutton": 443873,
         "runbutton": 355153,
         "runtime": 15,
+        "searchzone":[[3630.0, -2072.0, 20.0],[3762.0, -1947.0, 90.0]],
+        "distance":[0.0, 425.0, 0.0],
         "decsription": [
             "Recipe template <itemname> [chance critical failed craft] [chance successful craft].",
             "Player status effect list: regeneration, speed, berserk, death."
@@ -13,34 +15,34 @@
     "recipes": {
         "rough": {
             "card_o5": [
-                ["card_fm", 10, 5]
+                ["card_fm", 90, 5]
             ]
         },
         "coarse": {
             "card_o5": [
-                ["card_fm", 100, 10]
+                ["card_fm", 0, 10]
             ],
             "weapon_m4a1_silencer": [
-                ["weapon_m4a1", 100, 100]
+                ["weapon_m4a1", 0, 100]
             ],
             "weapon_usp_silencer": [
-                ["weapon_hkp2000", 100, 100]
+                ["weapon_hkp2000", 0, 100]
             ]
         },
         "one_by_one": {
             "card_o5": [
-                ["card_fm", 100, 0]
+                ["card_fm", 0, 0]
             ]
         },
         "fine": {
             "card_o5": [
-                ["card_fm", 100, 0]
+                ["card_fm", 0, 0]
             ],
             "weapon_m4a1": [
-                ["weapon_m4a1_silencer", 100, 100]
+                ["weapon_m4a1_silencer", 0, 100]
             ],
             "weapon_hkp2000": [
-                ["weapon_usp_silencer", 100, 100]
+                ["weapon_usp_silencer", 0, 100]
             ],
             "player": [
                 ["Regeneration", 100],
@@ -49,14 +51,14 @@
         },
         "very_fine": {
             "card_o5": [
-                ["card_fm", 100, 0]
+                ["card_fm", 0, 0]
             ],
             "card_lt": [
-                ["card_o5", 100, 70]
+                ["card_o5", 0, 70]
             ],
             "weapon_usp_silencer": [
-                ["weapon_deagle", 70, 70],
-                ["weapon_deagle", 60, 90]
+                ["weapon_deagle", 30, 70],
+                ["weapon_deagle", 40, 90]
             ]
         }
     }

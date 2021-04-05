@@ -4,7 +4,7 @@
 
 #include <json>
 
-methodmap Door < JSON_Object {
+methodmap Door < JSON_OBJECT {
     
     public Door(Door door) {
         return view_as<Door>(door);
@@ -23,7 +23,7 @@ methodmap Door < JSON_Object {
     }
 }
 
-methodmap Doors < JSON_Object {
+methodmap Doors < JSON_OBJECT {
     public StringMapSnapshot GetAll() { return this.Snapshot(); }
 
     public Door Get(char[] id) { return view_as<Door>(this.GetObject(id)); }

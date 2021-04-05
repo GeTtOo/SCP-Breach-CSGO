@@ -1,4 +1,4 @@
-methodmap EntConfig < JSON_Object {
+methodmap EntConfig < JSON_OBJECT {
     
     public void name(char[] buffer, int max_size) {
         this.GetString("name", buffer, max_size);
@@ -17,7 +17,7 @@ methodmap EntConfig < JSON_Object {
     }
 }
 
-methodmap Entities < JSON_Object {
+methodmap Entities < JSON_OBJECT {
 
     public Entities(char[] mapname) {
         return view_as<Entities>(ReadConfig(mapname, "entities"));

@@ -544,11 +544,11 @@ public int InventoryHandler(Menu menu, MenuAction action, int client, int item) 
 //////////////////////////////////////////////////////////////////////////////
 
 public void SetMapRegions() {
-    JSON_Array regions = gamemode.config.regions;
+    JSON_ARRAY regions = gamemode.config.regions;
 
     for (int i=0; i < regions.Length; i++) {
-        JSON_Object region = regions.GetObject(i);
-        JSON_Array pos = view_as<JSON_Array>(region.GetObject("pos"));
+        JSON_OBJECT region = view_as<JSON_OBJECT>(regions.GetObject(i));
+        JSON_ARRAY pos = view_as<JSON_ARRAY>(region.GetObject("pos"));
         char radius[5], name[128];
         IntToString(region.GetInt("radius"),radius,sizeof(radius));
         region.GetString("name",name,sizeof(name));
@@ -561,7 +561,7 @@ public void SetMapRegions() {
 }
 
 public void SpawnItemsOnMap() {
-    JSON_Object spawnmap = gamemode.config.spawnmap;
+    JSON_OBJECT spawnmap = gamemode.config.spawnmap;
     StringMapSnapshot snapshot = spawnmap.Snapshot();
 
     for (int i=0; i < snapshot.Length; i++) {
@@ -571,11 +571,11 @@ public void SpawnItemsOnMap() {
 
         if (json_is_meta_key(item)) continue;
         
-        JSON_Array rawDataArr = view_as<JSON_Array>(spawnmap.GetObject(item));
+        JSON_ARRAY rawDataArr = view_as<JSON_ARRAY>(spawnmap.GetObject(item));
 
         for (int v=0; v < rawDataArr.Length; v++) {
-            JSON_Object data = rawDataArr.GetObject(v);
-            JSON_Array pos = view_as<JSON_Array>(data.GetObject("pos"));
+            JSON_OBJECT data = view_as<JSON_OBJECT>(rawDataArr.GetObject(v));
+            JSON_ARRAY pos = view_as<JSON_ARRAY>(data.GetObject("pos"));
 
             if (GetRandomInt(1, 100) <= data.GetInt("chance"))
                 Ents.Create(item)

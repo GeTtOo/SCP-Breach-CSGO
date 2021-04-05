@@ -9,11 +9,11 @@
 #include "scp/classes/gamemode/entities"
 #include "scp/classes/timers"
 
-methodmap Classes < JSON_Object {
+methodmap Classes < JSON_OBJECT {
     public Class get(char[] name) { Class class = view_as<Class>(this.GetObject(name)); class.Name(name); return class; }
 }
 
-methodmap GTeam < JSON_Object {
+methodmap GTeam < JSON_OBJECT {
 
     property int percent {
         public get() { return this.GetInt("percent"); }
@@ -41,7 +41,7 @@ methodmap GTeam < JSON_Object {
     }
 }
 
-methodmap Teams < JSON_Object {
+methodmap Teams < JSON_OBJECT {
     
     public Teams(char[] mapname) {
         return view_as<Teams>(ReadConfig(mapname, "classes"));
@@ -56,13 +56,13 @@ methodmap Teams < JSON_Object {
 
 #include "scp/classes/gamemode/manager"
 
-methodmap GameMode < JSON_Object {
+methodmap GameMode < JSON_OBJECT {
     
     public GameMode(char[] mapname) {
-        GameMode self = view_as<GameMode>(new JSON_Object());
-        self.SetObject("Teams", new Teams(mapname));
-        self.SetObject("Entities", new Entities(mapname));
-        self.SetObject("Config", new Config(mapname));
+        GameMode self = view_as<GameMode>(new JSON_OBJECT());
+        self.SetValue("Teams", new Teams(mapname));
+        self.SetValue("Entities", new Entities(mapname));
+        self.SetValue("Config", new Config(mapname));
         self.SetValue("Manager", new Manager(view_as<Teams>(self.GetObject("Teams"))));
         self.SetValue("Timers", new Timers());
         return self;
@@ -91,18 +91,18 @@ methodmap GameMode < JSON_Object {
     }
 }
 
-public JSON_Object ReadConfig(char[] mapname, char[] filename) {
+public JSON_OBJECT ReadConfig(char[] mapname, char[] filename) {
     char path[PLATFORM_MAX_PATH];
-    JSON_Object obj;
+    JSON_OBJECT obj;
     Format(path, sizeof(path), "%s%s%s%s%s", "configs/scp/", mapname, "/", filename, ".json");
     BuildPath(Path_SM, path, PLATFORM_MAX_PATH, path);
     if (FileExists(path)) {
         char buffer[65536];
         Handle file = OpenFile(path,"r+");
         ReadFileString(file, buffer, sizeof(buffer));
-        obj = json_decode(buffer);
+        obj = view_as<JSON_OBJECT>(json_decode(buffer));
     } else {
-        obj = new JSON_Object();
+        obj = new JSON_OBJECT();
     }
 
     return obj;

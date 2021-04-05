@@ -6,14 +6,14 @@
 
 #include "scp/classes/gamemode/doors"
 
-methodmap Config < JSON_Object {
+methodmap Config < JSON_OBJECT {
     
     public Config(char[] mapname) {
         Config self = view_as<Config>(ReadConfig(mapname, "config"));
 
         self.SetObject("Doors", view_as<Doors>(ReadConfig(mapname, "doors")));
-        self.SetObject("SpawnMap", view_as<JSON_Object>(ReadConfig(mapname, "spawn_map")));
-        self.SetObject("Regions", view_as<JSON_Array>(ReadConfig(mapname, "regions")));
+        self.SetObject("SpawnMap", view_as<JSON_OBJECT>(ReadConfig(mapname, "spawn_map")));
+        self.SetObject("Regions", view_as<JSON_ARRAY>(ReadConfig(mapname, "regions")));
 
         return self;
     }
@@ -34,12 +34,12 @@ methodmap Config < JSON_Object {
         public get() { return view_as<Doors>(this.GetObject("Doors")); }
     }
 
-    property JSON_Object spawnmap { 
-        public get() { return view_as<JSON_Object>(this.GetObject("SpawnMap")); }
+    property JSON_OBJECT spawnmap { 
+        public get() { return view_as<JSON_OBJECT>(this.GetObject("SpawnMap")); }
     }
 
-    property JSON_Array regions { 
-        public get() { return view_as<JSON_Array>(this.GetObject("Regions")); }
+    property JSON_ARRAY regions { 
+        public get() { return view_as<JSON_ARRAY>(this.GetObject("Regions")); }
     }
 
     property float NukeTime {
@@ -58,7 +58,7 @@ methodmap Config < JSON_Object {
     
     property Vector AdminRoomPos {
         public get() {
-            JSON_Object rawPos = this.GetObject("AdminRoom");
+            JSON_OBJECT rawPos = this.GetObject("AdminRoom");
             Vector pos = new Vector(rawPos.GetFloat("x"), rawPos.GetFloat("y"), rawPos.GetFloat("z"));
             return pos;
         }
