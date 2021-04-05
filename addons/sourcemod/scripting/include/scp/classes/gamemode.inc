@@ -97,7 +97,7 @@ public JSON_Object ReadConfig(char[] mapname, char[] filename) {
     Format(path, sizeof(path), "%s%s%s%s%s", "configs/scp/", mapname, "/", filename, ".json");
     BuildPath(Path_SM, path, PLATFORM_MAX_PATH, path);
     if (FileExists(path)) {
-        char buffer[8192];
+        char buffer[65536];
         Handle file = OpenFile(path,"r+");
         ReadFileString(file, buffer, sizeof(buffer));
         obj = json_decode(buffer);
