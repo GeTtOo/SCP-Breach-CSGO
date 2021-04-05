@@ -13,12 +13,11 @@
 methodmap Client < Entity {
 
     public Client(int id) {
-        Client self = view_as<Client>(CreateTrie());
-        self.SetValue("id", id);
-        self.SetValue("haveсlass", false);
-        self.SetValue("inventory", new Inventory());
+        Client client = view_as<Client>(new Entity(id));
+        client.SetValue("haveсlass", false);
+        client.SetValue("inventory", new Inventory());
 
-        return self;
+        return client;
     }
 
     property int health {

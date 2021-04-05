@@ -23,8 +23,8 @@ methodmap Entity < Base {
     }
 
     property bool active {
-        public set(bool value) { this.SetValue("active", value); }
-        public get() { bool value; return this.GetValue("active", value) ? value : true; }
+        public set(bool value) { this.SetBool("active", value); }
+        public get() { return this.GetBool("active"); }
     }
 
     public void InvName(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("invname", buffer) : this.GetString("invname", buffer, max_size); }
@@ -46,9 +46,12 @@ methodmap Entity < Base {
         else
         {
             DispatchKeyValueVector(this.id, "origin", vectorArr);
+            DispatchKeyValueVector(this.id, "angles", angleArr);
         }
 
         delete vec;
+        if (ang != null)
+            delete ang;
         return this;
     }
 

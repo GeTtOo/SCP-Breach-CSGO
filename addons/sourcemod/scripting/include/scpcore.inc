@@ -3,6 +3,8 @@
 #endif
 #define _scpcore_included
 
+#pragma dynamic 131072
+
 methodmap Base < StringMap {
     
     public Base() { return view_as<Base>(CreateTrie()); }
@@ -43,21 +45,13 @@ forward void SCP_OnPlayerDeath(Client &vic, Client &atk);
 
 forward void SCP_OnButtonPressed(Client &ply, int doorId);
 
-public any NativeGameMode_Config(Handle Plugin, int numArgs) {
-    return view_as<Config>(gamemode.GetObject("Config"));
-}
+public any NativeGameMode_Config(Handle Plugin, int numArgs) { return view_as<Config>(gamemode.GetObject("Config")); }
 
-public any NativeGameMode_Entities(Handle Plugin, int numArgs) {
-    return view_as<Entities>(gamemode.GetObject("Entities"));
-}
+public any NativeGameMode_Entities(Handle Plugin, int numArgs) { return view_as<Entities>(gamemode.GetObject("Entities")); }
 
-public any NativeGameMode_Manager(Handle Plugin, int numArgs) {
-    return view_as<Manager>(gamemode.GetObject("Manager"));
-}
+public any NativeGameMode_Manager(Handle Plugin, int numArgs) { return view_as<Manager>(gamemode.GetObject("Manager")); }
 
-public any NativeGameMode_Timers(Handle Plugin, int numArgs) {
-    return view_as<Timers>(gamemode.GetObject("Timers"));
-}
+public any NativeGameMode_Timers(Handle Plugin, int numArgs) { return view_as<Timers>(gamemode.GetObject("Timers")); }
 
 public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
     char name[32];
