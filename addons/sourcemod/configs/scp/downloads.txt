@@ -54,3 +54,4 @@ models/props/sl_physics/keycardzm.dx90.vtx
 models/props/sl_physics/keycardzm.mdl
 models/props/sl_physics/keycardzm.phy
 models/props/sl_physics/keycardzm.vvd
+sound/ttt_foundation/914_player_rough.mp3
