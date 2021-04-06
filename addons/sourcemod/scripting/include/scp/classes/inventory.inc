@@ -2,10 +2,10 @@
 /*---------------------------------------------------Player inventory---------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
-methodmap Item < StringMap {
+methodmap Item < Base {
 
     public Item(char[] class) {
-        Item self = view_as<Item>(new StringMap());
+        Item self = view_as<Item>(CreateTrie());
         self.SetString("class", class);
         return self;
     }
@@ -28,34 +28,39 @@ methodmap Item < StringMap {
     }
 }
 
-methodmap Inventory < StringMap {
+methodmap Inventory < Base {
 
     public Inventory() {
-        Inventory self = view_as<Inventory>(new StringMap());
+        Inventory self = view_as<Inventory>(CreateTrie());
         self.SetValue("inventory", new ArrayList());
         return self;
     }
 
-    public void Add(char[] entclass) {
-        ArrayList inv;
-        this.GetValue("inventory", inv);
-
-        EntConfig entcfg = gamemode.entities.get(entclass);
-
-        char name[32];
-        entcfg.name(name, sizeof(name));
-
-        Item itm = new Item(entclass);
-        itm.name(name);
-
-        inv.Push(itm);
+    property ArrayList items {
+        public get() { return this.GetList("inventory"); }
     }
 
-    public bool TryAdd(char[] entclass) {
-        ArrayList inv;
-        this.GetValue("inventory", inv);
+    public int Check(char[] val) {
+        ArrayList list = this.GetList("inventory");
+        
+        int ival = 0;
 
-        if (inv.Length <= 4) {
+        for (int i=0; i < list.Length; i++) {
+            char itemname[32];
+            view_as<Item>(list.Get(i)).GetEntClass(itemname, sizeof(itemname));
+
+            EntConfig entcfg = gamemode.entities.get(itemname);
+            if (entcfg && entcfg != null)
+                ival = entcfg.GetInt(val, 0);
+        }
+
+        return ival;
+    }
+
+    public bool Add(char[] entclass) {
+        ArrayList inv = this.GetList("inventory");
+
+        if (inv.Length <= gamemode.config.invsize) {
             EntConfig entcfg = gamemode.entities.get(entclass);
 
             char name[32];
@@ -71,20 +76,16 @@ methodmap Inventory < StringMap {
             return false;
     }
 
-    public Item Get(int id) {
-        ArrayList inv;
-        this.GetValue("inventory", inv);
+    public Item Drop(int index = 0) {
+        ArrayList inv = this.GetList("inventory");
 
-        Item itm = view_as<Item>(inv.Get(id, 0));
-        inv.Erase(id);
-        this.SetValue("inventory", inv);
+        Item itm = inv.Get(index);
+        inv.Erase(index);
 
         return itm;
     }
 
     public void Clear() {
-        ArrayList inv;
-        this.GetValue("inventory", inv);
-        inv.Clear();
+        this.GetList("inventory").Clear();
     }
 }

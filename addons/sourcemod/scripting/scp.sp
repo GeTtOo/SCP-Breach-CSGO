@@ -154,7 +154,8 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 {
     Client ply = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
 
-    if (IsClientExist(ply.id)) {
+    if (IsClientExist(ply.id) && GetClientTeam(ply.id) > 1 && !ply.active) {
+        ply.active = true;
         CreateTimer(0.004, Timer_PlayerSpawn, ply, TIMER_FLAG_NO_MAPCHANGE);
     }
 
@@ -186,7 +187,7 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
             Call_PushCellRef(ply);
             Call_Finish();
 
-            ply.Spawn();
+            ply.Setup();
 
             if (!IsFakeClient(ply.id))
                 SendConVarValue(ply.id, FindConVar("game_type"), "6");
@@ -208,6 +209,26 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
     {
         Client vic = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
         Client atk = Clients.Get(GetClientOfUserId(GetEventInt(event, "attacker")));
+
+        ArrayList inv = vic.inv.items;
+
+        while (inv.Length != 0) {
+            char entclass[32];
+            
+            Item itm = vic.inv.Drop();
+            itm.GetEntClass(entclass, sizeof(entclass));
+
+            delete itm;
+
+            Ents.Create(entclass)
+            .SetPos(vic.GetPos() + new Vector(GetRandomFloat(-30.0,30.0), GetRandomFloat(-30.0,30.0), 0.0))
+            .UseCB(view_as<SDKHookCB>(Callback_EntUse))
+            .Spawn();
+        }
+        
+        vic.inv.Clear();
+
+        vic.active = false;
 
         EndRoundCount(vic);
 
@@ -299,6 +320,7 @@ public void OnRoundPreStart(Event ev, const char[] name, bool dbroadcast)
         client.class = null;
         client.haveclass = false;
         client.inv.Clear();
+        client.active = false;
     }
 
     Ents.Clear();
@@ -359,7 +381,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 {
                     return Plugin_Continue;
                 }
-                else if (ply.access >= door.access)
+                else if (ply.access >= door.access || ply.inv.Check("access") >= door.access)
                 {
                     return Plugin_Continue;
                 }
@@ -489,6 +511,7 @@ void LoadFileToDownload()
                 }
                 else if(StrContains(buffer, ".wav", false) == (size - 4) || StrContains(buffer, ".mp3", false) == (size - 4))
                 {
+                    PrintToServer("Precached");
                     FakePrecacheSound(buffer);
                 }
             }
@@ -516,7 +539,7 @@ public SDKHookCB Callback_EntUse(int eid, int cid) {
     ent.GetClass(entClassName, sizeof(entClassName));
 
     if (gamemode.entities.HasKey(entClassName))
-        if (ply.inv.TryAdd(entClassName))
+        if (ply.inv.Add(entClassName))
             Ents.Remove(ent.id);
         else
             PrintToChat(ply.id, " \x07[SCP] \x01Твой инвентарь переполнен");
@@ -525,10 +548,11 @@ public SDKHookCB Callback_EntUse(int eid, int cid) {
 public int InventoryHandler(Menu menu, MenuAction action, int client, int item) {
     if (action == MenuAction_Select) {
         Client ply = Clients.Get(client);
-        Item itm = ply.inv.Get(item);
+        Item itm = ply.inv.Drop(item);
 
         char entclass[32];
         itm.GetEntClass(entclass, sizeof(entclass));
+        delete itm;
 
         Ents.Create(entclass)
         .SetPos(ply.GetPos())
@@ -553,7 +577,7 @@ public void SetMapRegions() {
         IntToString(region.GetInt("radius"),radius,sizeof(radius));
         region.GetString("name",name,sizeof(name));
 
-        Entity ent = Ents.Create("info_map_region").SetPos(new Vector(pos.GetFloat(0),pos.GetFloat(1),pos.GetFloat(2)));
+        Entity ent = Ents.Create("info_map_region", false).SetPos(new Vector(pos.GetFloat(0),pos.GetFloat(1),pos.GetFloat(2)));
         DispatchKeyValue(ent.id,"radius",radius);
         DispatchKeyValue(ent.id,"token",name);
         ent.Spawn();
@@ -847,6 +871,11 @@ public Action TpTo914(int client, const char[] command, int argc)
 
 public Action PlayerSpawn(int client,int args)
 {
+    if (IsPlayerAlive(client)) {
+        PrintToConsole(client, "Сменить класс возможно только мёртвым игрокам");
+        return Plugin_Stop;
+    }
+
     char teamName[32], className[32];
     GetCmdArg(1, teamName, sizeof(teamName));
     GetCmdArg(2, className, sizeof(className));
@@ -861,11 +890,13 @@ public Action PlayerSpawn(int client,int args)
         ply.Team(curTeam, sizeof(curTeam));
         ply.Team(teamName);
         ply.class = gteam.class(className);
-
+        
+        //ply.Setup();
         ply.Spawn();
 
-        gamemode.mngr.team(curTeam).count--;
+        //gamemode.mngr.team(curTeam).count--;
         gamemode.mngr.team(teamName).count++;
+        gamemode.mngr.DeadPlayers--;
     } else {
         PrintToConsole(ply.id, "Ошибка в идентификаторе команды/класса");
     }

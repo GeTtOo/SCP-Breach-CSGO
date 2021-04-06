@@ -42,6 +42,10 @@ methodmap Config < JSON_OBJECT {
         public get() { return view_as<JSON_ARRAY>(this.GetObject("Regions")); }
     }
 
+    property int invsize {
+        public get() { return this.GetInt("invsize") - 1; } //Index size started at 0
+    }
+
     property float NukeTime {
         public set(float time) { this.SetFloat("NukeTime", time); }
         public get() { return this.GetFloat("NukeTime"); }

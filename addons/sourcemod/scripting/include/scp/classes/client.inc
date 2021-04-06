@@ -14,6 +14,7 @@ methodmap Client < Entity {
 
     public Client(int id) {
         Client client = view_as<Client>(new Entity(id));
+        client.SetValue("active", false);
         client.SetValue("haveсlass", false);
         client.SetValue("inventory", new Inventory());
 
@@ -80,9 +81,11 @@ methodmap Client < Entity {
 
     public void Give(char[] item) { GivePlayerItem(this.id, item); }
 
+    public void Kill() { ForcePlayerSuicide(this.id); }
+
     public void Kick(char[] reason) { KickClient(this.id, reason); }
 
-    public void Spawn() {
+    public void Setup() {
         this.SetupBaseStats(this.class);
 
         if (this.class.GetPos() != null)
@@ -92,7 +95,7 @@ methodmap Client < Entity {
             for (int i=0; i < this.class.items.Length; i++) {
                 char entclass[32];
                 this.class.items.GetString(i, entclass, sizeof(entclass));
-                this.inv.TryAdd(entclass);
+                this.inv.Add(entclass);
             }
 
         if (this.class.weapons != null)
@@ -113,7 +116,9 @@ methodmap Client < Entity {
 
         //this.SetModel(playerModel);
         //this.SetHandsModel(playerHandsModel);
+    }
 
+    public void Spawn() {
         if (!IsPlayerAlive(this.id))
             CS_RespawnPlayer(this.id);
     }

@@ -119,11 +119,9 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
 
     entity.active = false;
     entity.SetString("class", EntName);
-
-    ArrayList entArr;
-    Ents.GetValue("Entities", entArr);
-
-    PushArrayCell(entArr, entity);
+    
+    if (view_as<bool>(GetNativeCell(3)))
+        Ents.GetList("Entities").Push(entity);
 
     return entity;
 }

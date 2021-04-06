@@ -1,4 +1,4 @@
-methodmap ClientSingleton < StringMap {
+methodmap ClientSingleton < Base {
 
     public ClientSingleton() {
         ClientSingleton self = view_as<ClientSingleton>(new StringMap());
@@ -47,7 +47,7 @@ methodmap ClientSingleton < StringMap {
     }
 }
 
-methodmap EntitySingleton < StringMap {
+methodmap EntitySingleton < Base {
 
     public EntitySingleton() {
         EntitySingleton self = view_as<EntitySingleton>(new StringMap());
@@ -101,7 +101,7 @@ methodmap EntitySingleton < StringMap {
     public native Entity Get(int id);
     public native Entity TryGetOrAdd(int id);
 
-    public native Entity Create(char[] EntName);
+    public native Entity Create(char[] EntName, bool register = true);
 
     public native void Remove(int id);
 

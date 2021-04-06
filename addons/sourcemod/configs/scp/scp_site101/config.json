@@ -2,8 +2,9 @@
     "debug":true,
     "DefaultGlobalClass":"Chaos",
     "DefaultClass":"D Class",
+    "invsize": 5,
     "NukeTime":110.0,
     "NukeKillPos":400.0,
     "NukeSound":"*/ttt_foundation/warhead_announcement.wav",
-    "AdminRoom": [0,0,0]
+    "AdminRoom": [-4890,-6340,0]
 }
