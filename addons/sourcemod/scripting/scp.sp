@@ -63,11 +63,12 @@ public void OnPluginStart()
 {
     Clients = new ClientSingleton();
     Ents = new EntitySingleton();
+    AdminMenu = new AdminMenuSingleton();
     
     RegServerCmd("ents", CmdEnts);
     RegServerCmd("scp", CmdSCP);
 
-    RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_BAN);
+    RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_CUSTOM1);
     RegAdminCmd("spawn", PlayerSpawn, ADMFLAG_BAN);
 
     AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
@@ -120,6 +121,11 @@ public void OnClientConnected(int id) {
 
 public void OnClientPostAdminCheck(int id) {
     Client ply = Clients.Get(id);
+
+    if(GetAdminFlag(GetUserAdmin(id), Admin_Custom1))
+    {
+        AdminMenu.Add(ply);
+    }
 
     if (gamemode.config.debug)
     {
