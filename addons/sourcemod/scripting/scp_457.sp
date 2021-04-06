@@ -19,6 +19,7 @@ public Plugin myinfo = {
 public void SCP_OnPlayerJoin(Client &ply)
 {
     HookEvent("player_death", Event_PlayerDeath);
+    HookEvent("round_end", OnRoundEnd);
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
 }
 
@@ -60,6 +61,11 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 }
 
 public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
+{
+    DeleteEffect(GetClientOfUserId(GetEventInt(event, "userid")));
+}
+
+public void OnRoundEnd(Event event, const char[] name, bool dbroadcast) 
 {
     DeleteEffect(GetClientOfUserId(GetEventInt(event, "userid")));
 }

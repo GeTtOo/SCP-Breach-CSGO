@@ -31,7 +31,8 @@ public Plugin myinfo = {
 //
 //////////////////////////////////////////////////////////////////////////////
 
-public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) {
+public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
+{
     CreateNative("GameMode.team", NativeGameMode_GetTeam);
     CreateNative("GameMode.config.get", NativeGameMode_Config);
     CreateNative("GameMode.entities.get", NativeGameMode_Entities);
@@ -69,7 +70,7 @@ public void OnPluginStart()
     RegServerCmd("scp", CmdSCP);
 
     RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_CUSTOM1);
-    RegAdminCmd("spawn", PlayerSpawn, ADMFLAG_BAN);
+    RegAdminCmd("scp_spawn", PlayerSpawn, ADMFLAG_CUSTOM1);
 
     AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
     AddCommandListener(GetClientPos, "getmypos");
@@ -111,15 +112,18 @@ public void OnMapStart()
     }
 }
 
-public void OnGameFrame() {
+public void OnGameFrame()
+{
     gamemode.timer.Update();
 }
 
-public void OnClientConnected(int id) {
+public void OnClientConnected(int id)
+{
     Clients.Add(id);
 }
 
-public void OnClientPostAdminCheck(int id) {
+public void OnClientPostAdminCheck(int id)
+{
     Client ply = Clients.Get(id);
 
     if(GetAdminFlag(GetUserAdmin(id), Admin_Custom1))
@@ -141,7 +145,8 @@ public void OnClientPostAdminCheck(int id) {
     Call_Finish();
 }
 
-public void OnClientDisconnect(int id) {
+public void OnClientDisconnect(int id)
+{
     Client ply = Clients.Get(id);
 
     if (gamemode.config.debug)
@@ -170,7 +175,8 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 
 public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
 {
-    if(IsClientExist(ply.id)) {
+    if(IsClientExist(ply.id))
+    {
         int m_hMyWeapons_size = GetEntPropArraySize(ply.id, Prop_Send, "m_hMyWeapons");
         int item; 
 
@@ -188,7 +194,8 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
         SetEntData(ply.id, gamemode.mngr.PlayerCollisionGroup, 2, 4, true);
         EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
 
-        if (ply != null && ply.class != null) {
+        if (ply != null && ply.class != null)
+        {
             Call_StartForward(OnClientSpawnForward);
             Call_PushCellRef(ply);
             Call_Finish();
@@ -218,7 +225,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
         ArrayList inv = vic.inv.items;
 
-        while (inv.Length != 0) {
+        while (inv.Length != 0)
+        {
             char entclass[32];
             
             Item itm = vic.inv.Drop();
@@ -247,7 +255,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
     return Plugin_Handled;
 }
 
-public void OnRoundStart(Event ev, const char[] name, bool dbroadcast) 
+public void OnRoundStart(Event event, const char[] name, bool dbroadcast) 
 {
     if(!IsWarmup())
     {
@@ -318,7 +326,7 @@ public void OnRoundStart(Event ev, const char[] name, bool dbroadcast)
     }
 }
 
-public void OnRoundPreStart(Event ev, const char[] name, bool dbroadcast) 
+public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast) 
 {
     for (int cig=1; cig <= Clients.InGame(); cig++) 
     {
@@ -513,11 +521,12 @@ void LoadFileToDownload()
 
                 if(StrContains(buffer, ".mdl", false) == (size - 4))
                 {
+                    PrintToServer("Precached Model %s", buffer);
                     PrecacheModel(buffer);
                 }
                 else if(StrContains(buffer, ".wav", false) == (size - 4) || StrContains(buffer, ".mp3", false) == (size - 4))
                 {
-                    PrintToServer("Precached");
+                    PrintToServer("Precached Sound %s", buffer);
                     FakePrecacheSound(buffer);
                 }
             }
@@ -537,22 +546,31 @@ void LoadFileToDownload()
 //
 //////////////////////////////////////////////////////////////////////////////
 
-public SDKHookCB Callback_EntUse(int eid, int cid) {
-    Client ply = Clients.Get(cid);
-    Entity ent = Ents.Get(eid);
+public SDKHookCB Callback_EntUse(int entity, int client) 
+{
+    Client ply = Clients.Get(client);
+    Entity ent = Ents.Get(entity);
 
     char entClassName[32];
     ent.GetClass(entClassName, sizeof(entClassName));
 
     if (gamemode.entities.HasKey(entClassName))
+    {
         if (ply.inv.Add(entClassName))
             Ents.Remove(ent.id);
         else
             PrintToChat(ply.id, " \x07[SCP] \x01Твой инвентарь переполнен");
+    }
 }
 
-public int InventoryHandler(Menu menu, MenuAction action, int client, int item) {
-    if (action == MenuAction_Select) {
+public int InventoryHandler(Menu hMenu, MenuAction action, int client, int item) 
+{
+    if (action == MenuAction_End)
+    {
+        delete hMenu;
+    }
+    else if (action == MenuAction_Select) 
+    {
         Client ply = Clients.Get(client);
         Item itm = ply.inv.Drop(item);
 
@@ -573,10 +591,12 @@ public int InventoryHandler(Menu menu, MenuAction action, int client, int item) 
 //
 //////////////////////////////////////////////////////////////////////////////
 
-public void SetMapRegions() {
+public void SetMapRegions() 
+{
     JSON_ARRAY regions = gamemode.config.regions;
 
-    for (int i=0; i < regions.Length; i++) {
+    for (int i=0; i < regions.Length; i++) 
+    {
         JSON_OBJECT region = view_as<JSON_OBJECT>(regions.GetObject(i));
         JSON_ARRAY pos = view_as<JSON_ARRAY>(region.GetObject("pos"));
         char radius[5], name[128];
@@ -590,11 +610,13 @@ public void SetMapRegions() {
     }
 }
 
-public void SpawnItemsOnMap() {
+public void SpawnItemsOnMap() 
+{
     JSON_OBJECT spawnmap = gamemode.config.spawnmap;
     StringMapSnapshot snapshot = spawnmap.Snapshot();
 
-    for (int i=0; i < snapshot.Length; i++) {
+    for (int i=0; i < snapshot.Length; i++) 
+    {
         int itemlen = snapshot.KeyBufferSize(i);
         char[] item = new char[itemlen];
         snapshot.GetKey(i, item, itemlen);
@@ -603,7 +625,8 @@ public void SpawnItemsOnMap() {
         
         JSON_ARRAY rawDataArr = view_as<JSON_ARRAY>(spawnmap.GetObject(item));
 
-        for (int v=0; v < rawDataArr.Length; v++) {
+        for (int v=0; v < rawDataArr.Length; v++) 
+        {
             JSON_OBJECT data = view_as<JSON_OBJECT>(rawDataArr.GetObject(v));
             JSON_ARRAY pos = view_as<JSON_ARRAY>(data.GetObject("pos"));
 
@@ -794,14 +817,17 @@ public Action NukeExplosion(Handle hTimer)
 
 //-----------------------------Server-----------------------------//
 
-public Action CmdEnts(int args) {
+public Action CmdEnts(int args) 
+{
     char command[32];
     GetCmdArgString(command, sizeof(command));
 
-    if (StrEqual(command, "getall", false)) {
+    if (StrEqual(command, "getall", false)) 
+    {
         ArrayList ents = Ents.GetAll();
 
-        for (int i=0; i < ents.Length; i++) {
+        for (int i=0; i < ents.Length; i++) 
+        {
             Entity ent = ents.Get(i);
             char name[32];
 
@@ -814,16 +840,19 @@ public Action CmdEnts(int args) {
     }
 }
 
-public Action CmdSCP(int args) {
+public Action CmdSCP(int args)
+{
     char command[32];
     GetCmdArgString(command, sizeof(command));
 
-    if (StrEqual(command, "status", false)) {
+    if (StrEqual(command, "status", false))
+    {
         StringMapSnapshot snapshot = gamemode.mngr.teams.Snapshot();
 
         PrintToServer("Class: Dead, count: %i", gamemode.mngr.DeadPlayers);
         
-        for (int i=0; i < snapshot.Length; i++) {
+        for (int i=0; i < snapshot.Length; i++)
+        {
             int teamlen = snapshot.KeyBufferSize(i);
             char[] teamname = new char[teamlen];
             snapshot.GetKey(i, teamname, teamlen);
@@ -877,7 +906,8 @@ public Action TpTo914(int client, const char[] command, int argc)
 
 public Action PlayerSpawn(int client,int args)
 {
-    if (IsPlayerAlive(client)) {
+    if (IsPlayerAlive(client))
+    {
         PrintToConsole(client, "Сменить класс возможно только мёртвым игрокам");
         return Plugin_Stop;
     }
@@ -890,7 +920,8 @@ public Action PlayerSpawn(int client,int args)
 
     GTeam gteam = gamemode.team(teamName);
 
-    if (gteam != null && gteam.classes.HasKey(className)) {
+    if (gteam != null && gteam.classes.HasKey(className))
+    {
         char curTeam[32];
 
         ply.Team(curTeam, sizeof(curTeam));
@@ -903,7 +934,9 @@ public Action PlayerSpawn(int client,int args)
         //gamemode.mngr.team(curTeam).count--;
         gamemode.mngr.team(teamName).count++;
         gamemode.mngr.DeadPlayers--;
-    } else {
+    }
+    else
+    {
         PrintToConsole(ply.id, "Ошибка в идентификаторе команды/класса");
     }
     
@@ -916,7 +949,8 @@ public Action PlayerSpawn(int client,int args)
 //
 //////////////////////////////////////////////////////////////////////////////
 
-public void InventoryDisplay(Client ply) {
+public void InventoryDisplay(Client ply)
+{
     Menu InvMenu = new Menu(InventoryHandler);
 
     InvMenu.SetTitle("Инвентарь");
@@ -925,7 +959,9 @@ public void InventoryDisplay(Client ply) {
     ply.inv.GetValue("inventory", inv);
 
     if (inv.Length)
-        for (int i=0; i < inv.Length; i++) {
+    {
+        for (int i=0; i < inv.Length; i++)
+        {
             char itemid[8], itemName[32];
 
             IntToString(i, itemid, sizeof(itemid));
@@ -933,9 +969,12 @@ public void InventoryDisplay(Client ply) {
             
             InvMenu.AddItem(itemid, itemName, ITEMDRAW_DEFAULT);
         }
+    }
     else
+    {
         //InvMenu.AddItem("item1", "Предметов нет", ITEMDRAW_DISABLED);
         PrintToChat(ply.id, " \x07[SCP] \x01В твоём инвентаре нет предметов");
+    }
 
     InvMenu.Display(ply.id, 30);
 }
