@@ -250,13 +250,9 @@ public int MenuHandler_ScpAdminMenuTarget(Menu hMenu, MenuAction action, int cli
                 }
                 case MOVE_TO_ADMIN_ZONE:
                 {
-                    if(IsClientExist(target) && IsPlayerAlive(target) && !IsCleintInSpec(target))
+                    if(AdminMenu.Get(client).target && IsPlayerAlive(target) && !IsCleintInSpec(target))
                     {
-                        float pos[3];
-                        pos[0] = gamemode.config.AdminRoom.x;
-                        pos[1] = gamemode.config.AdminRoom.y;
-                        pos[2] = gamemode.config.AdminRoom.z;
-                        TeleportEntity(target, pos, NULL_VECTOR, NULL_VECTOR);
+                        AdminMenu.Get(client).target.SetPos(gamemode.config.AdminRoom);
                     }
                 }
                 case GIVE_PLAYER_ITEM:
