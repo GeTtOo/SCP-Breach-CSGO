@@ -528,6 +528,8 @@ void LoadFileToDownload()
                 }
                 else if(StrContains(buffer, ".wav", false) == (size - 4) || StrContains(buffer, ".mp3", false) == (size - 4))
                 {
+                    strcopy(buffer, sizeof(buffer), buffer[6]);
+                    Format(buffer, sizeof(buffer), "%s%s", "*/", buffer);
                     PrintToServer("Precached Sound %s", buffer);
                     FakePrecacheSound(buffer);
                 }
@@ -602,12 +604,12 @@ public void SetMapRegions()
     for (int i=0; i < regions.Length; i++) 
     {
         JSON_OBJECT region = view_as<JSON_OBJECT>(regions.GetObject(i));
-        JSON_ARRAY pos = view_as<JSON_ARRAY>(region.GetObject("pos"));
+        Vector pos = region.GetVector("pos");
         char radius[5], name[128];
         IntToString(region.GetInt("radius"),radius,sizeof(radius));
         region.GetString("name",name,sizeof(name));
 
-        Entity ent = Ents.Create("info_map_region", false).SetPos(new Vector(pos.GetFloat(0),pos.GetFloat(1),pos.GetFloat(2)));
+        Entity ent = Ents.Create("info_map_region", false).SetPos(pos);
         DispatchKeyValue(ent.id,"radius",radius);
         DispatchKeyValue(ent.id,"token",name);
         ent.Spawn();
