@@ -11,7 +11,8 @@
                 "model":".mdl",
                 "health":100,
                 "armor":100,
-                "speed":1.2,
+                "speed":260,
+                "multipler":1.0,
                 "items":["card_lt"],
                 "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer", "weapon_tablet"],
                 "comment":"test"
@@ -48,7 +49,7 @@
                 "model":".mdl",
                 "health":180,
                 "armor":200,
-                "speed":0.9,
+                "speed":234,
                 "items":["card_zm"],
                 "weapons":["weapon_m249", "weapon_revolver"]
             },
@@ -92,7 +93,7 @@
                 "percent":50,
                 "model":".mdl",
                 "health":25000,
-                "speed":0.5,
+                "speed":130,
                 "doors":[115,116],
                 "comment":"096"
             },
@@ -102,7 +103,8 @@
                 "percent":25,
                 "model":".mdl",
                 "health":15000,
-                "speed":4.2,
+                "speed":250,
+                "multipler":4.2,
                 "doors":[160,161],
                 "comment":"173"
             },
@@ -113,7 +115,8 @@
                 "model":".mdl",
                 "health":4000,
                 "armor":2000,
-                "speed":1.2,
+                "speed":250,
+                "multipler":1.2,
                 "doors":[445],
                 "comment":"Fire man"
             }

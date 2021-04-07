@@ -41,7 +41,11 @@ methodmap Class < JSON_OBJECT {
     }
 
     property float speed {
-        public get() { return this.GetFloat("speed", 1.0); }
+        public get() { return float(this.GetInt("speed", 260)); }
+    }
+
+    property float multipler {
+        public get() { return this.GetFloat("multipler", 1.0); }
     }
 
     property JSON_ARRAY doors {

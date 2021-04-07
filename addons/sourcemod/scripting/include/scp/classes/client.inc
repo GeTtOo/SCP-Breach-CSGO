@@ -32,6 +32,11 @@ methodmap Client < Entity {
     }
 
     property float speed {
+        public set(float val) { SetEntPropFloat(this.id, Prop_Send, "m_flMaxspeed", val); }
+        public get() { return GetEntPropFloat(this.id, Prop_Send, "m_flMaxspeed"); }
+    }
+
+    property float multipler {
         public set(float val) { SetEntPropFloat(this.id, Prop_Send, "m_flLaggedMovementValue", val); }
         public get() { return GetEntPropFloat(this.id, Prop_Send, "m_flLaggedMovementValue"); }
     }
@@ -69,6 +74,7 @@ methodmap Client < Entity {
         this.health = class.health;
         this.armor = class.armor;
         this.speed = class.speed;
+        this.multipler = class.multipler;
     }
 
     public bool GetName(char[] buffer, int max_size = 0) { return GetClientName(this.id, buffer, max_size); }
