@@ -4,9 +4,9 @@
         "countername": "scp_914_logic_counter",
         "switchbutton": 443873,
         "runbutton": 355153,
-        "runtime": 15,
-        "searchzone":[[3630.0, -2072.0, 20.0],[3762.0, -1947.0, 90.0]],
-        "distance":[0.0, 425.0, 0.0],
+        "runtime": 8,
+        "searchzone":[[3630.0, -2072.0, 20],[3762, -1947, 90]],
+        "distance":[0, 425, 0],
         "decsription": [
             "Recipe template <itemname> [chance critical failed craft] [chance successful craft].",
             "Player status effect list: regeneration, speed, berserk, death."
@@ -14,11 +14,17 @@
     },
     "recipes": {
         "rough": {
+            "player": [
+                ["Regeneration", 0]
+            ],
             "card_o5": [
                 ["card_fm", 90, 5]
             ]
         },
         "coarse": {
+            "player": [
+                ["Regeneration", 0]
+            ],
             "card_o5": [
                 ["card_fm", 0, 10]
             ],

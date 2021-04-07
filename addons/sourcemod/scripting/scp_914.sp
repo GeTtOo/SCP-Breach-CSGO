@@ -15,7 +15,7 @@ char modes[5][32] = {"rough", "coarse", "one_by_one", "fine", "very_fine"};
 char curmode[32] = "rough";
 
 public Plugin myinfo = {
-    name = "SCP 914",
+    name = "[SCP] SCP-914",
     author = "Andrey::Dono",
     description = "SCP-914 for CS:GO modification SCP Foundation",
     version = "1.0",
@@ -61,11 +61,13 @@ public SDKHookCB Callback_EntUse(int eid, int cid) {
     Client ply = Clients.Get(cid);
     Entity ent = Ents.Get(eid);
 
+    if (ply.IsSCP) return;
+
     char entClassName[32];
     ent.GetClass(entClassName, sizeof(entClassName));
 
     if (gamemode.entities.HasKey(entClassName))
-        if (ply.inv.TryAdd(entClassName))
+        if (ply.inv.Add(entClassName))
             Ents.Remove(ent.id);
         else
             PrintToChat(ply.id, " \x07[SCP] \x01Твой инвентарь переполнен");
@@ -92,6 +94,7 @@ public void SCP_OnButtonPressed(Client &ply, int doorId) {
 
 public void Transform(Client ply) {
     JSON_OBJECT recipes = gamemode.config.GetObject("914").GetObject("recipes").GetObject(curmode);
+    bool AmbientPlay = false;
 
     char filter[3][32] = {"prop_physics", "weapon_", "player"};
     
@@ -100,7 +103,7 @@ public void Transform(Client ply) {
     if (gamemode.config.debug)
         PrintToChatAll("Ents count: %i", ents.Length);
 
-    for(int i=0; i < ents.Length; i++) 
+    for(int i=0; i < ents.Length; i++)
     {
         Entity ent = ents.Get(i);
 
@@ -123,7 +126,7 @@ public void Transform(Client ply) {
             if (json_is_meta_key(ientclass)) continue;
 
             if (StrEqual(entclass, ientclass)) {
-                Vector oitempos = ent.GetPos() - new Vector(0.0, 425.0, 0.0);
+                Vector oitempos = ent.GetPos() - config.GetVector("distance");
 
                 JSON_ARRAY oentdata = recipes.GetArray(ientclass);
                 JSON_ARRAY recipe = oentdata.GetArray(GetRandomInt(0, oentdata.Length - 1));
@@ -133,6 +136,26 @@ public void Transform(Client ply) {
                 
                 if (StrEqual(entclass, "player"))
                 {
+                    Handle umsg = StartMessageOne("Fade", ent.id, USERMSG_RELIABLE);
+                    PbSetInt(umsg, "duration", 800);
+                    PbSetInt(umsg, "hold_time", 3000);
+                    PbSetInt(umsg, "flags", 0x0001);
+                    PbSetColor(umsg, "clr", {0,0,0,255});
+                    EndMessage();
+
+                    if (StrEqual(curmode, "rough") || StrEqual(curmode, "coarse")) {
+                        if (!AmbientPlay) {
+                            Vector emitpos = ent.GetPos();
+                            float nativepos[3];
+                            emitpos.GetArr(nativepos);
+                            
+                            EmitAmbientSound("*/ttt_foundation/914_player_rough.mp3", nativepos);
+                            AmbientPlay = true;
+                        }
+                        
+                        EmitSoundToClient(ent.id, "*/ttt_foundation/914_player_rough.mp3");
+                    }
+
                     if (recipe.GetInt(1) >= GetRandomInt(1, 100)) {
                         char statusname[32];
                         recipe.GetString(0, statusname, sizeof(statusname));
@@ -141,6 +164,10 @@ public void Transform(Client ply) {
                         Call_PushCell(ply);
                         Call_Finish();
                         
+                        ent.SetPos(oitempos);
+                    }
+                    else
+                    {
                         ent.SetPos(oitempos);
                     }
                 }
@@ -173,7 +200,7 @@ public void Transform(Client ply) {
         }
 
         if (!upgraded) {
-            Vector oitempos = ent.GetPos() - new Vector(0.0, 425.0, 0.0);
+            Vector oitempos = ent.GetPos() - config.GetVector("distance");
 
             if (StrEqual(entclass, "player"))
             {
@@ -191,7 +218,7 @@ public void Transform(Client ply) {
 }
 
 public void Regeneration(Client ply) {
-    PrintToChat(ply.id, "Ты получаешь бафф регенерации");
+    PrintToChat(ply.id, " \x07[SCP] \x01Ты получаешь бафф регенерации");
 
     char  timername[128];
     Format(timername, sizeof(timername), "Status effect Regeneraion for player id %i", ply.id);
@@ -208,7 +235,11 @@ public void Buff_Regeneration(Client ply) {
 }
 
 public void Speed(Client ply) {
-    PrintToChat(ply.id, "Ты получаешь бафф увеличенной скорости");
+    PrintToChat(ply.id, " \x07[SCP] \x01Ты получаешь бафф увеличенной скорости");
     
     ply.speed *= 2.0;
+}
+
+public void Injure(Client ply) {
+    
 }

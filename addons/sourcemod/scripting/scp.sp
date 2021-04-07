@@ -145,7 +145,7 @@ public void OnClientPostAdminCheck(int id)
     Call_Finish();
 }
 
-public void OnClientDisconnect(int id)
+public void OnClientDisconnect_Post(int id)
 {
     Client ply = Clients.Get(id);
 
@@ -192,13 +192,15 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
         }
         
         SetEntData(ply.id, gamemode.mngr.PlayerCollisionGroup, 2, 4, true);
-        EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
 
         if (ply != null && ply.class != null)
         {
             Call_StartForward(OnClientSpawnForward);
             Call_PushCellRef(ply);
             Call_Finish();
+
+            if (!ply.IsSCP)
+                EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
 
             ply.Setup();
 
@@ -255,7 +257,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
     return Plugin_Handled;
 }
 
-public void OnRoundStart(Event event, const char[] name, bool dbroadcast) 
+public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 {
     if(!IsWarmup())
     {
@@ -551,6 +553,8 @@ public SDKHookCB Callback_EntUse(int entity, int client)
     Client ply = Clients.Get(client);
     Entity ent = Ents.Get(entity);
 
+    if (ply.IsSCP) return;
+
     char entClassName[32];
     ent.GetClass(entClassName, sizeof(entClassName));
 
@@ -628,11 +632,11 @@ public void SpawnItemsOnMap()
         for (int v=0; v < rawDataArr.Length; v++) 
         {
             JSON_OBJECT data = view_as<JSON_OBJECT>(rawDataArr.GetObject(v));
-            JSON_ARRAY pos = view_as<JSON_ARRAY>(data.GetObject("pos"));
+            Vector pos = data.GetVector("pos");
 
             if (GetRandomInt(1, 100) <= data.GetInt("chance"))
                 Ents.Create(item)
-                .SetPos(new Vector(pos.GetFloat(0),pos.GetFloat(1),pos.GetFloat(2)))
+                .SetPos(pos)
                 .UseCB(view_as<SDKHookCB>(Callback_EntUse))
                 .Spawn();
         }
@@ -881,7 +885,7 @@ public Action PrintEntInBox(int client, const char[] command, int argc)
 {
     Client ply = Clients.Get(client);
 
-    char filter[2][32] = {"prop_physics", "weapon_"};
+    char filter[4][32] = {"prop_physics", "weapon_", "func_door", "prop_dynamic"};
 
     ArrayList entArr = Ents.FindInBox(ply.GetPos() - new Vector(200.0, 200.0, 200.0), ply.GetPos() + new Vector(200.0, 200.0, 200.0), filter, sizeof(filter));
 

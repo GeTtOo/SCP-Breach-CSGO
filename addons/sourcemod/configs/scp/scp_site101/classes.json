@@ -4,7 +4,7 @@
         "priority":false,
         "Classes": {
             "Commander": {
-                "pos":[-10740.0,-5950.0,1715.0],
+                "pos":[-10740,-5950,1715],
                 "percent":10,
                 "priority":true,
                 "escape":false,
@@ -17,14 +17,14 @@
                 "comment":"test"
             },
             "Operator": {
-                "pos":[-10800.0,-5950.0,1715.0],
+                "pos":[-10800,-5950,1715],
                 "percent":40,
                 "model":".mdl",
                 "items":["card_bg"],
                 "weapons":["weapon_m4a1", "weapon_hkp2000", "weapon_tablet"]
             },
             "Security": {
-                "pos":[-11040.0,-1735.0,2.0],
+                "pos":[-11040,-1735,2],
                 "percent":30,
                 "escape":true,
                 "model":".mdl",
@@ -67,12 +67,12 @@
         "priority":true,
         "Classes": {
             "049": {
-                "pos":[-8455.0,975.0,2.0],
-                "ang":[0.0,125.0,0.0],
+                "pos":[-8455,975,2],
+                "ang":[0,125,0],
                 "percent":50,
                 "model":".mdl",
                 "health":7800,
-                "doors":[81,82],
+                "doors":[157,158],
                 "comment":"The Doctor :d"
             },
             "049_2": {
@@ -81,22 +81,40 @@
                 "health":7800,
                 "comment":"049-2"
             },
+            "079": {
+                "percent":50,
+                "model":".mdl",
+                "comment":"AI computer"
+            },
+            "096": {
+                "pos":[-13250, -2550, 0],
+                "ang":[0,0,0],
+                "percent":50,
+                "model":".mdl",
+                "health":25000,
+                "speed":0.5,
+                "doors":[115,116],
+                "comment":"096"
+            },
             "173": {
+                "pos":[-1800,-900,0],
+                "ang":[0,270,0],
                 "percent":25,
                 "model":".mdl",
-                "health":8000,
+                "health":15000,
                 "speed":4.2,
+                "doors":[160,161],
                 "comment":"173"
             },
             "457": {
-                "pos":[-5200.0,-3030.0,2.0],
+                "pos":[-5200,-3030,2],
                 "percent":25,
                 "priority":true,
                 "model":".mdl",
                 "health":4000,
                 "armor":2000,
                 "speed":1.2,
-                "doors":[379],
+                "doors":[445],
                 "comment":"Fire man"
             }
         }

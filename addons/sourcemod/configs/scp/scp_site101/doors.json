@@ -29,6 +29,46 @@
         "access":3,
         "scp":false
     },
+    "311096": {
+        "location":"Security room",
+        "access":2,
+        "scp":false
+    },
+    "311099": {
+        "location":"Security room",
+        "access":2,
+        "scp":false
+    },
+    "490332": {
+        "location":"096 room",
+        "access":3,
+        "scp":true
+    },
+    "490320": {
+        "location":"096 room",
+        "access":3,
+        "scp":true
+    },
+    "490772": {
+        "location":"096 camera",
+        "access":4,
+        "scp":true
+    },
+    "310502": {
+        "location":"096 room",
+        "access":2,
+        "scp":true
+    },
+    "310499": {
+        "location":"096 room",
+        "access":2,
+        "scp":true
+    },
+    "312323": {
+        "location":"096 camera",
+        "access":5,
+        "scp":true
+    },
     "312244": {
         "location":"079 door",
         "access":2,
@@ -49,7 +89,17 @@
         "access":2,
         "scp":true
     },
-    "286460": {
+    "286405": {
+        "location":"457 hall",
+        "access":2,
+        "scp":true
+    },
+    "302236": {
+        "location":"096 room",
+        "access":2,
+        "scp":true
+    },
+    "354434": {
         "location":"457 camera",
         "access":4,
         "scp":true

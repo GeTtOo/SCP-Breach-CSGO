@@ -43,7 +43,7 @@ methodmap Config < JSON_OBJECT {
     }
 
     property int invsize {
-        public get() { return this.GetInt("invsize") - 1; } //Index size started at 0
+        public get() { return this.GetInt("invsize") - 1; } //Index started at 0
     }
 
     property float NukeTime {
@@ -62,7 +62,7 @@ methodmap Config < JSON_OBJECT {
     
     property Vector AdminRoom {
         public get() {
-            this.GetVector("AdminRoom");
+            return this.GetVector("AdminRoom");
         }
     }
 
