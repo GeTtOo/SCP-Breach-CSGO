@@ -4,16 +4,16 @@
 
 methodmap Tmr < Base {
 
-    public Tmr(Handle ph, char[] name, int delay, int repeations, char[] func, ArrayList args) {
+    public Tmr(Handle ph, char[] name, float delay, int repeations, char[] func, ArrayList args) {
         Tmr timer = view_as<Tmr>(new StringMap());
         timer.SetValue("pluginhandle", ph);
         timer.SetString("name", name);
-        timer.SetInt("delay", delay);
+        timer.SetFloat("delay", delay);
         timer.SetInt("repeations", repeations);
         timer.SetString("func", func);
         timer.SetValue("args", args);
 
-        timer.SetInt("nextinvoke", GetTime() + delay);
+        timer.SetFloat("nextinvoke", GetGameTime() + delay);
 
         return timer;
     }
@@ -26,8 +26,8 @@ methodmap Tmr < Base {
         this.GetString("name", name, max_len);
     }
 
-    property int delay {
-        public get() { return this.GetInt("delay"); }
+    property float delay {
+        public get() { return this.GetFloat("delay"); }
     }
 
     property int repeations {
@@ -43,9 +43,9 @@ methodmap Tmr < Base {
         public get() { Handle args; return this.GetValue("args", args) ? args : null; }
     }
 
-    property int nextinvoke {
-        public set(int time) { this.SetInt("nextinvoke", time); }
-        public get() { return this.GetInt("nextinvoke"); }
+    property float nextinvoke {
+        public set(float time) { this.SetFloat("nextinvoke", time); }
+        public get() { return this.GetFloat("nextinvoke"); }
     }
 }
 
@@ -58,7 +58,7 @@ methodmap Timers < Base {
     }
 
     public Tmr Create(char[] name, int delay, int repeations, char[] funcname, any args = false) {
-        Tmr timer = new Tmr(GetMyHandle(), name, delay, repeations, funcname, args);
+        Tmr timer = new Tmr(GetMyHandle(), name, (float(delay) / float(1000)), repeations, funcname, args);
         this.GetList("timers").Push(timer);
         return timer;
     }
@@ -97,8 +97,8 @@ methodmap Timers < Base {
         ArrayList list = this.GetList("timers");
 
         for (int i=0; i < list.Length; i++) {
-            Tmr timer = view_as<Tmr>(list.Get(i, 0));
-            if (GetTime() >= timer.GetInt("nextinvoke")) {
+            Tmr timer = list.Get(i);
+            if (GetGameTime() >= timer.GetFloat("nextinvoke")) {
                 char funcname[32];
 
                 timer.func(funcname, sizeof(funcname));
