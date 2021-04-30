@@ -27,7 +27,7 @@ public Plugin myinfo = {
     author = "Andrey::Dono, GeTtOo",
     description = "SCP gamemmode for CS:GO",
     version = "1.0",
-    url = "https://github.com/GeTtOo/csgo_scp"
+    url = "https://github.com/Eternity-Development-Team/csgo_scp"
 };
 
 //////////////////////////////////////////////////////////////////////////////
