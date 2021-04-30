@@ -1,7 +1,7 @@
 methodmap Vector < Base {
 
-    public Vector(float x, float y, float z) {
-        Vector vec = view_as<Vector>(new StringMap());
+    public Vector(float x = 0.0, float y = 0.0, float z = 0.0) {
+        Vector vec = view_as<Vector>(CreateTrie());
 
         vec.SetValue("x", x);
         vec.SetValue("y", y);
@@ -50,6 +50,34 @@ methodmap Vector < Base {
 
         return this;
     }
+
+    public Vector Clone() {
+        return new Vector(this.x, this.y, this.z);
+    }
+
+    public float DotProduct(Vector vec2) {
+        float vecarr1[3], vecarr2[3];
+        this.GetArr(vecarr1);
+        vec2.GetArr(vecarr2);
+
+        float dotproduct = GetVectorDotProduct(vecarr1, vecarr2);
+
+        delete this;
+        delete vec2;
+
+        return dotproduct;
+    }
+
+    public float Length() {
+        float vecarr1[3];
+        this.GetArr(vecarr1);
+        
+        float length = GetVectorLength(vecarr1);
+        
+        delete this;
+
+        return length;
+    }
 }
 
 stock Vector operator+(Vector first, Vector second) {
@@ -75,4 +103,30 @@ methodmap Angle < Vector {
         
         return ang;
     }
+
+    public Vector Forward(Vector startpos, float scale) {
+        float startposarr[3], angarr[3], forwardarr[3], endposarr[3];
+        startpos.GetArr(startposarr);
+        this.GetArr(angarr);
+        GetAngleVectors(angarr, forwardarr, NULL_VECTOR, NULL_VECTOR);
+        ScaleVector(forwardarr, scale);
+        AddVectors(startposarr, forwardarr, endposarr);
+
+        delete this;
+        delete startpos;
+
+        return new Vector(endposarr[0], endposarr[1], endposarr[2]);
+    }
+}
+
+stock Angle operator+(Angle first, Angle second) {
+    Angle result = new Angle(first.x + second.x, first.y + second.y, first.z + second.z);
+    delete first; delete second;
+    return result;
+}
+
+stock Angle operator-(Angle first, Angle second) {
+    Angle result = new Angle(first.x - second.x, first.y - second.y, first.z - second.z);
+    delete first; delete second;
+    return result;
 }
