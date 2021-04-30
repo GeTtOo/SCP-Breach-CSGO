@@ -1,11 +1,11 @@
 {
     "config": {
-        "usemathcounter":false,
+        "usemathcounter":true,
         "countername": "scp_914_logic_counter",
         "switchbutton": 443873,
-        "runbutton": 355153,
+        "runbutton": 516151,
         "runtime": 8,
-        "searchzone":[[3630.0, -2072.0, 20],[3762, -1947, 90]],
+        "searchzone":[[3630, -2072, 20],[3762, -1947, 90]],
         "distance":[0, 425, 0],
         "decsription": [
             "Recipe template <itemname> [chance critical failed craft] [chance successful craft].",
@@ -15,7 +15,7 @@
     "recipes": {
         "rough": {
             "player": [
-                ["Regeneration", 0]
+                ["Butchering", 100]
             ],
             "card_o5": [
                 ["card_fm", 90, 5]
@@ -23,7 +23,7 @@
         },
         "coarse": {
             "player": [
-                ["Regeneration", 0]
+                ["Injure", 100]
             ],
             "card_o5": [
                 ["card_fm", 0, 10]
@@ -51,8 +51,8 @@
                 ["weapon_usp_silencer", 0, 100]
             ],
             "player": [
-                ["Regeneration", 100],
-                ["Speed", 100]
+                ["Regeneration", 50],
+                ["Speed", 50]
             ]
         },
         "very_fine": {

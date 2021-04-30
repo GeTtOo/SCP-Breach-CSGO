@@ -54,4 +54,11 @@ models/props/sl_physics/keycardzm.dx90.vtx
 models/props/sl_physics/keycardzm.mdl
 models/props/sl_physics/keycardzm.phy
 models/props/sl_physics/keycardzm.vvd
-sound/ttt_foundation/914_player_rough.mp3
+models/cs_medic1.mdl
+models/cs_medic1.dx90.vtx
+models/cs_medic1.vvd
+models/cs_medic1.phy
+materials/scp/camera_effect.vtf
+materials/scp/camera_effect.vmt
+sound/scp/warhead_announcement.wav
+sound/scp/914_player_rough.mp3
