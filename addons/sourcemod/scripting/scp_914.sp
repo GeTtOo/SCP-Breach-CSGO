@@ -75,7 +75,7 @@ public SDKHookCB Callback_EntUse(int eid, int cid) {
 
 public void SCP_OnButtonPressed(Client &ply, int doorId) {
     if (doorId == config.GetInt("runbutton"))
-        gamemode.timer.Simple(config.GetInt("runtime"), "Transform", ply);
+        gamemode.timer.Simple(config.GetInt("runtime") * 1000, "Transform", ply);
     
     if (doorId == config.GetInt("switchbutton"))
         if (config.GetBool("usemathcounter"))
@@ -149,11 +149,11 @@ public void Transform(Client ply) {
                             float nativepos[3];
                             emitpos.GetArr(nativepos);
                             
-                            EmitAmbientSound("*/ttt_foundation/914_player_rough.mp3", nativepos);
+                            EmitAmbientSound("*/scp/914_player_rough.mp3", nativepos);
                             AmbientPlay = true;
                         }
                         
-                        EmitSoundToClient(ent.id, "*/ttt_foundation/914_player_rough.mp3");
+                        EmitSoundToClient(ent.id, "*/scp/914_player_rough.mp3");
                     }
 
                     if (recipe.GetInt(1) >= GetRandomInt(1, 100)) {
@@ -218,12 +218,12 @@ public void Transform(Client ply) {
 }
 
 public void Regeneration(Client ply) {
-    PrintToChat(ply.id, " \x07[SCP] \x01Ты получаешь бафф регенерации");
+    PrintToChat(ply.id, " \x07[SCP] \x01 Вы ощущаете необычайный прилив сил");
 
     char  timername[128];
-    Format(timername, sizeof(timername), "Status effect Regeneraion for player id %i", ply.id);
+    Format(timername, sizeof(timername), "regeneration-%i", ply.id);
     
-    gamemode.timer.Create(timername, 1, 60, "Buff_Regeneration", ply);
+    gamemode.timer.Create(timername, 1000, 60, "Buff_Regeneration", ply);
 }
 
 public void Buff_Regeneration(Client ply) {
@@ -235,11 +235,25 @@ public void Buff_Regeneration(Client ply) {
 }
 
 public void Speed(Client ply) {
-    PrintToChat(ply.id, " \x07[SCP] \x01Ты получаешь бафф увеличенной скорости");
+    PrintToChat(ply.id, " \x07[SCP] \x01 Вы впадаете в ярость");
     
     ply.speed *= 2.0;
 }
 
 public void Injure(Client ply) {
+    PrintToChat(ply.id, " \x07[SCP] \x01 Ваше тело начинает кровоточить из за множества мелких ран");
+
+    char  timername[128];
+    Format(timername, sizeof(timername), "injure-%i", ply.id);
     
+    gamemode.timer.Create(timername, 2000, 30, "Debuff_Injure", ply);
+}
+
+public void Debuff_Injure(Client ply) {
+    ply.health -= (ply.class.health * 3 / 100);
+}
+
+public void Butchering(Client ply) {
+    PrintToChat(ply.id, " \x07[SCP] Ваше тело было разделано на компоненты.");
+    ply.Kill();
 }

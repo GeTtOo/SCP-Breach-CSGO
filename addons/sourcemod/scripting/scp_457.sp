@@ -25,10 +25,7 @@ public void SCP_OnPlayerJoin(Client &ply)
 
 public void SCP_OnPlayerSpawn(Client &ply)
 {
-    char class[32];
-    ply.class.Name(class, sizeof(class));
-
-    if(StrEqual(class, "457"))
+    if(ply.class.Is("457"))
     {
         SetEntityRenderMode(ply.id, RENDER_NONE);
         IgniteEffect(ply.id);
@@ -40,21 +37,14 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
     Client vic = Clients.Get(victim), atk = Clients.Get(attacker);
     
     if (atk == null) return Plugin_Continue;
-    char victimClass[32], attackerClass[32];
-    vic.class.Name(victimClass, sizeof(victimClass));
     
-    if(StrEqual(victimClass, "457") && damagetype == DMG_BURN)
+    if(vic.class.Is("457") && damagetype == DMG_BURN)
     {
         return Plugin_Handled;
     }
-    else if(atk != null)
+    else if(atk != null && atk.class.Is("457"))
     {
-        atk.class.Name(attackerClass, sizeof(attackerClass));
-
-        if(StrEqual(attackerClass, "457"))
-        {
             IgniteEntity(vic.id, 20.0);
-        }
     }
 
     return Plugin_Continue;
@@ -105,26 +95,20 @@ void DeleteEffect(int client)
 {
     Client ply = Clients.Get(client);
 
-    if (ply != null && ply.class != null)
+    if (ply != null && ply.class != null && ply.class.Is("457"))
     {
-        char class[32];
-        ply.class.Name(class, sizeof(class));
+        SetEntityRenderMode(ply.id, RENDER_NORMAL);
 
-        if(StrEqual(class, "457"))
+        if(particle != -1)
         {
-            SetEntityRenderMode(ply.id, RENDER_NORMAL);
+            AcceptEntityInput(particle, "Kill");
+            particle = -1;
+        }
 
-            if(particle != -1)
-            {
-                AcceptEntityInput(particle, "Kill");
-                particle = -1;
-            }
-
-            int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
-            if (ent > MaxClients && IsValidEdict(ent))
-            {
-                AcceptEntityInput(ent, "Kill");
-            }
+        int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
+        if (ent > MaxClients && IsValidEdict(ent))
+        {
+            AcceptEntityInput(ent, "Kill");
         }
     }
 }
