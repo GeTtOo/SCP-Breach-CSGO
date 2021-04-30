@@ -13,9 +13,14 @@
 Handle OnClientJoinForward;
 Handle OnClientLeaveForward;
 Handle OnClientSpawnForward;
+Handle OnClientResetForward;
 Handle OnTakeDamageForward;
 Handle OnPlayerDeathForward;
 Handle OnButtonPressedForward;
+Handle OnRoundStartForward;
+Handle OnRoundEndForward;
+Handle OnInputForward;
+Handle OnPressFForward;
 
 public Plugin myinfo = {
     name = "[SCP] GameMode",
@@ -52,9 +57,14 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_CellByRef);
     OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_CellByRef);
     OnClientSpawnForward = CreateGlobalForward("SCP_OnPlayerSpawn", ET_Event, Param_CellByRef);
+    OnClientResetForward = CreateGlobalForward("SCP_OnPlayerReset", ET_Event, Param_CellByRef);
     OnTakeDamageForward = CreateGlobalForward("SCP_OnTakeDamage", ET_Event, Param_Cell, Param_Cell, Param_FloatByRef, Param_CellByRef);
     OnPlayerDeathForward = CreateGlobalForward("SCP_OnPlayerDeath", ET_Event, Param_CellByRef, Param_CellByRef);
     OnButtonPressedForward = CreateGlobalForward("SCP_OnButtonPressed", ET_Event, Param_CellByRef, Param_Cell);
+    OnRoundStartForward = CreateGlobalForward("SCP_OnRoundStart", ET_Event);
+    OnRoundEndForward = CreateGlobalForward("SCP_OnRoundEnd", ET_Event);
+    OnInputForward = CreateGlobalForward("SCP_OnInput", ET_Event, Param_CellByRef, Param_Cell);
+    OnPressFForward = CreateGlobalForward("SCP_OnPressF", ET_Event, Param_CellByRef);
 
     RegPluginLibrary("scp_core");
     return APLRes_Success;
@@ -93,16 +103,14 @@ bool fixCache = false;
 
 public void OnMapStart() 
 {
-    char mapName[128], sound[128];
+    char mapName[128];
 
     GetCurrentMap(mapName, sizeof(mapName));
     gamemode = new GameMode(mapName);
 
     gamemode.mngr.PlayerCollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
-    gamemode.config.NukeSound(sound, sizeof(sound));
 
     PrecacheSound(NUKE_EXPLOSION_SOUND);
-    FakePrecacheSound(sound);
     LoadFileToDownload();
     
     // ¯\_(ツ)_/¯
@@ -167,24 +175,24 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 
     if (IsClientExist(ply.id) && GetClientTeam(ply.id) > 1 && !ply.active) {
         ply.active = true;
-        CreateTimer(0.004, Timer_PlayerSpawn, ply, TIMER_FLAG_NO_MAPCHANGE);
+        gamemode.timer.Simple(1, "Timer_PlayerSpawn", ply);
     }
 
     return Plugin_Continue;
 }
 
-public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
+public void Timer_PlayerSpawn(Client ply)
 {
     if(IsClientExist(ply.id))
     {
         int m_hMyWeapons_size = GetEntPropArraySize(ply.id, Prop_Send, "m_hMyWeapons");
-        int item; 
+        int item;
 
-        for(int index = 0; index < m_hMyWeapons_size; index++) 
+        for(int index = 0; index < m_hMyWeapons_size; index++)
         { 
             item = GetEntPropEnt(ply.id, Prop_Send, "m_hMyWeapons", index);
 
-            if(item != -1) 
+            if(item != -1)
             { 
                 RemovePlayerItem(ply.id, item);
                 AcceptEntityInput(item, "Kill");
@@ -207,7 +215,7 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
             if (!IsFakeClient(ply.id))
                 SendConVarValue(ply.id, FindConVar("game_type"), "6");
 
-            if (gamemode.config.debug) 
+            if (gamemode.config.debug)
             {
                 char teamName[32], className[32];
                 ply.Team(teamName, sizeof(teamName));
@@ -216,45 +224,6 @@ public Action Timer_PlayerSpawn(Handle hTimer, Client ply)
             }
         }
     }
-}
-
-public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
-{
-    if(!IsWarmup())
-    {
-        Client vic = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
-        Client atk = Clients.Get(GetClientOfUserId(GetEventInt(event, "attacker")));
-
-        ArrayList inv = vic.inv.items;
-
-        while (inv.Length != 0)
-        {
-            char entclass[32];
-            
-            Item itm = vic.inv.Drop();
-            itm.GetEntClass(entclass, sizeof(entclass));
-
-            delete itm;
-
-            Ents.Create(entclass)
-            .SetPos(vic.GetPos() + new Vector(GetRandomFloat(-30.0,30.0), GetRandomFloat(-30.0,30.0), 0.0))
-            .UseCB(view_as<SDKHookCB>(Callback_EntUse))
-            .Spawn();
-        }
-        
-        vic.inv.Clear();
-
-        vic.active = false;
-
-        EndRoundCount(vic);
-
-        Call_StartForward(OnPlayerDeathForward);
-        Call_PushCellRef(vic);
-        Call_PushCellRef(atk);
-        Call_Finish();
-    }
-
-    return Plugin_Handled;
 }
 
 public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
@@ -269,7 +238,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         int teamCount, classCount, extra = 0;
         int keyLen;
 
-        for (int i = 0; i < teamNameS.Length; i++) 
+        for (int i = 0; i < teamNameS.Length; i++)
         {
             keyLen = teamNameS.KeyBufferSize(i);
             char[] teamKey = new char[keyLen];
@@ -284,7 +253,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
             StringMapSnapshot classNameS = team.GetClassNames();
             int classKeyLen;
 
-            for (int v = 0; v < classNameS.Length; v++) 
+            for (int v = 0; v < classNameS.Length; v++)
             {
                 classKeyLen = classNameS.KeyBufferSize(v);
                 char[] classKey = new char[classKeyLen];
@@ -296,7 +265,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
                 classCount = teamCount * class.percent / 100;
                 classCount = (classCount != 0 || !class.priority) ? classCount : 1;
 
-                for (int scc = 1; scc <= classCount; scc++) 
+                for (int scc = 1; scc <= classCount; scc++)
                 {
                     if (extra > Clients.InGame()) break;
                     Client player = Clients.GetRandomWithoutClass();
@@ -310,7 +279,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
             }
         }
 
-        for (int i = 1; i <= Clients.InGame() - extra; i++) 
+        for (int i = 1; i <= Clients.InGame() - extra; i++)
         {
             Client player = Clients.GetRandomWithoutClass();
             char team[32], class[32];
@@ -320,19 +289,26 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
             player.class = gamemode.team(team).class(class);
             player.haveclass = true;
             gamemode.mngr.team(team).count++;
-
         }
 
         SetMapRegions();
         SpawnItemsOnMap();
+
+        Call_StartForward(OnRoundStartForward);
+        Call_Finish();
     }
 }
 
-public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast) 
+public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
 {
-    for (int cig=1; cig <= Clients.InGame(); cig++) 
+    for (int cig=1; cig <= Clients.InGame(); cig++)
     {
         Client client = Clients.Get(cig);
+
+        Call_StartForward(OnClientResetForward);
+        Call_PushCellRef(client);
+        Call_Finish();
+
         client.class = null;
         client.haveclass = false;
         client.inv.Clear();
@@ -340,6 +316,9 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
     }
 
     Ents.Clear();
+
+    Call_StartForward(OnRoundEndForward);
+    Call_Finish();
 }
 
 public Action CS_OnTerminateRound(float& delay, CSRoundEndReason& reason)
@@ -355,6 +334,19 @@ public Action CS_OnTerminateRound(float& delay, CSRoundEndReason& reason)
     else
     {
         return Plugin_Handled;
+    }
+}
+
+public void OnPlayerRunCmdPost(int client, int buttons)
+{
+    Client ply = Clients.Get(client);
+    
+    if (ply != null && ply.class != null)
+    {
+        Call_StartForward(OnInputForward);
+        Call_PushCellRef(ply);
+        Call_PushCell(buttons);
+        Call_Finish();
     }
 }
 
@@ -377,7 +369,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
             char[] doorKey = new char[doorKeyLen];
             doorsSnapshot.GetKey(i, doorKey, doorKeyLen);
             
-            if (json_is_meta_key(doorKey)) 
+            if (json_is_meta_key(doorKey))
                 continue;
 
             // ¯\_(ツ)_/¯
@@ -453,6 +445,45 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
     return Plugin_Continue;
 }
 
+public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
+{
+    if(!IsWarmup())
+    {
+        Client vic = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
+        Client atk = Clients.Get(GetClientOfUserId(GetEventInt(event, "attacker")));
+
+        ArrayList inv = vic.inv.items;
+
+        while (inv.Length != 0)
+        {
+            char entclass[32];
+            
+            Item itm = vic.inv.Drop();
+            itm.GetEntClass(entclass, sizeof(entclass));
+
+            delete itm;
+
+            Ents.Create(entclass)
+            .SetPos(vic.GetPos() + new Vector(GetRandomFloat(-30.0,30.0), GetRandomFloat(-30.0,30.0), 0.0))
+            .UseCB(view_as<SDKHookCB>(Callback_EntUse))
+            .Spawn();
+        }
+        
+        vic.inv.Clear();
+
+        vic.active = false;
+
+        EndRoundCount(vic);
+
+        Call_StartForward(OnPlayerDeathForward);
+        Call_PushCellRef(vic);
+        Call_PushCellRef(atk);
+        Call_Finish();
+    }
+
+    return Plugin_Handled;
+}
+
 public void Event_OnTriggerActivation(const char[] output, int caller, int activator, float delay)
 {
     if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsClientInSpec(activator))
@@ -469,14 +500,7 @@ public void Event_OnTriggerActivation(const char[] output, int caller, int activ
 public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
 {
     if(IsClientExist(client) && !IsClientInSpec(client))
-    {
-        Client ply = Clients.Get(client);
-        
-        if(!ply.IsSCP)
-        {
-            DisplayFMenu(ply);
-        }
-    }
+        DisplayFMenu(Clients.Get(client));
 }
 
 public Action OnWeaponTake(int client, int iWeapon)
@@ -505,7 +529,7 @@ public Action OnWeaponTake(int client, int iWeapon)
 //
 //////////////////////////////////////////////////////////////////////////////
 
-void LoadFileToDownload()
+public void LoadFileToDownload()
 {
     Handle hFile = OpenFile("addons/sourcemod/configs/scp/downloads.txt", "r");
     
@@ -523,14 +547,12 @@ void LoadFileToDownload()
 
                 if(StrContains(buffer, ".mdl", false) == (size - 4))
                 {
-                    PrintToServer("Precached Model %s", buffer);
                     PrecacheModel(buffer);
                 }
                 else if(StrContains(buffer, ".wav", false) == (size - 4) || StrContains(buffer, ".mp3", false) == (size - 4))
                 {
                     strcopy(buffer, sizeof(buffer), buffer[6]);
                     Format(buffer, sizeof(buffer), "%s%s", "*/", buffer);
-                    PrintToServer("Precached Sound %s", buffer);
                     FakePrecacheSound(buffer);
                 }
             }
@@ -613,6 +635,7 @@ public void SetMapRegions()
         DispatchKeyValue(ent.id,"radius",radius);
         DispatchKeyValue(ent.id,"token",name);
         ent.Spawn();
+        delete ent;
     }
 }
 
@@ -645,7 +668,7 @@ public void SpawnItemsOnMap()
     }
 }
 
-void SCP_EndRound(const char[] team)
+public void SCP_EndRound(const char[] team)
 {
     gamemode.mngr.RoundComplete = true;
     
@@ -661,7 +684,7 @@ void SCP_EndRound(const char[] team)
     }
 }
 
-void SCP_NukeActivation()
+public void SCP_NukeActivation()
 {
     char sound[128];
     gamemode.config.NukeSound(sound, sizeof(sound));
@@ -678,7 +701,7 @@ void SCP_NukeActivation()
     }
 }
 
-void EndRoundCount(Client ply)
+public void EndRoundCount(Client ply)
 {
     if(Clients.Alive() == 0 && Clients.InGame() != 0)
     {
@@ -701,12 +724,12 @@ void EndRoundCount(Client ply)
     }
 }
 
-void FakePrecacheSound(const char[] szPath)
+stock void FakePrecacheSound(const char[] szPath)
 {
     AddToStringTable(FindStringTable( "soundprecache" ), szPath);
 }
 
-void Shake(int client)
+stock void Shake(int client)
 {
     Handle message = StartMessageOne("Shake", client, USERMSG_RELIABLE);
 
@@ -756,20 +779,6 @@ stock bool IsCleintInSpec(int client)
     }
 
     return true;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-//                                Commands
-//
-//////////////////////////////////////////////////////////////////////////////
-
-public Action Command_AdminMenu(int client, int args)
-{
-    if(IsClientExist(client))
-    {
-        DisplayAdminMenu(client);
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -871,6 +880,14 @@ public Action CmdSCP(int args)
 
 //-----------------------------Client-----------------------------//
 
+public Action Command_AdminMenu(int client, int args)
+{
+    if(IsClientExist(client))
+    {
+        DisplayAdminMenu(client);
+    }
+}
+
 public Action GetClientPos(int client, const char[] command, int argc)
 {
     Client ply = Clients.Get(client);
@@ -880,6 +897,7 @@ public Action GetClientPos(int client, const char[] command, int argc)
 
     delete plyPos;
 
+    PrintEntInCone(client, command, argc);
     PrintEntInBox(client, command, argc);
 }
 
@@ -899,6 +917,24 @@ public Action PrintEntInBox(int client, const char[] command, int argc)
         ent.GetClass(entclass, sizeof(entclass));
         
         PrintToChat(ply.id, "class: %s, id: %i", entclass, ent.id);
+    }
+
+    delete entArr;
+}
+
+public Action PrintEntInCone(int client, const char[] command, int argc)
+{
+    Client ply = Clients.Get(client);
+
+    char filter[1][32] = {"player"};
+
+    ArrayList entArr = Ents.FindInCone(ply.EyePos(), ply.EyeAngles().Forward(ply.EyePos(), 1000.0), 90, filter, sizeof(filter));
+
+    for(int i=0; i < entArr.Length; i++) 
+    {
+        Client ent = entArr.Get(i, 0);
+        
+        PrintToChat(ply.id, "Player: %i", ent.id);
     }
 
     delete entArr;
@@ -985,8 +1021,16 @@ public void InventoryDisplay(Client ply)
     InvMenu.Display(ply.id, 30);
 }
 
-void DisplayFMenu(Client ply)
+public void DisplayFMenu(Client ply)
 {
     //PrintToChat(client, " \x07[SCP] \x01Скоро тут будет меню (честно-честно!)");
-    InventoryDisplay(ply);
+
+    if (!ply.IsSCP)
+        InventoryDisplay(ply);
+    else
+    {
+        Call_StartForward(OnPressFForward);
+        Call_PushCellRef(ply);
+        Call_Finish();
+    }
 }

@@ -27,11 +27,21 @@ forward void SCP_OnPlayerLeave(Client &ply);
 
 forward void SCP_OnPlayerSpawn(Client &ply);
 
+forward void SCP_OnPlayerReset(Client &ply);
+
 forward Action SCP_OnTakeDamage(Client vic, Client atk, float &damage, int &damagetype);
 
 forward void SCP_OnPlayerDeath(Client &vic, Client &atk);
 
 forward void SCP_OnButtonPressed(Client &ply, int doorId);
+
+forward void SCP_OnRoundStart();
+
+forward void SCP_OnRoundEnd();
+
+forward void SCP_OnInput(Client &ply, int buttons);
+
+forward void SCP_OnPRessF(Client &ply);
 
 public any NativeGameMode_Config(Handle Plugin, int numArgs) { return view_as<Config>(gamemode.GetObject("Config")); }
 

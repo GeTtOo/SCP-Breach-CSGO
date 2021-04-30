@@ -145,4 +145,43 @@ methodmap EntitySingleton < Base {
 
         return entArr;
     }
+
+    public ArrayList FindInCone(Vector coneApex, Vector coneEnd, int coneAperture, char[][] filter, int filter_size) {
+        int entId = 0;
+        ArrayList entArr = new ArrayList(128);
+        
+        while ((entId = FindEntityByClassname(entId, "*")) != -1) {
+            if (!IsValidEntity(entId)) continue;
+
+            char className[32];
+            GetEntityClassname(entId, className, sizeof(className));
+
+            for (int i=0; i < filter_size; i++) {
+                if (StrContains(className, filter[i]) == 0) {
+                    float vec[3];
+                    GetEntPropVector(entId, Prop_Send, "m_vecOrigin", vec);
+                    Vector vecEnt = new Vector(vec[0], vec[1], vec[2]);
+
+                    int halfAperture = coneAperture / 2;
+                    Vector atp = coneApex.Clone() - vecEnt;
+                    Vector axis = coneApex.Clone() - coneEnd.Clone();
+
+                    bool isInInfCone = atp.Clone().DotProduct(axis.Clone()) / atp.Clone().Length() / axis.Clone().Length() < Cosine(float(halfAperture));
+                    bool isInCone = atp.DotProduct(axis.Clone()) / axis.Clone().Length() < axis.Length();
+
+                    if (!isInInfCone && isInCone)
+                        PushArrayCell(entArr, this.TryGetOrAdd(entId));
+                }
+            }
+        }
+
+        delete coneApex;
+        delete coneEnd;
+
+        return entArr;
+    }
+
+    public ArrayList FindInPVS(Client ply, int distance = 100, int fov = 90, char filter[1][32] = {"player"}) {
+        return this.FindInCone(ply.EyePos(), ply.EyeAngles().Forward(ply.EyePos(), float(distance)), fov, filter, sizeof(filter));
+    }
 }
