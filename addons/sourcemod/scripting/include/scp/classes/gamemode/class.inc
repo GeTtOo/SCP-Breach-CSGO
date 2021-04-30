@@ -60,8 +60,12 @@ methodmap Class < JSON_OBJECT {
         public get() { return view_as<JSON_ARRAY>(this.GetObject("weapons")); }
     }
 
+    public bool Is(char[] equalClass) {
+        char thisClass[32]; this.GetString("name", thisClass, sizeof(thisClass)); return StrEqual(thisClass, equalClass);
+    }
+
     public bool Model(char[] buffer, int max_size) {
-    this.GetString("model", buffer, max_size);
+        this.GetString("model", buffer, max_size);
     }
 
     public bool HandsModel(char[] buffer, int max_size) {

@@ -79,6 +79,12 @@ methodmap Client < Entity {
 
     public bool GetName(char[] buffer, int max_size = 0) { return GetClientName(this.id, buffer, max_size); }
 
+    public bool IsAlive() { return IsPlayerAlive(this.id); }
+
+    public Vector EyePos() { float vecarr[3]; GetClientEyePosition(this.id, vecarr); return new Vector(vecarr[0], vecarr[1], vecarr[2]); }
+
+    public Angle EyeAngles() { float angarr[3]; GetClientEyeAngles(this.id, angarr); return new Angle(angarr[0], angarr[1], angarr[2]); }
+
     public void SetModel(char[] model) { SetEntityModel(this.id, model); }
 
     public void SetHandsModel(char[] model) { SetEntPropString(this.id, Prop_Send, "m_szArmsModel", model); }
@@ -115,13 +121,17 @@ methodmap Client < Entity {
             for (int i=0; i < this.class.doors.Length; i++)
                 AcceptEntityInput(this.class.doors.GetInt(i), "Open");
 
-        char playerModel[128], playerHandsModel[128];
+        if (this.class.HasKey("model")) {
+            char playerModel[128];
+            this.class.Model(playerModel, sizeof(playerModel));
+            this.SetModel(playerModel);
+        }
 
-        this.class.Model(playerModel, sizeof(playerModel));
-        this.class.HandsModel(playerHandsModel, sizeof(playerHandsModel));
-
-        //this.SetModel(playerModel);
-        //this.SetHandsModel(playerHandsModel);
+        if (this.class.HasKey("hands")) {
+            char handsModel[128];
+            this.class.Model(handsModel, sizeof(handsModel));
+            this.SetHandsModel(handsModel);
+        }
     }
 
     public void Spawn() {
