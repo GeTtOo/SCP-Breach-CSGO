@@ -83,7 +83,7 @@ public void SCP_OnPlayerSpawn(Client &ply) {
         SetEntProp(ply.id, Prop_Send, "m_iHideHUD", 4112); // 1<<12|1<<4 || 2^12 + 2^4
         SetEntPropFloat(ply.id, Prop_Send, "m_flModelScale", 0.01);
         ply.SetValue("camcontrol", new Controller(ply));
-        ClientCommand(ply.id, "r_screenoverlay scp/camera_effect");
+        ClientCommand(ply.id, "r_screenoverlay models/scp/camera_effect");
         char timername[32];
         Format(timername, sizeof(timername), "SCP-079_timeupd_", ply.id);
         gamemode.timer.Create(timername, 1000, 0, "TimeUpdate", ply);

@@ -125,6 +125,9 @@ methodmap Client < Entity {
             char playerModel[128];
             this.class.Model(playerModel, sizeof(playerModel));
             this.SetModel(playerModel);
+
+            SetEntProp(this.id, Prop_Send, "m_nBody", this.GetInt("bodygroup"));
+            SetEntProp(this.id, Prop_Send, "m_nSkin", this.GetInt("skin"));
         }
 
         if (this.class.HasKey("hands")) {

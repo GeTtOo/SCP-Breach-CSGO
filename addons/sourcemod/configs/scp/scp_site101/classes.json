@@ -41,6 +41,8 @@
         "priority":false,
         "Classes": {
             "Soldier": {
+                "model":"models/player/custom_player/scp/chaos_unit.mdl",
+                "bodygroup":1,
                 "pos":[-7316,-5968,1712],
                 "ang":[0,180,0],
                 "percent":20,
@@ -53,7 +55,6 @@
             "D Class": {
                 "percent":80,
                 "priority":true,
-                "model":"models/cs_medic1.mdl",
                 "escape":true,
                 "health":100,
                 "comment":"test"
