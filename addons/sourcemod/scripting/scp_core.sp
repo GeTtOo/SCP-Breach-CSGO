@@ -75,21 +75,24 @@ public void OnPluginStart()
     Clients = new ClientSingleton();
     Ents = new EntitySingleton();
     AdminMenu = new AdminMenuSingleton();
+
+    LoadTranslations("scpcore.phrases");
     
-    RegServerCmd("ents", CmdEnts);
-    RegServerCmd("scp", CmdSCP);
+    RegServerCmd("ents", CmdEnts);                                                          // ¯\_(ツ)_/¯
+    RegServerCmd("scp", CmdSCP);                                                            // ¯\_(ツ)_/¯
 
     RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_CUSTOM1);
     RegAdminCmd("scp_spawn", PlayerSpawn, ADMFLAG_CUSTOM1);
 
     AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
-    AddCommandListener(GetClientPos, "getmypos");
-    AddCommandListener(TpTo914, "tp914");
+    AddCommandListener(GetClientPos, "getmypos");                                           // ¯\_(ツ)_/¯
+    AddCommandListener(TpTo914, "tp914");                                                   // ¯\_(ツ)_/¯
     
     HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_prestart", OnRoundPreStart);
     HookEvent("player_death", Event_PlayerDeath, EventHookMode_Pre);
+    
     HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
     HookEntityOutput("trigger_teleport", "OnStartTouch", Event_OnTriggerActivation);
 }
@@ -220,7 +223,7 @@ public void Timer_PlayerSpawn(Client ply)
                 char teamName[32], className[32];
                 ply.Team(teamName, sizeof(teamName));
                 ply.class.Name(className, sizeof(className));
-                PrintToChat(ply.id, " \x07[SCP] \x01Твой класс %s - %s", teamName, className);
+                PrintToChat(ply.id, " \x07[SCP] \x01%t", "Show class when player spawn", teamName, className);
             }
         }
     }
@@ -358,7 +361,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
         int doorId = GetEntProp(caller, Prop_Data, "m_iHammerID");
 
         if (gamemode.config.debug)
-            PrintToChatAll(" \x07[SCP] \x01Door/Button id: (%i)", doorId);
+            PrintToChatAll(" \x07[SCP Admin] \x01Door/Button id: (%i)", doorId);
 
         StringMapSnapshot doorsSnapshot = gamemode.config.doors.GetAll();
         int doorKeyLen;
@@ -492,7 +495,7 @@ public void Event_OnTriggerActivation(const char[] output, int caller, int activ
 
         if(gamemode.config.debug)
         {
-            PrintToChatAll(" \x07[SCP] \x01T_ID: %i", iTrigger);
+            PrintToChatAll(" \x07[SCP Admin] \x01T_ID: %i", iTrigger);
         }
     }
 }
@@ -587,7 +590,7 @@ public SDKHookCB Callback_EntUse(int entity, int client)
         if (ply.inv.Add(entClassName))
             Ents.Remove(ent.id);
         else
-            PrintToChat(ply.id, " \x07[SCP] \x01Твой инвентарь переполнен");
+            PrintToChat(ply.id, " \x07[SCP] \x01%t", "Inventory full");
     }
 }
 
@@ -675,12 +678,12 @@ public void SCP_EndRound(const char[] team)
     if(StrEqual("nuke_explosion", team))
     {
         CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TargetBombed, false);
-        PrintToChatAll(" \x07[SCP] \x01Комплекс уничтожен! Выживших не обнаружено...");
+        PrintToChatAll(" \x07[SCP] \x01%t", "Site destroy");
     }
     else
     {
         CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TerroristWin, false);
-        PrintToChatAll(" \x07[SCP] \x01%s победили!", team);
+        PrintToChatAll(" \x07[SCP] \x01%t", "Team Win", team);
     }
 }
 
@@ -1015,7 +1018,7 @@ public void InventoryDisplay(Client ply)
     else
     {
         //InvMenu.AddItem("item1", "Предметов нет", ITEMDRAW_DISABLED);
-        PrintToChat(ply.id, " \x07[SCP] \x01В твоём инвентаре нет предметов");
+        PrintToChat(ply.id, " \x07[SCP] \x01%t", "Inventory empty");
     }
 
     InvMenu.Display(ply.id, 30);
@@ -1023,7 +1026,8 @@ public void InventoryDisplay(Client ply)
 
 public void DisplayFMenu(Client ply)
 {
-    //PrintToChat(client, " \x07[SCP] \x01Скоро тут будет меню (честно-честно!)");
+    //PrintToChat(client, " \x07[SCP] \x01Скоро тут будет меню (честно-честно!)"); ©️ Гет
+    // 3 месяца прошло, ничего себе скоро :pepeGigles: ©️ Гет (да говорю сам с собой, что вы мне сделаете?!)
 
     if (!ply.IsSCP)
         InventoryDisplay(ply);

@@ -1,0 +1,30 @@
+"Phrases"
+{
+    "Show class when player spawn"
+    {
+        "#format"   "{1:s},{2:s}"
+        "en"        ""
+        "ru"        "Ваш класс {1} - {2}"
+    }
+    "Inventory full"
+    {
+        "en"        ""
+        "ru"        "Ваш инвентарь переполнен"
+    }
+    "Inventory empty"
+    {
+        "en"        ""
+        "ru"        "Ваш инвентарь пуст"
+    }
+    "Site destroy"
+    {
+        "en"        ""
+        "ru"        "Комплекс уничтожен! Выживших не обнаружено..."
+    }
+    "Team Win"
+    {
+        "#format"   "{1:s}"
+        "en"        ""
+        "ru"        "{1} победили!"
+    }
+}
