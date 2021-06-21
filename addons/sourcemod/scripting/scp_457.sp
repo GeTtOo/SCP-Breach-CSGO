@@ -44,7 +44,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
     }
     else if(atk != null && atk.class.Is("457"))
     {
-            IgniteEntity(vic.id, 20.0);
+        IgniteEntity(vic.id, 20.0);
     }
 
     return Plugin_Continue;
