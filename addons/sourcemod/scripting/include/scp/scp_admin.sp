@@ -48,7 +48,7 @@ methodmap AdminAction < Base
             {
                 if(IsClientInSpec(target))
                 {
-                    PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x04Наблюдатель", target);
+                    PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x04%t", target, "Spectator");
                 }
                 else if(IsPlayerAlive(target))
                 {
@@ -62,7 +62,7 @@ methodmap AdminAction < Base
                 }
                 else
                 {
-                    PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x03Мертв", target);
+                    PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x03%t", target, "Dead");
                 }
             }
         }
@@ -72,12 +72,12 @@ methodmap AdminAction < Base
     {
         if(!this.admin.fullaccess)
         {
-            PrintToChat(this.admin.id, " \x07[SCP] \x01Игнорирование карт доступа \x06включено");
+            PrintToChat(this.admin.id, " \x07[SCP] \x01%t \x06%t", "Door access", "Enable");
             this.admin.fullaccess = true;
         }
         else
         {
-            PrintToChat(this.admin.id, " \x07[SCP] \x01Игнорирование карт доступа \x06отключено");
+            PrintToChat(this.admin.id, " \x07[SCP] \x01%t \x06%t", "Door access", "Disable");
             this.admin.fullaccess = false;
         }
     }
@@ -99,7 +99,7 @@ methodmap AdminAction < Base
         }
         else
         {
-            PrintToChat(this.admin.id, " \x07[SCP] \x01Игрок вышел/умер/находиться в наблюдателях");
+            PrintToChat(this.admin.id, " \x07[SCP] \x01%t", "Player unavailable");
         }
     }
 }
@@ -141,18 +141,30 @@ void DisplayAdminMenu(int client)
 {
     if(IsClientExist(client))
     {
+        char buffer[128];
         Menu hMenu = new Menu(MenuHandler_ScpAdminMenu);
-        hMenu.SetTitle("Меню администратора");
+        
+        FormatEx(buffer, sizeof(buffer), "%T", "Admin menu title", client);
+        hMenu.SetTitle(buffer);
 
-        hMenu.AddItem("item1", "Просмотреть классы игроков", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item2", "Возродить игрока", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item3", "Телепортировать игрока", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item4", "Переместить в наблюдатели", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item5", "Провести беседу с игроком", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item6", "Игнорирование карт доступа", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item7", "Выдать предмет", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item8", "Перезапустить раунд", ITEMDRAW_DEFAULT);
-        hMenu.AddItem("item9", "Взорвать комплекс", ITEMDRAW_DEFAULT);
+        FormatEx(buffer, sizeof(buffer), "%T", "Show class", client);
+        hMenu.AddItem("item1", buffer, ITEMDRAW_DEFAULT);
+        FormatEx(buffer, sizeof(buffer), "%T", "Respawn", client);
+        hMenu.AddItem("item2", buffer, ITEMDRAW_DEFAULT);
+        FormatEx(buffer, sizeof(buffer), "%T", "Teleport", client);
+        hMenu.AddItem("item3", buffer, ITEMDRAW_DEFAULT);
+        FormatEx(buffer, sizeof(buffer), "%T", "Move to spec", client);
+        hMenu.AddItem("item4", buffer, ITEMDRAW_DEFAULT);
+        FormatEx(buffer, sizeof(buffer), "%T", "Talk", client);
+        hMenu.AddItem("item5", buffer, ITEMDRAW_DEFAULT);
+        FormatEx(buffer, sizeof(buffer), "%T", "Door access", client);
+        hMenu.AddItem("item6", buffer, ITEMDRAW_DEFAULT);
+        FormatEx(buffer, sizeof(buffer), "%T", "Give item", client);
+        hMenu.AddItem("item7", buffer, ITEMDRAW_DEFAULT);
+        FormatEx(buffer, sizeof(buffer), "%T", "Restart", client);
+        hMenu.AddItem("item8", buffer, ITEMDRAW_DEFAULT);
+        FormatEx(buffer, sizeof(buffer), "%T", "Explode", client);
+        hMenu.AddItem("item9", buffer, ITEMDRAW_DEFAULT);
 
         hMenu.Display(client, 30);
     }
@@ -180,7 +192,7 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
             {
                 gamemode.mngr.RoundComplete = true;
                 CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TargetBombed, false);
-                PrintToChatAll(" \x07[SCP] \x01Раунд перезапущен администратором");
+                PrintToChatAll(" \x07[SCP] \x01%t", "Rount restart");
             }
             case DESTROY_SITE:
             {
@@ -197,8 +209,11 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
 
 void DisplayTargetMenu(int client)
 {
+    char buffer[64];
     Menu hMenu = new Menu(MenuHandler_ScpAdminMenuTarget);
-    hMenu.SetTitle("Выберите игрока:");
+    
+    FormatEx(buffer, sizeof(buffer), "%T", "Select target", client);
+    hMenu.SetTitle(buffer);
 
     AddTargetsToMenu2(hMenu, client, COMMAND_FILTER_NO_BOTS|COMMAND_FILTER_CONNECTED);
 
@@ -221,11 +236,11 @@ public int MenuHandler_ScpAdminMenuTarget(Menu hMenu, MenuAction action, int cli
 
         if((target = GetClientOfUserId(userid)) == 0)
         {
-            PrintToChat(client, " \x07[SCP] \x01Игрок больше не доступен");
+            PrintToChat(client, " \x07[SCP] \x01%t", "Target unavailable");
         }
         else if (!CanUserTarget(client, target))
 		{
-			PrintToChat(client, " \x07[SCP] \x01Невозможно найти игрока");
+			PrintToChat(client, " \x07[SCP] \x01%t", "Cant find");
 		}
         else
 		{
@@ -275,10 +290,12 @@ public bool GetLookPos_Filter(int entity, int contentsMask, any data)
 
 void ChangePlayerClass(int client)
 {
-    int teamKeylen, classKeylen; 
+    int teamKeylen, classKeylen;
+    char buffer[64];
     
     Menu hMenu = new Menu(MenuHandler_ScpChangeClass);
-    hMenu.SetTitle("Выберите класс:");
+    FormatEx(buffer, sizeof(buffer), "%T", "Select class", client);
+    hMenu.SetTitle(buffer);
 
     StringMapSnapshot teamSnap = gamemode.GetTeamNames();
 

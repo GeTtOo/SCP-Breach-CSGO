@@ -1,30 +1,132 @@
 "Phrases"
 {
+    /* Core */
     "Show class when player spawn"
     {
         "#format"   "{1:s},{2:s}"
-        "en"        ""
+        "en"        "Your class {1} - {2}"
         "ru"        "Ваш класс {1} - {2}"
     }
     "Inventory full"
     {
-        "en"        ""
+        "en"        "Your inventory is full"
         "ru"        "Ваш инвентарь переполнен"
     }
     "Inventory empty"
     {
-        "en"        ""
+        "en"        "Your inventory is empty"
         "ru"        "Ваш инвентарь пуст"
     }
     "Site destroy"
     {
-        "en"        ""
+        "en"        "The complex is destroyed! No survivors were found..."
         "ru"        "Комплекс уничтожен! Выживших не обнаружено..."
     }
     "Team Win"
     {
         "#format"   "{1:s}"
-        "en"        ""
+        "en"        "{1} won!"
         "ru"        "{1} победили!"
+    }
+    /* Admin menu */
+    "Spectator"
+    {
+        "en"        "Spectator"
+        "ru"        "Наблюдатель"
+    }
+    "Dead"
+    {
+        "en"        "Dead"
+        "ru"        "Мертв"
+    }
+    "Door access"
+    {
+        "en"        "Ignoring access cards"
+        "ru"        "Игнорирование карт доступа"
+    }
+    "Enable"
+    {
+        "en"        "enabled"
+        "ru"        "включено"
+    }
+    "Disable"
+    {
+        "en"        "disabled"
+        "ru"        "отключено"
+    }
+    "Player unavailable"
+    {
+        "en"        "The player is disconnected/dead/in the spectators"
+        "ru"        "Игрок вышел/умер/находиться в наблюдателях"
+    }
+    "Admin menu title"
+    {
+        "en"        "Admin menu"
+        "ru"        "Меню администратора"
+    }
+    "Show class"
+    {
+        "en"        "View Player classes"
+        "ru"        "Просмотреть классы игроков"
+    }
+    "Respawn"
+    {
+        "en"        "Respawn the player"
+        "ru"        "Возродить игрока"
+    }
+    "Teleport"
+    {
+        "en"        "Teleport the player"
+        "ru"        "Телепортировать игрока"
+    }
+    "Move to spec"
+    {
+        "en"        "Move to spectators"
+        "ru"        "Переместить в наблюдатели"
+    }
+    "Talk"
+    {
+        "en"        "Conduct a conversation with player"
+        "ru"        "Провести беседу с игроком"
+    }
+    "Give item"
+    {
+        "en"        "Give item"
+        "ru"        "Выдать предмет"
+    }
+    "Restart"
+    {
+        "en"        "Restart round"
+        "ru"        "Перезапустить раунд"
+    }
+    "Explode"
+    {
+        "en"        "Exlpode the complex"
+        "ru"        "Взорвать комплекс"
+    }
+    "Rount restart"
+    {
+        "en"        "Round was restarted by the administrator"
+        "ru"        "Раунд перезапущен администратором"
+    }
+    "Select target"
+    {
+        "en"        "Select a player"
+        "ru"        "Выберите игрока:"
+    }
+    "Target unavailable"
+    {
+        "en"        "The player is no longer available"
+        "ru"        "Игрок больше не доступен"
+    }
+    "Cant find"
+    {
+        "en"        "Unable to find the player"
+        "ru"        "Невозможно найти игрока"
+    }
+    "Select class"
+    {
+        "en"        "Select a class"
+        "ru"        "Выберите класс:"
     }
 }
