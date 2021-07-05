@@ -1,6 +1,5 @@
 "Phrases"
 {
-    /* Core */
     "Show class when player spawn"
     {
         "#format"   "{1:s},{2:s}"
@@ -28,7 +27,6 @@
         "en"        "{1} won!"
         "ru"        "{1} победили!"
     }
-    /* Admin menu */
     "Spectator"
     {
         "en"        "Spectator"
