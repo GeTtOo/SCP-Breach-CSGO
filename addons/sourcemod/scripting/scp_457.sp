@@ -42,7 +42,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
     {
         return Plugin_Handled;
     }
-    else if(atk != null && atk.class.Is("457"))
+    else if(atk != null && atk.class.Is("457") && atk.id != vic.id)
     {
         IgniteEntity(vic.id, 20.0);
     }
