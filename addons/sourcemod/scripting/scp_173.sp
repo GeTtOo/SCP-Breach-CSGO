@@ -9,8 +9,8 @@ public Plugin myinfo = {
     name = "[SCP] SCP-173",
     author = "Andrey::Dono",
     description = "SCP 173 for CS:GO modification SCP Foundation",
-    version = "0.1",
-    url = ""
+    version = "1.0",
+    url = "https://github.com/GeTtOo/csgo_scp"
 };
 
 public void SCP_OnPlayerSpawn(Client &ply) {

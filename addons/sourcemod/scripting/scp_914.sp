@@ -19,7 +19,7 @@ public Plugin myinfo = {
     author = "Andrey::Dono",
     description = "SCP-914 for CS:GO modification SCP Foundation",
     version = "1.0",
-    url = ""
+    url = "https://github.com/GeTtOo/csgo_scp"
 };
 
 public void OnPluginStart() {

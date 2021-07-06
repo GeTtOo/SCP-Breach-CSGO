@@ -24,7 +24,7 @@ char sounds[10][32] = {
 public Plugin myinfo = {
 	name = "[SCP] SCP 049",
 	author = "GeTtOo",
-	description = "SCP 049",
+	description = "Added SCP 049",
 	version = "1.0",
 	url = "https://github.com/GeTtOo/csgo_scp"
 };
