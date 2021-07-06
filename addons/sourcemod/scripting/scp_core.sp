@@ -27,7 +27,7 @@ public Plugin myinfo = {
     author = "Andrey::Dono, GeTtOo",
     description = "SCP gamemmode for CS:GO",
     version = "1.0",
-    url = "https://github.com/Eternity-Development-Team/csgo_scp"
+    url = "https://github.com/GeTtOo/csgo_scp"
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -810,21 +810,24 @@ public Action NukeExplosion(Handle hTimer)
                 EmitSoundToClient(client, NUKE_EXPLOSION_SOUND);
                 Shake(client);
             }
-
-            int ent;
-            while((ent = FindEntityByClassname(ent, "func_door")) != -1)
-            {
-                char name[16];
-                GetEntPropString(ent, Prop_Data, "m_iName", name, sizeof(name));
-                
-                if(StrContains("DoorGate", name, false) != -1)
-                {
-                    AcceptEntityInput(ent, "Close");
-                    AcceptEntityInput(ent, "Lock");
-                }
-            }
         }
     }
+
+    int ent;
+    while((ent = FindEntityByClassname(ent, "func_door")) != -1)
+    {
+        char name[16];
+        GetEntPropString(ent, Prop_Data, "m_iName", name, sizeof(name));
+        
+        if(StrContains(name, "DoorGate", false) != -1)
+        {
+            AcceptEntityInput(ent, "Close");
+            AcceptEntityInput(ent, "Lock");
+        }
+    }
+
+    //!- Список кнопок которые будут блокироваться после взрыва
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -908,7 +911,7 @@ public Action PrintEntInBox(int client, const char[] command, int argc)
 {
     Client ply = Clients.Get(client);
 
-    char filter[4][32] = {"prop_physics", "weapon_", "func_door", "prop_dynamic"};
+    char filter[4][32] = { "prop_physics", "weapon_", "func_door", "prop_dynamic" };
 
     ArrayList entArr = Ents.FindInBox(ply.GetPos() - new Vector(200.0, 200.0, 200.0), ply.GetPos() + new Vector(200.0, 200.0, 200.0), filter, sizeof(filter));
 
@@ -1017,8 +1020,7 @@ public void InventoryDisplay(Client ply)
     }
     else
     {
-        //InvMenu.AddItem("item1", "Предметов нет", ITEMDRAW_DISABLED);
-        PrintToChat(ply.id, " \x07[SCP] \x01%t", "Inventory empty");
+        PrintCenterText(ply.id, "%t", "Inventory empty");
     }
 
     InvMenu.Display(ply.id, 30);
@@ -1026,8 +1028,9 @@ public void InventoryDisplay(Client ply)
 
 public void DisplayFMenu(Client ply)
 {
-    //PrintToChat(client, " \x07[SCP] \x01Скоро тут будет меню (честно-честно!)"); ©️ Гет
+    // PrintToChat(client, " \x07[SCP] \x01Скоро тут будет меню (честно-честно!)"); ©️ Гет
     // 3 месяца прошло, ничего себе скоро :pepeGigles: ©️ Гет (да говорю сам с собой, что вы мне сделаете?!)
+    // Она тут была оказывается ┬─┬ ノ( ゜-゜ノ) ©️ Гет
 
     if (!ply.IsSCP)
         InventoryDisplay(ply);
