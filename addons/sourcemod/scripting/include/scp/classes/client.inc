@@ -91,7 +91,7 @@ methodmap Client < Entity {
 
     public void Team(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("team", buffer) : this.GetString("team", buffer, max_size); }
 
-    public void Give(char[] item) { GivePlayerItem(this.id, item); }
+    public int Give(char[] item) { return GivePlayerItem(this.id, item); }
 
     public void Kill() { ForcePlayerSuicide(this.id); }
 
@@ -112,9 +112,22 @@ methodmap Client < Entity {
 
         if (this.class.weapons != null)
             for (int i=0; i < this.class.weapons.Length; i++) {
-                char weapon[32];
-                this.class.weapons.GetString(i, weapon, sizeof(weapon));
-                this.Give(weapon);
+                if (view_as<int>(this.class.weapons.GetKeyType(i)) != 4) {
+                    char weapon[32];
+                    this.class.weapons.GetString(i, weapon, sizeof(weapon));
+                    this.Give(weapon);
+                }
+                else
+                {
+                    JSON_ARRAY multigive = view_as<JSON_ARRAY>(this.class.weapons.GetObject(i));
+
+                    for (int k=0; k < multigive.GetInt(1); k++)
+                    {
+                        char weapon[32];
+                        multigive.GetString(0, weapon, sizeof(weapon));
+                        this.Give(weapon);
+                    }
+                }
             }
         
         if (this.class.doors != null)

@@ -13,14 +13,26 @@
                 "speed":260,
                 "multipler":1.0,
                 "items":["card_lt"],
-                "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer", "weapon_tablet"],
+                "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer", ["weapon_healthshot", 2], "weapon_tagrenade"],
                 "comment":"test"
+            },
+            "Medic": {
+                "pos":[-10800,-5950,1715],
+                "percent":10,
+                "items":["card_bg"],
+                "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 3], "weapon_tagrenade"]
+            },
+            "Sapper": {
+                "pos":[-10800,-5950,1715],
+                "percent":5,
+                "items":["card_bg"],
+                "weapons":["weapon_m4a1", "weapon_hkp2000", "weapon_bumpmine", "weapon_bumpmine", "weapon_bumpmine", "weapon_hegrenade", "weapon_tagrenade"]
             },
             "Operator": {
                 "pos":[-10800,-5950,1715],
-                "percent":40,
+                "percent":25,
                 "items":["card_bg"],
-                "weapons":["weapon_m4a1", "weapon_hkp2000", "weapon_tablet"]
+                "weapons":["weapon_m4a1", "weapon_hkp2000", "weapon_healthshot", "weapon_tagrenade"]
             },
             "Security": {
                 "pos":[-11040,-1735,2],
@@ -50,7 +62,7 @@
                 "armor":200,
                 "speed":234,
                 "items":["card_zm"],
-                "weapons":["weapon_m249", "weapon_revolver"]
+                "weapons":["weapon_m249", "weapon_revolver", "weapon_shield"]
             },
             "D Class": {
                 "percent":80,
