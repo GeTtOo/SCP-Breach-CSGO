@@ -210,7 +210,7 @@ public void Timer_PlayerSpawn(Client ply)
             Call_PushCellRef(ply);
             Call_Finish();
 
-            if (!ply.IsSCP)
+            if (!ply.IsSCP)         // (╯°□°）╯︵ ┻━┻  ©️ Гет
                 EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
 
             ply.Setup();
@@ -694,6 +694,7 @@ public void SCP_NukeActivation()
 
     EmitSoundToAll(sound);
 
+    CreateTimer(gamemode.config.NukeTime - 3.0, NukeExplosionDoorClose);
     CreateTimer(gamemode.config.NukeTime, NukeExplosion);
 
     int ent;
@@ -813,6 +814,11 @@ public Action NukeExplosion(Handle hTimer)
         }
     }
 
+    return Plugin_Stop;
+}
+
+public Action NukeExplosionDoorClose(Handle hTimer)
+{
     int ent;
     while((ent = FindEntityByClassname(ent, "func_door")) != -1)
     {
@@ -827,7 +833,7 @@ public Action NukeExplosion(Handle hTimer)
     }
 
     //!- Список кнопок которые будут блокироваться после взрыва
-
+    return Plugin_Stop;
 }
 
 //////////////////////////////////////////////////////////////////////////////

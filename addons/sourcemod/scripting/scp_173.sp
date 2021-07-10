@@ -13,7 +13,8 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void SCP_OnPlayerSpawn(Client &ply) {
+public void SCP_OnPlayerSpawn(Client &ply) 
+{
     if (ply.class != null && ply.class.Is("173")) {
         char  timername[128];
         Format(timername, sizeof(timername), "SCP-173-%i", ply.id);
@@ -37,8 +38,10 @@ public void SCP_OnPlayerLeave(Client &ply)
     DestroyVisualChecker(ply);
 }
 
-public void CheckVisualContact(Client ply) {
-    if (ply != null && ply.class != null && ply.IsAlive() && ply.class.Is("173")) {
+public void CheckVisualContact(Client ply) 
+{
+    if (ply != null && ply.class != null && ply.IsAlive() && ply.class.Is("173")) 
+    {
         bool isvis = false;
         float scpPosArr[3];
         Vector pos = ply.EyePos();
@@ -87,12 +90,14 @@ public void CheckVisualContact(Client ply) {
     }
 }
 
-public bool RayFilter(int ent, int mask, any data) {
+public bool RayFilter(int ent, int mask, any data) 
+{
     if (ent >= 1 && ent <= MaxClients) return false;
     return true;
 }
 
-public void DestroyVisualChecker(Client ply) {
+public void DestroyVisualChecker(Client ply) 
+{
     if (ply != null && ply.class != null && ply.class.Is("173")) {
         char  timername[128];
         Format(timername, sizeof(timername), "SCP-173-%i", ply.id);
