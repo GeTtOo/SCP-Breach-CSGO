@@ -5,6 +5,10 @@
 #pragma semicolon 1
 #pragma newdecls required
 
+// Урон в секунду в конфиг
+// Подсчет игроков
+Handle gTimerDamage;
+
 public Plugin myinfo = {
     name = "[SCP] SCP-035",
     author = "GeTtOo",
@@ -13,7 +17,13 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void SCP_OnPlayerJoin(Client &ply) 
+public void OnPluginStart()
+{
+    HookEvent("player_death", Event_PlayerDeath);
+    HookEvent("round_end", OnRoundEnd);
+}
+
+public void SCP_OnPlayerJoin(Client &ply)
 {
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
 }
@@ -24,6 +34,21 @@ public void SCP_OnRoundStart()
     .SetPos(new Vector(-7682.0, 464.0, 118.0), new Angle(0.0, 0.0, 0.0))
     .UseCB(view_as<SDKHookCB>(Callback_EntUse))
     .Spawn();
+}
+
+public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
+{
+    TimerKill(GetClientOfUserId(GetEventInt(event, "userid")));
+}
+
+public void OnRoundEnd(Event event, const char[] name, bool dbroadcast) 
+{
+    TimerKill(GetClientOfUserId(GetEventInt(event, "userid")));
+}
+
+public void OnClientDisconnect(int client)
+{
+    TimerKill(client);
 }
 
 public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
@@ -69,4 +94,29 @@ public SDKHookCB Callback_EntUse(int eid, int cid)
     gamemode.mngr.team("SCP").count++;
 
     Ents.Remove(eid);
+
+    gTimerDamage = CreateTimer(2.0, TimerHitSCP, ply, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+}
+
+public Action TimerHitSCP(Handle hTimer, Client ply)
+{
+    int hp = GetClientHealth(ply.id);
+
+    if(hp > 10)
+        SetEntityHealth(ply.id, hp - 10);
+    else
+        ForcePlayerSuicide(ply.id);
+
+    return Plugin_Continue;
+}
+
+void TimerKill(int client)
+{
+    Client ply = Clients.Get(client);
+
+    if (ply != null && ply.class != null && ply.class.Is("035"))
+    {
+        KillTimer(gTimerDamage);
+        gTimerDamage = null;
+    }
 }
