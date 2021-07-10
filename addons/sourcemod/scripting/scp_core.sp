@@ -431,9 +431,23 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
             {
                 return Plugin_Stop;
             }
+            else if(!gamemode.config.ff)
+            {
+                char vicTeam[32], atkTeam[32];
+                
+                vic.Team(vicTeam, sizeof(vicTeam));
+                atk.Team(atkTeam, sizeof(atkTeam));
+                
+                if(StrEqual(vicTeam, atkTeam))
+                {
+                    return Plugin_Stop;
+                }
+            }
         }
         else
+        {
             atk = null;
+        }
         
         Call_StartForward(OnTakeDamageForward);
         Call_PushCell(vic);
@@ -694,7 +708,7 @@ public void SCP_NukeActivation()
 
     EmitSoundToAll(sound);
 
-    CreateTimer(gamemode.config.NukeTime - 3.0, NukeExplosionDoorClose);
+    CreateTimer(gamemode.config.NukeTime - 10.0, NukeExplosionDoorClose);
     CreateTimer(gamemode.config.NukeTime, NukeExplosion);
 
     int ent;

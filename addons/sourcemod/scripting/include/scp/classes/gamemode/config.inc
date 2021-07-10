@@ -69,4 +69,8 @@ methodmap Config < JSON_OBJECT {
     property bool debug {
         public get() { return this.GetBool("debug"); }
     }
+
+    property bool ff {
+        public get() { return this.GetBool("ff"); }
+    }
 }
