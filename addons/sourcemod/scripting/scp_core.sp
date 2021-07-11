@@ -363,6 +363,9 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
         if (gamemode.config.debug)
             PrintToChatAll(" \x07[SCP Admin] \x01Door/Button id: (%i)", doorId);
 
+        if(gamemode.config.NukeButtonID == doorId)
+            SCP_NukeActivation();
+
         StringMapSnapshot doorsSnapshot = gamemode.config.doors.GetAll();
         int doorKeyLen;
 

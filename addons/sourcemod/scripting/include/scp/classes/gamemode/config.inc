@@ -59,6 +59,10 @@ methodmap Config < JSON_OBJECT {
     public void NukeSound(char[] buffer, int max_size) {
         this.GetString("NukeSound", buffer, max_size);
     }
+
+    property int NukeButtonID {
+        public get() { return this.GetBool("NukeButtonID"); }
+    }
     
     property Vector AdminRoom {
         public get() {
