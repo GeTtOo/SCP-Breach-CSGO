@@ -210,7 +210,7 @@ public void Timer_PlayerSpawn(Client ply)
             Call_PushCellRef(ply);
             Call_Finish();
 
-            if (!ply.IsSCP)
+            if (!ply.IsSCP)         // (╯°□°）╯︵ ┻━┻  ©️ Гет
                 EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
 
             ply.Setup();
@@ -363,6 +363,9 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
         if (gamemode.config.debug)
             PrintToChatAll(" \x07[SCP Admin] \x01Door/Button id: (%i)", doorId);
 
+        if(gamemode.config.NukeButtonID == doorId)
+            SCP_NukeActivation();
+
         StringMapSnapshot doorsSnapshot = gamemode.config.doors.GetAll();
         int doorKeyLen;
 
@@ -431,9 +434,23 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
             {
                 return Plugin_Stop;
             }
+            else if(!gamemode.config.ff)
+            {
+                char vicTeam[32], atkTeam[32];
+                
+                vic.Team(vicTeam, sizeof(vicTeam));
+                atk.Team(atkTeam, sizeof(atkTeam));
+                
+                if(StrEqual(vicTeam, atkTeam))
+                {
+                    return Plugin_Stop;
+                }
+            }
         }
         else
+        {
             atk = null;
+        }
         
         Call_StartForward(OnTakeDamageForward);
         Call_PushCell(vic);
@@ -694,6 +711,7 @@ public void SCP_NukeActivation()
 
     EmitSoundToAll(sound);
 
+    CreateTimer(gamemode.config.NukeTime - 10.0, NukeExplosionDoorClose);
     CreateTimer(gamemode.config.NukeTime, NukeExplosion);
 
     int ent;
@@ -813,6 +831,11 @@ public Action NukeExplosion(Handle hTimer)
         }
     }
 
+    return Plugin_Stop;
+}
+
+public Action NukeExplosionDoorClose(Handle hTimer)
+{
     int ent;
     while((ent = FindEntityByClassname(ent, "func_door")) != -1)
     {
@@ -827,7 +850,7 @@ public Action NukeExplosion(Handle hTimer)
     }
 
     //!- Список кнопок которые будут блокироваться после взрыва
-
+    return Plugin_Stop;
 }
 
 //////////////////////////////////////////////////////////////////////////////
