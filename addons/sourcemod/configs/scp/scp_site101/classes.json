@@ -88,6 +88,7 @@
                 "ang":[0,125,0],
                 "percent":20,
                 "health":7800,
+                "fists":false,
                 "doors":[159,160],
                 "weapons":["weapon_fists"],
                 "comment":"The Doctor ʕ•ᴥ•ʔ"
@@ -100,7 +101,8 @@
             },
             "079": {
                 "percent":20,
-                "comment":"AI computer"
+                "comment":"AI computer",
+                "fists":false
             },
             "096": {
                 "pos":[-13250, -2550, 0],
@@ -118,6 +120,7 @@
                 "health":15000,
                 "speed":250,
                 "multipler":4.2,
+                "fists":false,
                 "doors":[162,163],
                 "comment":"173"
             },

@@ -48,6 +48,11 @@ methodmap Class < JSON_OBJECT {
         public get() { return this.GetFloat("multipler", 1.0); }
     }
 
+    property bool fists {
+        public set(bool fists) { this.SetBool("fists", fists); }
+        public get() { return this.GetBool("fists", true); }
+    }
+
     property JSON_ARRAY doors {
         public get() { return view_as<JSON_ARRAY>(this.GetObject("doors")); }
     }

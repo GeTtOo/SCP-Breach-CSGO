@@ -210,7 +210,7 @@ public void Timer_PlayerSpawn(Client ply)
             Call_PushCellRef(ply);
             Call_Finish();
 
-            if (!ply.IsSCP)         // (╯°□°）╯︵ ┻━┻  ©️ Гет
+            if (ply.class.fists)         // (╯°□°）╯︵ ┻━┻  ©️ Гет
                 EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
 
             ply.Setup();
