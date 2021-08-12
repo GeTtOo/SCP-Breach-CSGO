@@ -6,6 +6,7 @@ methodmap Base < StringMap {
     public bool SetFloat(char[] index, float val) { return this.SetValue(index, val); }
     public bool SetBool(char[] index, bool val) { return this.SetValue(index, val); }
     public bool SetList(char[] index, ArrayList val) { return this.SetValue(index, val); }
+    public bool CreateList(char[] index, int blocksize = 1, int size = 1) { return this.SetValue(index, new ArrayList(blocksize, size)); }
 
     public int GetInt(char[] index, int defval = 0) { int val; return this.GetValue(index, val) ? val : defval; }
     public float GetFloat(char[] index, float defval = 0.0) { float val; return this.GetValue(index, val) ? val : defval; }
