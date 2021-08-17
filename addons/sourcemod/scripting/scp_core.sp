@@ -111,7 +111,7 @@ public void OnMapStart()
     GetCurrentMap(mapName, sizeof(mapName));
     gamemode = new GameMode(mapName);
 
-    gamemode.mngr.PlayerCollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
+    gamemode.mngr.CollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
 
     PrecacheSound(NUKE_EXPLOSION_SOUND);
     LoadFileToDownload();
@@ -178,7 +178,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 
     if (IsClientExist(ply.id) && GetClientTeam(ply.id) > 1 && !ply.active) {
         ply.active = true;
-        gamemode.timer.Simple(1, "Timer_PlayerSpawn", ply);
+        gamemode.timer.Simple(500, "Timer_PlayerSpawn", ply);
     }
 
     return Plugin_Continue;
@@ -202,7 +202,7 @@ public void Timer_PlayerSpawn(Client ply)
             } 
         }
         
-        SetEntData(ply.id, gamemode.mngr.PlayerCollisionGroup, 2, 4, true);
+        gamemode.mngr.SetCollisionGroup(ply.id, 2);
 
         if (ply != null && ply.class != null)
         {
@@ -236,6 +236,16 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         gamemode.mngr.RoundComplete = false;
         gamemode.mngr.IsNuked = false;
         gamemode.mngr.Reset();
+        
+        ArrayList sortedPlayers = new ArrayList();
+        
+        Client bufarr[MAXPLAYERS+1];
+        Clients.GetArray("Clients", bufarr, sizeof(bufarr));
+
+        for (int i=1; i <= Clients.InGame(); i++)
+            sortedPlayers.Push(bufarr[i]);
+
+        sortedPlayers.Sort(Sort_Random, Sort_Integer);
         
         StringMapSnapshot teamNameS = gamemode.GetTeamNames();
         int teamCount, classCount, extra = 0;
@@ -271,7 +281,10 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
                 for (int scc = 1; scc <= classCount; scc++)
                 {
                     if (extra > Clients.InGame()) break;
-                    Client player = Clients.GetRandomWithoutClass();
+                    int id = sortedPlayers.Length - 1;
+                    if (id < 0) break;
+                    Client player = view_as<Client>(sortedPlayers.Get(id));
+                    sortedPlayers.Erase(id);
                     player.Team(teamKey);
                     player.class = class;
                     player.haveclass = true;
@@ -284,7 +297,10 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 
         for (int i = 1; i <= Clients.InGame() - extra; i++)
         {
-            Client player = Clients.GetRandomWithoutClass();
+            int id = sortedPlayers.Length - 1;
+            if (id < 0) break;
+            Client player = view_as<Client>(sortedPlayers.Get(id));
+            sortedPlayers.Erase(id);
             char team[32], class[32];
             gamemode.config.DefaultGlobalClass(team, sizeof(team));
             gamemode.config.DefaultClass(class, sizeof(class));
@@ -293,6 +309,8 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
             player.haveclass = true;
             gamemode.mngr.team(team).count++;
         }
+        
+        delete sortedPlayers;
 
         SetMapRegions();
         SpawnItemsOnMap();

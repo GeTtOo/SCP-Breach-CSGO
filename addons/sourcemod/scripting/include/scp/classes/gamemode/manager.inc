@@ -10,9 +10,9 @@ methodmap Manager < Base {
         return mngr;
     }
 
-    property int PlayerCollisionGroup {
-        public set(int value) { this.SetInt("playercollisiongroup", value); }
-        public get() { return this.GetInt("playercollisiongroup"); }
+    property int CollisionGroup {
+        public set(int value) { this.SetInt("collisiongroup", value); }
+        public get() { return this.GetInt("collisiongroup"); }
     }
 
     property bool IsNuked {
@@ -36,6 +36,10 @@ methodmap Manager < Base {
             this.GetValue("teams", teams);
             return teams;
         }
+    }
+
+    public void SetCollisionGroup(int entity, int group) {
+        SetEntData(entity, this.CollisionGroup, group, 4, true);
     }
 
     public GTeam team(char[] name) {
