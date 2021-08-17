@@ -1,5 +1,5 @@
 {
-    "ff":false,
+    "ff":true,
     "debug":true,
     "DefaultGlobalClass":"Chaos",
     "DefaultClass":"D Class",
