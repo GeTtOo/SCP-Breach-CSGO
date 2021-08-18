@@ -65,6 +65,11 @@ methodmap Client < Entity {
         public get() { return this.GetBool("fullaccess", false); }
     }
 
+    property bool spawned {
+        public set(bool val) { this.SetBool("spawned", val); }
+        public get() { return this.GetBool("spawned", false); }
+    }
+
     property Inventory inv {
         public set(Inventory inv) { this.SetValue("inventory", inv); }
         public get() { Inventory inv; return this.GetValue("inventory", inv) ? inv : null; }
@@ -92,6 +97,24 @@ methodmap Client < Entity {
     public void Team(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("team", buffer) : this.GetString("team", buffer, max_size); }
 
     public int Give(char[] item) { return GivePlayerItem(this.id, item); }
+
+    public void RestrictWeapons() {
+        int m_hMyWeapons_size = GetEntPropArraySize(this.id, Prop_Send, "m_hMyWeapons");
+        int item;
+
+        for(int index = 0; index < m_hMyWeapons_size; index++)
+        { 
+            item = GetEntPropEnt(this.id, Prop_Send, "m_hMyWeapons", index);
+
+            if(item != -1)
+            { 
+                RemovePlayerItem(this.id, item);
+                AcceptEntityInput(item, "Kill");
+            } 
+        }
+    }
+
+    public void SetCollisionGroup(int group) { gamemode.mngr.SetCollisionGroup(this.id, group); }
 
     public void Kill() { ForcePlayerSuicide(this.id); }
 

@@ -178,7 +178,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 
     if (IsClientExist(ply.id) && GetClientTeam(ply.id) > 1 && !ply.active) {
         ply.active = true;
-        gamemode.timer.Simple(250, "Timer_PlayerSpawn", ply);
+        gamemode.timer.Simple(1, "Timer_PlayerSpawn", ply);
     }
 
     return Plugin_Continue;
@@ -186,47 +186,34 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 
 public void Timer_PlayerSpawn(Client ply)
 {
-    if(IsClientExist(ply.id))
+    if(ply.spawned && IsClientExist(ply.id) && ply != null && ply.class != null)
     {
-        int m_hMyWeapons_size = GetEntPropArraySize(ply.id, Prop_Send, "m_hMyWeapons");
-        int item;
+        PrintToServer("Spawn ply: %i", ply.id);
+        ply.SetCollisionGroup(2);
+        ply.RestrictWeapons();
 
-        for(int index = 0; index < m_hMyWeapons_size; index++)
-        { 
-            item = GetEntPropEnt(ply.id, Prop_Send, "m_hMyWeapons", index);
+        Call_StartForward(OnClientSpawnForward);
+        Call_PushCellRef(ply);
+        Call_Finish();
 
-            if(item != -1)
-            { 
-                RemovePlayerItem(ply.id, item);
-                AcceptEntityInput(item, "Kill");
-            } 
-        }
-        
-        gamemode.mngr.SetCollisionGroup(ply.id, 2);
+        if (ply.class.fists)
+            EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
 
-        if (ply != null && ply.class != null)
+        ply.Setup();
+
+        if (!IsFakeClient(ply.id))
+            SendConVarValue(ply.id, FindConVar("game_type"), "6");
+
+        if (gamemode.config.debug)
         {
-            Call_StartForward(OnClientSpawnForward);
-            Call_PushCellRef(ply);
-            Call_Finish();
-
-            if (ply.class.fists)         // (╯°□°）╯︵ ┻━┻  ©️ Гет
-                EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
-
-            ply.Setup();
-
-            if (!IsFakeClient(ply.id))
-                SendConVarValue(ply.id, FindConVar("game_type"), "6");
-
-            if (gamemode.config.debug)
-            {
-                char teamName[32], className[32];
-                ply.Team(teamName, sizeof(teamName));
-                ply.class.Name(className, sizeof(className));
-                PrintToChat(ply.id, " \x07[SCP] \x01%t", "Show class when player spawn", teamName, className);
-            }
+            char teamName[32], className[32];
+            ply.Team(teamName, sizeof(teamName));
+            ply.class.Name(className, sizeof(className));
+            PrintToChat(ply.id, " \x07[SCP] \x01%t", "Show class when player spawn", teamName, className);
         }
     }
+
+    ply.spawned = true;
 }
 
 public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
@@ -334,6 +321,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
         client.haveclass = false;
         client.inv.Clear();
         client.active = false;
+        client.spawned = true;
     }
 
     Ents.Clear();
