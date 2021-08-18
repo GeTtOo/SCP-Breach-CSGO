@@ -9,6 +9,7 @@
         "distance":[0, 425, 0],
         "decsription": [
             "Recipe template <itemname> [chance critical failed craft] [chance successful craft].",
+            "Recipe player template [chance get status].",
             "Player status effect list: regeneration, speed, berserk, death."
         ]
     },
@@ -41,6 +42,10 @@
             ]
         },
         "fine": {
+            "player": [
+                ["Regeneration", 50],
+                ["Speed", 50]
+            ],
             "card_o5": [
                 ["card_fm", 0, 0]
             ],
@@ -49,10 +54,6 @@
             ],
             "weapon_hkp2000": [
                 ["weapon_usp_silencer", 0, 100]
-            ],
-            "player": [
-                ["Regeneration", 50],
-                ["Speed", 50]
             ]
         },
         "very_fine": {

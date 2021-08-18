@@ -7,6 +7,7 @@
 
 #define MATH_COUNTER_VALUE_OFFSET 924
 
+JSON_OBJECT gconfig;
 JSON_OBJECT config;
 
 int Counter = 0;
@@ -34,8 +35,8 @@ public void OnMapStart() {
     char mapName[128];
     GetCurrentMap(mapName, sizeof(mapName));
 
-    gamemode.config.Add("914", ReadConfig(mapName, "914"));
-    config = gamemode.config.GetObject("914").GetObject("config");
+    gconfig = ReadConfig(mapName, "914");
+    config = gconfig.GetObject("config");
 }
 
 public Action OnRoundStart(Event ev, const char[] name, bool dbroadcast) {
@@ -93,7 +94,7 @@ public void SCP_OnButtonPressed(Client &ply, int doorId) {
 }
 
 public void Transform(Client ply) {
-    JSON_OBJECT recipes = gamemode.config.GetObject("914").GetObject("recipes").GetObject(curmode);
+    JSON_OBJECT recipes = gconfig.GetObject("recipes").GetObject(curmode);
     bool AmbientPlay = false;
 
     char filter[3][32] = {"prop_physics", "weapon_", "player"};
