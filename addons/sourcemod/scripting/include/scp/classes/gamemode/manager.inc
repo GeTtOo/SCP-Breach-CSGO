@@ -5,7 +5,7 @@
 methodmap Manager < Base {
 
     public Manager(Teams teams) {
-        Manager mngr = view_as<Manager>(new StringMap());
+        Manager mngr = view_as<Manager>(new Base());
         mngr.SetValue("teams", teams);
         return mngr;
     }

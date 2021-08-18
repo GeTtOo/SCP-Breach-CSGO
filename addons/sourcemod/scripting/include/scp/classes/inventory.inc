@@ -5,7 +5,7 @@
 methodmap Item < Base {
 
     public Item(char[] class) {
-        Item self = view_as<Item>(CreateTrie());
+        Item self = view_as<Item>(new Base());
         self.SetString("class", class);
         return self;
     }

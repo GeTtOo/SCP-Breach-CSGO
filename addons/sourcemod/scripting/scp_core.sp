@@ -178,7 +178,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 
     if (IsClientExist(ply.id) && GetClientTeam(ply.id) > 1 && !ply.active) {
         ply.active = true;
-        gamemode.timer.Simple(500, "Timer_PlayerSpawn", ply);
+        gamemode.timer.Simple(250, "Timer_PlayerSpawn", ply);
     }
 
     return Plugin_Continue;

@@ -10,7 +10,7 @@
 methodmap Entity < Base {
 
     public Entity(int id) {
-        Entity entity = view_as<Entity>(CreateTrie());
+        Entity entity = view_as<Entity>(new Base());
 
         entity.SetValue("id", id);
         entity.SetValue("active", true);

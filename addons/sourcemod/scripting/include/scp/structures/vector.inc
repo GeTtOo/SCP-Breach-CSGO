@@ -1,7 +1,7 @@
 methodmap Vector < Base {
 
     public Vector(float x = 0.0, float y = 0.0, float z = 0.0) {
-        Vector vec = view_as<Vector>(CreateTrie());
+        Vector vec = view_as<Vector>(new Base());
 
         vec.SetValue("x", x);
         vec.SetValue("y", y);
@@ -95,7 +95,7 @@ stock Vector operator-(Vector first, Vector second) {
 methodmap Angle < Vector {
     
     public Angle(float x, float y, float z) {
-        Angle ang = view_as<Angle>(new StringMap());
+        Angle ang = view_as<Angle>(new Base());
 
         ang.SetValue("x", x);
         ang.SetValue("y", y);

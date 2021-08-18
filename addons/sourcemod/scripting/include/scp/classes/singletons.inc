@@ -1,14 +1,12 @@
 methodmap ClientSingleton < Base {
 
     public ClientSingleton() {
-        ClientSingleton self = view_as<ClientSingleton>(new StringMap());
+        ClientSingleton self = view_as<ClientSingleton>(new Base());
         Client clients[MAXPLAYERS + 1];
         self.SetArray("Clients", clients, sizeof(clients));
         
         return self;
     }
-    
-    public native Client Get(int id);
 
     public Client Add(int id) {
         Client clients[MAXPLAYERS + 1];
@@ -24,21 +22,19 @@ methodmap ClientSingleton < Base {
         this.SetArray("Clients", clients, sizeof(clients));
     }
 
-    property int len { 
-        public get() { return MAXPLAYERS + 1; }
-    }
+    public native Client Get(int id);
+
+    public native Client GetRandom();
 
     public native int InGame();
 
     public native int Alive();
-
-    public native Client GetRandom();
 }
 
 methodmap EntitySingleton < Base {
 
     public EntitySingleton() {
-        EntitySingleton self = view_as<EntitySingleton>(new StringMap());
+        EntitySingleton self = view_as<EntitySingleton>(new Base());
         ArrayList entArr = new ArrayList();
         self.SetValue("Entities", entArr);
         return self;

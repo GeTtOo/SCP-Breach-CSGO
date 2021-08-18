@@ -52,7 +52,7 @@ methodmap Tmr < Base {
 methodmap Timers < Base {
 
     public Timers() {
-        Timers self = view_as<Timers>(CreateTrie());
+        Timers self = view_as<Timers>(new Base());
         self.SetValue("timers", new ArrayList());
         return self;
     }
