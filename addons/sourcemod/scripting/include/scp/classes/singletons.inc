@@ -29,6 +29,10 @@ methodmap ClientSingleton < Base {
     public native int InGame();
 
     public native int Alive();
+
+    property int Length {
+        public get() { return this.InGame(); }
+    }
 }
 
 methodmap EntitySingleton < Base {

@@ -27,11 +27,6 @@ methodmap GTeam < JSON_OBJECT {
         public get() { return view_as<Classes>(this.GetObject("Classes")); }
     }
 
-    property int count {
-        public set(int val) { this.SetInt("count", val); }
-        public get() { return this.GetInt("count", 0); }
-    }
-
     public Class class(char[] name) {
         return this.classes.get(name);
     }
@@ -54,8 +49,6 @@ methodmap Teams < JSON_OBJECT {
     public GTeam get(char[] name) { return view_as<GTeam>(this.GetObject(name)); }
 }
 
-#include "scp/classes/gamemode/manager"
-
 methodmap GameMode < JSON_OBJECT {
     
     public GameMode(char[] mapname) {
@@ -63,7 +56,6 @@ methodmap GameMode < JSON_OBJECT {
         self.SetValue("Teams", new Teams(mapname));
         self.SetValue("Entities", new Entities(mapname));
         self.SetValue("Config", new Config(mapname));
-        self.SetValue("Manager", new Manager(view_as<Teams>(self.GetObject("Teams"))));
         self.SetValue("Timers", new Timers());
         return self;
     }

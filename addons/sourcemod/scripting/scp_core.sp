@@ -110,7 +110,8 @@ public void OnMapStart()
 
     GetCurrentMap(mapName, sizeof(mapName));
     gamemode = new GameMode(mapName);
-
+    
+    gamemode.SetValue("Manager", new Manager());
     gamemode.mngr.CollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
 
     PrecacheSound(NUKE_EXPLOSION_SOUND);
@@ -188,8 +189,7 @@ public void Timer_PlayerSpawn(Client ply)
 {
     if(ply.spawned && IsClientExist(ply.id) && ply != null && ply.class != null)
     {
-        PrintToServer("Spawn ply: %i", ply.id);
-        ply.SetCollisionGroup(2);
+        gamemode.mngr.SetCollisionGroup(ply.id, 2);
         ply.RestrictWeapons();
 
         Call_StartForward(OnClientSpawnForward);
@@ -222,7 +222,6 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
     {
         gamemode.mngr.RoundComplete = false;
         gamemode.mngr.IsNuked = false;
-        gamemode.mngr.Reset();
         
         ArrayList sortedPlayers = new ArrayList();
         
@@ -275,7 +274,6 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
                     player.Team(teamKey);
                     player.class = class;
                     player.haveclass = true;
-                    gamemode.mngr.team(teamKey).count++;
 
                     extra++;
                 }
@@ -294,7 +292,6 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
             player.Team(team);
             player.class = gamemode.team(team).class(class);
             player.haveclass = true;
-            gamemode.mngr.team(team).count++;
         }
         
         delete sortedPlayers;
@@ -498,6 +495,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         vic.inv.Clear();
 
         vic.active = false;
+
+        vic.Team("Dead");
 
         EndRoundCount(vic);
 
@@ -741,9 +740,6 @@ public void EndRoundCount(Client ply)
             char team[32];
             ply.Team(team, sizeof(team));
             
-            gamemode.mngr.team(team).count--;
-            gamemode.mngr.DeadPlayers++;
-            
             char winTeam[32];
             if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
                 SCP_EndRound(winTeam);
@@ -897,19 +893,7 @@ public Action CmdSCP(int args)
 
     if (StrEqual(command, "status", false))
     {
-        StringMapSnapshot snapshot = gamemode.mngr.teams.Snapshot();
-
-        PrintToServer("Class: Dead, count: %i", gamemode.mngr.DeadPlayers);
-        
-        for (int i=0; i < snapshot.Length; i++)
-        {
-            int teamlen = snapshot.KeyBufferSize(i);
-            char[] teamname = new char[teamlen];
-            snapshot.GetKey(i, teamname, teamlen);
-            if (json_is_meta_key(teamname)) continue;
-
-            PrintToServer("Class: %s, count: %i", teamname, gamemode.mngr.team(teamname).count);
-        }
+        gamemode.mngr.PrintTeamStatus();
     }
 }
 
@@ -1007,10 +991,6 @@ public Action PlayerSpawn(int client,int args)
         
         //ply.Setup();
         ply.Spawn();
-
-        //gamemode.mngr.team(curTeam).count--;
-        gamemode.mngr.team(teamName).count++;
-        gamemode.mngr.DeadPlayers--;
     }
     else
     {

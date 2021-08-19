@@ -21,6 +21,8 @@ GameMode gamemode;
 ClientSingleton Clients;
 EntitySingleton Ents;
 
+#include "scp/classes/gamemode/manager"
+
 forward void SCP_OnPlayerJoin(Client &ply);
 
 forward void SCP_OnPlayerLeave(Client &ply);

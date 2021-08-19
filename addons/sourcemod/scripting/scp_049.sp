@@ -58,9 +58,6 @@ public void SCP_OnPlayerDeath(Client &vic, Client &atk)
 
 				vic.Team("SCP");
 				vic.class = gamemode.team("SCP").class("049_2");
-
-				gamemode.mngr.DeadPlayers--;
-				gamemode.mngr.team("SCP").count++;
 				
 				vic.Spawn();
 				TeleportEntity(vic.id, pos, NULL_VECTOR, NULL_VECTOR);

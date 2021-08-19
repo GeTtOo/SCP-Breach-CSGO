@@ -114,7 +114,7 @@ methodmap Client < Entity {
         }
     }
 
-    public void SetCollisionGroup(int group) { gamemode.mngr.SetCollisionGroup(this.id, group); }
+    //public void SetCollisionGroup(int group) { gamemode.mngr.SetCollisionGroup(this.id, group); }
 
     public void Kill() { ForcePlayerSuicide(this.id); }
 

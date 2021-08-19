@@ -76,7 +76,6 @@ public SDKHookCB Callback_EntUse(int eid, int cid)
 
     char team[32];
     ply.Team(team, sizeof(team));
-    gamemode.mngr.team(team).count--;
 
     for(int i = 0; i < 63; i++)
     {
@@ -91,7 +90,6 @@ public SDKHookCB Callback_EntUse(int eid, int cid)
     ply.inv.Clear();
     ply.Team("SCP");
     ply.class = gamemode.team("SCP").class("035");
-    gamemode.mngr.team("SCP").count++;
 
     Ents.Remove(eid);
 
