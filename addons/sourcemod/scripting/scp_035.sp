@@ -7,7 +7,6 @@
 
 // Урон в секунду в конфиг
 // Подсчет игроков
-Handle gTimerDamage;
 
 public Plugin myinfo = {
     name = "[SCP] SCP-035",
@@ -74,29 +73,24 @@ public SDKHookCB Callback_EntUse(int eid, int cid)
 
     if (ply.IsSCP && ply != null && ply.class != null) return;
 
-    char team[32];
-    ply.Team(team, sizeof(team));
-
-    for(int i = 0; i < 63; i++)
-    {
-        int index = GetEntPropEnt(ply.id, Prop_Send, "m_hMyWeapons", i);
-
-        if(index && IsValidEdict(index))
-        {
-            CS_DropWeapon(ply.id, index, true, true);
-        }
-    }
-
-    ply.inv.Clear();
-    ply.Team("SCP");
-    ply.class = gamemode.team("SCP").class("035");
-
     Ents.Remove(eid);
 
-    gTimerDamage = CreateTimer(2.0, TimerHitSCP, ply, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+    Vector sp = ply.GetPos();
+    Angle sa = ply.GetAng();
+
+    ply.Kill();
+
+    ply.Team("SCP");
+    ply.class = gamemode.team("SCP").class("035");
+    
+    ply.Spawn();
+
+    ply.SetPos(sp, sa);
+    
+    gamemode.timer.Create("Timer_SCP-035_Hit", 2500, 0, "HandlerHitSCP", ply);
 }
 
-public Action TimerHitSCP(Handle hTimer, Client ply)
+public Action HandlerHitSCP(Client ply)
 {
     int hp = GetClientHealth(ply.id);
 
@@ -104,8 +98,6 @@ public Action TimerHitSCP(Handle hTimer, Client ply)
         SetEntityHealth(ply.id, hp - 10);
     else
         ForcePlayerSuicide(ply.id);
-
-    return Plugin_Continue;
 }
 
 void TimerKill(int client)
@@ -114,7 +106,6 @@ void TimerKill(int client)
 
     if (ply != null && ply.class != null && ply.class.Is("035"))
     {
-        KillTimer(gTimerDamage);
-        gTimerDamage = null;
+        gamemode.timer.Remove("HandlerHitSCP");
     }
 }

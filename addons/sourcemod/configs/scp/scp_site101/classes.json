@@ -80,7 +80,7 @@
             "035": {
                 "percent":0,
                 "health":12000,
-                "weapons":["weapon_axe"],
+                "weapons":[["weapon_axe", 3]],
                 "comment":"035"
             },
             "049": {

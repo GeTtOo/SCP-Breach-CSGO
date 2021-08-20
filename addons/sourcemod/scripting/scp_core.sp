@@ -532,13 +532,46 @@ public Action OnWeaponTake(int client, int iWeapon)
 {
     Client ply = Clients.Get(client);
 
-    if(ply.IsSCP)
+    char classname[64];
+    GetEntityClassname(iWeapon, classname, sizeof(classname));
+
+    bool weaponAllow = false;
+
+    if (ply != null && ply.class != null && ply.class.weapons != null)
+    {
+        
+        ArrayList meleeFix = new ArrayList(32);
+        meleeFix.PushString("weapon_axe");
+        meleeFix.PushString("weapon_spanner");
+        meleeFix.PushString("weapon_hammer");
+
+        char buf[32];
+                
+        for (int i=0; i < ply.class.weapons.Length; i++)
+        {
+            if (view_as<int>(ply.class.weapons.GetKeyType(i)) != 4)
+            {
+                ply.class.weapons.GetString(i, buf, sizeof(buf));
+            }
+            else
+            {
+                view_as<JSON_ARRAY>(ply.class.weapons.GetObject(i)).GetString(0, buf, sizeof(buf));
+            }
+
+            if (meleeFix.FindString(buf) != -1)
+                buf = "weapon_melee";
+            
+            if (StrEqual(classname, buf))
+                weaponAllow = true;
+        }
+
+        delete meleeFix;
+    }
+
+    if(ply.IsSCP && !weaponAllow)
     {
         return Plugin_Stop;
     }
-
-    char classname[64];
-    GetEntityClassname(iWeapon, classname, sizeof(classname));
 
     if (StrEqual(classname, "weapon_melee") || StrEqual(classname, "weapon_knife"))
     {
