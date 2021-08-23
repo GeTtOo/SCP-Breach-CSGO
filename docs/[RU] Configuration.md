@@ -50,7 +50,7 @@
 
 ## [config.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/config.json)
 
-В данное файле происходит настройка основных параметров мода  
+В данном файле происходит настройка основных параметров мода  
 
 ### Параметры:
 
