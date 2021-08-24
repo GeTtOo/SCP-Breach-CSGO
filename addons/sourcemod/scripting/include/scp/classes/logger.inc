@@ -63,9 +63,10 @@ methodmap Logger < Base
     
     public void SendMessageDiscord(const char[] timestring, const char[] type, const char[] formatMessage)
     {
-        Discord_StartMessage();
-        Discord_SetUsername("SCP");
-        Discord_SetContent("```md\n[%s][%s] %s```", timestring, type, formatMessage);
-        Discord_EndMessage("scp_logger", true);
+        //Discord_StartMessage();
+        //Discord_SetUsername("SCP");
+        //Discord_SetContent("```md\n[%s][%s] %s```", timestring, type, formatMessage);
+        //Discord_EndMessage("scp_logger", true);
+        PrintToChatAll("[%s][%s]: %s"timestring, type, formatMessage);
     }
 }
