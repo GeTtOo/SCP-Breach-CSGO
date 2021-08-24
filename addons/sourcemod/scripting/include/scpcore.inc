@@ -22,6 +22,7 @@ ClientSingleton Clients;
 EntitySingleton Ents;
 
 #include "scp/classes/gamemode/manager"
+#include "scp/classes/gamemode/logger"
 
 forward void SCP_OnPlayerJoin(Client &ply);
 
@@ -52,6 +53,8 @@ public any NativeGameMode_Entities(Handle Plugin, int numArgs) { return view_as<
 public any NativeGameMode_Manager(Handle Plugin, int numArgs) { return view_as<Manager>(gamemode.GetObject("Manager")); }
 
 public any NativeGameMode_Timers(Handle Plugin, int numArgs) { return view_as<Timers>(gamemode.GetObject("Timers")); }
+
+public any NativeGameMode_Logger(Handle Plugin, int numArgs) { return view_as<Logger>(gamemode.GetObject("Logger")); }
 
 public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
     char name[32];

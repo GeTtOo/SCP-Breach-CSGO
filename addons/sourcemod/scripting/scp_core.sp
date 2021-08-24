@@ -43,6 +43,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("GameMode.entities.get", NativeGameMode_Entities);
     CreateNative("GameMode.mngr.get", NativeGameMode_Manager);
     CreateNative("GameMode.timer.get", NativeGameMode_Timers);
+    CreateNative("GameMode.log.get", NativeGameMode_Logger);
     
     CreateNative("ClientSingleton.Get", NativeClients_Get);
     CreateNative("ClientSingleton.GetRandom", NativeClients_GetRandom);

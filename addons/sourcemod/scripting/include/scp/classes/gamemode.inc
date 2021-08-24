@@ -57,6 +57,7 @@ methodmap GameMode < JSON_OBJECT {
         self.SetValue("Entities", new Entities(mapname));
         self.SetValue("Config", new Config(mapname));
         self.SetValue("Timers", new Timers());
+        self.SetValue("Logger", new Logger());
         return self;
     }
 
@@ -69,6 +70,10 @@ methodmap GameMode < JSON_OBJECT {
     }
 
     property Timers timer {
+        public native get();
+    }
+
+    property Logger log {
         public native get();
     }
 
