@@ -5,7 +5,7 @@
     "DefaultClass":"D Class",
     "invsize": 5,
     "NukeTime":110.0,
-    "NukeKillPos":400.0,
+    "NukeKillPos":1690.0,
     "NukeSound":"*/scp/warhead_announcement.mp3",
     "NukeButtonID":356023,
     "AdminRoom": [-4890,-6340,0]

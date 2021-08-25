@@ -40,21 +40,31 @@ methodmap Inventory < Base {
         public get() { return this.GetList("inventory"); }
     }
 
-    public int Check(char[] val) {
+    public bool Check(char[] val, int check) {
         ArrayList list = this.GetList("inventory");
-        
-        int ival = 0;
 
         for (int i=0; i < list.Length; i++) {
             char itemname[32];
             view_as<Item>(list.Get(i)).GetEntClass(itemname, sizeof(itemname));
 
             EntConfig entcfg = gamemode.entities.get(itemname);
-            if (entcfg && entcfg != null)
-                ival = entcfg.GetInt(val, 0);
+            if (entcfg && entcfg != null) {
+                if (view_as<int>(entcfg.GetKeyType(val)) == 4) {
+                    JSON_ARRAY arrvalues = view_as<JSON_ARRAY>(entcfg.GetObject(val));
+
+                    for (int k=0; k < arrvalues.Length; k++)
+                        if (arrvalues.GetInt(k, 0) == check)
+                            return true;
+                }
+                else
+                {
+                    if (entcfg.GetInt(val, 0) == check)
+                        return true;
+                }
+            }
         }
 
-        return ival;
+        return false;
     }
 
     public bool Add(char[] entclass) {

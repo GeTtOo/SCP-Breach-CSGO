@@ -57,7 +57,6 @@ methodmap GameMode < JSON_OBJECT {
         self.SetValue("Entities", new Entities(mapname));
         self.SetValue("Config", new Config(mapname));
         self.SetValue("Timers", new Timers());
-        self.SetValue("Logger", new Logger());
         return self;
     }
 

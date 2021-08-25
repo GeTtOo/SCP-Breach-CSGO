@@ -16,9 +16,9 @@
                 "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer", ["weapon_healthshot", 2], "weapon_tagrenade"],
                 "comment":"test"
             },
-            "Medic": {
+            "Medic-Operator": {
                 "pos":[-10800,-5950,1715],
-                "percent":10,
+                "percent":0,
                 "items":["card_bg"],
                 "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 3], "weapon_tagrenade"]
             },
@@ -26,7 +26,7 @@
                 "pos":[-10800,-5950,1715],
                 "percent":5,
                 "items":["card_bg"],
-                "weapons":["weapon_m4a1", "weapon_hkp2000", "weapon_bumpmine", "weapon_bumpmine", "weapon_bumpmine", "weapon_hegrenade", "weapon_tagrenade"]
+                "weapons":["weapon_m4a1", "weapon_hkp2000", "weapon_hegrenade", "weapon_breachcharge"]
             },
             "Operator": {
                 "pos":[-10800,-5950,1715],
@@ -36,7 +36,7 @@
             },
             "Security": {
                 "pos":[-11040,-1735,2],
-                "percent":30,
+                "percent":25,
                 "escape":true,
                 "items":["card_en"],
                 "weapons":["weapon_usp_silencer"]
@@ -44,7 +44,15 @@
             "Scientist": {
                 "percent":20,
                 "escape":true,
+                "cae":"Commander",
                 "items":["card_bs"]
+            },
+            "Medic": {
+                "pos":[-6602, -7230, 0],
+                "ang":[0,90,0],
+                "percent":15,
+                "items":["card_bg"],
+                "weapons":[["weapon_healthshot", 2]]
             }
         }
     },
@@ -68,6 +76,7 @@
                 "percent":80,
                 "priority":true,
                 "escape":true,
+                "cae":"Soldier",
                 "health":100,
                 "comment":"test"
             }
@@ -86,9 +95,9 @@
             "049": {
                 "pos":[-8455,975,2],
                 "ang":[0,125,0],
+                "priority":true,
                 "percent":20,
                 "health":7800,
-                "fists":false,
                 "doors":[159,160],
                 "weapons":["weapon_fists"],
                 "comment":"The Doctor ʕ•ᴥ•ʔ"
@@ -100,7 +109,7 @@
                 "comment":"049-2"
             },
             "079": {
-                "percent":20,
+                "percent":10,
                 "comment":"AI computer",
                 "fists":false
             },
@@ -134,8 +143,7 @@
             },
             "457": {
                 "pos":[-5200,-3030,2],
-                "percent":20,
-                "priority":true,
+                "percent":10,
                 "health":4000,
                 "armor":2000,
                 "speed":250,

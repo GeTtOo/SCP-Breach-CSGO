@@ -87,7 +87,7 @@ public void OnPluginStart()
 
     AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
     AddCommandListener(GetClientPos, "getmypos");                                           // ¯\_(ツ)_/¯
-    AddCommandListener(TpTo914, "tp914");                                                   // ¯\_(ツ)_/¯
+    AddCommandListener(TpTo, "tp");                                                   // ¯\_(ツ)_/¯
     
     HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
     HookEvent("round_start", OnRoundStart);
@@ -113,6 +113,8 @@ public void OnMapStart()
     gamemode = new GameMode(mapName);
     
     gamemode.SetValue("Manager", new Manager());
+    gamemode.SetValue("Logger", new Logger());
+    
     gamemode.mngr.CollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
 
     PrecacheSound(NUKE_EXPLOSION_SOUND);
@@ -180,7 +182,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 
     if (IsClientExist(ply.id) && GetClientTeam(ply.id) > 1 && !ply.active) {
         ply.active = true;
-        gamemode.timer.Simple(1, "Timer_PlayerSpawn", ply);
+        gamemode.timer.Simple(200, "Timer_PlayerSpawn", ply);
     }
 
     return Plugin_Continue;
@@ -399,7 +401,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 {
                     return Plugin_Continue;
                 }
-                else if (ply.access >= door.access || ply.inv.Check("access") >= door.access)
+                else if (ply.access >= door.access || ply.inv.Check("access", door.access))
                 {
                     return Plugin_Continue;
                 }
@@ -993,10 +995,22 @@ public Action PrintEntInCone(int client, const char[] command, int argc)
     delete entArr;
 }
 
-public Action TpTo914(int client, const char[] command, int argc)
+public Action TpTo(int client, const char[] command, int argc)
 {
     Client ply = Clients.Get(client);
-    ply.SetPos(new Vector(3100.0, -2231.0, 0.0), new Angle(0.0, 0.0, 0.0));
+
+    char arg[32];
+
+    GetCmdArg(1, arg, sizeof(arg));
+
+    if (StrEqual(arg, "914", false))
+    {
+        ply.SetPos(new Vector(3100.0, -2231.0, 0.0), new Angle(0.0, 0.0, 0.0));
+    }
+    if (StrEqual(arg, "d", false))
+    {
+        ply.SetPos(new Vector(-2413.0, -5632.0, 0.0), new Angle(0.0, 0.0, 0.0));
+    }
 }
 
 public Action PlayerSpawn(int client,int args)
