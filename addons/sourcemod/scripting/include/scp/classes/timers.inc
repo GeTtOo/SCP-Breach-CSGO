@@ -85,7 +85,7 @@ methodmap Timers < Base {
                 list.Erase(i);
     }
     
-    public void Simple(int delay, char[] funcname, any args) {
+    public void Simple(int delay, char[] funcname, any args = false) {
         char timername[32], pname[32];
         GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
         IntToString(GetTime(), timername, sizeof(timername));
