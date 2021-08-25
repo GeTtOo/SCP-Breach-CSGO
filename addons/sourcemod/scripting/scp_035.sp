@@ -40,7 +40,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
     TimerKill(GetClientOfUserId(GetEventInt(event, "userid")));
 }
 
-public void OnRoundEnd(Event event, const char[] name, bool dbroadcast) 
+public void OnRoundEnd(Event event, const char[] name, bool dbroadcast)
 {
     TimerKill(GetClientOfUserId(GetEventInt(event, "userid")));
 }
@@ -52,13 +52,11 @@ public void OnClientDisconnect(int client)
 
 public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
 {
-    char attackerClass[32];
     Client atk = Clients.Get(attacker);
 
     if (atk == null) return Plugin_Continue;
-    atk.class.Name(attackerClass, sizeof(attackerClass)); 
 
-    if(StrEqual(attackerClass, "035"))
+    if(atk.class.Is("035"))
     {
         damage += 180;
         return Plugin_Changed;
@@ -92,10 +90,8 @@ public SDKHookCB Callback_EntUse(int eid, int cid)
 
 public Action HandlerHitSCP(Client ply)
 {
-    int hp = GetClientHealth(ply.id);
-
-    if(hp > 10)
-        SetEntityHealth(ply.id, hp - 10);
+    if(ply.health > 10)
+        ply.health -= 10;
     else
         ForcePlayerSuicide(ply.id);
 }
@@ -106,6 +102,6 @@ void TimerKill(int client)
 
     if (ply != null && ply.class != null && ply.class.Is("035"))
     {
-        gamemode.timer.Remove("HandlerHitSCP");
+        gamemode.timer.Remove("Timer_SCP-035_Hit");
     }
 }
