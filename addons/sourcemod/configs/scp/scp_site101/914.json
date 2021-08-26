@@ -63,10 +63,10 @@
             "card_lt": [
                 ["card_o5", 0, 70]
             ],
-            "weapon_usp_silencer": [
-                ["weapon_deagle", 30, 70],
-                ["weapon_deagle", 40, 90]
-            ]
+            "weapon_usp_silencer": {
+                "20":["weapon_revolver", 0, 90],
+                "80":["weapon_deagle", 40, 90]
+            }
         }
     }
 }

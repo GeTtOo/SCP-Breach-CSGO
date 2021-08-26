@@ -129,8 +129,32 @@ public void Transform(Client ply) {
             if (StrEqual(entclass, ientclass)) {
                 Vector oitempos = ent.GetPos() - config.GetVector("distance");
 
-                JSON_ARRAY oentdata = recipes.GetArray(ientclass);
-                JSON_ARRAY recipe = oentdata.GetArray(GetRandomInt(0, oentdata.Length - 1));
+                JSON_OBJECT oentdata = recipes.GetObject(ientclass);
+                JSON_ARRAY recipe;
+
+                if (oentdata.IsArray)
+                {
+                    recipe = view_as<JSON_ARRAY>(oentdata).GetArray(GetRandomInt(0, view_as<JSON_ARRAY>(oentdata).Length - 1));
+                }
+                else
+                {
+                    StringMapSnapshot soentdata = oentdata.Snapshot();
+                    int keylen2;
+                    int random = GetRandomInt(1,100);
+                    int count = 0;
+                    for (int v=0; v < soentdata.Length; v++) {
+                        keylen2 = soentdata.KeyBufferSize(v);
+                        char[] chance = new char[keylen2];
+                        soentdata.GetKey(v, chance, keylen2);
+                        if (json_is_meta_key(chance)) continue;
+
+                        count += StringToInt(chance);
+                        if (count >= random) {
+                            recipe = oentdata.GetArray(chance);
+                            break;
+                        }
+                    }
+                }
 
                 char oentclass[32];
                 recipe.GetString(0, oentclass, sizeof(oentclass));
@@ -238,7 +262,7 @@ public void Buff_Regeneration(Client ply) {
 public void Speed(Client ply) {
     PrintToChat(ply.id, " \x07[SCP] \x01 Вы впадаете в ярость");
     
-    ply.speed *= 2.0;
+    ply.multipler *= 2.0;
 }
 
 public void Injure(Client ply) {
