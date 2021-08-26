@@ -78,6 +78,7 @@ public void OnPluginStart()
     AdminMenu = new AdminMenuSingleton();
 
     LoadTranslations("scpcore.phrases");
+    LoadTranslations("scpcore.regions.phrases");
     
     RegServerCmd("ents", CmdEnts);                                                          // ¯\_(ツ)_/¯
     RegServerCmd("scp", CmdSCP);                                                            // ¯\_(ツ)_/¯
@@ -148,7 +149,7 @@ public void OnClientPostAdminCheck(int id)
 
     if (gamemode.config.debug)
     {
-        PrintToServer("Client joined - localId: (%i), steamId: (%i)", ply.id, GetSteamAccountID(ply.id));
+        gamemode.log.Info("Client joined | localId: (%i), steamId: (%i)", ply.id, GetSteamAccountID(ply.id));
     }
 
     SDKHook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
@@ -165,7 +166,7 @@ public void OnClientDisconnect_Post(int id)
     Client ply = Clients.Get(id);
 
     if (gamemode.config.debug)
-        PrintToServer("Client disconnected: %i", ply.id);
+        gamemode.log.Info("Client disconnected: %i", ply.id);
 
     EndRoundCount(ply);
 
@@ -299,7 +300,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         
         delete sortedPlayers;
 
-        SetMapRegions();
+        SetupMapRegions();
         SpawnItemsOnMap();
 
         Call_StartForward(OnRoundStartForward);
@@ -680,7 +681,7 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int item)
 //
 //////////////////////////////////////////////////////////////////////////////
 
-public void SetMapRegions() 
+public void SetupMapRegions() 
 {
     JSON_ARRAY regions = gamemode.config.regions;
 
@@ -690,7 +691,9 @@ public void SetMapRegions()
         Vector pos = region.GetVector("pos");
         char radius[5], name[128];
         IntToString(region.GetInt("radius"),radius,sizeof(radius));
-        region.GetString("name",name,sizeof(name));
+        region.GetString("ltag",name,sizeof(name));
+        
+        Format(name, sizeof(name), "%T", name, LANG_SERVER);
 
         Entity ent = Ents.Create("info_map_region", false).SetPos(pos);
         DispatchKeyValue(ent.id,"radius",radius);

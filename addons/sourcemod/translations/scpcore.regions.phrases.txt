@@ -1,0 +1,43 @@
+"Phrases"
+{
+    "SCP-914"
+    {
+        "en"    "SCP-914"
+        "ru"    "SCP-914"
+    }
+    "MogSpawn"
+    {
+        "en"    "MOG spawn site"
+        "ru"    "Зона высадки оперативной группы MOG"
+    }
+    "ChaosSpawn"
+    {
+        "en"    "Chaos spawn site"
+        "ru"    "Зона высадки Повстанцев Хаоса"
+    }
+    "DSpawn"
+    {
+        "en"    "Class D living zone"
+        "ru"    "Жилая зона Д класса"
+    }
+    "SecurityRoom"
+    {
+        "en"    "Security room"
+        "ru"    "Помещение охраны комплекса"
+    }
+    "SCP-106-zone"
+    {
+        "en"    "SCP-106 containment zone"
+        "ru"    "Зона сдерживания SCP-106"
+    }
+    "SCP-106-control-room"
+    {
+        "en"    "SCP-106 control room"
+        "ru"    "Контрольный пункт камеры SCP-106"
+    }
+    "SCP-106-room"
+    {
+        "en"    "SCP-106 room"
+        "ru"    "Камера SCP-106"
+    }
+}
