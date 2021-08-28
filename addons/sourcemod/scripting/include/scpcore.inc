@@ -62,6 +62,16 @@ public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
     return view_as<Teams>(gamemode.GetObject("Teams")).get(name);
 }
 
+public any NativeClients_GetAll(Handle Plugin, int numArgs) {
+    Client clients[MAXPLAYERS + 1];
+    Clients.GetArray("Clients", clients, sizeof(clients));
+    ArrayList players = new ArrayList();
+    for (int i=0; i < MAXPLAYERS + 1; i++)
+        if (clients[i] != null)
+            players.Push(clients[i]);
+    return players;
+}
+
 public any NativeClients_Get(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
     Client clients[MAXPLAYERS + 1];

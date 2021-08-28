@@ -65,6 +65,11 @@ methodmap Client < Entity {
         public get() { return this.GetBool("fullaccess", false); }
     }
 
+    property bool FirstSpawn {
+        public set(bool val) { this.SetBool("firstspawn", val); }
+        public get() { return this.GetBool("firstspawn", true); }
+    }
+
     property bool spawned {
         public set(bool val) { this.SetBool("spawned", val); }
         public get() { return this.GetBool("spawned", false); }

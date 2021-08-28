@@ -45,6 +45,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("GameMode.timer.get", NativeGameMode_Timers);
     CreateNative("GameMode.log.get", NativeGameMode_Logger);
     
+    CreateNative("ClientSingleton.GetAll", NativeClients_GetAll);
     CreateNative("ClientSingleton.Get", NativeClients_Get);
     CreateNative("ClientSingleton.GetRandom", NativeClients_GetRandom);
     CreateNative("ClientSingleton.InGame", NativeClients_InGame);
@@ -182,6 +183,8 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
     Client ply = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
 
     if (IsClientExist(ply.id) && GetClientTeam(ply.id) > 1 && !ply.active) {
+        if (ply.FirstSpawn)
+            ply.FirstSpawn = false;
         ply.active = true;
         gamemode.timer.Simple(200, "Timer_PlayerSpawn", ply);
     }
@@ -302,6 +305,8 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 
         SetupMapRegions();
         SpawnItemsOnMap();
+
+        CheckNewPlayers(gamemode.config.psars);
 
         Call_StartForward(OnRoundStartForward);
         Call_Finish();
@@ -730,6 +735,34 @@ public void SpawnItemsOnMap()
                 .Spawn();
         }
     }
+}
+
+public void CheckNewPlayers(int seconds)
+{
+    gamemode.timer.Create("PSARS", 1000, seconds, "PSARS");
+}
+
+public void PSARS()
+{
+    ArrayList players = Clients.GetAll();
+
+    for (int i=0; i < players.Length; i++)
+    {
+        Client ply = players.Get(i);
+
+        if (ply.FirstSpawn && IsClientInGame(ply.id) && GetClientTeam(ply.id) > 1)
+        {
+            char team[32], class[32];
+            gamemode.config.DefaultGlobalClass(team, sizeof(team));
+            gamemode.config.DefaultClass(class, sizeof(class));
+            ply.Team(team);
+            ply.class = gamemode.team(team).class(class);
+            ply.haveclass = true;
+            ply.Spawn();
+        }
+    }
+
+    delete players;
 }
 
 public void SCP_EndRound(const char[] team)

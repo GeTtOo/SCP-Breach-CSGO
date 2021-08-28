@@ -4,6 +4,7 @@
     "DefaultGlobalClass":"Chaos",
     "DefaultClass":"D Class",
     "invsize": 5,
+    "psars": 30,
     "NukeTime":110.0,
     "NukeKillPos":1690.0,
     "NukeSound":"*/scp/warhead_announcement.mp3",

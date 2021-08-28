@@ -46,6 +46,10 @@ methodmap Config < JSON_OBJECT {
         public get() { return this.GetInt("invsize") - 1; } //Index started at 0
     }
 
+    property int psars {
+        public get() { return this.GetInt("psars"); }
+    }
+
     property float NukeTime {
         public set(float time) { this.SetFloat("NukeTime", time); }
         public get() { return this.GetFloat("NukeTime"); }

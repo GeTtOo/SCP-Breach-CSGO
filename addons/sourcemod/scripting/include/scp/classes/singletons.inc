@@ -22,6 +22,8 @@ methodmap ClientSingleton < Base {
         this.SetArray("Clients", clients, sizeof(clients));
     }
 
+    public native ArrayList GetAll();
+
     public native Client Get(int id);
 
     public native Client GetRandom();
