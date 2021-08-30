@@ -123,6 +123,12 @@ methodmap Client < Entity {
 
     public void Kill() { ForcePlayerSuicide(this.id); }
 
+    public void SilenceKill() {
+        this.RestrictWeapons();
+        this.inv.Clear();
+        this.Kill();
+    }
+
     public void Kick(char[] reason) { KickClient(this.id, reason); }
 
     public void Setup() {
@@ -176,10 +182,23 @@ methodmap Client < Entity {
             this.class.Model(handsModel, sizeof(handsModel));
             this.SetHandsModel(handsModel);
         }
+
+        char teamName[32], className[32];
+        this.Team(teamName, sizeof(teamName));
+        this.class.Name(className, sizeof(className));
+        PrintToChat(this.id, " \x07[SCP] \x01%t", "Show class when player spawn", teamName, className);
     }
 
     public void Spawn() {
         if (!IsPlayerAlive(this.id))
             CS_RespawnPlayer(this.id);
+    }
+
+    public void UpdateClass() {
+        if (!IsPlayerAlive(this.id))
+            CS_RespawnPlayer(this.id);
+        this.RestrictWeapons();
+        this.inv.Clear();
+        this.Setup();
     }
 }

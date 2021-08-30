@@ -186,7 +186,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
         if (ply.FirstSpawn)
             ply.FirstSpawn = false;
         ply.active = true;
-        gamemode.timer.Simple(200, "Timer_PlayerSpawn", ply);
+        gamemode.timer.Simple(1, "Timer_PlayerSpawn", ply);
     }
 
     return Plugin_Continue;
@@ -210,14 +210,6 @@ public void Timer_PlayerSpawn(Client ply)
 
         if (!IsFakeClient(ply.id))
             SendConVarValue(ply.id, FindConVar("game_type"), "6");
-
-        if (gamemode.config.debug)
-        {
-            char teamName[32], className[32];
-            ply.Team(teamName, sizeof(teamName));
-            ply.class.Name(className, sizeof(className));
-            PrintToChat(ply.id, " \x07[SCP] \x01%t", "Show class when player spawn", teamName, className);
-        }
     }
 
     ply.spawned = true;
@@ -428,12 +420,12 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
             //Vector opp = ply.GetPos();
             //Angle opa = ply.GetAng();
 
-            ply.Kill();
+            //ply.Kill();
 
             ply.Team(teamName);
             ply.class = gamemode.team(teamName).class(className);
             
-            ply.Spawn();
+            ply.UpdateClass();
             //ply.SetPos(opp, opa);
         }
 

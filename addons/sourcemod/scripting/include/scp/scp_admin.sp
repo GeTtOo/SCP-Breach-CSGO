@@ -341,7 +341,7 @@ public int MenuHandler_ScpChangeClass(Menu hMenu, MenuAction action, int client,
             hMenu.GetItem(item, team, sizeof(team), _, class, sizeof(class));
 
             if(IsPlayerAlive(AdminMenu.Get(client).target.id))
-                AdminMenu.Get(client).target.Kill();
+                AdminMenu.Get(client).target.SilenceKill();
             
             AdminMenu.Get(client).target.Team(team);
             AdminMenu.Get(client).target.class = gamemode.team(team).class(class);
