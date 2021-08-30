@@ -418,6 +418,25 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
             }
         }
 
+        if (ply.class.escape != null && doorId == ply.class.escape.trigger)
+        {
+            char className[32], teamName[32];
+            ply.class.escape.class(className, sizeof(className));
+            if (!ply.class.escape.team(teamName, sizeof(teamName)))
+                ply.Team(teamName, sizeof(teamName));
+            
+            //Vector opp = ply.GetPos();
+            //Angle opa = ply.GetAng();
+
+            ply.Kill();
+
+            ply.Team(teamName);
+            ply.class = gamemode.team(teamName).class(className);
+            
+            ply.Spawn();
+            //ply.SetPos(opp, opa);
+        }
+
         Call_StartForward(OnButtonPressedForward);
         Call_PushCellRef(ply);
         Call_PushCell(doorId);
@@ -1046,6 +1065,10 @@ public Action TpTo(int client, const char[] command, int argc)
     if (StrEqual(arg, "d", false))
     {
         ply.SetPos(new Vector(-2413.0, -5632.0, 0.0), new Angle(0.0, 0.0, 0.0));
+    }
+    if (StrEqual(arg, "mog", false))
+    {
+        ply.SetPos(new Vector(-10739.0, -5920.0, 1712.0), new Angle(0.0, 0.0, 0.0));
     }
 }
 

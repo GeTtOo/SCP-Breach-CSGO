@@ -2,6 +2,7 @@
 #pragma newdecls required
 
 #include <json>
+#include <scp/classes/gamemode/escape>
 
 methodmap Class < JSON_OBJECT {
 
@@ -28,10 +29,6 @@ methodmap Class < JSON_OBJECT {
         public get() { return this.GetBool("priority", false); }
     }
 
-    property bool escape {
-        public get() { return this.GetBool("escape", false); }
-    }
-
     property int health {
         public get() { return this.GetInt("health", 100); }
     }
@@ -51,6 +48,10 @@ methodmap Class < JSON_OBJECT {
     property bool fists {
         public set(bool fists) { this.SetBool("fists", fists); }
         public get() { return this.GetBool("fists", true); }
+    }
+
+    property EscapeInfo escape {
+        public get() { return view_as<EscapeInfo>(this.GetObject("escape")); }
     }
 
     property JSON_ARRAY doors {
