@@ -4,9 +4,9 @@
 
 #include <json>
 
-#include "scp/classes/gamemode/config"
-#include "scp/classes/gamemode/class"
-#include "scp/classes/gamemode/entities"
+#include "scp/classes/json/config"
+#include "scp/classes/json/class"
+#include "scp/classes/json/entities"
 #include "scp/classes/timers"
 
 methodmap Classes < JSON_OBJECT {

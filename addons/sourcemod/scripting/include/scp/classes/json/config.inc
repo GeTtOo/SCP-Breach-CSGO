@@ -4,7 +4,7 @@
 
 #include <json>
 
-#include "scp/classes/gamemode/doors"
+#include "scp/classes/json/doors"
 
 methodmap Config < JSON_OBJECT {
     

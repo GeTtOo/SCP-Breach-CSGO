@@ -2,7 +2,7 @@
 #pragma newdecls required
 
 #include <json>
-#include <scp/classes/gamemode/escape>
+#include <scp/classes/json/escape>
 
 methodmap Class < JSON_OBJECT {
 
