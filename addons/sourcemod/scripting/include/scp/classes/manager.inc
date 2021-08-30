@@ -68,6 +68,8 @@ methodmap Manager < Base {
             return true;
         }
 
+        delete GlobalTeams;
+
         return false;
     }
 
@@ -102,5 +104,7 @@ methodmap Manager < Base {
         }
 
         PrintToServer("----------");
+
+        delete GlobalTeams;
     }
 }
