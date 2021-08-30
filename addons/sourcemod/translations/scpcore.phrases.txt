@@ -122,6 +122,11 @@
         "en"        "Unable to find the player"
         "ru"        "Невозможно найти игрока"
     }
+    "Select team"
+    {
+        "en"        "Select a team"
+        "ru"        "Выберите команду:"
+    }
     "Select class"
     {
         "en"        "Select a class"

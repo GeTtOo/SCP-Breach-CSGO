@@ -250,7 +250,7 @@ public int MenuHandler_ScpAdminMenuTarget(Menu hMenu, MenuAction action, int cli
             {
                 case RESPAWN_PLAYER:
                 {
-                    ChangePlayerClass(client);
+                    RenderTeamMenu(client);
                 }
                 case TELEPORT:
                 {
@@ -288,13 +288,13 @@ public bool GetLookPos_Filter(int entity, int contentsMask, any data)
     return data != entity;
 }
 
-void ChangePlayerClass(int client)
+void RenderTeamMenu(int client)
 {
-    int teamKeylen, classKeylen;
+    int teamKeylen;
     char buffer[64];
     
-    Menu hMenu = new Menu(MenuHandler_ScpChangeClass);
-    FormatEx(buffer, sizeof(buffer), "%T", "Select class", client);
+    Menu hMenu = new Menu(MenuHandler_GetTeams);
+    FormatEx(buffer, sizeof(buffer), "%T", "Select team", client);
     hMenu.SetTitle(buffer);
 
     StringMapSnapshot teamSnap = gamemode.GetTeamNames();
@@ -307,27 +307,58 @@ void ChangePlayerClass(int client)
 
         if(json_is_meta_key(teamName))
             continue;
-        
-        GTeam team = gamemode.team(teamName);
-        StringMapSnapshot classSnap = team.GetClassNames();
 
-        for(int x = 0; x < classSnap.Length; x++)
-        {
-            classKeylen = classSnap.KeyBufferSize(x);
-            char[] className = new char[classKeylen];
-            classSnap.GetKey(x, className, classKeylen);
-
-            if(json_is_meta_key(className))
-                continue;
-
-            hMenu.AddItem(teamName, className, ITEMDRAW_DEFAULT);
-        }
+        hMenu.AddItem(teamName, teamName, ITEMDRAW_DEFAULT);
     }
 
     hMenu.Display(client, 30);
 }
 
-public int MenuHandler_ScpChangeClass(Menu hMenu, MenuAction action, int client, int item)
+void RenderClassMenu(int client, char[] teamName)
+{
+    int classKeylen;
+    char buffer[64];
+    
+    Menu hMenu = new Menu(MenuHandler_GetClass);
+    FormatEx(buffer, sizeof(buffer), "%T", "Select class", client);
+    hMenu.SetTitle(buffer);
+
+    StringMapSnapshot classSnap = gamemode.team(teamName).GetClassNames();
+
+    for(int x = 0; x < classSnap.Length; x++)
+    {
+        classKeylen = classSnap.KeyBufferSize(x);
+        char[] className = new char[classKeylen];
+        classSnap.GetKey(x, className, classKeylen);
+
+        if(json_is_meta_key(className))
+            continue;
+
+        hMenu.AddItem(teamName, className, ITEMDRAW_DEFAULT);
+    }
+
+    hMenu.Display(client, 30);
+}
+
+public int MenuHandler_GetTeams(Menu hMenu, MenuAction action, int client, int item)
+{
+    if (action == MenuAction_End)
+    {
+        delete hMenu;
+    }
+    else if (action == MenuAction_Select)
+    {
+        if(AdminMenu.Get(client).target && !IsCleintInSpec(AdminMenu.Get(client).target.id))
+        {
+            char team[32];
+            hMenu.GetItem(item, team, sizeof(team));
+
+            RenderClassMenu(client, team);
+        }
+    }
+}
+
+public int MenuHandler_GetClass(Menu hMenu, MenuAction action, int client, int item)
 {
     if (action == MenuAction_End)
     {
