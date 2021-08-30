@@ -224,11 +224,11 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         
         ArrayList sortedPlayers = new ArrayList();
         
-        Client bufarr[MAXPLAYERS+1];
-        Clients.GetArray("Clients", bufarr, sizeof(bufarr));
+        Client buf[MAXPLAYERS+1];
+        Clients.GetArray("Clients", buf, sizeof(buf));
 
         for (int i=1; i <= Clients.InGame(); i++)
-            sortedPlayers.Push(bufarr[i]);
+            sortedPlayers.Push(buf[i]);
 
         sortedPlayers.Sort(Sort_Random, Sort_Integer);
         
@@ -268,7 +268,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
                     if (extra > Clients.InGame()) break;
                     int id = sortedPlayers.Length - 1;
                     if (id < 0) break;
-                    Client player = view_as<Client>(sortedPlayers.Get(id));
+                    Client player = sortedPlayers.Get(id);
                     sortedPlayers.Erase(id);
                     player.Team(teamKey);
                     player.class = class;
@@ -283,7 +283,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         {
             int id = sortedPlayers.Length - 1;
             if (id < 0) break;
-            Client player = view_as<Client>(sortedPlayers.Get(id));
+            Client player = sortedPlayers.Get(id);
             sortedPlayers.Erase(id);
             char team[32], class[32];
             gamemode.config.DefaultGlobalClass(team, sizeof(team));

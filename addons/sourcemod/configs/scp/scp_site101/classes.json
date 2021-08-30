@@ -73,7 +73,7 @@
                 "pos":[-10800,-5950,1715],
                 "percent":0,
                 "items":["card_bg"],
-                "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 3]]
+                "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 5]]
             }
         }
     },
@@ -98,7 +98,7 @@
                 "priority":true,
                 "health":100,
                 "escape":{
-                    "trigger":330025,
+                    "trigger":330006,
                     "class":"Soldier"
                 }
             }
