@@ -196,7 +196,7 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
             }
             case DESTROY_SITE:
             {
-                SCP_NukeActivation();
+                gamemode.mngr.nuke.Activate();
             }
             default:
             {

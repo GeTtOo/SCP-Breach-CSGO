@@ -9,6 +9,10 @@ methodmap EscapeInfo < JSON_OBJECT {
         public get() { return this.GetInt("trigger"); }
     }
 
+    property bool savepos {
+        public get() { return this.GetBool("savepos"); }
+    }
+
     public bool team(char[] buffer, int max_size) {
         return this.GetString("team", buffer, max_size);
     }

@@ -60,6 +60,21 @@ methodmap Entity < Base {
         return this;
     }
 
+    public Entity SetProp(char[] name, any value, any type = Prop_Send, int element = 0) {
+        SetEntProp(this.id, type, name, value, _, element);
+        return this;
+    }
+
+    public Entity SetPropFloat(char[] name, any value, any type = Prop_Send) {
+        SetEntPropFloat(this.id, type, name, float(value));
+        return this;
+    }
+
+    public Entity SetPropString(char[] name, char[] value, any type = Prop_Send) {
+        SetEntPropString(this.id, type, name, value);
+        return this;
+    }
+
     public Entity Spawn() {
         DispatchSpawn(this.id);
         return this;

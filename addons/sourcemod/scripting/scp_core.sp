@@ -8,8 +8,6 @@
 #include <scpcore>
 #include "include/scp/scp_admin.sp"
 
-#define NUKE_EXPLOSION_SOUND "weapons/c4/c4_exp_deb1.wav"
-
 Handle OnClientJoinForward;
 Handle OnClientLeaveForward;
 Handle OnClientSpawnForward;
@@ -76,6 +74,7 @@ public void OnPluginStart()
 {
     Clients = new ClientSingleton();
     Ents = new EntitySingleton();
+    WT = new WorldTextSingleton();
     AdminMenu = new AdminMenuSingleton();
 
     LoadTranslations("scpcore.phrases");
@@ -220,7 +219,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
     if(!IsWarmup())
     {
         gamemode.mngr.RoundComplete = false;
-        gamemode.mngr.IsNuked = false;
+        gamemode.mngr.nuke.IsNuked = false;
         
         ArrayList sortedPlayers = new ArrayList();
         
@@ -298,6 +297,8 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         SetupMapRegions();
         SpawnItemsOnMap();
 
+        gamemode.mngr.nuke.SpawnDisplay();
+
         CheckNewPlayers(gamemode.config.psars);
 
         Call_StartForward(OnRoundStartForward);
@@ -323,6 +324,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
     }
 
     Ents.Clear();
+    WT.Clear();
 
     Call_StartForward(OnRoundEndForward);
     Call_Finish();
@@ -367,8 +369,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
         if (gamemode.config.debug)
             PrintToChatAll(" \x07[SCP Admin] \x01Door/Button id: (%i)", doorId);
 
-        if(gamemode.config.NukeButtonID == doorId)
-            SCP_NukeActivation();
+        gamemode.mngr.nuke.Controller(doorId);
 
         StringMapSnapshot doorsSnapshot = gamemode.config.doors.GetAll();
         int doorKeyLen;
@@ -416,17 +417,25 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
             ply.class.escape.class(className, sizeof(className));
             if (!ply.class.escape.team(teamName, sizeof(teamName)))
                 ply.Team(teamName, sizeof(teamName));
-            
-            //Vector opp = ply.GetPos();
-            //Angle opa = ply.GetAng();
 
-            //ply.Kill();
+            bool savepos = ply.class.escape.savepos;
+
+            Vector opp;
+            Angle opa;
+
+            if (savepos)
+            {
+                opp = ply.GetPos();
+                opa = ply.GetAng();
+            }
 
             ply.Team(teamName);
             ply.class = gamemode.team(teamName).class(className);
             
             ply.UpdateClass();
-            //ply.SetPos(opp, opa);
+
+            if (savepos)
+                ply.SetPos(opp, opa);
         }
 
         Call_StartForward(OnButtonPressedForward);
@@ -792,24 +801,6 @@ public void SCP_EndRound(const char[] team)
     }
 }
 
-public void SCP_NukeActivation()
-{
-    char sound[128];
-    gamemode.config.NukeSound(sound, sizeof(sound));
-
-    EmitSoundToAll(sound);
-
-    CreateTimer(gamemode.config.NukeTime - 10.0, NukeExplosionDoorClose);
-    CreateTimer(gamemode.config.NukeTime, NukeExplosion);
-
-    int ent;
-    
-    while((ent = FindEntityByClassname(ent, "func_door")) != -1)
-    {
-        AcceptEntityInput(ent, "Open");
-    }
-}
-
 public void EndRoundCount(Client ply)
 {
     if(Clients.Alive() == 0 && Clients.InGame() != 0)
@@ -845,6 +836,55 @@ stock void Shake(int client)
     PbSetFloat(message, "duration", 5.0);
 
     EndMessage();
+}
+
+public void SCP_AlphaWarheadCountdown() {
+    char time[32], time2[10], time3[4];
+    float cursec = gamemode.mngr.nuke.detonationtime - GetGameTime();
+    FloatToString(FloatFraction(cursec), time2, sizeof(time2));
+    strcopy(time3, sizeof(time3), time2[2]);
+    Format(time, sizeof(time), "%i:%i:%s",  RoundToNearest(cursec) / 60, RoundFloat(cursec) % 60, time3);
+    gamemode.mngr.nuke.Update(time);
+}
+
+public void ClosingDoorBeforeNukeExplode() {
+    int ent;
+    while((ent = FindEntityByClassname(ent, "func_door")) != -1)
+    {
+        char name[16];
+        GetEntPropString(ent, Prop_Data, "m_iName", name, sizeof(name));
+        
+        if(StrContains(name, "DoorGate", false) != -1)
+        {
+            AcceptEntityInput(ent, "Close");
+            AcceptEntityInput(ent, "Lock");
+        }
+    }
+}
+
+public void NukeExplode() {
+    float pos[3];
+    gamemode.mngr.nuke.IsNuked = true;
+
+    for(int client = 0; client < MAXPLAYERS; client++)
+    {
+        if(IsClientExist(client))
+        {
+            GetClientAbsOrigin(client, pos);
+
+            if(pos[2] <= gamemode.config.nuke.killpos)
+            {
+                ForcePlayerSuicide(client);
+            }
+            else
+            {
+                EmitSoundToClient(client, NUKE_EXPLOSION_SOUND);
+                Shake(client);
+            }
+        }
+    }
+
+    gamemode.mngr.nuke.Update("Site destroyed");
 }
 
 stock bool IsClientExist(int client)
@@ -885,57 +925,6 @@ stock bool IsCleintInSpec(int client)
     }
 
     return true;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-//                                 Timers
-//
-//////////////////////////////////////////////////////////////////////////////
-
-public Action NukeExplosion(Handle hTimer)
-{
-    float pos[3];
-    gamemode.mngr.IsNuked = true;
-
-    for(int client = 0; client < MAXPLAYERS; client++)
-    {
-        if(IsClientExist(client))
-        {
-            GetClientAbsOrigin(client, pos);
-
-            if(pos[2] <= gamemode.config.NukeKillPos)
-            {
-                ForcePlayerSuicide(client);
-            }
-            else
-            {
-                EmitSoundToClient(client, NUKE_EXPLOSION_SOUND);
-                Shake(client);
-            }
-        }
-    }
-
-    return Plugin_Stop;
-}
-
-public Action NukeExplosionDoorClose(Handle hTimer)
-{
-    int ent;
-    while((ent = FindEntityByClassname(ent, "func_door")) != -1)
-    {
-        char name[16];
-        GetEntPropString(ent, Prop_Data, "m_iName", name, sizeof(name));
-        
-        if(StrContains(name, "DoorGate", false) != -1)
-        {
-            AcceptEntityInput(ent, "Close");
-            AcceptEntityInput(ent, "Lock");
-        }
-    }
-
-    //!- Список кнопок которые будут блокироваться после взрыва
-    return Plugin_Stop;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1061,6 +1050,10 @@ public Action TpTo(int client, const char[] command, int argc)
     if (StrEqual(arg, "mog", false))
     {
         ply.SetPos(new Vector(-10739.0, -5920.0, 1712.0), new Angle(0.0, 0.0, 0.0));
+    }
+    if (StrEqual(arg, "nuke", false))
+    {
+        ply.SetPos(new Vector(-7821.0, -5978.0, 200.0), new Angle(0.0, 0.0, 0.0));
     }
 }
 

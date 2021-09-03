@@ -8,6 +8,7 @@
 // ¯\_(ツ)_/¯
 #include "scp/structures/base"
 #include "scp/structures/vector"
+#include "scp/structures/color"
 #include "scp/structures/json"
 #include "scp/classes/gamemode"
 
@@ -18,8 +19,11 @@ GameMode gamemode;
 
 #include "scp/classes/singletons"
 
+#include "scp/classes/worldtext"
+
 ClientSingleton Clients;
 EntitySingleton Ents;
+WorldTextSingleton WT;
 
 #include "scp/classes/manager"
 #include "scp/classes/logger"

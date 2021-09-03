@@ -173,8 +173,8 @@ methodmap Client < Entity {
             this.class.Model(playerModel, sizeof(playerModel));
             this.SetModel(playerModel);
 
-            SetEntProp(this.id, Prop_Send, "m_nBody", this.GetInt("bodygroup"));
-            SetEntProp(this.id, Prop_Send, "m_nSkin", this.GetInt("skin"));
+            this.SetProp("m_nBody", this.class.GetInt("bodygroup", 0));
+            this.SetProp("m_nSkin", this.class.GetInt("skin", 0));
         }
 
         if (this.class.HasKey("hands")) {

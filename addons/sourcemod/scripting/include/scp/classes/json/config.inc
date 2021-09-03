@@ -5,6 +5,7 @@
 #include <json>
 
 #include "scp/classes/json/doors"
+#include "scp/classes/json/nuke"
 
 methodmap Config < JSON_OBJECT {
     
@@ -50,22 +51,8 @@ methodmap Config < JSON_OBJECT {
         public get() { return this.GetInt("psars"); }
     }
 
-    property float NukeTime {
-        public set(float time) { this.SetFloat("NukeTime", time); }
-        public get() { return this.GetFloat("NukeTime"); }
-    }
-
-    property float NukeKillPos {
-        public set(float level) { this.SetFloat("NukeKillPos", level); }
-        public get() { return this.GetFloat("NukeKillPos"); }
-    }
-
-    public void NukeSound(char[] buffer, int max_size) {
-        this.GetString("NukeSound", buffer, max_size);
-    }
-
-    property int NukeButtonID {
-        public get() { return this.GetBool("NukeButtonID"); }
+    property NukeConfig nuke {
+        public get() { NukeConfig nuke; return this.GetValue("nuke", nuke) ? nuke : null; }
     }
     
     property Vector AdminRoom {

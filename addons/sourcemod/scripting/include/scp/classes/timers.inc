@@ -53,7 +53,7 @@ methodmap Timers < Base {
 
     public Timers() {
         Timers self = view_as<Timers>(new Base());
-        self.SetValue("timers", new ArrayList());
+        self.CreateList("timers");
         return self;
     }
 

@@ -4,6 +4,7 @@
         "priority":false,
         "Classes": {
             "Commander": {
+                "model":"models/player/custom_player/scp/captain_unit.mdl",
                 "pos":[-10740,-5950,1715],
                 "percent":10,
                 "priority":true,
@@ -49,7 +50,8 @@
                 "items":["card_bs"],
                 "escape":{
                     "trigger":330025,
-                    "class":"Operator-Scientist"
+                    "class":"Operator-Scientist",
+                    "savepos":true
                 }
             },
             "Operator-Scientist": {

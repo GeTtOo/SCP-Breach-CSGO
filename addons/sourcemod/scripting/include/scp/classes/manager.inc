@@ -2,21 +2,23 @@
 /*----------------------------------------------------Round Manager-----------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
+#include "scp\classes\manager\nuke.inc"
+
 methodmap Manager < Base {
 
     public Manager() {
         Manager mngr = view_as<Manager>(new Base());
+        mngr.SetValue("nuke", new NuclearWarhead());
         return mngr;
+    }
+
+    property NuclearWarhead nuke {
+        public get() { NuclearWarhead nuke; return this.GetValue("nuke", nuke) ? nuke : null; }
     }
 
     property int CollisionGroup {
         public set(int value) { this.SetInt("collisiongroup", value); }
         public get() { return this.GetInt("collisiongroup"); }
-    }
-
-    property bool IsNuked {
-        public set(bool value) { this.SetBool("nuked", value); }
-        public get() { return this.GetBool("nuked"); }
     }
 
     property bool RoundComplete {
