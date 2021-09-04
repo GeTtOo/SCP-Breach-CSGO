@@ -40,6 +40,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("GameMode.config.get", NativeGameMode_Config);
     CreateNative("GameMode.entities.get", NativeGameMode_Entities);
     CreateNative("GameMode.mngr.get", NativeGameMode_Manager);
+    CreateNative("GameMode.nuke.get", NativeGameMode_Nuke);
     CreateNative("GameMode.timer.get", NativeGameMode_Timers);
     CreateNative("GameMode.log.get", NativeGameMode_Logger);
     
@@ -114,6 +115,7 @@ public void OnMapStart()
     gamemode = new GameMode(mapName);
     
     gamemode.SetValue("Manager", new Manager());
+    gamemode.SetValue("Nuke", new NuclearWarhead());
     gamemode.SetValue("Logger", new Logger());
     
     gamemode.mngr.CollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
@@ -219,7 +221,6 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
     if(!IsWarmup())
     {
         gamemode.mngr.RoundComplete = false;
-        gamemode.mngr.nuke.IsNuked = false;
         
         ArrayList sortedPlayers = new ArrayList();
         
@@ -297,7 +298,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         SetupMapRegions();
         SpawnItemsOnMap();
 
-        gamemode.mngr.nuke.SpawnDisplay();
+        gamemode.nuke.SpawnDisplay();
 
         CheckNewPlayers(gamemode.config.psars);
 
@@ -325,6 +326,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
 
     Ents.Clear();
     WT.Clear();
+    gamemode.nuke.Reset();
 
     Call_StartForward(OnRoundEndForward);
     Call_Finish();
@@ -369,7 +371,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
         if (gamemode.config.debug)
             PrintToChatAll(" \x07[SCP Admin] \x01Door/Button id: (%i)", doorId);
 
-        gamemode.mngr.nuke.Controller(doorId);
+        gamemode.nuke.Controller(doorId);
 
         StringMapSnapshot doorsSnapshot = gamemode.config.doors.GetAll();
         int doorKeyLen;
@@ -824,67 +826,6 @@ public void EndRoundCount(Client ply)
 stock void FakePrecacheSound(const char[] szPath)
 {
     AddToStringTable(FindStringTable( "soundprecache" ), szPath);
-}
-
-stock void Shake(int client)
-{
-    Handle message = StartMessageOne("Shake", client, USERMSG_RELIABLE);
-
-    PbSetInt(message, "command", 0);
-    PbSetFloat(message, "local_amplitude", 50.0);
-    PbSetFloat(message, "frequency", 10.0);
-    PbSetFloat(message, "duration", 5.0);
-
-    EndMessage();
-}
-
-public void SCP_AlphaWarheadCountdown() {
-    char time[32], time2[10], time3[4];
-    float cursec = gamemode.mngr.nuke.detonationtime - GetGameTime();
-    FloatToString(FloatFraction(cursec), time2, sizeof(time2));
-    strcopy(time3, sizeof(time3), time2[2]);
-    Format(time, sizeof(time), "%i:%i:%s",  RoundToNearest(cursec) / 60, RoundFloat(cursec) % 60, time3);
-    gamemode.mngr.nuke.Update(time);
-}
-
-public void ClosingDoorBeforeNukeExplode() {
-    int ent;
-    while((ent = FindEntityByClassname(ent, "func_door")) != -1)
-    {
-        char name[16];
-        GetEntPropString(ent, Prop_Data, "m_iName", name, sizeof(name));
-        
-        if(StrContains(name, "DoorGate", false) != -1)
-        {
-            AcceptEntityInput(ent, "Close");
-            AcceptEntityInput(ent, "Lock");
-        }
-    }
-}
-
-public void NukeExplode() {
-    float pos[3];
-    gamemode.mngr.nuke.IsNuked = true;
-
-    for(int client = 0; client < MAXPLAYERS; client++)
-    {
-        if(IsClientExist(client))
-        {
-            GetClientAbsOrigin(client, pos);
-
-            if(pos[2] <= gamemode.config.nuke.killpos)
-            {
-                ForcePlayerSuicide(client);
-            }
-            else
-            {
-                EmitSoundToClient(client, NUKE_EXPLOSION_SOUND);
-                Shake(client);
-            }
-        }
-    }
-
-    gamemode.mngr.nuke.Update("Site destroyed");
 }
 
 stock bool IsClientExist(int client)

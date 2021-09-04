@@ -2,18 +2,11 @@
 /*----------------------------------------------------Round Manager-----------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
-#include "scp\classes\manager\nuke.inc"
-
 methodmap Manager < Base {
 
     public Manager() {
         Manager mngr = view_as<Manager>(new Base());
-        mngr.SetValue("nuke", new NuclearWarhead());
         return mngr;
-    }
-
-    property NuclearWarhead nuke {
-        public get() { NuclearWarhead nuke; return this.GetValue("nuke", nuke) ? nuke : null; }
     }
 
     property int CollisionGroup {
@@ -28,6 +21,42 @@ methodmap Manager < Base {
 
     public void SetCollisionGroup(int entity, int group) {
         SetEntData(entity, this.CollisionGroup, group, 4, true);
+    }
+
+    public void PlaySound(char[] path, int channel) {
+        EmitSoundToAll(path, _, channel);
+    }
+
+    public void StopSound(char[] path, int channel) {
+        for (int i=0; i < MAXPLAYERS; i++) {
+            Client ply = Clients.Get(i);
+
+            if (ply != null)
+                StopSound(ply.id, channel, path);
+        }
+    }
+
+    public void Fade(int entid, int duration, int holdtime, Colour clr, int bits = 0x0001)
+    {
+        Handle umsg = StartMessageOne("Fade", entid, USERMSG_RELIABLE);
+        PbSetInt(umsg, "duration", duration);
+        PbSetInt(umsg, "hold_time", holdtime);
+        PbSetInt(umsg, "flags", bits);
+        int arr[4];
+        clr.GetArr(arr);
+        PbSetColor(umsg, "clr", arr);
+        EndMessage();
+    }
+
+    public void Shake(int entid, int duration, int amplitude, int frequency)
+    {
+        Handle message = StartMessageOne("Shake", entid, USERMSG_RELIABLE);
+
+        PbSetInt(message, "command", 0);
+        PbSetFloat(message, "local_amplitude", float(amplitude));
+        PbSetFloat(message, "frequency", float(frequency));
+        PbSetFloat(message, "duration", float(duration));
+        EndMessage();
     }
     
     public bool CheckTeamStatus(char[] buffer, int max_size) {

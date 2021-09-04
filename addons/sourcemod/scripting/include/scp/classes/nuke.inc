@@ -82,7 +82,7 @@ methodmap NuclearWarhead < Base {
         this.detonationtime = GetGameTime() + float(gamemode.config.nuke.time);
 
         //if (this.resumetime == 0.0)
-        gamemode.timer.Create("SCP_ALPHA_WARHEAD_COUNTDOWN", 10, gamemode.config.nuke.time * 100000, "SCP_AlphaWarheadCountdown");
+        gamemode.timer.Create("SCP_ALPHA_WARHEAD_COUNTDOWN", 100, gamemode.config.nuke.time * 10000, "SCP_AlphaWarheadCountdown");
         //else
             //gamemode.timer.Create("SCP_ALPHA_WARHEAD_COUNTDOWN", 10, RoundToNearest(this.resumetime) * 100000, "SCP_AlphaWarheadCountdown");
 
@@ -100,8 +100,10 @@ methodmap NuclearWarhead < Base {
 
         char sound[128];
         gamemode.config.nuke.sound(sound, sizeof(sound));
+        
+        gamemode.mngr.StopSound(sound, 240);
 
-        StopSound(1,240,sound);
+        this.Update("Canceled");
     }
 
     public void SpawnDisplay() {
@@ -117,11 +119,71 @@ methodmap NuclearWarhead < Base {
     }
     
     public void Controller(int btnId) {
-        if (gamemode.config.nuke.readybtn == btnId && !this.ready)
+        if (gamemode.config.nuke.readybtn == btnId && !this.ready && !this.IsNuked)
             this.Ready();
-        else if (gamemode.config.nuke.activebtn == btnId && this.ready && !this.active)
+        else if (gamemode.config.nuke.activebtn == btnId && this.ready && !this.active && !this.IsNuked)
             this.Activate();
         else if (gamemode.config.nuke.cancelbtn == btnId && this.ready && this.active)
             this.Cancel();
     }
+    
+    public void Reset() {
+        this.IsNuked = false;
+        this.ready = false;
+        this.active = false;
+        this.resumetime = 0.0;
+        this.detonationtime = 0.0;
+    }
+}
+
+public void SCP_AlphaWarheadCountdown() {
+    char time[32], time2[10], time3[3];
+    float cursec = gamemode.nuke.detonationtime - GetGameTime();
+    FloatToString(FloatFraction(cursec), time2, sizeof(time2));
+    strcopy(time3, sizeof(time3), time2[2]);
+    Format(time, sizeof(time), "%i:%i:%s",  RoundToNearest(cursec) / 60, RoundFloat(cursec) % 60, time3);
+    gamemode.nuke.Update(time);
+}
+
+public void ClosingDoorBeforeNukeExplode() {
+    int ent;
+    while((ent = FindEntityByClassname(ent, "func_door")) != -1)
+    {
+        char name[16];
+        GetEntPropString(ent, Prop_Data, "m_iName", name, sizeof(name));
+        
+        if(StrContains(name, "DoorGate", false) != -1)
+        {
+            AcceptEntityInput(ent, "Close");
+            AcceptEntityInput(ent, "Lock");
+        }
+    }
+}
+
+public void NukeExplode() {
+    gamemode.nuke.IsNuked = true;
+
+    for(int i=0; i < MAXPLAYERS; i++)
+    {
+        Client ply = Clients.Get(i);
+
+        if(ply != null && ply.IsAlive())
+        {
+            Vector pos = ply.GetPos();
+
+            if(pos.z <= gamemode.config.nuke.killpos)
+            {
+                ply.Kill();
+            }
+            else
+            {
+                EmitSoundToClient(ply.id, NUKE_EXPLOSION_SOUND);
+                gamemode.mngr.Shake(ply.id, 5, 10, 50);
+            }
+
+            delete pos;
+        }
+    }
+
+    gamemode.nuke.Update("Site destroyed");
 }

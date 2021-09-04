@@ -26,6 +26,7 @@ EntitySingleton Ents;
 WorldTextSingleton WT;
 
 #include "scp/classes/manager"
+#include "scp/classes/nuke"
 #include "scp/classes/logger"
 
 forward void SCP_OnPlayerJoin(Client &ply);
@@ -55,6 +56,8 @@ public any NativeGameMode_Config(Handle Plugin, int numArgs) { return view_as<Co
 public any NativeGameMode_Entities(Handle Plugin, int numArgs) { return view_as<Entities>(gamemode.GetObject("Entities")); }
 
 public any NativeGameMode_Manager(Handle Plugin, int numArgs) { return view_as<Manager>(gamemode.GetObject("Manager")); }
+
+public any NativeGameMode_Nuke(Handle Plugin, int numArgs) { return view_as<NuclearWarhead>(gamemode.GetObject("Nuke")); }
 
 public any NativeGameMode_Timers(Handle Plugin, int numArgs) { return view_as<Timers>(gamemode.GetObject("Timers")); }
 

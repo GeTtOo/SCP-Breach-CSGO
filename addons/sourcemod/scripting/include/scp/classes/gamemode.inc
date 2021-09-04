@@ -68,6 +68,10 @@ methodmap GameMode < JSON_OBJECT {
         public native get();
     }
 
+    property NuclearWarhead nuke {
+        public native get();
+    }
+
     property Timers timer {
         public native get();
     }
