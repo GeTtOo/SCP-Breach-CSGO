@@ -18,8 +18,6 @@ public Plugin myinfo = {
 
 public void SCP_OnPlayerJoin(Client &ply)
 {
-    HookEvent("player_death", Event_PlayerDeath);
-    HookEvent("round_end", OnRoundEnd);
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
 }
 
@@ -50,19 +48,24 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
     return Plugin_Continue;
 }
 
-public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
+public void SCP_OnPlayerClear(Client &ply)
 {
-    DeleteEffect(GetClientOfUserId(GetEventInt(event, "userid")));
-}
+    if (ply != null && ply.class != null && ply.class.Is("457"))
+    {
+        SetEntityRenderMode(ply.id, RENDER_NORMAL);
 
-public void OnRoundEnd(Event event, const char[] name, bool dbroadcast) 
-{
-    DeleteEffect(GetClientOfUserId(GetEventInt(event, "userid")));
-}
+        if(particle != -1)
+        {
+            AcceptEntityInput(particle, "Kill");
+            particle = -1;
+        }
 
-public void OnClientDisconnect(int client)
-{
-    DeleteEffect(client);
+        int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
+        if (ent > MaxClients && IsValidEdict(ent))
+        {
+            AcceptEntityInput(ent, "Kill");
+        }
+    }
 }
 
 void IgniteEffect(int client)
@@ -88,28 +91,6 @@ void IgniteEffect(int client)
         AcceptEntityInput(particle, "SetParent", client);
         ActivateEntity(particle);
         AcceptEntityInput(particle, "Start");
-    }
-}
-
-void DeleteEffect(int client)
-{
-    Client ply = Clients.Get(client);
-
-    if (ply != null && ply.class != null && ply.class.Is("457"))
-    {
-        SetEntityRenderMode(ply.id, RENDER_NORMAL);
-
-        if(particle != -1)
-        {
-            AcceptEntityInput(particle, "Kill");
-            particle = -1;
-        }
-
-        int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
-        if (ent > MaxClients && IsValidEdict(ent))
-        {
-            AcceptEntityInput(ent, "Kill");
-        }
     }
 }
 

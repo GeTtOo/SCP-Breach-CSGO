@@ -12,6 +12,7 @@ Handle OnClientJoinForward;
 Handle OnClientLeaveForward;
 Handle OnClientSpawnForward;
 Handle OnClientResetForward;
+Handle OnClientClearForward;
 Handle OnTakeDamageForward;
 Handle OnPlayerDeathForward;
 Handle OnButtonPressedForward;
@@ -59,6 +60,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_CellByRef);
     OnClientSpawnForward = CreateGlobalForward("SCP_OnPlayerSpawn", ET_Event, Param_CellByRef);
     OnClientResetForward = CreateGlobalForward("SCP_OnPlayerReset", ET_Event, Param_CellByRef);
+    OnClientClearForward = CreateGlobalForward("SCP_OnPlayerClear", ET_Event, Param_CellByRef);
     OnTakeDamageForward = CreateGlobalForward("SCP_OnTakeDamage", ET_Event, Param_Cell, Param_Cell, Param_FloatByRef, Param_CellByRef);
     OnPlayerDeathForward = CreateGlobalForward("SCP_OnPlayerDeath", ET_Event, Param_CellByRef, Param_CellByRef);
     OnButtonPressedForward = CreateGlobalForward("SCP_OnButtonPressed", ET_Event, Param_CellByRef, Param_Cell);
@@ -171,6 +173,10 @@ public void OnClientDisconnect_Post(int id)
         gamemode.log.Info("Client disconnected: %i", ply.id);
 
     EndRoundCount(ply);
+
+    Call_StartForward(OnClientClearForward);
+    Call_PushCellRef(ply);
+    Call_Finish();
 
     Call_StartForward(OnClientLeaveForward);
     Call_PushCellRef(ply);
@@ -313,6 +319,10 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
     {
         Client client = Clients.Get(cig);
 
+        Call_StartForward(OnClientClearForward);
+        Call_PushCellRef(client);
+        Call_Finish();
+
         Call_StartForward(OnClientResetForward);
         Call_PushCellRef(client);
         Call_Finish();
@@ -326,6 +336,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
 
     Ents.Clear();
     WT.Clear();
+    gamemode.timer.GetList("timers").Clear();
     gamemode.nuke.Reset();
 
     Call_StartForward(OnRoundEndForward);
@@ -527,7 +538,12 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
         vic.active = false;
 
+        Call_StartForward(OnClientClearForward);
+        Call_PushCellRef(vic);
+        Call_Finish();
+
         vic.Team("Dead");
+        vic.class = null;
 
         EndRoundCount(vic);
 

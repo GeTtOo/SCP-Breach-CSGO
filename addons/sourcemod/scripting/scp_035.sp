@@ -16,12 +16,6 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void OnPluginStart()
-{
-    HookEvent("player_death", Event_PlayerDeath);
-    HookEvent("round_end", OnRoundEnd);
-}
-
 public void SCP_OnPlayerJoin(Client &ply)
 {
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
@@ -35,19 +29,12 @@ public void SCP_OnRoundStart()
     .Spawn();
 }
 
-public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
+public void SCP_OnPlayerClear(Client &ply)
 {
-    TimerKill(GetClientOfUserId(GetEventInt(event, "userid")));
-}
-
-public void OnRoundEnd(Event event, const char[] name, bool dbroadcast)
-{
-    TimerKill(GetClientOfUserId(GetEventInt(event, "userid")));
-}
-
-public void OnClientDisconnect(int client)
-{
-    TimerKill(client);
+    if (ply != null && ply.class != null && ply.class.Is("035"))
+    {
+        gamemode.timer.Remove("Timer_SCP-035_Hit");
+    }
 }
 
 public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
@@ -94,14 +81,4 @@ public Action HandlerHitSCP(Client ply)
         ply.health -= 10;
     else
         ForcePlayerSuicide(ply.id);
-}
-
-void TimerKill(int client)
-{
-    Client ply = Clients.Get(client);
-
-    if (ply != null && ply.class != null && ply.class.Is("035"))
-    {
-        gamemode.timer.Remove("Timer_SCP-035_Hit");
-    }
 }

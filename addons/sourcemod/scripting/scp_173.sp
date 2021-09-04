@@ -23,19 +23,14 @@ public void SCP_OnPlayerSpawn(Client &ply)
     }
 }
 
-public void SCP_OnPlayerReset(Client &ply)
+public void SCP_OnPlayerClear(Client &ply)
 {
-    DestroyVisualChecker(ply);
-}
+    if (ply != null && ply.class != null && ply.class.Is("173")) {
+        char  timername[128];
+        Format(timername, sizeof(timername), "SCP-173-%i", ply.id);
 
-public void SCP_OnPlayerDeath(Client &ply)
-{
-    DestroyVisualChecker(ply);
-}
-
-public void SCP_OnPlayerLeave(Client &ply)
-{
-    DestroyVisualChecker(ply);
+        gamemode.timer.Remove(timername);
+    }
 }
 
 public void CheckVisualContact(Client ply) 
@@ -94,16 +89,6 @@ public bool RayFilter(int ent, int mask, any data)
 {
     if (ent >= 1 && ent <= MaxClients) return false;
     return true;
-}
-
-public void DestroyVisualChecker(Client ply) 
-{
-    if (ply != null && ply.class != null && ply.class.Is("173")) {
-        char  timername[128];
-        Format(timername, sizeof(timername), "SCP-173-%i", ply.id);
-
-        gamemode.timer.Remove(timername);
-    }
 }
 
 public void SCP_OnInput(Client &atk, int buttons)

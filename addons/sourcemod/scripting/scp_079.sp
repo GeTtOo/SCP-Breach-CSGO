@@ -57,10 +57,6 @@ methodmap Controller < Base {
     }
 }
 
-public void OnPluginStart() {
-    PrintToServer("Plugin loaded");
-}
-
 public void SCP_OnRoundStart() {
     CamList = new ArrayList();
 

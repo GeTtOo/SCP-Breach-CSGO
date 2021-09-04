@@ -12,6 +12,7 @@ methodmap Tmr < Base {
         timer.SetInt("repeations", repeations);
         timer.SetString("func", func);
         timer.SetValue("args", args);
+        timer.SetBool("removed", false);
 
         timer.SetFloat("nextinvoke", GetGameTime() + delay);
 
@@ -43,6 +44,11 @@ methodmap Tmr < Base {
         public get() { Handle args; return this.GetValue("args", args) ? args : null; }
     }
 
+    property bool removed {
+        public set(bool val) { this.SetBool("removed", val); }
+        public get() { return this.GetBool("removed"); }
+    }
+
     property float nextinvoke {
         public set(float time) { this.SetFloat("nextinvoke", time); }
         public get() { return this.GetFloat("nextinvoke"); }
@@ -67,7 +73,7 @@ methodmap Timers < Base {
         ArrayList list = this.GetList("timers");
         
         for (int i=0; i < list.Length; i++) {
-            char timername[32];
+            char timername[64];
             view_as<Tmr>(list.Get(i)).name(timername, sizeof(timername));
             if (StrEqual(timername, name)) {
                 list.Erase(i);
@@ -86,7 +92,7 @@ methodmap Timers < Base {
     }
     
     public void Simple(int delay, char[] funcname, any args = false) {
-        char timername[32], pname[32];
+        char timername[64], pname[64];
         GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
         IntToString(GetTime(), timername, sizeof(timername));
         Format(timername, sizeof(timername), "%s_%s", pname, timername);
@@ -98,8 +104,8 @@ methodmap Timers < Base {
 
         for (int i=0; i < list.Length; i++) {
             Tmr timer = list.Get(i);
-            if (GetGameTime() >= timer.GetFloat("nextinvoke")) {
-                char funcname[32];
+            if (!timer.removed && GetGameTime() >= timer.nextinvoke) {
+                char funcname[64];
 
                 timer.func(funcname, sizeof(funcname));
 
@@ -109,7 +115,10 @@ methodmap Timers < Base {
                 Call_Finish();
                 
                 if (timer.repeations == 1)
-                    list.Erase(i);
+                {
+                    timer.removed = true;
+                    //list.Erase(i);
+                }
                 else if (timer.repeations > 1) {
                     timer.nextinvoke += timer.delay;
                     timer.repeations--;

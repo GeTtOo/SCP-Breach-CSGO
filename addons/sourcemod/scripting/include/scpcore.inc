@@ -37,6 +37,8 @@ forward void SCP_OnPlayerSpawn(Client &ply);
 
 forward void SCP_OnPlayerReset(Client &ply);
 
+forward void SCP_OnPlayerClear(Client &ply);
+
 forward Action SCP_OnTakeDamage(Client vic, Client atk, float &damage, int &damagetype);
 
 forward void SCP_OnPlayerDeath(Client &vic, Client &atk);

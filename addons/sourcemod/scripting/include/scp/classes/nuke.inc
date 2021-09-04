@@ -82,7 +82,7 @@ methodmap NuclearWarhead < Base {
         this.detonationtime = GetGameTime() + float(gamemode.config.nuke.time);
 
         //if (this.resumetime == 0.0)
-        gamemode.timer.Create("SCP_ALPHA_WARHEAD_COUNTDOWN", 100, gamemode.config.nuke.time * 10000, "SCP_AlphaWarheadCountdown");
+        gamemode.timer.Create("SCP_ALPHA_WARHEAD_COUNTDOWN", 100, 0, "SCP_AlphaWarheadCountdown");
         //else
             //gamemode.timer.Create("SCP_ALPHA_WARHEAD_COUNTDOWN", 10, RoundToNearest(this.resumetime) * 100000, "SCP_AlphaWarheadCountdown");
 
@@ -143,6 +143,9 @@ public void SCP_AlphaWarheadCountdown() {
     strcopy(time3, sizeof(time3), time2[2]);
     Format(time, sizeof(time), "%i:%i:%s",  RoundToNearest(cursec) / 60, RoundFloat(cursec) % 60, time3);
     gamemode.nuke.Update(time);
+
+    //if ((gamemode.nuke.detonationtime - GetGameTime()) < 0.1)
+        //gamemode.nuke.Update("Site destroyed");
 }
 
 public void ClosingDoorBeforeNukeExplode() {
@@ -161,6 +164,7 @@ public void ClosingDoorBeforeNukeExplode() {
 }
 
 public void NukeExplode() {
+
     gamemode.nuke.IsNuked = true;
 
     for(int i=0; i < MAXPLAYERS; i++)
@@ -184,6 +188,8 @@ public void NukeExplode() {
             delete pos;
         }
     }
+
+    gamemode.timer.Remove("SCP_ALPHA_WARHEAD_COUNTDOWN");
 
     gamemode.nuke.Update("Site destroyed");
 }
