@@ -10,6 +10,7 @@
         "time":110,
         "killpos":1690,
         "sound":"*/scp/warhead_announcement.mp3",
+        "cancelsound":"*/scp/warhead_canceled.mp3",
         "readybtn":319835,
         "activebtn":319810,
         "cancelbtn":319835,

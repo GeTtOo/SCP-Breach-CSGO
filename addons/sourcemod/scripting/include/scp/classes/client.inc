@@ -101,6 +101,17 @@ methodmap Client < Entity {
 
     public void Team(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("team", buffer) : this.GetString("team", buffer, max_size); }
 
+    public void PlaySound(char[] path, int channel = 40, int level = 100, int entity = 0) {
+        int clients[1];
+        clients[0] = this.id;
+
+        EmitSound(clients, sizeof(clients), path, (entity == 0) ? this.id : entity, channel, level);
+    }
+
+    public void StopSound(char[] path, int channel = 40) {
+        StopSound(this.id, channel, path);
+    }
+
     public int Give(char[] item) { return GivePlayerItem(this.id, item); }
 
     public void RestrictWeapons() {

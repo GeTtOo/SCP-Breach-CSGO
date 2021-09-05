@@ -336,8 +336,8 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
 
     Ents.Clear();
     WT.Clear();
-    gamemode.timer.GetList("timers").Clear();
     gamemode.nuke.Reset();
+    gamemode.timer.ClearAll();
 
     Call_StartForward(OnRoundEndForward);
     Call_Finish();

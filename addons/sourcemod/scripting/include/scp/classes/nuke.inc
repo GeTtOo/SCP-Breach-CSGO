@@ -61,7 +61,7 @@ methodmap NuclearWarhead < Base {
         char sound[128];
         gamemode.config.nuke.sound(sound, sizeof(sound));
 
-        EmitSoundToAll(sound,_,240);
+        gamemode.mngr.PlaySoundToAll(sound, 240);
 
         gamemode.timer.Create("SCP_ALPHA_WARHEAD_CALL_EXPLODE", gamemode.config.nuke.time * 1000, 1, "NukeExplode");
         gamemode.timer.Create("SCP_ALPHA_WARHEAD_DOOR_CONTROLLER", (gamemode.config.nuke.time - 10) * 1000, 1, "ClosingDoorBeforeNukeExplode");
@@ -100,8 +100,10 @@ methodmap NuclearWarhead < Base {
 
         char sound[128];
         gamemode.config.nuke.sound(sound, sizeof(sound));
-        
-        gamemode.mngr.StopSound(sound, 240);
+        gamemode.mngr.StopSoundAll(sound, 240);
+
+        gamemode.config.nuke.cancelsound(sound, sizeof(sound));
+        gamemode.mngr.PlaySoundToAll(sound, 250);
 
         this.Update("Canceled");
     }

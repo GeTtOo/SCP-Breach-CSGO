@@ -36,4 +36,8 @@ methodmap NukeConfig < JSON_OBJECT {
     public void sound(char[] buffer, int max_size) {
         this.GetString("sound", buffer, max_size);
     }
+
+    public void cancelsound(char[] buffer, int max_size) {
+        this.GetString("cancelsound", buffer, max_size);
+    }
 }

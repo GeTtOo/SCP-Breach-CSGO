@@ -23,17 +23,25 @@ methodmap Manager < Base {
         SetEntData(entity, this.CollisionGroup, group, 4, true);
     }
 
-    public void PlaySound(char[] path, int channel) {
+    public void PlaySoundToAll(char[] path, int channel) {
         EmitSoundToAll(path, _, channel);
     }
 
-    public void StopSound(char[] path, int channel) {
+    public void StopSoundAll(char[] path, int channel) {
         for (int i=0; i < MAXPLAYERS; i++) {
             Client ply = Clients.Get(i);
 
             if (ply != null)
                 StopSound(ply.id, channel, path);
         }
+    }
+
+    public void PlayAmbient(char[] path, Client ply) {
+        float vecarr[3];
+        Vector vec = ply.EyePos();
+        vec.GetArr(vecarr);
+        delete vec;
+        EmitAmbientSound(path, vecarr, ply.id);
     }
 
     public void Fade(int entid, int duration, int holdtime, Colour clr, int bits = 0x0001)

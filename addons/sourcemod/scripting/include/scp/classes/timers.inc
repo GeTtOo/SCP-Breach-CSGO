@@ -84,11 +84,16 @@ methodmap Timers < Base {
         return false;
     }
 
+    public void ClearAll() {
+        this.GetList("timers").Clear();
+    }
+
     public void PluginClear() {
         ArrayList list = this.GetList("timers");
-        for (int i=0; i < list.Length; i++)
-            if (view_as<Tmr>(list.Get(i)).ph == GetMyHandle())
-                list.Erase(i);
+        if (list.Length != 0)
+            for (int i=0; i < list.Length; i++)
+                if (view_as<Tmr>(list.Get(i)).ph == GetMyHandle())
+                    list.Erase(i);
     }
     
     public void Simple(int delay, char[] funcname, any args = false) {

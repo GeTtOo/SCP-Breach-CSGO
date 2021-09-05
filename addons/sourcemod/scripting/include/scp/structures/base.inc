@@ -12,4 +12,6 @@ methodmap Base < StringMap {
     public float GetFloat(char[] index, float defval = 0.0) { float val; return this.GetValue(index, val) ? val : defval; }
     public bool GetBool(char[] index, bool defval = false) { bool val; return this.GetValue(index, val) ? val : defval; }
     public ArrayList GetList(char[] index) { ArrayList list; return this.GetValue(index, list) ? list : null; }
+
+    public bool RemoveValue(char[] index) { return this.Remove(index); }
 }
