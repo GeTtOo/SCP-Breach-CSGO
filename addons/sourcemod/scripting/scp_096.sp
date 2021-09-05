@@ -13,8 +13,6 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-bool IsRage = false;
-
 public void SCP_OnPlayerJoin(Client &ply) 
 {
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
@@ -22,16 +20,28 @@ public void SCP_OnPlayerJoin(Client &ply)
 
 public void SCP_OnPlayerSpawn(Client &ply) {
     if (ply.class != null && ply.class.Is("096")) {
+
+        ply.SetBool("IsRage", false);
+        ply.SetBool("cooldown", false);
+        
         char  timername[128];
         Format(timername, sizeof(timername), "SCP-096-%i", ply.id);
-
         gamemode.timer.Create(timername, 250, 0, "CheckVision", ply);
+
+        Format(timername, sizeof(timername), "SCP-096-S-%i", ply.id);
+        gamemode.timer.Create(timername, 46000, 0, "Crying", ply);
+
+        Crying(ply);
     }
 }
 
 public void SCP_OnPlayerClear(Client &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("096")) {
+        
+        ply.RemoveValue("IsRage");
+        ply.RemoveValue("cooldown");
+        
         char  timername[128];
         Format(timername, sizeof(timername), "SCP-096-%i", ply.id);
 
@@ -46,8 +56,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 
 	if(atk.class.Is("096"))
 	{
-        PrintToServer("Test");
-        if (IsRage)
+        if (atk.GetBool("IsRage"))
             damage += 800;
         else
             damage = 0.0;
@@ -88,11 +97,19 @@ public void CheckVision(Client ply) {
                         Handle ray = TR_TraceRayFilterEx(scpPosArr, playerPosArr, MASK_PLAYERSOLID_BRUSHONLY, RayType_EndPoint, RayFilter);
                         if (!TR_DidHit(ray))
                         {
-                            if (!IsRage)
+                            if (!ply.GetBool("cooldown") && !ply.GetBool("IsRage"))
                             {
-                                IsRage = true;
-                                ply.speed = 0.0;
-                                gamemode.timer.Simple(2000, "Rage", ply);
+                                ply.SetBool("IsRage", true);
+                                ply.speed = 0.1;
+
+                                char  timername[128];
+                                Format(timername, sizeof(timername), "SCP-096-S-%i", ply.id);
+                                gamemode.timer.Remove(timername);
+
+                                ply.StopSound("*/scp/scp-096_crying.mp3", 280);
+                                
+                                gamemode.timer.Simple(5500, "Rage", ply);
+                                gamemode.mngr.PlayAmbient("*/scp/scp-096_rage_start.mp3", ply);
                             }
                         }
 
@@ -118,13 +135,53 @@ public void Rage(Client ply) {
     ply.speed = 260.0;
     ply.multipler = 2.5;
 
-    gamemode.timer.Simple(15000, "Tranquility", ply);
+    gamemode.mngr.PlayAmbient("*/scp/scp-096_rage.mp3", ply);
+
+    gamemode.timer.Simple(10500, "Tranquility", ply);
 }
 
 public void Tranquility(Client ply) {
     if (ply != null && ply.class != null && ply.IsAlive()) {
         ply.speed = ply.class.speed;
         ply.multipler = ply.class.multipler;
-        IsRage = false;
+        ply.SetBool("IsRage", false);
+        ply.SetBool("cooldown", true);
+
+        gamemode.mngr.PlayAmbient("*/scp/scp-096_tranquility.mp3", ply);
+
+        gamemode.timer.Simple(25000, "CooldownReset", ply);
+        gamemode.timer.Simple(5900, "StartCrying", ply);
+    }
+}
+
+public void StartCrying(Client ply) {
+    char  timername[128];
+    Format(timername, sizeof(timername), "SCP-096-S-%i", ply.id);
+    gamemode.timer.Create(timername, 46000, 0, "Crying", ply);
+
+    Crying(ply);
+}
+
+public void Crying(Client ply) {
+    ply.PlaySound("*/scp/scp-096_crying.mp3", 280);
+}
+
+public void CooldownReset(Client ply) {
+    ply.SetBool("cooldown", false);
+}
+
+public void SCP_OnPressF(Client &ply) {
+    if (ply.GetBool("IsRage")){
+        gamemode.timer.Simple(1500, "DisableAbility", ply);
+        ply.multipler *= 2;
+    }
+}
+
+public void DisableAbility(Client ply) {
+    if (ply.GetBool("IsRage")){
+        ply.multipler = 2.5;
+    } else {
+        ply.speed = ply.class.speed;
+        ply.multipler = ply.class.multipler;
     }
 }
