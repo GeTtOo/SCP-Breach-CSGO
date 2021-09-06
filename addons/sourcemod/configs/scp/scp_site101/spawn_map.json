@@ -6,25 +6,25 @@
         {"chance":100,"pos":[578, -3444, 43]},
         {"chance":100,"pos":[3240,-2231,50]}
     ],
-    "card_bg":[
+    "card_scientist":[
         {"chance":100,"pos":[3220,-2231,50]}
     ],
-    "card_bs":[
+    "card_major_scientist":[
         {"chance":25,"pos":[2704,-2382,272]}
     ],
-    "card_en":[
+    "card_guard":[
         {"chance":100,"pos":[3180,-2231,50]}
     ],
-    "card_fm":[
+    "card_containment_engineer":[
         {"chance":100,"pos":[3160,-2231,50]}
     ],
-    "card_j":[
+    "card_facility_manager":[
         {"chance":100,"pos":[3140,-2231,50]}
     ],
-    "card_lt":[
+    "card_janitor":[
         {"chance":100,"pos":[3120,-2231,50]}
     ],
-    "card_zm":[
+    "card_mog_commander":[
         {"chance":100,"pos":[3100,-2231,50]}
     ]
 }

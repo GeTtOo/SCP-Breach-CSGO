@@ -64,21 +64,11 @@ methodmap EntitySingleton < Base {
 
         if (StrContains(entName, "weapon") != -1)
             switch (GetEntProp(ent.id, Prop_Send, "m_iItemDefinitionIndex")) {
-                case 60: {
-                    entName = "weapon_m4a1_silencer";
-                }
-                case 61: {
-                    entName = "weapon_usp_silencer";
-                }
-                case 63: {
-                    entName = "weapon_cz75a";
-                }
-                case 64: {
-                    entName = "weapon_revolver";
-                }
-                case 23: {
-                    entName = "weapon_mp5sd";
-                }
+                case 60: { entName = "weapon_m4a1_silencer"; }
+                case 61: { entName = "weapon_usp_silencer"; }
+                case 63: { entName = "weapon_cz75a"; }
+                case 64: { entName = "weapon_revolver"; }
+                case 23: { entName = "weapon_mp5sd"; }
             }
 
         ent.SetString("class", entName);

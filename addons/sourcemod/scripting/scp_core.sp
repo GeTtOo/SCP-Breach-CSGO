@@ -163,6 +163,9 @@ public void OnClientPostAdminCheck(int id)
     Call_StartForward(OnClientJoinForward);
     Call_PushCellRef(ply);
     Call_Finish();
+
+    if (!ply.active && !IsFakeClient(ply.id))
+        ply.SetPropFloat("m_fForceTeam", 0.0);
 }
 
 public void OnClientDisconnect_Post(int id)
@@ -337,7 +340,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
     Ents.Clear();
     WT.Clear();
     gamemode.nuke.Reset();
-    gamemode.timer.ClearAll();
+    gamemode.timer.PluginClear();
 
     Call_StartForward(OnRoundEndForward);
     Call_Finish();

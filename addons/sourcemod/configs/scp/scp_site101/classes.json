@@ -13,32 +13,32 @@
                 "armor":100,
                 "speed":260,
                 "multipler":1.0,
-                "items":["card_cm"],
+                "items":["card_mog_commander"],
                 "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer", ["weapon_healthshot", 2]],
                 "comment":"test"
             },
             "Lieutenant": {
                 "pos":[-10800,-5950,1715],
                 "percent":25,
-                "items":["card_lt"],
+                "items":["card_mog_lieutenant"],
                 "weapons":["weapon_m4a1", "weapon_hkp2000"]
             },
             "Operator": {
                 "pos":[-10800,-5950,1715],
                 "percent":25,
-                "items":["card_bg"],
+                "items":["card_senior_guard"],
                 "weapons":["weapon_m4a1", "weapon_hkp2000", "weapon_healthshot"]
             },
             "Sapper": {
                 "pos":[-10800,-5950,1715],
                 "percent":5,
-                "items":["card_bg"],
+                "items":["card_senior_guard"],
                 "weapons":["weapon_m4a1", "weapon_hkp2000", "weapon_hegrenade", "weapon_breachcharge"]
             },
             "Security": {
                 "pos":[-11040,-1735,2],
                 "percent":25,
-                "items":["card_en"],
+                "items":["card_guard"],
                 "weapons":["weapon_usp_silencer"],
                 "escape":{
                     "trigger":330025,
@@ -47,7 +47,7 @@
             },
             "Scientist": {
                 "percent":20,
-                "items":["card_bs"],
+                "items":["card_scientist"],
                 "escape":{
                     "trigger":330025,
                     "class":"Operator-Scientist",
@@ -57,14 +57,14 @@
             "Operator-Scientist": {
                 "pos":[-10800,-5950,1715],
                 "percent":0,
-                "items":["card_bg"],
+                "items":["card_senior_guard"],
                 "weapons":["weapon_mp7", "weapon_deagle"]
             },
             "Medic": {
                 "pos":[-6602, -7230, 0],
                 "ang":[0,90,0],
                 "percent":15,
-                "items":["card_bg"],
+                "items":["card_major_scientist"],
                 "weapons":[["weapon_healthshot", 2]],
                 "escape":{
                     "trigger":330025,
@@ -74,7 +74,7 @@
             "Operator-Medic": {
                 "pos":[-10800,-5950,1715],
                 "percent":0,
-                "items":["card_bg"],
+                "items":["card_scientist"],
                 "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 5]]
             }
         }
@@ -92,7 +92,7 @@
                 "health":180,
                 "armor":200,
                 "speed":234,
-                "items":["card_zm"],
+                "items":["card_chaos"],
                 "weapons":["weapon_m249", "weapon_revolver", "weapon_shield"]
             },
             "D Class": {
@@ -155,6 +155,7 @@
                 "comment":"Ded"
             },
             "173": {
+                "model":"models/player/custom_player/scp/captain_unit.mdl",
                 "pos":[-1800,-900,0],
                 "ang":[0,270,0],
                 "percent":20,

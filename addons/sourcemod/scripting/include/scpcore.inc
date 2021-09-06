@@ -129,10 +129,12 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
 
         entity = new Entity(CreateEntityByName("prop_physics_override"));
 
-        char modelName[128], mass[12], name[32];
+        char modelName[128], mass[12], name[32], bodygroup[12], skin[12];
         entcfg.model(modelName, sizeof(modelName));
-        entcfg.mass(mass, sizeof(mass));
         entcfg.name(name, sizeof(name));
+        FloatToString(entcfg.GetFloat("mass"), mass, sizeof(mass));
+        IntToString(entcfg.GetInt("bodygroup"), bodygroup, sizeof(bodygroup));
+        IntToString(entcfg.GetInt("skin"), skin, sizeof(skin));
         
         entity.InvName(name);
 
@@ -140,6 +142,8 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
         DispatchKeyValue(entity.id, "physicsmode", "2");
         DispatchKeyValue(entity.id, "massScale", mass);
         DispatchKeyValue(entity.id, "Solid", "6");
+        DispatchKeyValue(entity.id, "body", bodygroup);
+        DispatchKeyValue(entity.id, "skin", skin);
         if (entcfg.spawnflags != 0) {
             char flags[8];
             IntToString(entcfg.spawnflags, flags, sizeof(flags));
