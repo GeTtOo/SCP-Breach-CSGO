@@ -94,6 +94,12 @@
         "spawnflags":4356,
         "access":[1,2,4,6,7,8,9,10]
     },
+    "268_cap": {
+        "name":"SCP-268",
+        "model":"models/eternity/props/keycard.mdl",
+        "mass":0.2,
+        "spawnflags":4356
+    },
     "035_mask": {
         "name":"035 Маска",
         "model":"models/eternity/props/scp/scp_035.mdl",

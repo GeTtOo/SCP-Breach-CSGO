@@ -13,12 +13,17 @@ methodmap Class < JSON_OBJECT {
             this.GetString("name", buffer, max_size);
     }
 
-    public Vector GetPos() {
-        return this.GetVector("pos");
-    }
-
-    public Angle GetAng() {
-        return view_as<Angle>(this.GetVector("ang"));
+    public JSON_OBJECT GetVecAng() {
+        JSON_OBJECT posobj = this.GetObject("pos");
+        JSON_OBJECT vecang = null;
+        
+        if (posobj != null)
+            if (!posobj.IsArray)
+                vecang = posobj;
+            else
+                vecang = view_as<JSON_OBJECT>(view_as<JSON_ARRAY>(posobj).GetObject(GetRandomInt(0, view_as<JSON_ARRAY>(posobj).Length - 1)));
+        
+        return vecang;
     }
 
     property int percent {

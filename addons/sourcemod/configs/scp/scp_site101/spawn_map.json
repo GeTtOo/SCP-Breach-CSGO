@@ -2,6 +2,9 @@
     "weapon_deagle":[
         {"chance":50,"pos":[-2121, -6406, 257]}
     ],
+    "weapon_spanner":[
+        {"chance":100,"pos":[911,-3332,28],"ang":[0,67,0]}
+    ],
     "card_o5":[
         {"chance":100,"pos":[578, -3444, 43]},
         {"chance":100,"pos":[3240,-2231,50]}

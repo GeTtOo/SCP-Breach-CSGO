@@ -29,6 +29,23 @@ public void SCP_OnRoundStart()
     .Spawn();
 }
 
+public void SCP_OnPlayerSpawn(Client &ply) 
+{
+    if (ply.class != null && ply.class.Is("035"))
+        Logic(ply);
+}
+
+public SDKHookCB Callback_EntUse(int eid, int cid) 
+{
+    Client ply = Clients.Get(cid);
+
+    if (ply.IsSCP && ply != null && ply.class != null) return;
+
+    Ents.Remove(eid);
+
+    Logic(ply);
+}
+
 public void SCP_OnPlayerClear(Client &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("035"))
@@ -52,14 +69,16 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
     return Plugin_Continue;
 }
 
-public SDKHookCB Callback_EntUse(int eid, int cid) 
+public Action HandlerHitSCP(Client ply)
 {
-    Client ply = Clients.Get(cid);
+    if(ply.health > 10)
+        ply.health -= 10;
+    else
+        ForcePlayerSuicide(ply.id);
+}
 
-    if (ply.IsSCP && ply != null && ply.class != null) return;
-
-    Ents.Remove(eid);
-
+public void Logic(Client ply)
+{
     Vector sp = ply.GetPos();
     Angle sa = ply.GetAng();
 
@@ -73,12 +92,4 @@ public SDKHookCB Callback_EntUse(int eid, int cid)
     ply.SetPos(sp, sa);
     
     gamemode.timer.Create("Timer_SCP-035_Hit", 2500, 0, "HandlerHitSCP", ply);
-}
-
-public Action HandlerHitSCP(Client ply)
-{
-    if(ply.health > 10)
-        ply.health -= 10;
-    else
-        ForcePlayerSuicide(ply.id);
 }

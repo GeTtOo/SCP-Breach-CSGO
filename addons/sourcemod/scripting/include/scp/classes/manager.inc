@@ -146,4 +146,40 @@ methodmap Manager < Base {
 
         delete GlobalTeams;
     }
+
+    public void EndGame(char[] winteam) {
+        gamemode.mngr.RoundComplete = true;
+        
+        if (StrEqual(winteam, "nuke"))
+            PrintToChatAll(" \x07[SCP] \x01%t", "Site destroy");
+        else if(StrEqual(winteam, "nobody"))
+            PrintToChatAll(" \x07[SCP] \x01%t", "Site destroy");
+        else
+            PrintToChatAll(" \x07[SCP] \x01%t", "Team Win", winteam);
+
+        CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TargetBombed, false);
+    }
+
+    public void GameCheck(Client ply) {
+        if(Clients.Alive() == 0 && Clients.InGame() != 0)
+        {
+            this.EndGame("nuke");
+        }
+        else if(Clients.Alive() != 0)
+        {
+            if (ply != null && ply.class != null)
+            {
+                char team[32];
+                ply.Team(team, sizeof(team));
+                
+                char winTeam[32];
+                if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
+                    this.EndGame(winTeam);
+            }
+        }
+        else if (Clients.InGame() != 0)
+        {
+            this.EndGame("nobody");
+        }
+    }
 }

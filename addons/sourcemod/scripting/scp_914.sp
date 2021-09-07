@@ -28,7 +28,7 @@ public void OnPluginStart() {
 }
 
 public void OnPluginEnd() {
-    gamemode.timer.PluginClear();
+    //gamemode.timer.PluginClear();
 }
 
 public void OnMapStart() {

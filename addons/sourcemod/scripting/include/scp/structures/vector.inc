@@ -25,10 +25,24 @@ methodmap Vector < Base {
         public get() { return this.GetFloat("z"); }
     }
 
+    public void SetArr(float[3] vec) {
+        this.x = vec[0];
+        this.y = vec[1];
+        this.z = vec[2];
+    }
+
     public void GetArr(float[3] vec) {
         vec[0] = this.x;
         vec[1] = this.y;
         vec[2] = this.z;
+    }
+
+    public void GetArrD(float[3] vec) {
+        vec[0] = this.x;
+        vec[1] = this.y;
+        vec[2] = this.z;
+
+        delete this;
     }
 
     public Vector Plus(Vector vec2) {
@@ -77,6 +91,37 @@ methodmap Vector < Base {
         delete this;
 
         return length;
+    }
+
+    public Vector GetFromPoint(Vector vec) {
+        float vecarr1[3], vecarr2[3], vecarr3[3];
+        this.GetArr(vecarr1);
+        vec.GetArr(vecarr2);
+
+        MakeVectorFromPoints(vecarr1, vecarr2, vecarr3);
+        
+        delete this;
+        delete vec;
+
+        return new Vector(vecarr3[0], vecarr3[1], vecarr3[2]);
+    }
+
+    public Vector Normalize() {
+        float vecarr[3];
+        this.GetArr(vecarr);
+        NormalizeVector(vecarr, vecarr);
+        this.SetArr(vecarr);
+
+        return this;
+    }
+
+    public Vector Scale(float scale) {
+        float vecarr[3];
+        this.GetArr(vecarr);
+        ScaleVector(vecarr, scale);
+        this.SetArr(vecarr);
+
+        return this;
     }
 }
 

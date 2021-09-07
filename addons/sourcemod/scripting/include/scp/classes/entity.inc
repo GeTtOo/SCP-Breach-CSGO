@@ -55,6 +55,18 @@ methodmap Entity < Base {
         return this;
     }
 
+    public void Push(Entity ent, float force) {
+        float vecvel[3];
+        this.GetPos().GetFromPoint(ent.GetPos()).Normalize().Scale(force).GetArrD(vecvel);
+        TeleportEntity(ent.id, NULL_VECTOR, NULL_VECTOR, vecvel);
+    }
+
+    public void ReversePush(Vector vec, float force) {
+        float vecvel[3];
+        vec.GetFromPoint(this.GetPos()).Normalize().Scale(force).GetArrD(vecvel);
+        TeleportEntity(this.id, NULL_VECTOR, NULL_VECTOR, vecvel);
+    }
+
     public Entity UseCB(SDKHookCB cb) {
         SDKHook(this.id, SDKHook_Use, cb);
         return this;

@@ -175,7 +175,7 @@ public void OnClientDisconnect_Post(int id)
     if (gamemode.config.debug)
         gamemode.log.Info("Client disconnected: %i", ply.id);
 
-    EndRoundCount(ply);
+    gamemode.mngr.GameCheck(ply);
 
     Call_StartForward(OnClientClearForward);
     Call_PushCellRef(ply);
@@ -340,7 +340,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
     Ents.Clear();
     WT.Clear();
     gamemode.nuke.Reset();
-    gamemode.timer.PluginClear();
+    gamemode.timer.ClearAll();
 
     Call_StartForward(OnRoundEndForward);
     Call_Finish();
@@ -548,7 +548,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         vic.Team("Dead");
         vic.class = null;
 
-        EndRoundCount(vic);
+        gamemode.mngr.GameCheck(atk);
 
         Call_StartForward(OnPlayerDeathForward);
         Call_PushCellRef(vic);
@@ -715,9 +715,10 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int item)
         delete itm;
 
         Ents.Create(entclass)
-        .SetPos(ply.GetPos())
+        .SetPos(ply.GetAng().Forward(ply.EyePos(), 5.0) - new Vector(0.0, 0.0, 15.0))
         .UseCB(view_as<SDKHookCB>(Callback_EntUse))
-        .Spawn();
+        .Spawn()
+        .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
     }
 }
 
@@ -768,10 +769,11 @@ public void SpawnItemsOnMap()
         {
             JSON_OBJECT data = view_as<JSON_OBJECT>(rawDataArr.GetObject(v));
             Vector pos = data.GetVector("pos");
+            Angle ang = data.GetAngle("ang");
 
             if (GetRandomInt(1, 100) <= data.GetInt("chance"))
                 Ents.Create(item)
-                .SetPos(pos)
+                .SetPos(pos, ang)
                 .UseCB(view_as<SDKHookCB>(Callback_EntUse))
                 .Spawn();
         }
@@ -804,42 +806,6 @@ public void PSARS()
     }
 
     delete players;
-}
-
-public void SCP_EndRound(const char[] team)
-{
-    gamemode.mngr.RoundComplete = true;
-    
-    if(StrEqual("nuke_explosion", team))
-    {
-        CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TargetBombed, false);
-        PrintToChatAll(" \x07[SCP] \x01%t", "Site destroy");
-    }
-    else
-    {
-        CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TerroristWin, false);
-        PrintToChatAll(" \x07[SCP] \x01%t", "Team Win", team);
-    }
-}
-
-public void EndRoundCount(Client ply)
-{
-    if(Clients.Alive() == 0 && Clients.InGame() != 0)
-    {
-        SCP_EndRound("nuke_explosion");
-    }
-    else
-    {
-        if (ply != null && ply.class != null)
-        {
-            char team[32];
-            ply.Team(team, sizeof(team));
-            
-            char winTeam[32];
-            if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
-                SCP_EndRound(winTeam);
-        }
-    }
 }
 
 stock void FakePrecacheSound(const char[] szPath)
@@ -979,7 +945,7 @@ public Action PrintEntInCone(int client, const char[] command, int argc)
 
     char filter[1][32] = {"player"};
 
-    ArrayList entArr = Ents.FindInCone(ply.EyePos(), ply.EyeAngles().Forward(ply.EyePos(), 1000.0), 90, filter, sizeof(filter));
+    ArrayList entArr = Ents.FindInCone(ply.EyePos(), ply.GetAng().Forward(ply.EyePos(), 1000.0), 90, filter, sizeof(filter));
 
     for(int i=0; i < entArr.Length; i++) 
     {

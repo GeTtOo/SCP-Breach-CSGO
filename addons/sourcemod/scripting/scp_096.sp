@@ -44,8 +44,12 @@ public void SCP_OnPlayerClear(Client &ply)
         
         char  timername[128];
         Format(timername, sizeof(timername), "SCP-096-%i", ply.id);
-
         gamemode.timer.Remove(timername);
+
+        Format(timername, sizeof(timername), "SCP-096-S-%i", ply.id);
+        gamemode.timer.Remove(timername);
+
+        ply.StopSound("*/scp/scp-096_crying.mp3", 280);
     }
 }
 

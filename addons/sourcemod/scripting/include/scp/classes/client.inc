@@ -93,7 +93,7 @@ methodmap Client < Entity {
 
     public Vector EyePos() { float vecarr[3]; GetClientEyePosition(this.id, vecarr); return new Vector(vecarr[0], vecarr[1], vecarr[2]); }
 
-    public Angle EyeAngles() { float angarr[3]; GetClientEyeAngles(this.id, angarr); return new Angle(angarr[0], angarr[1], angarr[2]); }
+    public Angle GetAng() { float angarr[3]; GetClientEyeAngles(this.id, angarr); return new Angle(angarr[0], angarr[1], angarr[2]); }
 
     public void SetModel(char[] model) { SetEntityModel(this.id, model); }
 
@@ -145,15 +145,45 @@ methodmap Client < Entity {
     public void Setup() {
         this.SetupBaseStats(this.class);
 
-        if (this.class.GetPos() != null)
-            this.SetPos(this.class.GetPos(), this.class.GetAng());
+        JSON_OBJECT pos = this.class.GetVecAng();
+        if (pos != null)
+            this.SetPos(pos.GetVector("vec"), pos.GetAngle("ang"));
 
         if (this.class.items != null)
-            for (int i=0; i < this.class.items.Length; i++) {
-                char entclass[32];
-                this.class.items.GetString(i, entclass, sizeof(entclass));
-                this.inv.Add(entclass);
+        {
+            JSON_ARRAY items = this.class.items;
+
+            for (int i=0; i < items.Length; i++) {
+                if (view_as<int>(items.GetKeyType(i)) == 0)
+                {
+                    char entclass[32];
+                    items.GetString(i, entclass, sizeof(entclass));
+                    this.inv.Add(entclass);
+                }
+                else
+                {
+                    JSON_OBJECT itemsobj = view_as<JSON_OBJECT>(items.GetObject(i));
+                    StringMapSnapshot sitems = itemsobj.Snapshot();
+                    int keylen;
+                    int random = GetRandomInt(1,100);
+                    int count = 0;
+                    for (int k=0; k < sitems.Length; k++) {
+                        keylen = sitems.KeyBufferSize(k);
+                        char[] chance = new char[keylen];
+                        sitems.GetKey(k, chance, keylen);
+                        if (json_is_meta_key(chance)) continue;
+
+                        count += StringToInt(chance);
+                        if (count >= random) {
+                            char entclass[32];
+                            itemsobj.GetString(chance, entclass, sizeof(entclass));
+                            this.inv.Add(entclass);
+                            break;
+                        }
+                    }
+                }
             }
+        }
 
         if (this.class.weapons != null)
             for (int i=0; i < this.class.weapons.Length; i++) {

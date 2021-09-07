@@ -162,6 +162,6 @@ methodmap EntitySingleton < Base {
     }
 
     public ArrayList FindInPVS(Client ply, int distance = 100, int fov = 90, char filter[1][32] = {"player"}) {
-        return this.FindInCone(ply.EyePos(), ply.EyeAngles().Forward(ply.EyePos(), float(distance)), fov, filter, sizeof(filter));
+        return this.FindInCone(ply.EyePos(), ply.GetAng().Forward(ply.EyePos(), float(distance)), fov, filter, sizeof(filter));
     }
 }

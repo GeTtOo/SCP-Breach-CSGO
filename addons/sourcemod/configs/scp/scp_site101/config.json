@@ -1,7 +1,7 @@
 {
     "ff":true,
     "debug":true,
-    "DefaultGlobalClass":"Chaos",
+    "DefaultGlobalClass":"Personnel",
     "DefaultClass":"D Class",
     "invsize": 5,
     "psars": 30,
@@ -15,7 +15,8 @@
         "activebtn":319810,
         "cancelbtn":319835,
         "spawnlist":[
-            {"pos":[-9343, -5925, 1790],"ang":[0,0,0],"size":18,"color":[255,36,0]}
+            {"pos":[-9343, -5925, 1790],"ang":[0,0,0],"size":18,"color":[255,36,0]},
+            {"pos":[-9700, -6385, 1780],"ang":[0,270,0],"size":100,"color":[255,36,0]}
         ]
     }
 }
