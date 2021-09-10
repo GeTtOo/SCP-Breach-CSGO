@@ -214,7 +214,55 @@ methodmap Client < Entity {
             this.class.Model(playerModel, sizeof(playerModel));
             this.SetModel(playerModel);
 
-            this.SetProp("m_nBody", this.class.GetInt("bodygroup", 0));
+            if (this.class.HasKey("bodygroup"))
+                if (view_as<int>(this.class.GetKeyType("bodygroup")) == 1) {
+                    this.SetProp("m_nBody", this.class.GetInt("bodygroup", 0));
+                }
+                else
+                {
+                    ArrayList modelMetaData = new ArrayList();
+                    
+                    JSON_ARRAY metaArr = gamemode.config.meta;
+
+                    for (int i=0; i < metaArr.Length; i++) {
+                        JSON_OBJECT metaobj = view_as<JSON_OBJECT>(metaArr.GetObject(i));
+                        
+                        char modelName[128];
+                        metaobj.GetString("model", modelName, sizeof(modelName));
+
+                        if (StrEqual(playerModel, modelName)) {
+                            JSON_ARRAY bgdata = metaobj.GetArray("bgdata");
+
+                            for (int k=0; k < bgdata.Length; k++) {
+                                modelMetaData.Push(bgdata.GetInt(k));
+                            }
+                        }
+                    }
+
+                    JSON_ARRAY sbgarr = this.class.GetArray("bodygroup");
+
+                    int bodyGroupAddress = 0;
+                    
+                    for (int groupIndex = 0; groupIndex < sbgarr.Length; groupIndex++) {
+                        int groupValue;
+                        
+                        if (view_as<int>(sbgarr.GetKeyType(groupIndex)) == 1)
+                            groupValue = sbgarr.GetInt(groupIndex);
+                        else
+                            groupValue = GetRandomInt(sbgarr.GetArray(groupIndex).GetInt(0), sbgarr.GetArray(groupIndex).GetInt(1));
+
+                        int idx = 1;
+                        if (groupValue != 0) {
+                            for (int k=0; k < groupIndex; k++)
+                            idx += idx * modelMetaData.Get(k);
+
+                            bodyGroupAddress += idx * groupValue;
+                        }
+                    }
+
+                    this.SetProp("m_nBody", bodyGroupAddress);
+                }
+
             this.SetProp("m_nSkin", this.class.GetInt("skin", 0));
         }
 

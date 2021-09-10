@@ -72,30 +72,30 @@ public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
 }
 
 public any NativeClients_GetAll(Handle Plugin, int numArgs) {
-    Client clients[MAXPLAYERS + 1];
-    Clients.GetArray("Clients", clients, sizeof(clients));
+    ArrayList clients = Clients.GetList("Clients");
     ArrayList players = new ArrayList();
-    for (int i=0; i < MAXPLAYERS + 1; i++)
-        if (clients[i] != null)
-            players.Push(clients[i]);
+    for (int i=0; i < clients.Length; i++)
+        if (view_as<Client>(clients.Get(i)) != null)
+            players.Push(clients.Get(i, 1));
     return players;
 }
 
 public any NativeClients_Get(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
-    Client clients[MAXPLAYERS + 1];
-    Clients.GetArray("Clients", clients, sizeof(clients));
-    if (id <= MAXPLAYERS)
-        return view_as<Client>(clients[id]);
-    else
-        return view_as<Client>(null);
+    int idx = Clients.GetList("Clients").FindValue(id, 0);
+    return Clients.GetList("Clients").Get(idx, 1);
 }
 
 public any NativeClients_GetRandom(Handle Plugin, int numArgs) {
-    Client clients[MAXPLAYERS + 1];
-    Clients.GetArray("Clients", clients, sizeof(clients));
-    int random = GetRandomInt(1, Clients.InGame());
-    return view_as<Client>(clients[random]);
+    ArrayList sortedPlayers = new ArrayList();
+    ArrayList players = Clients.GetAll();
+    for (int i=0; i < players.Length; i++) {
+        Client player = players.Get(i);
+        if (player.IsAlive())
+            sortedPlayers.Push(players.Get(i));
+    }
+
+    return sortedPlayers.Get(GetRandomInt(0, sortedPlayers.Length-1));
 }
 
 public any NativeClients_InGame(Handle Plugin, int numArgs) {

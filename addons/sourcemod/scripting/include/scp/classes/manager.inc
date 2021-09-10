@@ -66,6 +66,41 @@ methodmap Manager < Base {
         PbSetFloat(message, "duration", float(duration));
         EndMessage();
     }
+
+    public void PrintTeamStatus() {
+        ArrayList GlobalTeams = new ArrayList(32);
+        int tpc[64];
+
+        for (int i=1; i <= Clients.Length; i++) {
+            Client ply = Clients.Get(i);
+
+            char plyTeamName[32];
+            ply.Team(plyTeamName, sizeof(plyTeamName));
+
+            int idt = GlobalTeams.FindString(plyTeamName);
+
+            if (idt == -1) {
+                idt = GlobalTeams.PushString(plyTeamName);
+                tpc[idt] = 1;
+            }
+            else
+            {
+                tpc[idt]++;
+            }
+        }
+
+        PrintToServer("----------");
+
+        for (int i = 0; i < GlobalTeams.Length; i++) {
+            char buf[32];
+            GlobalTeams.GetString(i, buf, sizeof(buf));
+            PrintToServer("Team: %s. (Count: %i)", buf, tpc[i]);
+        }
+
+        PrintToServer("----------");
+
+        delete GlobalTeams;
+    }
     
     public bool CheckTeamStatus(char[] buffer, int max_size) {
         ArrayList GlobalTeams = new ArrayList(32);
@@ -112,41 +147,6 @@ methodmap Manager < Base {
         return false;
     }
 
-    public void PrintTeamStatus() {
-        ArrayList GlobalTeams = new ArrayList(32);
-        int tpc[64];
-
-        for (int i=1; i <= Clients.Length; i++) {
-            Client ply = Clients.Get(i);
-
-            char plyTeamName[32];
-            ply.Team(plyTeamName, sizeof(plyTeamName));
-
-            int idt = GlobalTeams.FindString(plyTeamName);
-
-            if (idt == -1) {
-                idt = GlobalTeams.PushString(plyTeamName);
-                tpc[idt] = 1;
-            }
-            else
-            {
-                tpc[idt]++;
-            }
-        }
-
-        PrintToServer("----------");
-
-        for (int i = 0; i < GlobalTeams.Length; i++) {
-            char buf[32];
-            GlobalTeams.GetString(i, buf, sizeof(buf));
-            PrintToServer("Team: %s. (Count: %i)", buf, tpc[i]);
-        }
-
-        PrintToServer("----------");
-
-        delete GlobalTeams;
-    }
-
     public void EndGame(char[] winteam) {
         gamemode.mngr.RoundComplete = true;
         
@@ -167,7 +167,7 @@ methodmap Manager < Base {
         }
         else if(Clients.Alive() != 0)
         {
-            if (ply != null && ply.class != null)
+            if (ply != null)
             {
                 char team[32];
                 ply.Team(team, sizeof(team));
@@ -175,6 +175,8 @@ methodmap Manager < Base {
                 char winTeam[32];
                 if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
                     this.EndGame(winTeam);
+
+                PrintToServer(winTeam);
             }
         }
         else if (Clients.InGame() != 0)

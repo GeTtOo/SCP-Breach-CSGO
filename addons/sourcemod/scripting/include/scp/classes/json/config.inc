@@ -42,6 +42,10 @@ methodmap Config < JSON_OBJECT {
     property JSON_ARRAY regions { 
         public get() { return view_as<JSON_ARRAY>(this.GetObject("Regions")); }
     }
+    
+    property JSON_ARRAY meta {
+        public get() { return this.GetArray("meta"); }
+    }
 
     property int invsize {
         public get() { return this.GetInt("invsize") - 1; } //Index started at 0

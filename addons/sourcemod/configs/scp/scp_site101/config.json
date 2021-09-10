@@ -6,6 +6,9 @@
     "invsize": 5,
     "psars": 30,
     "AdminRoom": [-4890,-6340,0],
+    "meta": [
+        {"model":"models/player/custom_player/scp/mog.mdl","bgdata":[3,5,1,2,1,2,15,3,1,2]}
+    ],
     "nuke":{
         "time":110,
         "killpos":1690,

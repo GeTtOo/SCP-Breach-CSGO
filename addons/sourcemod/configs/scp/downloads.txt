@@ -6,6 +6,10 @@ models/eternity/props/scp/scp_035.mdl
 models/eternity/props/scp/scp_035.dx90.vtx
 models/eternity/props/scp/scp_035.vvd
 models/eternity/props/scp/scp_035.phy
+models/player/custom_player/scp/mog.mdl
+models/player/custom_player/scp/mog.dx90.vtx
+models/player/custom_player/scp/mog.vvd
+models/player/custom_player/scp/mog.phy
 models/eternity/players/scp_173.mdl
 models/eternity/players/scp_173.dx90.vtx
 models/eternity/players/scp_173.vvd

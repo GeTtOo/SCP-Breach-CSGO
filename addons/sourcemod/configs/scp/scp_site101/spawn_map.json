@@ -1,33 +1,36 @@
 {
     "weapon_deagle":[
-        {"chance":50,"pos":[-2121, -6406, 257]}
+        {"chance":50,"vec":[-2121, -6406, 257]}
     ],
     "weapon_spanner":[
-        {"chance":100,"pos":[911,-3332,28],"ang":[0,67,0]}
+        {"chance":100,"vec":[911,-3332,28],"ang":[0,67,0]}
+    ],
+    "weapon_hammer":[
+        {"chance":100,"vec":[-6316,-5504,39],"ang":[90,270,0]}
     ],
     "card_o5":[
-        {"chance":100,"pos":[578, -3444, 43]},
-        {"chance":100,"pos":[3240,-2231,50]}
+        {"chance":100,"vec":[578, -3444, 43]},
+        {"chance":100,"vec":[3240,-2231,50]}
     ],
     "card_scientist":[
-        {"chance":100,"pos":[3220,-2231,50]}
+        {"chance":100,"vec":[3220,-2231,50]}
     ],
     "card_major_scientist":[
-        {"chance":25,"pos":[2704,-2382,272]}
+        {"chance":25,"vec":[2704,-2382,272]}
     ],
     "card_guard":[
-        {"chance":100,"pos":[3180,-2231,50]}
+        {"chance":100,"vec":[3180,-2231,50]}
     ],
     "card_containment_engineer":[
-        {"chance":100,"pos":[3160,-2231,50]}
+        {"chance":100,"vec":[3160,-2231,50]}
     ],
     "card_facility_manager":[
-        {"chance":100,"pos":[3140,-2231,50]}
+        {"chance":100,"vec":[3140,-2231,50]}
     ],
     "card_janitor":[
-        {"chance":100,"pos":[3120,-2231,50]}
+        {"chance":100,"vec":[3120,-2231,50]}
     ],
     "card_mog_commander":[
-        {"chance":100,"pos":[3100,-2231,50]}
+        {"chance":100,"vec":[3100,-2231,50]}
     ]
 }

@@ -2,24 +2,21 @@ methodmap ClientSingleton < Base {
 
     public ClientSingleton() {
         ClientSingleton self = view_as<ClientSingleton>(new Base());
-        Client clients[MAXPLAYERS + 1];
-        self.SetArray("Clients", clients, sizeof(clients));
+        self.CreateList("Clients", 2);
         
         return self;
     }
 
     public Client Add(int id) {
-        Client clients[MAXPLAYERS + 1];
-        this.GetArray("Clients", clients, sizeof(clients));
-        clients[id] = view_as<Client>(new Client(id));
-        this.SetArray("Clients", clients, sizeof(clients));
+        any data[2];
+        data[0] = id;
+        data[1] = new Client(id);
+        this.GetList("Clients").PushArray(data);
     }
 
     public Client Remove(int id) {
-        Client clients[MAXPLAYERS + 1];
-        this.GetArray("Clients", clients, sizeof(clients));
-        delete clients[id];
-        this.SetArray("Clients", clients, sizeof(clients));
+        int idx = this.GetList("Clients").FindValue(id, 0);
+        this.GetList("Clients").Erase(idx);
     }
 
     public native ArrayList GetAll();

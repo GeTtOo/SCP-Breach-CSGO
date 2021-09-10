@@ -92,6 +92,7 @@ public void OnPluginStart()
     AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
     AddCommandListener(GetClientPos, "getmypos");                                           // ¯\_(ツ)_/¯
     AddCommandListener(TpTo, "tp");                                                   // ¯\_(ツ)_/¯
+    AddCommandListener(Set, "set");
     
     HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
     HookEvent("round_start", OnRoundStart);
@@ -232,12 +233,14 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         gamemode.mngr.RoundComplete = false;
         
         ArrayList sortedPlayers = new ArrayList();
-        
-        Client buf[MAXPLAYERS+1];
-        Clients.GetArray("Clients", buf, sizeof(buf));
+        ArrayList players = Clients.GetAll();
 
-        for (int i=1; i <= Clients.InGame(); i++)
-            sortedPlayers.Push(buf[i]);
+        for (int i=0; i < players.Length; i++)
+        {
+            Client player = players.Get(i);
+            if (player.IsAlive())
+                sortedPlayers.Push(players.Get(i));
+        }
 
         sortedPlayers.Sort(Sort_Random, Sort_Integer);
         
@@ -768,7 +771,7 @@ public void SpawnItemsOnMap()
         for (int v=0; v < rawDataArr.Length; v++) 
         {
             JSON_OBJECT data = view_as<JSON_OBJECT>(rawDataArr.GetObject(v));
-            Vector pos = data.GetVector("pos");
+            Vector pos = data.GetVector("vec");
             Angle ang = data.GetAngle("ang");
 
             if (GetRandomInt(1, 100) <= data.GetInt("chance"))
@@ -910,7 +913,10 @@ public Action GetClientPos(int client, const char[] command, int argc)
     Client ply = Clients.Get(client);
 
     Vector plyPos = ply.GetPos();
+    Angle plyAng = ply.GetAng();
     PrintToChat(ply.id, "Your pos is: %f, %f, %f", plyPos.x, plyPos.y, plyPos.z);
+    
+    PrintToConsole(ply.id, "{\"vec\":[%i,%i,%i],\"ang\":[%i,%i,%i]}", RoundFloat(plyPos.x), RoundFloat(plyPos.y), RoundFloat(plyPos.z), RoundFloat(plyAng.x), RoundFloat(plyAng.y), RoundFloat(plyAng.z));
 
     delete plyPos;
 
@@ -980,6 +986,25 @@ public Action TpTo(int client, const char[] command, int argc)
     if (StrEqual(arg, "nuke", false))
     {
         ply.SetPos(new Vector(-7821.0, -5978.0, 200.0), new Angle(0.0, 0.0, 0.0));
+    }
+}
+
+public Action Set(int client, const char[] command, int argc)
+{
+    Client ply = Clients.Get(client);
+
+    char arg[32], arg2[32];
+
+    GetCmdArg(1, arg, sizeof(arg));
+    GetCmdArg(2, arg2, sizeof(arg2));
+
+    if (StrEqual(arg, "body", false))
+    {
+        ply.SetProp("m_nBody", StringToInt(arg2));
+    }
+    if (StrEqual(arg, "skin", false))
+    {
+        ply.SetProp("m_nSkin", StringToInt(arg2));
     }
 }
 

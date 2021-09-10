@@ -56,7 +56,7 @@ public void SCP_OnPlayerClear(Client &ply)
 public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
 {
 	Client atk = Clients.Get(attacker);
-	if (atk == null) return Plugin_Continue;
+	if (atk == null || atk.class == null) return Plugin_Continue;
 
 	if(atk.class.Is("096"))
 	{

@@ -58,7 +58,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 {
     Client atk = Clients.Get(attacker);
 
-    if (atk == null) return Plugin_Continue;
+    if (atk == null || atk.class == null) return Plugin_Continue;
 
     if(atk.class.Is("035"))
     {

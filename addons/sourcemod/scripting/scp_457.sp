@@ -34,7 +34,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 {
     Client vic = Clients.Get(victim), atk = Clients.Get(attacker);
     
-    if (atk == null) return Plugin_Continue;
+    if (atk == null || atk.class == null) return Plugin_Continue;
     
     if(vic.class.Is("457") && damagetype == DMG_BURN)
     {
