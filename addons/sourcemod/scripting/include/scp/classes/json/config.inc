@@ -55,6 +55,10 @@ methodmap Config < JSON_OBJECT {
         public get() { return this.GetInt("psars"); }
     }
 
+    property JSON_OBJECT reinforce {
+        public get() { return this.GetObject("reinforce"); }
+    }
+
     property NukeConfig nuke {
         public get() { NukeConfig nuke; return this.GetValue("nuke", nuke) ? nuke : null; }
     }

@@ -83,6 +83,7 @@ public any NativeClients_GetAll(Handle Plugin, int numArgs) {
 public any NativeClients_Get(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
     int idx = Clients.GetList("Clients").FindValue(id, 0);
+    if (idx == -1) return view_as<Client>(null);
     return Clients.GetList("Clients").Get(idx, 1);
 }
 

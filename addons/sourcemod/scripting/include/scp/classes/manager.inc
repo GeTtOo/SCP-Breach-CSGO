@@ -184,4 +184,48 @@ methodmap Manager < Base {
             this.EndGame("nobody");
         }
     }
+
+    public void CombatReinforcement(char[] teamName) {
+        ArrayList players = Clients.GetAll();
+        ArrayList deadPlayers = new ArrayList();
+
+        for (int i=0; i < players.Length; i++) {
+            Client ply = players.Get(i);
+
+            if (!ply.IsAlive())
+                deadPlayers.Push(ply);
+        }
+
+        deadPlayers.Sort(Sort_Random, Sort_Integer);
+
+        GTeam team = gamemode.team(teamName);
+        StringMapSnapshot classNameS = team.GetClassNames();
+        int classKeyLen, classCount = 0;
+
+        for (int v = 0; v < classNameS.Length; v++)
+        {
+            classKeyLen = classNameS.KeyBufferSize(v);
+            char[] classKey = new char[classKeyLen];
+            classNameS.GetKey(v, classKey, classKeyLen);
+            if (json_is_meta_key(classKey)) continue;
+
+            Class class = team.class(classKey);
+
+            classCount = deadPlayers.Length * class.percent / 100;
+            classCount = (classCount != 0 || !class.priority) ? classCount : 1;
+
+            for (int scc = 1; scc <= classCount; scc++)
+            {
+                int id = deadPlayers.Length - 1;
+                if (id < 0) break;
+                Client player = deadPlayers.Get(id);
+                deadPlayers.Erase(id);
+                player.Team(teamName);
+                player.class = class;
+                player.haveclass = true;
+                
+                player.UpdateClass();
+            }
+        }
+    }
 }

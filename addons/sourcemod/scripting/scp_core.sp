@@ -93,6 +93,7 @@ public void OnPluginStart()
     AddCommandListener(GetClientPos, "getmypos");                                           // ¯\_(ツ)_/¯
     AddCommandListener(TpTo, "tp");                                                   // ¯\_(ツ)_/¯
     AddCommandListener(Set, "set");
+    AddCommandListener(Reinforcement, "reinforce");
     
     HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
     HookEvent("round_start", OnRoundStart);
@@ -311,6 +312,8 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         SpawnItemsOnMap();
 
         gamemode.nuke.SpawnDisplay();
+        
+        gamemode.timer.Create("SCP_Combat_Reinforcement", gamemode.config.reinforce.GetInt("time") * 1000, 0, "CombatReinforcement");
 
         CheckNewPlayers(gamemode.config.psars);
 
@@ -811,6 +814,17 @@ public void PSARS()
     delete players;
 }
 
+public void CombatReinforcement()
+{
+    if (Clients.Alive() < RoundToNearest(float(Clients.InGame()) / 100.0 * float(gamemode.config.reinforce.GetInt("ratiodeadplayers")))) {
+        int rnd = GetRandomInt(0,1);
+        if (rnd == 0)
+            gamemode.mngr.CombatReinforcement("MOG");
+        else
+            gamemode.mngr.CombatReinforcement("Chaos");
+    }
+}
+
 stock void FakePrecacheSound(const char[] szPath)
 {
     AddToStringTable(FindStringTable( "soundprecache" ), szPath);
@@ -1006,6 +1020,13 @@ public Action Set(int client, const char[] command, int argc)
     {
         ply.SetProp("m_nSkin", StringToInt(arg2));
     }
+}
+
+public Action Reinforcement(int client, const char[] command, int argc) {
+    char arg[32];
+
+    GetCmdArg(1, arg, sizeof(arg));
+    gamemode.mngr.CombatReinforcement(arg);
 }
 
 public Action PlayerSpawn(int client,int args)
