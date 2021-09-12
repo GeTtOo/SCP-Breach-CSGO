@@ -123,6 +123,10 @@ public void OnMapStart()
     gamemode.SetValue("Logger", new Logger());
     
     gamemode.mngr.CollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
+    gamemode.config.SetInt("st", FindSendPropInfo("CBaseEntity", "m_flSimulationTime"));
+    gamemode.config.SetInt("pbst", FindSendPropInfo("CCSPlayer", "m_flProgressBarStartTime"));
+    gamemode.config.SetInt("pbd", FindSendPropInfo("CCSPlayer", "m_iProgressBarDuration"));
+    gamemode.config.SetInt("buaip", FindSendPropInfo("CCSPlayer", "m_iBlockingUseActionInProgress"));
 
     PrecacheSound(NUKE_EXPLOSION_SOUND);
     LoadFileToDownload();
@@ -324,9 +328,11 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 
 public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
 {
-    for (int cig=1; cig <= Clients.InGame(); cig++)
+    ArrayList players = Clients.GetAll();
+
+    for (int i=0; i < players.Length; i++)
     {
-        Client client = Clients.Get(cig);
+        Client client = players.Get(i);
 
         Call_StartForward(OnClientClearForward);
         Call_PushCellRef(client);
@@ -341,6 +347,8 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
         client.inv.Clear();
         client.active = false;
         client.spawned = true;
+        
+        client.RemoveValue("deathpos");
     }
 
     Ents.Clear();
@@ -553,6 +561,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
         vic.Team("Dead");
         vic.class = null;
+        vic.deathpos = vic.GetPos() - new Vector(0.0, 0.0, 63.0);
 
         gamemode.mngr.GameCheck(atk);
 

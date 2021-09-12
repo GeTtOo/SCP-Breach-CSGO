@@ -137,6 +137,22 @@ stock Vector operator-(Vector first, Vector second) {
     return result;
 }
 
+stock bool operator>(Vector first, Vector second) {
+    bool result = false;
+    if ((first.x > second.x) && (first.y > second.y) && (first.z > second.z))
+        result = true;
+    delete first; delete second;
+    return result;
+}
+
+stock bool operator<(Vector first, Vector second) {
+    bool result = false;
+    if ((first.x < second.x) && (first.y < second.y) && (first.z < second.z))
+        result = true;
+    delete first; delete second;
+    return result;
+}
+
 methodmap Angle < Vector {
     
     public Angle(float x, float y, float z) {

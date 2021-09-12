@@ -9,6 +9,7 @@
 #include <json>
 
 #include "scp/classes/inventory"
+#include "scp/classes/progress"
 
 methodmap Client < Entity {
 
@@ -17,6 +18,7 @@ methodmap Client < Entity {
         client.SetValue("active", false);
         client.SetValue("haveсlass", false);
         client.SetValue("inventory", new Inventory());
+        client.SetValue("progress", new ProgressBar(client));
 
         return client;
     }
@@ -75,9 +77,19 @@ methodmap Client < Entity {
         public get() { return this.GetBool("spawned", false); }
     }
 
+    property Vector deathpos {
+        public set(Vector val) { this.RemoveValue("deathpos"); this.SetVector("deathpos", val); }
+        public get() { return view_as<Vector>(this.GetVector("deathpos", null)); }
+    }
+
     property Inventory inv {
         public set(Inventory inv) { this.SetValue("inventory", inv); }
         public get() { Inventory inv; return this.GetValue("inventory", inv) ? inv : null; }
+    }
+
+    property ProgressBar progress {
+        public set(ProgressBar pb) { this.SetValue("progress", pb); }
+        public get() { ProgressBar pb; return this.GetValue("progress", pb) ? pb : null; }
     }
 
     public void SetupBaseStats(Class class) {
