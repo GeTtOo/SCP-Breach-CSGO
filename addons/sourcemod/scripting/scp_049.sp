@@ -23,8 +23,8 @@ char sounds[10][32] = {
 
 public Plugin myinfo = {
 	name = "[SCP] SCP 049",
-	author = "GeTtOo",
-	description = "Added SCP 049",
+	author = "Andrey::Dono, GeTtOo",
+	description = "SCP 049 for CS:GO SCP modification",
 	version = "1.0",
 	url = "https://github.com/GeTtOo/csgo_scp"
 };
@@ -42,78 +42,96 @@ public void OnMapStart()
     }
 }
 
-public void SCP_OnPlayerDeath(Client &vic, Client &atk)
+public void SCP_OnInput(Client &ply, int buttons)
 {
-	if(atk != null && atk.class != null)
+	if (buttons & IN_USE && ply.class.Is("049") && !ply.GetBool("049_reviving"))
 	{
-		char attackerClass[32];
-		atk.class.Name(attackerClass, sizeof(attackerClass));
-
-		if(StrEqual(attackerClass, "049"))
+		if (buttons & IN_USE)
 		{
-			if(vic != null && vic.class != null && vic != atk)
-			{
-				float pos[3];
-				GetClientAbsOrigin(vic.id, pos);
-
-				vic.Team("SCP");
-				vic.class = gamemode.team("SCP").class("049_2");
-				
-				vic.Spawn();
-				TeleportEntity(vic.id, pos, NULL_VECTOR, NULL_VECTOR);
-			}
+			ply.SetBool("049_reviving", true);
+			ply.progress.Start(3000, "Revive");
 		}
+	}
+
+	if ((buttons & IN_FORWARD || buttons & IN_BACK || buttons & IN_MOVELEFT || buttons & IN_MOVERIGHT) && ply.class.Is("049") && ply.GetBool("049_reviving"))
+	{
+		ply.progress.Stop();
+		ply.SetBool("049_reviving", false);
+		//gamemode.timer.Simple(3000, "ReviveUnlock", ply);
 	}
 }
 
-public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
-{
-	if(IsClientExist(client))
-	{
-		if(!g_MusicPlay)
-		{
-			char class[32];
-		
-			Client ply = Clients.Get(client);
-			ply.class.Name(class, sizeof(class));
-			
-			if(StrEqual(class, "049"))
-			{
-				g_MusicPlay = true;
-				
-				float pos[3];
-				GetClientAbsOrigin(client, pos);
+public void Revive(Client ply) {
+	ply.progress.Stop();
+	ply.SetBool("049_reviving", false);
 
-				int rnd = GetRandomInt(0, 9);
-				EmitAmbientSound(sounds[rnd], pos, client);
-				CreateTimer(15.0, AllowMusicPlay);
-			}
+	ArrayList players = Clients.GetAll();
+
+	Client vic;
+	for(int i=0; i < players.Length; i++)
+	{
+		vic = players.Get(i);
+
+		if (ply == vic) continue;
+		if (vic.IsAlive()) continue;
+
+		if ((ply.GetPos() - new Vector(200.0, 200.0, 100.0)) < vic.deathpos && (ply.GetPos() + new Vector(200.0, 200.0, 100.0)) > vic.deathpos)
+		{
+			vic.Team("SCP");
+			vic.class = gamemode.team("SCP").class("049_2");
+
+			vic.Spawn();
+			vic.SetPos(vic.deathpos, ply.GetAng() - new Angle(0.0, 180.0, 0.0));
 		}
 	}
+
+	delete players;
+}
+
+public void ReviveUnlock(Client ply) {
+	ply.SetBool("049_lock", false);
 }
 
 public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
 {
-	char attackerClass[32];
 	Client atk = Clients.Get(attacker);
-	if (atk == null) return Plugin_Continue;
-	atk.class.Name(attackerClass, sizeof(attackerClass)); 
+	Client vic = Clients.Get(victim);
+	if (atk == null || atk.class == null) return Plugin_Continue;
 
-	if(StrEqual(attackerClass, "049"))
+	if(atk.class.Is("049"))
 	{
 		damage += 180;
 		return Plugin_Changed;
 	}
-	else if(StrEqual(attackerClass, "049_2"))
+	else if(atk.class.Is("049_2"))
 	{
 		damage += 70;
 		return Plugin_Changed;
+	}
+	
+	if(vic.class.Is("049") && vic.GetBool("049_reviving"))
+	{
+		vic.progress.Stop();
+		vic.SetBool("049_reviving", false);
 	}
 
 	return Plugin_Continue;
 }
 
-public Action AllowMusicPlay(Handle hTimer)
+public void SCP_OnPressF(Client &ply) {
+    if (ply.class.Is("049") && !g_MusicPlay) {
+		g_MusicPlay = true;
+		
+		float pos[3];
+		GetClientAbsOrigin(ply.id, pos);
+
+		int rnd = GetRandomInt(0, 9);
+		EmitAmbientSound(sounds[rnd], pos, ply.id);
+		gamemode.timer.Simple(15000, "AllowMusicPlay");
+	}
+}
+
+public Action AllowMusicPlay()
 {
 	g_MusicPlay = false;
 	return Plugin_Stop;
