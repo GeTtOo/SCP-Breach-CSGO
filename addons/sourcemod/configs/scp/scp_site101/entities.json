@@ -45,7 +45,7 @@
         "mass":0.2,
         "skin":5,
         "spawnflags":4356,
-        "access":[1]
+        "access":[1,4,7]
     },
     "card_senior_guard": {
         "name":"Security card",
@@ -53,7 +53,7 @@
         "mass":0.2,
         "skin":6,
         "spawnflags":4356,
-        "access":[1]
+        "access":[1,2,6,7,9]
     },
     "card_zone_manager": {
         "name":"Zone Manager",

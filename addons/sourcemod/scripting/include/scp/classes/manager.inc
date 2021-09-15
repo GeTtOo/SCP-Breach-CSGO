@@ -9,6 +9,10 @@ methodmap Manager < Base {
         return mngr;
     }
 
+    property int serverlang {
+        public get() { return GetServerLanguage(); }
+    }
+
     property int CollisionGroup {
         public set(int value) { this.SetInt("collisiongroup", value); }
         public get() { return this.GetInt("collisiongroup"); }

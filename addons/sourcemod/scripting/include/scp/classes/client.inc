@@ -23,6 +23,10 @@ methodmap Client < Entity {
         return client;
     }
 
+    property int lang {
+        public get() { return GetClientLanguage(this.id); }
+    }
+
     property int health {
         public set(int val) { SetEntityHealth(this.id, val); }
         public get() { return GetClientHealth(this.id); }

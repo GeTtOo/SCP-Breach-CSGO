@@ -425,6 +425,8 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
 
             if (doorId == StringToInt(doorKey))
             {
+                int idpad = GetEntPropEnt(caller, Prop_Data, "m_hMoveChild");
+                
                 if (IsWarmup())
                 {
                     return Plugin_Continue;
@@ -439,10 +441,20 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 }
                 else if (ply.access >= door.access || ply.inv.Check("access", door.access))
                 {
+                    if (idpad != -1)
+                    {
+                        SetEntProp(idpad, Prop_Send, "m_nSkin", (ply.lang == 22) ? 1 : 4); // 22 = ru lang code
+                        gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad);
+                    }
                     return Plugin_Continue;
                 }
                 else
                 {
+                    if (idpad != -1)
+                    {
+                        SetEntProp(idpad, Prop_Send, "m_nSkin", (ply.lang == 22) ? 2 : 5);
+                        gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad);
+                    }
                     return Plugin_Stop;
                 }
             }
@@ -878,6 +890,11 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
 //
 //////////////////////////////////////////////////////////////////////////////
 
+public void ResetIdPad(int entid)
+{
+    SetEntProp(entid, Prop_Send, "m_nSkin", (gamemode.mngr.serverlang == 22) ? 0 : 3);
+}
+
 public void SetupMapRegions() 
 {
     JSON_ARRAY regions = gamemode.config.regions;
@@ -1140,6 +1157,10 @@ public Action TpTo(int client, const char[] command, int argc)
     if (StrEqual(arg, "mog", false))
     {
         ply.SetPos(new Vector(-10739.0, -5920.0, 1712.0), new Angle(0.0, 0.0, 0.0));
+    }
+    if (StrEqual(arg, "ha", false))
+    {
+        ply.SetPos(new Vector(-9423.0,2250.0,0.0), new Angle(0.0, 90.0, 0.0));
     }
     if (StrEqual(arg, "nuke", false))
     {
