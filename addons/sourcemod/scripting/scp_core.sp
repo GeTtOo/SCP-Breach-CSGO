@@ -130,62 +130,7 @@ public void OnMapStart()
     gamemode.config.SetInt("pbd", FindSendPropInfo("CCSPlayer", "m_iProgressBarDuration"));
     gamemode.config.SetInt("buaip", FindSendPropInfo("CCSPlayer", "m_iBlockingUseActionInProgress"));
 
-    JSON_OBJECT ents = ReadConfig(mapName, "entities");
-
-    StringMapSnapshot sents = ents.Snapshot();
-
-    int keylen;
-    for (int i = 0; i < sents.Length; i++)
-    {
-        keylen = sents.KeyBufferSize(i);
-        char[] entclass = new char[keylen];
-        sents.GetKey(i, entclass, keylen);
-        if (json_is_meta_key(entclass)) continue;
-
-        JSON_OBJECT ent = ents.GetObject(entclass);
-        StringMapSnapshot sent = ent.Snapshot();
-
-        char entname[32], entmodel[128];
-
-        ent.GetString("name", entname, sizeof(entname));
-        ent.GetString("model", entmodel, sizeof(entmodel));
-        
-        EntityMeta entdata = new EntityMeta();
-
-        int kl;
-        for (int k=0; k < sent.Length; k++)
-        {
-            kl = sent.KeyBufferSize(k);
-            char[] keyname = new char[kl];
-            sent.GetKey(k, keyname, kl);
-            if (json_is_meta_key(keyname)) continue;
-
-            entdata.class(entclass);
-
-            switch(ent.GetKeyType(keyname))
-            {
-                case 0: {
-                    char str[128];
-                    ent.GetString(keyname, str, sizeof(str));
-                    entdata.SetString(keyname, str);
-                }
-                case 1: { entdata.SetInt(keyname, ent.GetInt(keyname)); }
-                case 2: { entdata.SetFloat(keyname, ent.GetFloat(keyname)); }
-                case 3: { entdata.SetBool(keyname, ent.GetBool(keyname)); }
-                case 4: {
-                    JSON_ARRAY arr = ent.GetArray(keyname);
-                    ArrayList list = new ArrayList();
-
-                    for (int v=0; v < arr.Length; v++)
-                        list.Push(arr.GetInt(v));
-
-                    entdata.SetList(keyname, list);
-                }
-            }
-        }
-        
-        gamemode.meta.RegisterEntity(entdata);
-    }
+    LoadEntities(mapName);
 
     Call_StartForward(RegMetaForward);
     Call_Finish();
@@ -748,6 +693,65 @@ public void LoadFileToDownload()
     else
     {
         LogError("Can't find downloads.txt");
+    }
+}
+
+public void LoadEntities(char[] mapName)
+{
+    JSON_OBJECT ents = ReadConfig(mapName, "entities");
+    StringMapSnapshot sents = ents.Snapshot();
+
+    int keylen;
+    for (int i = 0; i < sents.Length; i++)
+    {
+        keylen = sents.KeyBufferSize(i);
+        char[] entclass = new char[keylen];
+        sents.GetKey(i, entclass, keylen);
+        if (json_is_meta_key(entclass)) continue;
+
+        JSON_OBJECT ent = ents.GetObject(entclass);
+        StringMapSnapshot sent = ent.Snapshot();
+
+        char entname[32], entmodel[128];
+
+        ent.GetString("name", entname, sizeof(entname));
+        ent.GetString("model", entmodel, sizeof(entmodel));
+        
+        EntityMeta entdata = new EntityMeta();
+
+        int kl;
+        for (int k=0; k < sent.Length; k++)
+        {
+            kl = sent.KeyBufferSize(k);
+            char[] keyname = new char[kl];
+            sent.GetKey(k, keyname, kl);
+            if (json_is_meta_key(keyname)) continue;
+
+            entdata.class(entclass);
+
+            switch(ent.GetKeyType(keyname))
+            {
+                case 0: {
+                    char str[128];
+                    ent.GetString(keyname, str, sizeof(str));
+                    entdata.SetString(keyname, str);
+                }
+                case 1: { entdata.SetInt(keyname, ent.GetInt(keyname)); }
+                case 2: { entdata.SetFloat(keyname, ent.GetFloat(keyname)); }
+                case 3: { entdata.SetBool(keyname, ent.GetBool(keyname)); }
+                case 4: {
+                    JSON_ARRAY arr = ent.GetArray(keyname);
+                    ArrayList list = new ArrayList();
+
+                    for (int v=0; v < arr.Length; v++)
+                        list.Push(arr.GetInt(v));
+
+                    entdata.SetList(keyname, list);
+                }
+            }
+        }
+        
+        gamemode.meta.RegisterEntity(entdata);
     }
 }
 
