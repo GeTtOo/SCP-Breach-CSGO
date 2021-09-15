@@ -38,20 +38,16 @@ methodmap EntitySingleton < Base {
 
     public EntitySingleton() {
         EntitySingleton self = view_as<EntitySingleton>(new Base());
-        ArrayList entArr = new ArrayList();
-        self.SetValue("Entities", entArr);
+        self.CreateList("entities");
+        self.CreateList("metadata");
         return self;
     }
 
-    public ArrayList GetAll() {
-        ArrayList entArr;
-        this.GetValue("Entities", entArr);
-        return entArr;
-    }
+    public ArrayList GetAll() { return this.GetList("entities"); }
 
     public Entity Add(int id) {
         ArrayList entArr;
-        this.GetValue("Entities", entArr);
+        this.GetValue("entities", entArr);
 
         Entity ent = new Entity(id);
         ent.active = true;
@@ -76,6 +72,7 @@ methodmap EntitySingleton < Base {
     }
     
     public native Entity Get(int id);
+    
     public native Entity TryGetOrAdd(int id);
 
     public native Entity Create(char[] EntName, bool register = true);
@@ -84,7 +81,7 @@ methodmap EntitySingleton < Base {
 
     public void Clear() {
         ArrayList entArr;
-        this.GetValue("Entities", entArr);
+        this.GetValue("entities", entArr);
 
         for(int i=0; i < entArr.Length; i++)
             delete view_as<Entity>(entArr.Get(i, 0));

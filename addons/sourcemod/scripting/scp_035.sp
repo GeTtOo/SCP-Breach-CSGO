@@ -16,34 +16,13 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
+public void SCP_RegisterMetaData() {
+    gamemode.meta.RegEntOnPickup("035_mask", "Logic", true);
+}
+
 public void SCP_OnPlayerJoin(Client &ply)
 {
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
-}
-
-public void SCP_OnRoundStart()
-{
-    Ents.Create("035_mask")
-    .SetPos(new Vector(-7682.0, 464.0, 118.0), new Angle(0.0, 0.0, 0.0))
-    .UseCB(view_as<SDKHookCB>(Callback_EntUse))
-    .Spawn();
-}
-
-public void SCP_OnPlayerSpawn(Client &ply) 
-{
-    if (ply.class != null && ply.class.Is("035"))
-        Logic(ply);
-}
-
-public SDKHookCB Callback_EntUse(int eid, int cid) 
-{
-    Client ply = Clients.Get(cid);
-
-    if (ply.IsSCP && ply != null && ply.class != null) return;
-
-    Ents.Remove(eid);
-
-    Logic(ply);
 }
 
 public void SCP_OnPlayerClear(Client &ply)
@@ -74,10 +53,10 @@ public Action HandlerHitSCP(Client ply)
     if(ply.health > 10)
         ply.health -= 10;
     else
-        ForcePlayerSuicide(ply.id);
+        ply.Kill();
 }
 
-public void Logic(Client ply)
+public void Logic(Client &ply)
 {
     Vector sp = ply.GetPos();
     Angle sa = ply.GetAng();

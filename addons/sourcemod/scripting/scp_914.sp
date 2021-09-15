@@ -67,7 +67,7 @@ public SDKHookCB Callback_EntUse(int eid, int cid) {
     char entClassName[32];
     ent.GetClass(entClassName, sizeof(entClassName));
 
-    if (gamemode.entities.HasKey(entClassName))
+    if (gamemode.meta.GetEntity(entClassName) != null)
         if (ply.inv.Add(entClassName))
             Ents.Remove(ent.id);
         else

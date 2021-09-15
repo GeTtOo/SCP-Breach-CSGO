@@ -153,7 +153,7 @@
                 "priority":true,
                 "percent":20,
                 "health":7800,
-                "doors":[159,160],
+                "doors":[180,181],
                 "weapons":["weapon_fists"],
                 "comment":"The Doctor ʕ•ᴥ•ʔ"
             },
@@ -173,7 +173,7 @@
                 "percent":20,
                 "health":25000,
                 "speed":130,
-                "doors":[117,118],
+                "doors":[138,139],
                 "comment":"096"
             },
             "106": {
@@ -192,7 +192,7 @@
                 "speed":250,
                 "multipler":4.2,
                 "fists":false,
-                "doors":[162,163],
+                "doors":[183,184],
                 "comment":"173"
             },
             "457": {
@@ -202,7 +202,7 @@
                 "armor":2000,
                 "speed":250,
                 "multipler":1.2,
-                "doors":[447],
+                "doors":[468],
                 "weapons":["weapon_fists"],
                 "comment":"Fire man"
             }

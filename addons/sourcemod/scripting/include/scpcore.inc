@@ -10,6 +10,7 @@
 #include "scp/structures/vector"
 #include "scp/structures/color"
 #include "scp/structures/json"
+#include "scp/classes/meta"
 #include "scp/classes/gamemode"
 
 GameMode gamemode;
@@ -53,9 +54,11 @@ forward void SCP_OnInput(Client &ply, int buttons);
 
 forward void SCP_OnPRessF(Client &ply);
 
+forward void SCP_RegisterMetaData();
+
 public any NativeGameMode_Config(Handle Plugin, int numArgs) { return view_as<Config>(gamemode.GetObject("Config")); }
 
-public any NativeGameMode_Entities(Handle Plugin, int numArgs) { return view_as<Entities>(gamemode.GetObject("Entities")); }
+public any NativeGameMode_Meta(Handle Plugin, int numArgs) { return view_as<Meta>(gamemode.GetObject("Meta")); }
 
 public any NativeGameMode_Manager(Handle Plugin, int numArgs) { return view_as<Manager>(gamemode.GetObject("Manager")); }
 
@@ -122,20 +125,20 @@ public any NativeClients_Alive(Handle Plugin, int numArgs) {
 public any NativeEntities_Create(Handle Plugin, int numArgs) {
     char EntName[32];
     GetNativeString(2, EntName, sizeof(EntName));
+
+    EntityMeta entdata = gamemode.meta.GetEntity(EntName);
     
     Entity entity;
-    if (gamemode.entities.HasKey(EntName))
+    if (entdata != null)
     {
-        EntConfig entcfg = gamemode.entities.get(EntName);
-
         entity = new Entity(CreateEntityByName("prop_physics_override"));
 
         char modelName[128], mass[12], name[32], bodygroup[12], skin[12];
-        entcfg.model(modelName, sizeof(modelName));
-        entcfg.name(name, sizeof(name));
-        FloatToString(entcfg.GetFloat("mass"), mass, sizeof(mass));
-        IntToString(entcfg.GetInt("bodygroup"), bodygroup, sizeof(bodygroup));
-        IntToString(entcfg.GetInt("skin"), skin, sizeof(skin));
+        entdata.model(modelName, sizeof(modelName));
+        entdata.name(name, sizeof(name));
+        FloatToString(entdata.mass, mass, sizeof(mass));
+        IntToString(entdata.bodygroup, bodygroup, sizeof(bodygroup));
+        IntToString(entdata.skin, skin, sizeof(skin));
         
         entity.InvName(name);
 
@@ -145,10 +148,14 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
         DispatchKeyValue(entity.id, "Solid", "6");
         DispatchKeyValue(entity.id, "body", bodygroup);
         DispatchKeyValue(entity.id, "skin", skin);
-        if (entcfg.spawnflags != 0) {
+        if (entdata.spawnflags != 0) {
             char flags[8];
-            IntToString(entcfg.spawnflags, flags, sizeof(flags));
+            IntToString(entdata.spawnflags, flags, sizeof(flags));
             DispatchKeyValue(entity.id, "spawnflags", flags);
+        }
+        if (entdata.usable) {
+            char funcname[32];
+            entdata.GetString("function", funcname, sizeof(funcname));
         }
     }
     else
@@ -160,7 +167,7 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
     entity.SetString("class", EntName);
     
     if (view_as<bool>(GetNativeCell(3)))
-        Ents.GetList("Entities").Push(entity);
+        Ents.GetList("entities").Push(entity);
 
     return entity;
 }
@@ -169,7 +176,7 @@ public any NativeEntities_Remove(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
 
     ArrayList entArr;
-    Ents.GetValue("Entities", entArr);
+    Ents.GetValue("entities", entArr);
 
     for(int i=0; i < entArr.Length; i++)
         if (view_as<Entity>(entArr.Get(i, 0)).id == id) {
@@ -181,7 +188,7 @@ public any NativeEntities_Remove(Handle Plugin, int numArgs) {
 public any NativeEntities_Get(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
     ArrayList entArr;
-    Ents.GetValue("Entities", entArr);
+    Ents.GetValue("entities", entArr);
 
     for(int i=0; i < entArr.Length; i++)
         if (view_as<Entity>(entArr.Get(i)).id == id)
@@ -193,7 +200,7 @@ public any NativeEntities_Get(Handle Plugin, int numArgs) {
 public any NativeEntities_TryGetOrAdd(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
     ArrayList entArr;
-    Ents.GetValue("Entities", entArr);
+    Ents.GetValue("entities", entArr);
 
     for(int i=0; i < entArr.Length; i++)
         if (view_as<Entity>(entArr.Get(i)).id == id)

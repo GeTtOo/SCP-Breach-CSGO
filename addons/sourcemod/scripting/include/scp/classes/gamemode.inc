@@ -6,7 +6,6 @@
 
 #include "scp/classes/json/config"
 #include "scp/classes/json/class"
-#include "scp/classes/json/entities"
 #include "scp/classes/timers"
 
 methodmap Classes < JSON_OBJECT {
@@ -54,13 +53,17 @@ methodmap GameMode < JSON_OBJECT {
     public GameMode(char[] mapname) {
         GameMode self = view_as<GameMode>(new JSON_OBJECT());
         self.SetValue("Teams", new Teams(mapname));
-        self.SetValue("Entities", new Entities(mapname));
         self.SetValue("Config", new Config(mapname));
+        self.SetValue("Meta", new Meta());
         self.SetValue("Timers", new Timers());
         return self;
     }
 
     property Config config {
+        public native get();
+    }
+
+    property Meta meta {
         public native get();
     }
 
@@ -81,10 +84,6 @@ methodmap GameMode < JSON_OBJECT {
     }
 
     public native GTeam team(char[] name);
-
-    property Entities entities {
-        public native get();
-    }
 
     public StringMapSnapshot GetTeamNames() {
         return this.GetObject("Teams").Snapshot();

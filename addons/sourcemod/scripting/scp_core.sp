@@ -20,6 +20,7 @@ Handle OnRoundStartForward;
 Handle OnRoundEndForward;
 Handle OnInputForward;
 Handle OnPressFForward;
+Handle RegMetaForward;
 
 public Plugin myinfo = {
     name = "[SCP] GameMode",
@@ -39,12 +40,12 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 {
     CreateNative("GameMode.team", NativeGameMode_GetTeam);
     CreateNative("GameMode.config.get", NativeGameMode_Config);
-    CreateNative("GameMode.entities.get", NativeGameMode_Entities);
+    CreateNative("GameMode.meta.get", NativeGameMode_Meta);
     CreateNative("GameMode.mngr.get", NativeGameMode_Manager);
     CreateNative("GameMode.nuke.get", NativeGameMode_Nuke);
     CreateNative("GameMode.timer.get", NativeGameMode_Timers);
     CreateNative("GameMode.log.get", NativeGameMode_Logger);
-    
+
     CreateNative("ClientSingleton.GetAll", NativeClients_GetAll);
     CreateNative("ClientSingleton.Get", NativeClients_Get);
     CreateNative("ClientSingleton.GetRandom", NativeClients_GetRandom);
@@ -68,6 +69,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     OnRoundEndForward = CreateGlobalForward("SCP_OnRoundEnd", ET_Event);
     OnInputForward = CreateGlobalForward("SCP_OnInput", ET_Event, Param_CellByRef, Param_Cell);
     OnPressFForward = CreateGlobalForward("SCP_OnPressF", ET_Event, Param_CellByRef);
+    RegMetaForward = CreateGlobalForward("SCP_RegisterMetaData", ET_Event);
 
     RegPluginLibrary("scp_core");
     return APLRes_Success;
@@ -127,6 +129,66 @@ public void OnMapStart()
     gamemode.config.SetInt("pbst", FindSendPropInfo("CCSPlayer", "m_flProgressBarStartTime"));
     gamemode.config.SetInt("pbd", FindSendPropInfo("CCSPlayer", "m_iProgressBarDuration"));
     gamemode.config.SetInt("buaip", FindSendPropInfo("CCSPlayer", "m_iBlockingUseActionInProgress"));
+
+    JSON_OBJECT ents = ReadConfig(mapName, "entities");
+
+    StringMapSnapshot sents = ents.Snapshot();
+
+    int keylen;
+    for (int i = 0; i < sents.Length; i++)
+    {
+        keylen = sents.KeyBufferSize(i);
+        char[] entclass = new char[keylen];
+        sents.GetKey(i, entclass, keylen);
+        if (json_is_meta_key(entclass)) continue;
+
+        JSON_OBJECT ent = ents.GetObject(entclass);
+        StringMapSnapshot sent = ent.Snapshot();
+
+        char entname[32], entmodel[128];
+
+        ent.GetString("name", entname, sizeof(entname));
+        ent.GetString("model", entmodel, sizeof(entmodel));
+        
+        EntityMeta entdata = new EntityMeta();
+
+        int kl;
+        for (int k=0; k < sent.Length; k++)
+        {
+            kl = sent.KeyBufferSize(k);
+            char[] keyname = new char[kl];
+            sent.GetKey(k, keyname, kl);
+            if (json_is_meta_key(keyname)) continue;
+
+            entdata.class(entclass);
+
+            switch(ent.GetKeyType(keyname))
+            {
+                case 0: {
+                    char str[128];
+                    ent.GetString(keyname, str, sizeof(str));
+                    entdata.SetString(keyname, str);
+                }
+                case 1: { entdata.SetInt(keyname, ent.GetInt(keyname)); }
+                case 2: { entdata.SetFloat(keyname, ent.GetFloat(keyname)); }
+                case 3: { entdata.SetBool(keyname, ent.GetBool(keyname)); }
+                case 4: {
+                    JSON_ARRAY arr = ent.GetArray(keyname);
+                    ArrayList list = new ArrayList();
+
+                    for (int v=0; v < arr.Length; v++)
+                        list.Push(arr.GetInt(v));
+
+                    entdata.SetList(keyname, list);
+                }
+            }
+        }
+        
+        gamemode.meta.RegisterEntity(entdata);
+    }
+
+    Call_StartForward(RegMetaForward);
+    Call_Finish();
 
     PrecacheSound(NUKE_EXPLOSION_SOUND);
     LoadFileToDownload();
@@ -547,7 +609,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
             Ents.Create(entclass)
             .SetPos(vic.GetPos() + new Vector(GetRandomFloat(-30.0,30.0), GetRandomFloat(-30.0,30.0), 0.0))
-            .UseCB(view_as<SDKHookCB>(Callback_EntUse))
+            .UseCB(view_as<SDKHookCB>(CB_EntUse))
             .Spawn();
         }
         
@@ -695,7 +757,7 @@ public void LoadFileToDownload()
 //
 //////////////////////////////////////////////////////////////////////////////
 
-public SDKHookCB Callback_EntUse(int entity, int client) 
+public SDKHookCB CB_EntUse(int entity, int client) 
 {
     Client ply = Clients.Get(client);
     Entity ent = Ents.Get(entity);
@@ -705,16 +767,31 @@ public SDKHookCB Callback_EntUse(int entity, int client)
     char entClassName[32];
     ent.GetClass(entClassName, sizeof(entClassName));
 
-    if (gamemode.entities.HasKey(entClassName))
+    if (gamemode.meta.GetEntity(entClassName) != null)
     {
-        if (ply.inv.Add(entClassName))
-            Ents.Remove(ent.id);
+        EntityMeta entdata = gamemode.meta.GetEntity(entClassName);
+
+        if (entdata.onpickup)
+        {
+            char funcname[32];
+            entdata.onpickup.name(funcname, sizeof(funcname));
+
+            Call_StartFunction(entdata.onpickup.hndl, GetFunctionByName(entdata.onpickup.hndl, funcname));
+            Call_PushCellRef(ply);
+            Call_Finish();
+        }
+
+        if (!entdata.onpickup || !entdata.onpickup.invblock)
+            if (ply.inv.Add(entClassName))
+                Ents.Remove(ent.id);
+            else
+                PrintToChat(ply.id, " \x07[SCP] \x01%t", "Inventory full");
         else
-            PrintToChat(ply.id, " \x07[SCP] \x01%t", "Inventory full");
+            Ents.Remove(ent.id);
     }
 }
 
-public int InventoryHandler(Menu hMenu, MenuAction action, int client, int item) 
+public int InventoryHandler(Menu hMenu, MenuAction action, int client, int item)
 {
     if (action == MenuAction_End)
     {
@@ -723,17 +800,71 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int item)
     else if (action == MenuAction_Select) 
     {
         Client ply = Clients.Get(client);
-        Item itm = ply.inv.Drop(item);
+        Item itm = ply.inv.Get(item);
 
-        char entclass[32];
-        itm.GetEntClass(entclass, sizeof(entclass));
-        delete itm;
+        char class[32], name[32];
+        itm.GetEntClass(class, sizeof(class));
+        itm.name(name, sizeof(name));
+        
+        EntityMeta entdata = gamemode.meta.GetEntity(class);
 
-        Ents.Create(entclass)
-        .SetPos(ply.GetAng().Forward(ply.EyePos(), 5.0) - new Vector(0.0, 0.0, 15.0))
-        .UseCB(view_as<SDKHookCB>(Callback_EntUse))
-        .Spawn()
-        .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
+        Menu InvItmMenu = new Menu(InventoryItemHandler);
+
+        InvItmMenu.SetTitle(name);
+
+        char itemid[3];
+        IntToString(item, itemid, sizeof(itemid));
+
+        InvItmMenu.AddItem(itemid, "Use", entdata.onuse ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+        InvItmMenu.AddItem(itemid, "Drop", ITEMDRAW_DEFAULT);
+
+        InvItmMenu.Display(ply.id, 30);
+    }
+}
+
+public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int item)
+{
+    if (action == MenuAction_End)
+    {
+        delete hMenu;
+    }
+    else if (action == MenuAction_Select) 
+    {
+        Client ply = Clients.Get(client);
+        
+        char itemid[3];
+        hMenu.GetItem(item, itemid, sizeof(itemid));
+
+        switch (item)
+        {
+            case 0:
+            {
+                Item itm = ply.inv.Get(StringToInt(itemid));
+                char entclass[32];
+                itm.GetEntClass(entclass, sizeof(entclass));
+                EntityMeta entdata = gamemode.meta.GetEntity(entclass);
+                
+                char funcname[32];
+                entdata.onuse.name(funcname, sizeof(funcname));
+
+                Call_StartFunction(entdata.onuse.hndl, GetFunctionByName(entdata.onuse.hndl, funcname));
+                Call_PushCellRef(ply);
+                Call_Finish();
+            }
+            case 1:
+            {
+                Item itm = ply.inv.Drop(StringToInt(itemid));
+                char entclass[32];
+                itm.GetEntClass(entclass, sizeof(entclass));
+                delete itm;
+
+                Ents.Create(entclass)
+                .SetPos(ply.GetAng().Forward(ply.EyePos(), 5.0) - new Vector(0.0, 0.0, 15.0))
+                .UseCB(view_as<SDKHookCB>(CB_EntUse))
+                .Spawn()
+                .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
+            }
+        }
     }
 }
 
@@ -789,7 +920,7 @@ public void SpawnItemsOnMap()
             if (GetRandomInt(1, 100) <= data.GetInt("chance"))
                 Ents.Create(item)
                 .SetPos(pos, ang)
-                .UseCB(view_as<SDKHookCB>(Callback_EntUse))
+                .UseCB(view_as<SDKHookCB>(CB_EntUse))
                 .Spawn();
         }
     }

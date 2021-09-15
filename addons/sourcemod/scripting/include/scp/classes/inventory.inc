@@ -10,6 +10,11 @@ methodmap Item < Base {
         return self;
     }
 
+    property bool usable {
+        public set(bool val) { this.SetBool("usable", val); }
+        public get() { return this.GetBool("usable"); }
+    }
+
     public Item SetEntClass(char[] class) {
         this.SetString("class", class);
         return this;
@@ -31,9 +36,9 @@ methodmap Item < Base {
 methodmap Inventory < Base {
 
     public Inventory() {
-        Inventory self = view_as<Inventory>(CreateTrie());
-        self.SetValue("inventory", new ArrayList());
-        return self;
+        Inventory inv = view_as<Inventory>(new Base());
+        inv.CreateList("inventory");
+        return inv;
     }
 
     property ArrayList items {
@@ -47,18 +52,18 @@ methodmap Inventory < Base {
             char itemname[32];
             view_as<Item>(list.Get(i)).GetEntClass(itemname, sizeof(itemname));
 
-            EntConfig entcfg = gamemode.entities.get(itemname);
-            if (entcfg && entcfg != null) {
-                if (view_as<int>(entcfg.GetKeyType(val)) == 4) {
-                    JSON_ARRAY arrvalues = view_as<JSON_ARRAY>(entcfg.GetObject(val));
+            EntityMeta entdata = gamemode.meta.GetEntity(itemname);
+            if (entdata != null) {
+                ArrayList checklist = entdata.GetList(val);
 
-                    for (int k=0; k < arrvalues.Length; k++)
-                        if (arrvalues.GetInt(k, 0) == check)
+                if (checklist != null) {
+                    for (int k=0; k < checklist.Length; k++)
+                        if (checklist.Get(k) == check)
                             return true;
                 }
                 else
                 {
-                    if (entcfg.GetInt(val, 0) == check)
+                    if (entdata.GetInt(val) == check)
                         return true;
                 }
             }
@@ -71,10 +76,10 @@ methodmap Inventory < Base {
         ArrayList inv = this.GetList("inventory");
 
         if (inv.Length <= gamemode.config.invsize) {
-            EntConfig entcfg = gamemode.entities.get(entclass);
+            EntityMeta entdata = gamemode.meta.GetEntity(entclass);
 
             char name[32];
-            entcfg.name(name, sizeof(name));
+            entdata.name(name, sizeof(name));
 
             Item itm = new Item(entclass);
             itm.name(name);
@@ -84,6 +89,10 @@ methodmap Inventory < Base {
         }
         else
             return false;
+    }
+
+    public Item Get(int index = 0) {
+        return this.GetList("inventory").Get(index);
     }
 
     public Item Drop(int index = 0) {
