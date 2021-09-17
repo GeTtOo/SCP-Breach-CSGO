@@ -1,6 +1,5 @@
 {
     "card_o5": {
-        "name":"Card О5",
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":0,
@@ -8,7 +7,6 @@
         "access":[1,2,3,4,5,6,7,8,9,10]
     },
     "card_facility_manager": {
-        "name":"Faciity manager",
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":1,
@@ -16,7 +14,6 @@
         "access":[1,2,3,4,5,9,10]
     },
     "card_containment_engineer": {
-        "name":"Containment engineer",
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":2,
@@ -24,7 +21,6 @@
         "access":[1,2,3,5,9,10]
     },
     "card_mog_commander": {
-        "name":"MOG Commander",
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":3,
@@ -32,7 +28,6 @@
         "access":[1,2,4,6,7,8,9,10]
     },
     "card_mog_lieutenant": {
-        "name":"Карта лейт. MOG",
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":4,
@@ -40,7 +35,6 @@
         "access":[1,2,4,6,7,9]
     },
     "card_guard": {
-        "name":"Security card",
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":5,
@@ -48,7 +42,6 @@
         "access":[1,4,7]
     },
     "card_senior_guard": {
-        "name":"Security card",
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":6,
@@ -56,7 +49,6 @@
         "access":[1,2,6,7,9]
     },
     "card_zone_manager": {
-        "name":"Zone Manager",
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":7,
@@ -64,7 +56,6 @@
         "access":[1,9]
     },
     "card_major_scientist": {
-        "name":"Major scientist",
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":8,
@@ -72,7 +63,6 @@
         "access":[1,2,3,4]
     },
     "card_scientist": {
-        "name":"Scientist",
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":9,
@@ -80,7 +70,6 @@
         "access":[1,2]
     },
     "card_janitor": {
-        "name":"Карта уборщика",
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":10,
@@ -88,38 +77,42 @@
         "access":[1]
     },
     "card_chaos": {
-        "name":"Карта Хаоса",
-        "model":"models/eternity/props/keycard.mdl",
+        "model":"models/eternity/props/chaos_card.mdl",
         "mass":0.2,
         "spawnflags":4356,
         "access":[1,2,4,6,7,8,9,10]
     },
-    "trash_metal": {
-        "name":"Метал",
-        "model":"models/eternity/props/keycard.mdl",
+    "iron_ingot": {
+        "model":"models/eternity/props/ingot.mdl",
         "mass":0.2,
         "spawnflags":4356
     },
-    "trash_plastic": {
-        "name":"Пластик",
-        "model":"models/eternity/props/keycard.mdl",
+    "plastic": {
+        "model":"models/eternity/props/plastic.mdl",
+        "mass":0.2,
+        "spawnflags":4356
+    },
+    "005_picklock": {
+        "model":"models/eternity/props/scp/scp_005.mdl",
         "mass":0.2,
         "spawnflags":4356
     },
     "500_panacea": {
-        "name":"SCP-500",
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "spawnflags":4356
     },
+    "427_amulet": {
+        "model":"models/eternity/props/scp/scp_427.mdl",
+        "mass":0.2,
+        "spawnflags":4356
+    },
     "268_cap": {
-        "name":"SCP-268",
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "spawnflags":4356
     },
     "035_mask": {
-        "name":"035 Маска",
         "model":"models/eternity/props/scp/scp_035.mdl",
         "mass":0.5,
         "spawnflags":4356

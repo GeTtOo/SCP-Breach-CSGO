@@ -84,17 +84,7 @@
         "access":5,
         "scp":false
     },
-    "311096": {
-        "location":"Security room",
-        "access":4,
-        "scp":false
-    },
-    "311099": {
-        "location":"Security room",
-        "access":4,
-        "scp":false
-    },
-    "311395": {
+    "311385": {
         "location":"Nuclear warhead site",
         "access":6,
         "scp":true
@@ -124,34 +114,9 @@
         "access":10,
         "scp":false
     },
-    "490332": {
-        "location":"096 room",
-        "access":3,
-        "scp":true
-    },
-    "490320": {
-        "location":"096 room",
-        "access":3,
-        "scp":true
-    },
     "490772": {
         "location":"096 camera",
         "access":4,
-        "scp":true
-    },
-    "310502": {
-        "location":"096 room",
-        "access":2,
-        "scp":true
-    },
-    "310499": {
-        "location":"096 room",
-        "access":2,
-        "scp":true
-    },
-    "312323": {
-        "location":"096 camera",
-        "access":5,
         "scp":true
     },
     "312244": {
@@ -159,39 +124,14 @@
         "access":3,
         "scp":true
     },
-    "310622": {
-        "location":"049 hall",
-        "access":2,
-        "scp":true
-    },
     "370644": {
         "location":"049 camera",
         "access":4,
         "scp":true
     },
-    "286411": {
-        "location":"457 hall",
-        "access":2,
-        "scp":true
-    },
-    "286405": {
-        "location":"457 hall",
-        "access":2,
-        "scp":true
-    },
-    "302236": {
-        "location":"096 room",
-        "access":2,
-        "scp":true
-    },
     "354434": {
         "location":"457 camera",
         "access":4,
-        "scp":true
-    },
-    "302597": {
-        "location":"SCP 996 hall",
-        "access":2,
         "scp":true
     },
     "302774": {

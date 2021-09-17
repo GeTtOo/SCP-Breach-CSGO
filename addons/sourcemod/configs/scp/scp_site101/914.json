@@ -18,27 +18,999 @@
             "player": [
                 ["Butchering", 100]
             ],
+            "card_janitor": [
+                ["card_facility_manager", 100, 0]
+            ],
+            "card_scientist": [
+                ["card_facility_manager", 100, 0]
+            ],
+            "card_major_scientist": [
+                ["card_janitor", 50, 100]
+            ],
+            "card_zone_manager": [
+                ["card_scientist", 50, 100]
+            ],
+            "card_guard": [
+                ["card_scientist", 50, 100]
+            ],
+            "card_senior_guard": [
+                ["card_major_scientist", 50, 100],
+                ["card_zone_manager", 50, 100]
+            ],
+            "card_mog_lieutenant": [
+                ["card_guard", 50, 100]
+            ],
+            "card_chaos": [
+                ["card_senior_guard", 50, 100]
+            ],
+            "card_mog_commander": [
+                ["card_senior_guard", 50, 100]
+            ],
+            "card_containment_engineer": [
+                ["card_mog_lieutenant", 50, 100]
+            ],
+            "card_facility_manager": [
+                ["card_chaos", 50, 100],
+                ["card_mog_commander", 50, 100]
+            ],
             "card_o5": [
-                ["card_fm", 90, 5]
+                ["card_containment_engineer", 50, 100]
+            ],
+            "weapon_hkp2000": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_usp_silencer": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_fiveseven": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_glock": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_tec9": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_elite": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_p250": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_cz75a": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_deagle": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_revolver": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_mag7": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_sawedoff": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_nova": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_xm1014": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_mp9": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_mac10": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_mp7": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_mp5sd": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_ump45": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_p90": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_bizon": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_famas": [
+                ["iron_ingot", 50, 100],
+                ["weapon_hkp2000", 50, 100],
+                ["weapon_usp_silencer", 50, 100],
+                ["weapon_glock", 50, 100],
+                ["weapon_tec9", 50, 100]
+            ],
+            "weapon_m4a1_silencer": [
+                ["iron_ingot", 50, 100],
+                ["weapon_deagle", 50, 100],
+                ["weapon_revolver", 50, 100],
+                ["weapon_cz75a", 50, 100]
+            ],
+            "weapon_m4a1": [
+                ["iron_ingot", 50, 100],
+                ["weapon_deagle", 50, 100],
+                ["weapon_revolver", 50, 100],
+                ["weapon_cz75a", 50, 100]
+            ],
+            "weapon_aug": [
+                ["iron_ingot", 50, 100],
+                ["weapon_fiveseven", 50, 100],
+                ["weapon_p250", 50, 100],
+                ["weapon_elite", 50, 100]
+            ],
+            "weapon_galilar": [
+                ["iron_ingot", 50, 100],
+                ["weapon_hkp2000", 50, 100],
+                ["weapon_usp_silencer", 50, 100],
+                ["weapon_glock", 50, 100],
+                ["weapon_tec9", 50, 100]
+            ],
+            "weapon_ak47": [
+                ["iron_ingot", 50, 100],
+                ["weapon_deagle", 50, 100],
+                ["weapon_revolver", 50, 100],
+                ["weapon_cz75a", 50, 100]
+            ],
+            "weapon_sg556": [
+                ["iron_ingot", 50, 100],
+                ["weapon_fiveseven", 50, 100],
+                ["weapon_p250", 50, 100],
+                ["weapon_elite", 50, 100]
+            ],
+            "weapon_scar20": [
+                ["iron_ingot", 50, 100],
+                ["weapon_xm1014", 50, 100]
+            ],
+            "weapon_g3sg1": [
+                ["iron_ingot", 50, 100],
+                ["weapon_xm1014", 50, 100]
+            ],
+            "weapon_ssg08": [
+                ["iron_ingot", 50, 100],
+                ["weapon_mag7", 50, 100],
+                ["weapon_sawedoff", 50, 100]
+            ],
+            "weapon_awp": [
+                ["iron_ingot", 50, 100],
+                ["weapon_nova", 50, 100]
+            ],
+            "weapon_m249": [
+                ["iron_ingot", 50, 100],
+                ["weapon_mp9", 50, 100],
+                ["weapon_mac10", 50, 100],
+                ["weapon_mp7", 50, 100],
+                ["weapon_mp5sd", 50, 100],
+                ["weapon_ump45", 50, 100],
+                ["weapon_bizon", 50, 100],
+                ["weapon_p90", 50, 100]
+            ],
+            "weapon_negev": [
+                ["iron_ingot", 50, 100],
+                ["weapon_mp9", 50, 100],
+                ["weapon_mac10", 50, 100],
+                ["weapon_mp7", 50, 100],
+                ["weapon_mp5sd", 50, 100],
+                ["weapon_ump45", 50, 100],
+                ["weapon_bizon", 50, 100],
+                ["weapon_p90", 50, 100]
+            ],
+            "weapon_flashbang": [
+                ["iron_ingot", 50, 100],
+                ["plastic", 50, 100]
+            ],
+            "weapon_hegrenade": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_incgrenade": [
+                ["iron_ingot", 50, 100],
+                ["plastic", 50, 100]
+            ],
+            "weapon_decoy": [
+                ["iron_ingot", 50, 100],
+                ["plastic", 50, 100]
+            ],
+            "weapon_smokegrenade": [
+                ["iron_ingot", 50, 100],
+                ["plastic", 50, 100]
+            ],
+            "weapon_healthshot": [
+                ["plastic", 50, 100]
+            ],
+            "scp_500": [
+                ["weapon_healthshot", 50, 100]
+            ],
+            "scp_472": [
+                ["scp_500", 50, 100]
+            ],
+            "weapon_axe": [
+                ["iron_ingot", 50, 100],
+                ["plastic", 50, 100]
+            ],
+            "weapon_hammer": [
+                ["iron_ingot", 50, 100],
+                ["plastic", 50, 100]
+            ],
+            "weapon_spanner": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_breachcharge": [
+                ["iron_ingot", 50, 100],
+                ["plastic", 50, 100]
+            ],
+            "weapon_shield": [
+                ["iron_ingot", 50, 100]
+            ],
+            "weapon_bumpmine": [
+                ["iron_ingot", 50, 100]
+            ],
+            "iron_ingot": [
+                ["iron_ingot", 100, 0]
+            ],
+            "plastic": [
+                ["iron_ingot", 100, 0]
             ]
         },
         "coarse": {
             "player": [
                 ["Injure", 100]
             ],
-            "card_o5": [
-                ["card_fm", 0, 10]
+            "card_janitor": [
+                ["plastic", 50, 100]
             ],
-            "weapon_m4a1_silencer": [
-                ["weapon_m4a1", 0, 100]
+            "card_scientist": {
+                "30":["plastic", 0, 100],
+                "70":["card_janitor", 0, 100]
+            },
+            "card_major_scientist": {
+                "30":["plastic", 0, 100],
+                "70":["card_janitor", 0, 100]
+            },
+            "card_zone_manager": {
+                "30":["plastic", 0, 100],
+                "70":["card_scientist", 0, 100]
+            },
+            "card_guard": {
+                "20":["plastic", 0, 100],
+                "40":["card_major_scientist", 0, 100],
+                "39":["card_zone_manager", 0, 100]
+            },
+            "card_senior_guard": {
+                "30":["plastic", 0, 100],
+                "70":["card_guard", 0, 100]
+            },
+            "card_mog_lieutenant": {
+                "30":["plastic", 0, 100],
+                "70":["card_senior_guard", 0, 100]
+            },
+            "card_chaos": {
+                "30":["plastic", 0, 100],
+                "70":["card_mog_lieutenant", 0, 100]
+            },
+            "card_mog_commander": {
+                "30":["plastic", 0, 100],
+                "70":["card_mog_lieutenant", 0, 100]
+            },
+            "card_containment_engineer": {
+                "20":["plastic", 0, 100],
+                "41":["card_mog_commander", 0, 100],
+                "39":["card_chaos", 0, 100]
+            },
+            "card_facility_manager": {
+                "30":["plastic", 0, 100],
+                "70":["card_containment_engineer", 0, 100]
+            },
+            "card_o5": {
+                "30":["plastic", 0, 100],
+                "70":["card_facility_manager", 0, 100]
+            },
+            "weapon_hkp2000": {
+                "10":["iron_ingot", 0, 100],
+                "30":["weapon_axe", 0, 100],
+                "29":["weapon_hammer", 0, 100],
+                "31":["weapon_spanner", 0, 100]
+            },
+            "weapon_usp_silencer": {
+                "10":["iron_ingot", 0, 100],
+                "30":["weapon_axe", 0, 100],
+                "29":["weapon_hammer", 0, 100],
+                "31":["weapon_spanner", 0, 100]
+            },
+            "weapon_fiveseven": {
+                "10":["iron_ingot", 0, 100],
+                "30":["weapon_axe", 0, 100],
+                "29":["weapon_hammer", 0, 100],
+                "31":["weapon_spanner", 0, 100]
+            },
+            "weapon_glock": {
+                "10":["iron_ingot", 0, 100],
+                "30":["weapon_axe", 0, 100],
+                "29":["weapon_hammer", 0, 100],
+                "31":["weapon_spanner", 0, 100]
+            },
+            "weapon_tec9": {
+                "10":["iron_ingot", 0, 100],
+                "30":["weapon_axe", 0, 100],
+                "29":["weapon_hammer", 0, 100],
+                "31":["weapon_spanner", 0, 100]
+            },
+            "weapon_elite": {
+                "10":["iron_ingot", 0, 100],
+                "30":["weapon_axe", 0, 100],
+                "29":["weapon_hammer", 0, 100],
+                "31":["weapon_spanner", 0, 100]
+            },
+            "weapon_p250": {
+                "10":["iron_ingot", 0, 100],
+                "30":["weapon_axe", 0, 100],
+                "29":["weapon_hammer", 0, 100],
+                "31":["weapon_spanner", 0, 100]
+            },
+            "weapon_cz75a": {
+                "10":["iron_ingot", 0, 100],
+                "30":["weapon_axe", 0, 100],
+                "29":["weapon_hammer", 0, 100],
+                "31":["weapon_spanner", 0, 100]
+            },
+            "weapon_deagle": {
+                "10":["iron_ingot", 0, 100],
+                "30":["weapon_axe", 0, 100],
+                "29":["weapon_hammer", 0, 100],
+                "31":["weapon_spanner", 0, 100]
+            },
+            "weapon_revolver": {
+                "10":["iron_ingot", 0, 100],
+                "30":["weapon_axe", 0, 100],
+                "29":["weapon_hammer", 0, 100],
+                "31":["weapon_spanner", 0, 100]
+            },
+            "weapon_mag7": [
+                ["iron_ingot", 0, 100],
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
             ],
-            "weapon_usp_silencer": [
-                ["weapon_hkp2000", 0, 100]
+            "weapon_sawedoff": [
+                ["iron_ingot", 0, 100],
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_nova": [
+                ["iron_ingot", 0, 100],
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_xm1014": [
+                ["iron_ingot", 0, 100],
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_mp9": [
+                ["iron_ingot", 0, 100],
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_mac10": [
+                ["iron_ingot", 0, 100],
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_mp7": [
+                ["iron_ingot", 0, 100],
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_mp5sd": [
+                ["iron_ingot", 0, 100],
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_ump45": [
+                ["iron_ingot", 0, 100],
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_p90": [
+                ["iron_ingot", 0, 100],
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_bizon": [
+                ["iron_ingot", 0, 100],
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_famas": {
+                "30":["iron_ingot", 0, 100],
+                "70":["weapon_mp7", 0, 100]
+            },
+            "weapon_m4a1_silencer": {
+                "30":["iron_ingot", 0, 100],
+                "70":["weapon_mp5sd", 0, 100]
+            },
+            "weapon_m4a1": {
+                "30":["iron_ingot", 0, 100],
+                "70":["weapon_p90", 0, 100]
+            },
+            "weapon_aug": {
+                "30":["iron_ingot", 0, 100],
+                "70":["weapon_bizon", 0, 100]
+            },
+            "weapon_galilar": {
+                "30":["iron_ingot", 0, 100],
+                "70":["weapon_mp9", 0, 100]
+            },
+            "weapon_ak47": {
+                "30":["iron_ingot", 0, 100],
+                "70":["weapon_mac10", 0, 100]
+            },
+            "weapon_sg556": {
+                "30":["iron_ingot", 0, 100],
+                "70":["weapon_ump45", 0, 100]
+            },
+            "weapon_scar20": {
+                "30":["iron_ingot", 0, 100],
+                "70":["weapon_aug", 0, 100]
+            },
+            "weapon_g3sg1": {
+                "30":["iron_ingot", 0, 100],
+                "70":["weapon_sg556", 0, 100]
+            },
+            "weapon_ssg08": {
+                "20":["iron_ingot", 0, 100],
+                "41":["weapon_galilar", 0, 100],
+                "39":["weapon_famas", 0, 100]
+            },
+            "weapon_awp": {
+                "10":["iron_ingot", 0, 100],
+                "31":["weapon_ak47", 0, 100],
+                "29":["weapon_m4a1", 0, 100],
+                "30":["weapon_m4a1_silencer", 0, 100]
+            },
+            "weapon_m249": {
+                "30":["iron_ingot", 0, 100],
+                "70":["weapon_p90", 0, 100]
+            },
+            "weapon_negev": {
+                "30":["iron_ingot", 0, 100],
+                "70":["weapon_bizon", 0, 100]
+            },
+            "weapon_flashbang": [
+                ["iron_ingot", 0, 100],
+                ["plastic", 0, 100]
+            ],
+            "weapon_hegrenade": [
+                ["iron_ingot", 0, 100],
+                ["plastic", 0, 100]
+            ],
+            "weapon_incgrenade": [
+                ["iron_ingot", 0, 100],
+                ["plastic", 0, 100]
+            ],
+            "weapon_decoy": [
+                ["iron_ingot", 0, 100],
+                ["plastic", 0, 100]
+            ],
+            "weapon_smokegrenade": [
+                ["iron_ingot", 0, 100],
+                ["plastic", 0, 100]
+            ],
+            "weapon_healthshot": [
+                ["iron_ingot", 0, 100],
+                ["weapon_decoy", 0, 100]
+            ],
+            "scp_500": {
+                "70":["plastic", 0, 100],
+                "30":["weapon_healthshot", 0, 100]
+            },
+            "scp_472": {
+                "70":["plastic", 0, 100],
+                "30":["scp_500", 0, 100]
+            },
+            "weapon_axe": [
+                ["iron_ingot", 0, 100],
+                ["plastic", 0, 100]
+            ],
+            "weapon_hammer": [
+                ["iron_ingot", 0, 100],
+                ["plastic", 0, 100]
+            ],
+            "weapon_spanner": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_breachcharge": [
+                ["iron_ingot", 0, 100],
+                ["plastic", 0, 100]
+            ],
+            "weapon_shield": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_bumpmine": [
+                ["iron_ingot", 0, 100]
+            ],
+            "iron_ingot": [
+                ["iron_ingot", 100, 0]
+            ],
+            "plastic": [
+                ["iron_ingot", 100, 0]
             ]
         },
         "one_by_one": {
+            "card_janitor": [
+                ["plastic", 0, 50]
+            ],
+            "card_scientist": [
+                ["plastic", 0, 100],
+                ["card_zone_manager", 0, 100],
+                ["card_scientist", 0, 100]
+            ],
+            "card_major_scientist": {
+                "30":["plastic", 0, 100],
+                "29":["card_zone_manager", 0, 100],
+                "31":["card_major_scientist", 0, 100],
+                "10":["card_guard", 0, 100]
+            },
+            "card_zone_manager": {
+                "21":["plastic", 0, 100],
+                "22":["card_scientist", 0, 100],
+                "24":["card_major_scientist", 0, 100],
+                "23":["card_zone_manager", 0, 100],
+                "10":["card_guard", 0, 100]
+            },
+            "card_guard": {
+                "44":["plastic", 0, 100],
+                "46":["card_guard", 0, 100],
+                "10":["card_major_scientist", 0, 100]
+            },
+            "card_senior_guard": [
+                ["plastic", 0, 100],
+                ["card_senior_guard", 0, 100]
+            ],
+            "card_mog_lieutenant": [
+                ["plastic", 0, 100],
+                ["card_mog_lieutenant", 0, 100]
+            ],
+            "card_chaos": {
+                "30":["plastic", 0, 100],
+                "29":["card_chaos", 0, 100],
+                "31":["card_mog_commander", 0, 100],
+                "10":["card_containment_engineer", 0, 100]
+            },
+            "card_mog_commander": {
+                "30":["plastic", 0, 100],
+                "29":["card_mog_commander", 0, 100],
+                "31":["card_chaos", 0, 100],
+                "10":["card_containment_engineer", 0, 100]
+            },
+            "card_containment_engineer": {
+                "44":["plastic", 0, 100],
+                "46":["card_containment_engineer", 0, 100],
+                "10":["card_facility_manager", 0, 100]
+            },
+            "card_facility_manager": {
+                "44":["plastic", 0, 100],
+                "46":["card_facility_manager", 0, 100],
+                "10":["card_o5", 0, 100]
+            },
             "card_o5": [
-                ["card_fm", 0, 0]
+                ["plastic", 0, 100],
+                ["card_o5", 0, 100]
+            ],
+            "weapon_hkp2000": [
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_tec9", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_usp_silencer": [
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_tec9", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_fiveseven": [
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_tec9", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_glock": [
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_tec9", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_tec9": [
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_elite": [
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_tec9", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_p250": [
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_tec9", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_cz75a": [
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_tec9", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_deagle": [
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_tec9", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_revolver", 0, 100]
+            ],
+            "weapon_revolver": [
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_tec9", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100]
+            ],
+            "weapon_mag7": [
+                ["weapon_sawedoff", 0, 100],
+                ["weapon_nova", 0, 100],
+                ["weapon_xm1014", 0, 100]
+            ],
+            "weapon_sawedoff": [
+                ["weapon_mag7", 0, 100],
+                ["weapon_nova", 0, 100],
+                ["weapon_xm1014", 0, 100]
+            ],
+            "weapon_nova": [
+                ["weapon_mag7", 0, 100],
+                ["weapon_sawedoff", 0, 100],
+                ["weapon_xm1014", 0, 100]
+            ],
+            "weapon_xm1014": [
+                ["weapon_mag7", 0, 100],
+                ["weapon_sawedoff", 0, 100],
+                ["weapon_nova", 0, 100]
+            ],
+            "weapon_mp9": [
+                ["weapon_mac10", 0, 100],
+                ["weapon_mp7", 0, 100],
+                ["weapon_mp5sd", 0, 100],
+                ["weapon_ump45", 0, 100],
+                ["weapon_p90", 0, 100],
+                ["weapon_bizon", 0, 100]
+            ],
+            "weapon_mac10": [
+                ["weapon_mp9", 0, 100],
+                ["weapon_mp7", 0, 100],
+                ["weapon_mp5sd", 0, 100],
+                ["weapon_ump45", 0, 100],
+                ["weapon_p90", 0, 100],
+                ["weapon_bizon", 0, 100]
+            ],
+            "weapon_mp7": [
+                ["weapon_mp9", 0, 100],
+                ["weapon_mac10", 0, 100],
+                ["weapon_mp5sd", 0, 100],
+                ["weapon_ump45", 0, 100],
+                ["weapon_p90", 0, 100],
+                ["weapon_bizon", 0, 100]
+            ],
+            "weapon_mp5sd": [
+                ["weapon_mp9", 0, 100],
+                ["weapon_mac10", 0, 100],
+                ["weapon_mp7", 0, 100],
+                ["weapon_ump45", 0, 100],
+                ["weapon_p90", 0, 100],
+                ["weapon_bizon", 0, 100]
+            ],
+            "weapon_ump45": [
+                ["weapon_mp9", 0, 100],
+                ["weapon_mac10", 0, 100],
+                ["weapon_mp7", 0, 100],
+                ["weapon_mp5sd", 0, 100],
+                ["weapon_p90", 0, 100],
+                ["weapon_bizon", 0, 100]
+            ],
+            "weapon_p90": [
+                ["weapon_mp9", 0, 100],
+                ["weapon_mac10", 0, 100],
+                ["weapon_mp7", 0, 100],
+                ["weapon_mp5sd", 0, 100],
+                ["weapon_ump45", 0, 100],
+                ["weapon_bizon", 0, 100]
+            ],
+            "weapon_bizon": [
+                ["weapon_mp9", 0, 100],
+                ["weapon_mac10", 0, 100],
+                ["weapon_mp7", 0, 100],
+                ["weapon_mp5sd", 0, 100],
+                ["weapon_ump45", 0, 100],
+                ["weapon_p90", 0, 100]
+            ],
+            "weapon_famas": [
+                ["weapon_m4a1_silencer", 0, 100],
+                ["weapon_m4a1", 0, 100],
+                ["weapon_aug", 0, 100],
+                ["weapon_galilar", 0, 100],
+                ["weapon_ak47", 0, 100],
+                ["weapon_sg556", 0, 100]
+            ],
+            "weapon_m4a1_silencer": [
+                ["weapon_famas", 0, 100],
+                ["weapon_m4a1", 0, 100],
+                ["weapon_aug", 0, 100],
+                ["weapon_galilar", 0, 100],
+                ["weapon_ak47", 0, 100],
+                ["weapon_sg556", 0, 100]
+            ],
+            "weapon_m4a1": [
+                ["weapon_famas", 0, 100],
+                ["weapon_m4a1_silencer", 0, 100],
+                ["weapon_aug", 0, 100],
+                ["weapon_galilar", 0, 100],
+                ["weapon_ak47", 0, 100],
+                ["weapon_sg556", 0, 100]
+            ],
+            "weapon_aug": [
+                ["weapon_famas", 0, 100],
+                ["weapon_m4a1_silencer", 0, 100],
+                ["weapon_m4a1", 0, 100],
+                ["weapon_galilar", 0, 100],
+                ["weapon_ak47", 0, 100],
+                ["weapon_sg556", 0, 100]
+            ],
+            "weapon_galilar": [
+                ["weapon_famas", 0, 100],
+                ["weapon_m4a1_silencer", 0, 100],
+                ["weapon_m4a1", 0, 100],
+                ["weapon_aug", 0, 100],
+                ["weapon_ak47", 0, 100],
+                ["weapon_sg556", 0, 100]
+            ],
+            "weapon_ak47": [
+                ["weapon_famas", 0, 100],
+                ["weapon_m4a1_silencer", 0, 100],
+                ["weapon_m4a1", 0, 100],
+                ["weapon_aug", 0, 100],
+                ["weapon_galilar", 0, 100],
+                ["weapon_sg556", 0, 100]
+            ],
+            "weapon_sg556": [
+                ["weapon_famas", 0, 100],
+                ["weapon_m4a1_silencer", 0, 100],
+                ["weapon_m4a1", 0, 100],
+                ["weapon_aug", 0, 100],
+                ["weapon_galilar", 0, 100],
+                ["weapon_ak47", 0, 100]
+            ],
+            "weapon_scar20": [
+                ["weapon_g3sg1", 0, 100],
+                ["weapon_ssg08", 0, 100],
+                ["weapon_awp", 0, 100]
+            ],
+            "weapon_g3sg1": [
+                ["weapon_scar20", 0, 100],
+                ["weapon_ssg08", 0, 100],
+                ["weapon_awp", 0, 100]
+            ],
+            "weapon_ssg08": [
+                ["weapon_scar20", 0, 100],
+                ["weapon_g3sg1", 0, 100],
+                ["weapon_awp", 0, 100]
+            ],
+            "weapon_awp": [
+                ["weapon_scar20", 0, 100],
+                ["weapon_g3sg1", 0, 100],
+                ["weapon_ssg08", 0, 100]
+            ],
+            "weapon_m249": [
+                ["weapon_negev", 0, 100]
+            ],
+            "weapon_negev": [
+                ["weapon_m249", 0, 100]
+            ],
+            "weapon_flashbang": [
+                ["weapon_hegrenade", 0, 100],
+                ["weapon_incgrenade", 0, 100],
+                ["weapon_decoy", 0, 100],
+                ["weapon_smokegrenade", 0, 100]
+            ],
+            "weapon_hegrenade": [
+                ["weapon_flashbang", 0, 100],
+                ["weapon_incgrenade", 0, 100],
+                ["weapon_decoy", 0, 100],
+                ["weapon_smokegrenade", 0, 100]
+            ],
+            "weapon_incgrenade": [
+                ["weapon_flashbang", 0, 100],
+                ["weapon_hegrenade", 0, 100],
+                ["weapon_decoy", 0, 100],
+                ["weapon_smokegrenade", 0, 100]
+            ],
+            "weapon_decoy": [
+                ["weapon_flashbang", 0, 100],
+                ["weapon_hegrenade", 0, 100],
+                ["weapon_incgrenade", 0, 100],
+                ["weapon_smokegrenade", 0, 100]
+            ],
+            "weapon_smokegrenade": [
+                ["weapon_flashbang", 0, 100],
+                ["weapon_hegrenade", 0, 100],
+                ["weapon_incgrenade", 0, 100],
+                ["weapon_decoy", 0, 100]
+            ],
+            "weapon_healthshot": [
+                ["weapon_healthshot", 0, 100]
+            ],
+            "scp_500": [
+                ["scp_500", 0, 100]
+            ],
+            "scp_472": [
+                ["scp_472", 0, 100]
+            ],
+            "weapon_axe": [
+                ["weapon_hammer", 0, 100],
+                ["weapon_spanner", 0, 100]
+            ],
+            "weapon_hammer": [
+                ["weapon_axe", 0, 100],
+                ["weapon_spanner", 0, 100]
+            ],
+            "weapon_spanner": [
+                ["weapon_hammer", 0, 100],
+                ["weapon_axe", 0, 100]
+            ],
+            "weapon_breachcharge": [
+                ["weapon_bumpmine", 0, 100]
+            ],
+            "weapon_shield": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_bumpmine": [
+                ["weapon_breachcharge", 0, 100]
+            ],
+            "iron_ingot": [
+                ["plastic", 0, 100],
+                ["weapon_shield", 0, 100]
+            ],
+            "plastic": [
+                ["iron_ingot", 0, 100]
             ]
         },
         "fine": {
@@ -46,27 +1018,448 @@
                 ["Regeneration", 50],
                 ["Speed", 50]
             ],
-            "card_o5": [
-                ["card_fm", 0, 0]
+            "card_janitor": [
+                ["card_scientist", 0, 100]
             ],
-            "weapon_m4a1": [
-                ["weapon_m4a1_silencer", 0, 100]
+            "card_scientist": [
+                ["card_major_scientist", 0, 100],
+                ["card_zone_manager", 0, 100]
+            ],
+            "card_major_scientist": [
+                ["card_guard", 0, 100]
+            ],
+            "card_zone_manager": [
+                ["card_guard", 0, 100]
+            ],
+            "card_guard": [
+                ["card_senior_guard", 0, 100]
+            ],
+            "card_senior_guard": [
+                ["card_mog_lieutenant", 0, 100]
+            ],
+            "card_mog_lieutenant": [
+                ["card_chaos", 0, 100],
+                ["card_mog_commander", 0, 100]
+            ],
+            "card_chaos": [
+                ["card_containment_engineer", 0, 100]
+            ],
+            "card_mog_commander": [
+                ["card_containment_engineer", 0, 100]
+            ],
+            "card_containment_engineer": [
+                ["card_facility_manager", 0, 100]
+            ],
+            "card_facility_manager": [
+                ["card_o5", 0, 100]
+            ],
+            "card_o5": [
+                ["scp_005", 90, 100]
             ],
             "weapon_hkp2000": [
-                ["weapon_usp_silencer", 0, 100]
+                ["weapon_mp9", 0, 100]
+            ],
+            "weapon_usp_silencer": [
+                ["weapon_mp7", 0, 100],
+                ["weapon_mp5sd", 0, 100]
+            ],
+            "weapon_fiveseven": [
+                ["weapon_mag7", 0, 100]
+            ],
+            "weapon_glock": [
+                ["weapon_mac10", 0, 100]
+            ],
+            "weapon_tec9": [
+                ["weapon_sawedoff", 0, 100]
+            ],
+            "weapon_elite": [
+                ["weapon_ump45", 0, 100]
+            ],
+            "weapon_p250": [
+                ["weapon_bizon", 0, 100]
+            ],
+            "weapon_cz75a": [
+                ["weapon_xm1014", 0, 100]
+            ],
+            "weapon_deagle": [
+                ["weapon_nova", 0, 100]
+            ],
+            "weapon_revolver": [
+                ["weapon_p90", 0, 100]
+            ],
+            "weapon_mag7": [
+                ["weapon_g3sg1", 0, 100]
+            ],
+            "weapon_sawedoff": [
+                ["weapon_scar20", 0, 100]
+            ],
+            "weapon_nova": [
+                ["weapon_awp", 0, 100]
+            ],
+            "weapon_xm1014": [
+                ["weapon_ssg08", 0, 100]
+            ],
+            "weapon_mp9": [
+                ["weapon_galilar", 0, 100]
+            ],
+            "weapon_mac10": [
+                ["weapon_famas", 0, 100]
+            ],
+            "weapon_mp7": [
+                ["weapon_aug", 0, 100]
+            ],
+            "weapon_mp5sd": [
+                ["weapon_m4a1_silencer", 0, 100]
+            ],
+            "weapon_ump45": [
+                ["weapon_sg556", 0, 100]
+            ],
+            "weapon_p90": [
+                ["weapon_ak47", 0, 100]
+            ],
+            "weapon_bizon": [
+                ["weapon_m4a1", 0, 100]
+            ],
+            "weapon_famas": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_m4a1_silencer": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_m4a1": [
+                ["weapon_negev", 0, 100]
+            ],
+            "weapon_aug": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_galilar": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_ak47": [
+                ["weapon_m249", 0, 100]
+            ],
+            "weapon_sg556": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_scar20": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_g3sg1": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_ssg08": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_awp": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_m249": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_negev": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_flashbang": [
+                ["plastic", 0, 100]
+            ],
+            "weapon_hegrenade": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_incgrenade": [
+                ["plastic", 0, 100]
+            ],
+            "weapon_decoy": [
+                ["plastic", 0, 100]
+            ],
+            "weapon_smokegrenade": [
+                ["plastic", 0, 100]
+            ],
+            "weapon_healthshot": {
+                "10":["scp_500", 0, 100],
+                "90":["plastic", 0, 100]
+            },
+            "scp_500": {
+                "10":["scp_472", 0, 100],
+                "90":["plastic", 0, 100]
+            },
+            "scp_472": [
+                ["plastic", 0, 100],
+                ["iron_ingot", 0, 100],
+                ["card_o5", 0, 100]
+            ],
+            "weapon_axe": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_hammer": [
+                ["iron_ingot", 0, 100],
+                ["weapon_axe", 0, 100]
+            ],
+            "weapon_spanner": [
+                ["iron_ingot", 0, 100],
+                ["weapon_axe", 0, 100]
+            ],
+            "weapon_breachcharge": [
+                ["plastic", 0, 100]
+            ],
+            "weapon_shield": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_bumpmine": [
+                ["iron_ingot", 0, 100]
+            ],
+            "iron_ingot": [
+                ["weapon_hkp2000", 0, 100],
+                ["weapon_usp_silencer", 0, 100],
+                ["weapon_fiveseven", 0, 100],
+                ["weapon_glock", 0, 100],
+                ["weapon_tec9", 0, 100],
+                ["weapon_elite", 0, 100],
+                ["weapon_p250", 0, 100],
+                ["weapon_cz75a", 0, 100],
+                ["weapon_deagle", 0, 100],
+                ["weapon_revolver", 0, 100],
+                ["weapon_shield", 0, 100],
+                ["weapon_hammer", 0, 100],
+                ["weapon_hegrenade", 0, 100],
+                ["weapon_spanner", 0, 100]
+        
+            ],
+            "plastic": [
+                ["weapon_healthshot", 0, 100],
+                ["weapon_breachcharge", 0, 100],
+                ["weapon_flashbang", 0, 100]
             ]
         },
         "very_fine": {
+            "card_janitor": {
+                "20":["plastic", 0, 100],
+                "41":["card_major_scientist", 0, 100],
+                "39":["card_zone_manager", 0, 100]
+            },
+            "card_scientist": {
+                "20":["plastic", 0, 100],
+                "21":["card_guard", 0, 100],
+                "59":["card_zone_manager", 0, 100]
+            },
+            "card_major_scientist": {
+                "20":["plastic", 0, 100],
+                "21":["card_senior_guard", 0, 100],
+                "59":["card_guard", 0, 100]
+            },
+            "card_zone_manager": {
+                "20":["plastic", 0, 100],
+                "21":["card_mog_lieutenant", 0, 100],
+                "59":["card_senior_guard", 0, 100]
+            },
+            "card_guard": {
+                "20":["plastic", 0, 100],
+                "21":["card_mog_commander", 0, 100],
+                "59":["card_mog_lieutenant", 0, 100]
+            },
+            "card_senior_guard": {
+                "19":["plastic", 0, 100],
+                "41":["card_mog_commander", 0, 100],
+                "40":["card_chaos", 0, 100]
+            },
+            "card_mog_lieutenant": {
+                "19":["plastic", 0, 100],
+                "41":["card_mog_commander", 0, 100],
+                "40":["card_chaos", 0, 100]
+            },
+            "card_chaos": {
+                "30":["plastic", 0, 100],
+                "40":["card_facility_manager", 0, 100]
+            },
+            "card_mog_commander": {
+                "30":["plastic", 0, 100],
+                "70":["card_facility_manager", 0, 100]
+            },
+            "card_containment_engineer": {
+                "19":["plastic", 0, 100],
+                "41":["card_o5", 0, 100],
+                "40":["weapon_flashbang", 0, 100]
+            },
+            "card_facility_manager": {
+                "19":["plastic", 0, 100],
+                "41":["card_o5", 0, 100],
+                "40":["weapon_flashbang", 0, 100]
+            },
             "card_o5": [
-                ["card_fm", 0, 0]
+                ["plastic", 0, 100],
+                ["weapon_flashbang", 0, 100]
             ],
-            "card_lt": [
-                ["card_o5", 0, 70]
+            "weapon_hkp2000": [
+                ["weapon_galilar", 0, 100],
+                ["weapon_famas", 0, 100]
             ],
-            "weapon_usp_silencer": {
-                "20":["weapon_revolver", 0, 90],
-                "80":["weapon_deagle", 40, 90]
-            }
+            "weapon_usp_silencer": [
+                ["weapon_galilar", 0, 100],
+                ["weapon_famas", 0, 100]
+            ],
+            "weapon_fiveseven": [
+                ["weapon_sg556", 0, 100],
+                ["weapon_aug", 0, 100]
+            ],
+            "weapon_glock": [
+                ["weapon_galilar", 0, 100],
+                ["weapon_famas", 0, 100]
+            ],
+            "weapon_tec9": [
+                ["weapon_galilar", 0, 100],
+                ["weapon_famas", 0, 100]
+            ],
+            "weapon_elite": [
+                ["weapon_sg556", 0, 100],
+                ["weapon_aug", 0, 100]
+            ],
+            "weapon_p250": [
+                ["weapon_sg556", 0, 100],
+                ["weapon_aug", 0, 100]
+            ],
+            "weapon_cz75a": [
+                ["weapon_ak47", 0, 100],
+                ["weapon_m4a1_silencer", 0, 100],
+                ["weapon_m4a1", 0, 100]
+            ],
+            "weapon_deagle": [
+                ["weapon_ak47", 0, 100],
+                ["weapon_m4a1_silencer", 0, 100],
+                ["weapon_m4a1", 0, 100]
+            ],
+            "weapon_revolver": [
+                ["weapon_ak47", 0, 100],
+                ["weapon_m4a1_silencer", 0, 100],
+                ["weapon_m4a1", 0, 100]
+            ],
+            "weapon_mag7": [
+                ["weapon_ssg08", 0, 100]
+            ],
+            "weapon_sawedoff": [
+                ["weapon_ssg08", 0, 100]
+            ],
+            "weapon_nova": [
+                ["weapon_awp", 0, 100]
+            ],
+            "weapon_xm1014": [
+                ["weapon_g3sg1", 0, 100],
+                ["weapon_scar20", 0, 100]
+            ],
+            "weapon_mp9": [
+                ["weapon_m249", 0, 100],
+                ["weapon_negev", 0, 100]
+            ],
+            "weapon_mac10": [
+                ["weapon_m249", 0, 100],
+                ["weapon_negev", 0, 100]
+            ],
+            "weapon_mp7": [
+                ["weapon_m249", 0, 100],
+                ["weapon_negev", 0, 100]
+            ],
+            "weapon_mp5sd": [
+                ["weapon_m249", 0, 100],
+                ["weapon_negev", 0, 100]
+            ],
+            "weapon_ump45": [
+                ["weapon_m249", 0, 100],
+                ["weapon_negev", 0, 100]
+            ],
+            "weapon_p90": [
+                ["weapon_m249", 0, 100],
+                ["weapon_negev", 0, 100]
+            ],
+            "weapon_bizon": [
+                ["weapon_m249", 0, 100],
+                ["weapon_negev", 0, 100]
+            ],
+            "weapon_famas": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_m4a1_silencer": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_m4a1": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_aug": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_galilar": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_ak47": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_sg556": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_scar20": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_g3sg1": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_ssg08": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_awp": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_m249": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_negev": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_flashbang": [
+                ["plastic", 0, 100]
+            ],
+            "weapon_hegrenade": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_incgrenade": [
+                ["plastic", 50, 100]
+            ],
+            "weapon_decoy": [
+                ["plastic", 50, 100]
+            ],
+            "weapon_smokegrenade": [
+                ["plastic", 50, 100]
+            ],
+            "weapon_healthshot": [
+                ["scp_500", 50, 100]
+            ],
+            "scp_500": [
+                ["scp_472", 50, 100]
+            ],
+            "scp_472": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_axe": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_hammer": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_spanner": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_breachcharge": [
+                ["plastic", 0, 100]
+            ],
+            "weapon_shield": [
+                ["iron_ingot", 0, 100]
+            ],
+            "weapon_bumpmine": [
+                ["plastic", 0, 100]
+            ],
+            "iron_ingot": [
+                ["weapon_awp", 50, 100]
+            ],
+            "plastic": [
+                ["weapon_healthshot", 50, 100],
+                ["card_janitor", 50, 100]
+            ]
         }
     }
 }
