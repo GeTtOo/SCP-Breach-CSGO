@@ -71,6 +71,23 @@ methodmap Inventory < Base {
         return false;
     }
 
+    public bool Remove(char[] entname) {
+        ArrayList inv = this.GetList("inventory");
+        char entclass[32];
+
+        for (int i=0; i < inv.Length; i++) {
+            InvItem item = inv.Get(i);
+            item.GetEntClass(entclass, sizeof(entclass));
+
+            if (StrEqual(entclass, entname)) {
+                inv.Erase(i);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
     public InvItem Get(int index = 0) {
         return this.GetList("inventory").Get(index);
     }
