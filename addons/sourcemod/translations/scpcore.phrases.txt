@@ -132,4 +132,19 @@
         "en"        "Select a class"
         "ru"        "Выберите класс:"
     }
+    "Inventory"
+    {
+        "en"        "Inventory"
+        "ru"        "Инвентарь"
+    }
+    "Use"
+    {
+        "en"        "Use"
+        "ru"        "Использовать"
+    }
+    "Drop"
+    {
+        "en"        "Drop"
+        "ru"        "Выбросить"
+    }
 }

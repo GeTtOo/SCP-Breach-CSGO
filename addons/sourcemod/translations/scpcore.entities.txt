@@ -1,0 +1,88 @@
+"Phrases"
+{
+    "card_o5"
+    {
+        "en"        "O5 card"
+        "ru"        "Карта О5"
+    }
+    "card_facility_manager"
+    {
+        "en"        "Facility manager card"
+        "ru"        "Карта директора"
+    }
+    "card_containment_engineer"
+    {
+        "en"        "Containment engineer card"
+        "ru"        "Карта инженера по содержанию"
+    }
+    "card_mog_commander"
+    {
+        "en"        "MOG commander card"
+        "ru"        "Карта командира МОГ"
+    }
+    "card_mog_lieutenant"
+    {
+        "en"        "MOG lieutenant card"
+        "ru"        "Карта лейтенанта МОГ"
+    }
+    "card_guard"
+    {
+        "en"        "Guard card"
+        "ru"        "Карта охранника"
+    }
+    "card_senior_guard"
+    {
+        "en"        "Senior guard card"
+        "ru"        "Карта кадета МОГ"
+    }
+    "card_zone_manager"
+    {
+        "en"        "Zone manager card"
+        "ru"        "Карта менеджера зоны"
+    }
+    "card_major_scientist"
+    {
+        "en"        "Major scientist card"
+        "ru"        "Карта старшего учёного"
+    }
+    "card_scientist"
+    {
+        "en"        "Scientist card"
+        "ru"        "Карта учёного"
+    }
+    "card_janitor"
+    {
+        "en"        "Janitor card"
+        "ru"        "Карта уборщика"
+    }
+    "card_chaos"
+    {
+        "en"        "Chaos card"
+        "ru"        "Карта повстанца Хаоса"
+    }
+    "iron_ingot"
+    {
+        "en"        "Metal"
+        "ru"        "Стальной слиток"
+    }
+    "plastic"
+    {
+        "en"        "Plastic"
+        "ru"        "Пластик"
+    }
+    "500_panacea"
+    {
+        "en"        "SCP-500 Panacea"
+        "ru"        "SCP-500 Панацея"
+    }
+    "268_cap"
+    {
+        "en"        "SCP-268 Cap"
+        "ru"        "SCP-268 Кепка"
+    }
+    "035_mask"
+    {
+        "en"        "SCP-035 Mask"
+        "ru"        "SCP-035 Маска"
+    }
+}
