@@ -22,11 +22,11 @@ char sounds[10][32] = {
 };
 
 public Plugin myinfo = {
-	name = "[SCP] SCP 049",
+	name = "[SCP] 049",
 	author = "Andrey::Dono, GeTtOo",
 	description = "SCP 049 for CS:GO SCP modification",
 	version = "1.0",
-	url = "https://github.com/GeTtOo/csgo_scp"
+	url = "https://github.com/Eternity-Development-Team/csgo_scp"
 };
 
 public void SCP_OnPlayerJoin(Client &ply) 

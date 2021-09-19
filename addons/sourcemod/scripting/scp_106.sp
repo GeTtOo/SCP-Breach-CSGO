@@ -6,11 +6,11 @@
 #pragma newdecls required
 
 public Plugin myinfo = {
-    name = "[SCP] SCP-106",
+    name = "[SCP] 106",
     author = "Andrey::Dono",
     description = "SCP-106 for CS:GO modification SCP Foundation",
     version = "1.0",
-    url = "https://github.com/GeTtOo/csgo_scp"
+    url = "https://github.com/Eternity-Development-Team/csgo_scp"
 };
 
 public void SCP_OnPlayerJoin(Client &ply) {
@@ -23,7 +23,10 @@ public void SCP_OnPlayerLeave(Client &ply) {
 
 public void SCP_OnPlayerSpawn(Client &ply) {
     if (ply != null && ply.class != null && ply.class.Is("106"))
+    {
+        gamemode.mngr.SetCollisionGroup(ply.id, 5);
         SDKHook(ply.id, SDKHook_StartTouch, CheckSurface);
+    }
 }
 
 public void SCP_OnButtonPressed(Client &ply, int doorId) {
@@ -51,6 +54,6 @@ public void CheckSurface(int client, int entity) {
 
         PrintToChat(client, "x: %f, y: %f, z: %f", sv.x, sv.y, sv.z);
 
-        gamemode.mngr.SetCollisionGroup(entity, 2);
+        gamemode.mngr.SetCollisionGroup(entity, 15);
     }
 }

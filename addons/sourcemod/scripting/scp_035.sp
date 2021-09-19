@@ -9,11 +9,11 @@
 // Подсчет игроков
 
 public Plugin myinfo = {
-    name = "[SCP] SCP-035",
+    name = "[SCP] 035",
     author = "GeTtOo",
     description = "Added SCP-035",
     version = "1.0",
-    url = "https://github.com/GeTtOo/csgo_scp"
+    url = "https://github.com/Eternity-Development-Team/csgo_scp"
 };
 
 public void SCP_RegisterMetaData() {

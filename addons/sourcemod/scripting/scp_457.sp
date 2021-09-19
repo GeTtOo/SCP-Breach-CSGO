@@ -9,11 +9,11 @@
 int particle = -1;
 
 public Plugin myinfo = {
-	name = "[SCP] SCP 457",
+	name = "[SCP] 457",
 	author = "GeTtOo",
-	description = "SCP 457",
+	description = "SCP-457",
 	version = "1.0",
-	url = "https://github.com/GeTtOo/csgo_scp"
+	url = "https://github.com/Eternity-Development-Team/csgo_scp"
 };
 
 public void SCP_OnPlayerJoin(Client &ply)

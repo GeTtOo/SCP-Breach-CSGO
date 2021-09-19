@@ -10,11 +10,16 @@ public Plugin myinfo = {
     author = "Any",
     description = "Plugin example for CS:GO modification - SCP Foundation",
     version = "1.0",
-    url = "https://github.com/GeTtOo/csgo_scp"
+    url = "https://github.com/Eternity-Development-Team/csgo_scp"
 };
 
 public void OnPluginStart() {
     PrintToServer("Plugin loaded");
+}
+
+public void SCP_RegisterMetaData() {
+    gamemode.meta.RegEntOnUse("ent_id", "Function name");
+    gamemode.meta.RegEntOnPickup("ent_id", "Function name", true); // true disable pick up to inventory (def false).
 }
 
 public void SCP_OnPlayerJoin(Client &ply) {
