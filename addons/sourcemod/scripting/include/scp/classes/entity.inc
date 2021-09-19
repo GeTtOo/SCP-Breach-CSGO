@@ -27,8 +27,6 @@ methodmap Entity < Base {
         public get() { return this.GetBool("active"); }
     }
 
-    public void InvName(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("invname", buffer) : this.GetString("invname", buffer, max_size); }
-
     public void GetClass(char[] name, int max_size) { if (!this.GetString("class", name, max_size)) GetEntityClassname(this.id, name, max_size); }
 
     public Vector GetPos() { float pos[3]; GetEntPropVector(this.id, Prop_Send, "m_vecOrigin", pos); return new Vector(pos[0], pos[1], pos[2]); }
@@ -55,16 +53,18 @@ methodmap Entity < Base {
         return this;
     }
 
-    public void Push(Entity ent, float force) {
+    public Entity Push(Entity ent, float force) {
         float vecvel[3];
         this.GetPos().GetFromPoint(ent.GetPos()).Normalize().Scale(force).GetArrD(vecvel);
         TeleportEntity(ent.id, NULL_VECTOR, NULL_VECTOR, vecvel);
+        return this;
     }
 
-    public void ReversePush(Vector vec, float force) {
+    public Entity ReversePush(Vector vec, float force) {
         float vecvel[3];
         vec.GetFromPoint(this.GetPos()).Normalize().Scale(force).GetArrD(vecvel);
         TeleportEntity(this.id, NULL_VECTOR, NULL_VECTOR, vecvel);
+        return this;
     }
 
     public Entity UseCB(SDKHookCB cb) {
@@ -90,6 +90,10 @@ methodmap Entity < Base {
     public Entity Spawn() {
         DispatchSpawn(this.id);
         return this;
+    }
+
+    public Entity Input(char[] input, Entity activator = null, Entity caller = null) {
+        AcceptEntityInput(this.id, input, (activator) ? activator.id : -1, (caller) ? caller.id : -1);
     }
 
     public void Remove() {

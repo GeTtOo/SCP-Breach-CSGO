@@ -4,6 +4,8 @@
     "DefaultGlobalClass":"Personnel",
     "DefaultClass":"D Class",
     "invsize": 5,
+    "usablecards":true,
+    "tsto":5,
     "psars": 30,
     "AdminRoom": [-4890,-6340,0],
     "reinforce":{
@@ -18,9 +20,9 @@
         "killpos":1690,
         "sound":"*/scp/warhead_announcement.mp3",
         "cancelsound":"*/scp/warhead_canceled.mp3",
-        "readybtn":319835,
-        "activebtn":319810,
-        "cancelbtn":319835,
+        "readybtn":356001,
+        "activebtn":356023,
+        "cancelbtn":356001,
         "spawnlist":[
             {"pos":[-9343, -5925, 1790],"ang":[0,0,0],"size":18,"color":[255,36,0]},
             {"pos":[-9700, -6385, 1780],"ang":[0,270,0],"size":100,"color":[255,36,0]}

@@ -51,6 +51,10 @@ methodmap Config < JSON_OBJECT {
         public get() { return this.GetInt("invsize") - 1; } //Index started at 0
     }
 
+    property int tsto {
+        public get() { return this.GetInt("tsto"); }
+    }
+
     property int psars {
         public get() { return this.GetInt("psars"); }
     }
@@ -67,6 +71,10 @@ methodmap Config < JSON_OBJECT {
         public get() {
             return this.GetVector("AdminRoom");
         }
+    }
+
+    property bool usablecards {
+        public get() { return this.GetBool("usablecards"); }
     }
 
     property bool debug {

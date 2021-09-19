@@ -86,4 +86,6 @@ methodmap Class < JSON_OBJECT {
     public bool weapon(char[] buffer, int max_size) {
         this.GetString("weapon", buffer, max_size);
     }
+
+    public bool overlay(char[] buffer, int max_size) { (max_size == 0) ? this.SetString("overlay", buffer) : this.GetString("overlay", buffer, max_size); }
 }

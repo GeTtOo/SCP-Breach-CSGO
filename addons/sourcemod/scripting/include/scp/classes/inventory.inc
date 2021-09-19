@@ -2,34 +2,22 @@
 /*---------------------------------------------------Player inventory---------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
-methodmap Item < Base {
+methodmap InvItem < Base {
 
-    public Item(char[] class) {
-        Item self = view_as<Item>(new Base());
-        self.SetString("class", class);
+    public InvItem(char[] class) {
+        InvItem self = view_as<InvItem>(new Base());
+        self.SetString("entclass", class);
         return self;
     }
 
-    property bool usable {
-        public set(bool val) { this.SetBool("usable", val); }
-        public get() { return this.GetBool("usable"); }
-    }
-
-    public Item SetEntClass(char[] class) {
-        this.SetString("class", class);
+    public InvItem SetEntClass(char[] class) {
+        this.SetString("entclass", class);
         return this;
     }
 
-    public Item GetEntClass(char[] class, int max_len) {
-        this.GetString("class", class, max_len);
+    public InvItem GetEntClass(char[] class, int max_len) {
+        this.GetString("entclass", class, max_len);
         return this;
-    }
-    
-    public void name(char[] buffer, int max_size = 0) {
-        if (max_size == 0)
-            this.SetString("name", buffer);
-        else
-            this.GetString("name", buffer, max_size);
     }
 }
 
@@ -50,7 +38,7 @@ methodmap Inventory < Base {
 
         for (int i=0; i < list.Length; i++) {
             char itemname[32];
-            view_as<Item>(list.Get(i)).GetEntClass(itemname, sizeof(itemname));
+            view_as<InvItem>(list.Get(i)).GetEntClass(itemname, sizeof(itemname));
 
             EntityMeta entdata = gamemode.meta.GetEntity(itemname);
             if (entdata != null) {
@@ -76,29 +64,21 @@ methodmap Inventory < Base {
         ArrayList inv = this.GetList("inventory");
 
         if (inv.Length <= gamemode.config.invsize) {
-            EntityMeta entdata = gamemode.meta.GetEntity(entclass);
-
-            char name[32];
-            entdata.name(name, sizeof(name));
-
-            Item itm = new Item(entclass);
-            itm.name(name);
-
-            inv.Push(itm);
+            inv.Push(new InvItem(entclass));
             return true;
         }
-        else
-            return false;
+        
+        return false;
     }
 
-    public Item Get(int index = 0) {
+    public InvItem Get(int index = 0) {
         return this.GetList("inventory").Get(index);
     }
 
-    public Item Drop(int index = 0) {
+    public InvItem Drop(int index = 0) {
         ArrayList inv = this.GetList("inventory");
 
-        Item itm = inv.Get(index);
+        InvItem itm = inv.Get(index);
         inv.Erase(index);
 
         return itm;

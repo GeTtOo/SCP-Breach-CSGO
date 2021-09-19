@@ -139,8 +139,6 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
         FloatToString(entdata.mass, mass, sizeof(mass));
         IntToString(entdata.bodygroup, bodygroup, sizeof(bodygroup));
         IntToString(entdata.skin, skin, sizeof(skin));
-        
-        entity.InvName(name);
 
         DispatchKeyValue(entity.id, "model", modelName);
         DispatchKeyValue(entity.id, "physicsmode", "2");

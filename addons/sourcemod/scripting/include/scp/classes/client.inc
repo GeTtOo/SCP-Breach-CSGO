@@ -61,11 +61,6 @@ methodmap Client < Entity {
         public get() { char team[32]; this.GetString("team", team, sizeof(team)); return StrEqual(team, "SCP"); }
     }
 
-    property int access {
-        public set(int card) { this.SetInt("access", card); }
-        public get() { return this.GetInt("access", 0); }
-    }
-
     property bool fullaccess {
         public set(bool card) { this.SetBool("fullaccess", card); }
         public get() { return this.GetBool("fullaccess", false); }
@@ -117,6 +112,23 @@ methodmap Client < Entity {
 
     public void Team(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("team", buffer) : this.GetString("team", buffer, max_size); }
 
+    public void TimerSimple(int delay, char[] funcname, any args = false) {
+        char timername[64], pname[64];
+        GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
+        FormatEx(timername, sizeof(timername), "%s_plyid-%i_%i_%i", pname, this.id, GetTime(), GetRandomInt(1, 1000));
+        gamemode.timer.Create(timername, delay, 1, funcname, args);
+    }
+
+    public void ShowOverlay(char[] name) {
+        char overlay[128];
+        Format(overlay, sizeof(overlay), "r_screenoverlay models/eternity/overlays/%s", name);
+        ClientCommand(this.id, overlay);
+    }
+
+    public void HideOverlay() {
+        ClientCommand(this.id, "r_screenoverlay none");
+    }
+
     public void PlaySound(char[] path, int channel = 40, int level = 100, int entity = 0) {
         int clients[1];
         clients[0] = this.id;
@@ -154,6 +166,22 @@ methodmap Client < Entity {
         this.RestrictWeapons();
         this.inv.Clear();
         this.Kill();
+    }
+
+    public bool Check(char[] val, int check) {
+        ArrayList checklist = this.GetList(val);
+        if (checklist != null) {
+            for (int k=0; k < checklist.Length; k++)
+                if (checklist.Get(k) == check)
+                    return true;
+        }
+        else
+        {
+            if (this.GetInt(val) == check)
+                return true;
+        }
+
+        return false;
     }
 
     public void Kick(char[] reason) { KickClient(this.id, reason); }

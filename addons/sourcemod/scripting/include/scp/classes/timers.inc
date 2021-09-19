@@ -44,11 +44,6 @@ methodmap Tmr < Base {
         public get() { Handle args; return this.GetValue("args", args) ? args : null; }
     }
 
-    property bool removed {
-        public set(bool val) { this.SetBool("removed", val); }
-        public get() { return this.GetBool("removed"); }
-    }
-
     property float nextinvoke {
         public set(float time) { this.SetFloat("nextinvoke", time); }
         public get() { return this.GetFloat("nextinvoke"); }
@@ -84,6 +79,20 @@ methodmap Timers < Base {
         return false;
     }
 
+    public bool RemoveIsContains(char[] name) {
+        ArrayList list = this.GetList("timers");
+        
+        for (int i=0; i < list.Length; i++) {
+            char timername[64];
+            view_as<Tmr>(list.Get(i)).name(timername, sizeof(timername));
+            if (StrContains(timername, name) != -1) {
+                list.Erase(i);
+            }
+        }
+        
+        return false;
+    }
+
     public void ClearAll() {
         this.GetList("timers").Clear();
     }
@@ -99,8 +108,7 @@ methodmap Timers < Base {
     public void Simple(int delay, char[] funcname, any args = false) {
         char timername[64], pname[64];
         GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
-        IntToString(GetTime(), timername, sizeof(timername));
-        Format(timername, sizeof(timername), "%s_%s", pname, timername);
+        FormatEx(timername, sizeof(timername), "%s_%i_%i", pname, GetTime(), GetRandomInt(1, 1000));
         this.Create(timername, delay, 1, funcname, args);
     }
 
@@ -109,27 +117,23 @@ methodmap Timers < Base {
 
         for (int i=0; i < list.Length; i++) {
             Tmr timer = list.Get(i);
-            if (!timer.removed && GetGameTime() >= timer.nextinvoke) {
-                char funcname[64];
-
-                timer.func(funcname, sizeof(funcname));
-
-                Call_StartFunction(timer.ph, GetFunctionByName(timer.ph, funcname));
-                if (timer.args)
-                    Call_PushCell(timer.args);
-                Call_Finish();
-                
+            if (GetGameTime() >= timer.nextinvoke) {
                 if (timer.repeations == 1)
-                {
-                    timer.removed = true;
-                    //list.Erase(i);
-                }
+                    list.Erase(i);
                 else if (timer.repeations > 1) {
                     timer.nextinvoke += timer.delay;
                     timer.repeations--;
                 }
                 else if (timer.repeations == 0)
                     timer.nextinvoke += timer.delay;
+
+                char funcname[64];
+                timer.func(funcname, sizeof(funcname));
+
+                Call_StartFunction(timer.ph, GetFunctionByName(timer.ph, funcname));
+                if (timer.args)
+                    Call_PushCell(timer.args);
+                Call_Finish();
             }
         }
     }

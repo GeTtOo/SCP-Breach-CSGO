@@ -83,7 +83,8 @@ public void OnPluginStart()
     AdminMenu = new AdminMenuSingleton();
 
     LoadTranslations("scpcore.phrases");
-    LoadTranslations("scpcore.regions.phrases");
+    LoadTranslations("scpcore.regions");
+    LoadTranslations("scpcore.entities");
     
     RegServerCmd("ents", CmdEnts);                                                          // ¯\_(ツ)_/¯
     RegServerCmd("scp", CmdSCP);                                                            // ¯\_(ツ)_/¯
@@ -103,7 +104,6 @@ public void OnPluginStart()
     HookEvent("player_death", Event_PlayerDeath, EventHookMode_Pre);
     
     HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
-    HookEntityOutput("trigger_teleport", "OnStartTouch", Event_OnTriggerActivation);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -131,6 +131,8 @@ public void OnMapStart()
     gamemode.config.SetInt("buaip", FindSendPropInfo("CCSPlayer", "m_iBlockingUseActionInProgress"));
 
     LoadEntities(mapName);
+    if (gamemode.config.usablecards)
+        InitKeyCards();
 
     Call_StartForward(RegMetaForward);
     Call_Finish();
@@ -190,6 +192,10 @@ public void OnClientDisconnect_Post(int id)
 
     gamemode.mngr.GameCheck(ply);
 
+    char timername[32];
+    FormatEx(timername, sizeof(timername), "plyid-%i", ply.id);
+    gamemode.timer.RemoveIsContains(timername);
+
     Call_StartForward(OnClientClearForward);
     Call_PushCellRef(ply);
     Call_Finish();
@@ -233,6 +239,15 @@ public void Timer_PlayerSpawn(Client ply)
 
         if (!IsFakeClient(ply.id))
             SendConVarValue(ply.id, FindConVar("game_type"), "6");
+
+        if (ply.class.HasKey("overlay"))
+        {
+            char name[32];
+            ply.class.overlay(name, sizeof(name));
+            ply.ShowOverlay(name);
+        
+            ply.TimerSimple(gamemode.config.tsto * 1000, "PlyHideOverlay", ply);
+        }
     }
 
     ply.spawned = true;
@@ -341,6 +356,10 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
     {
         Client client = players.Get(i);
 
+        char timername[32];
+        FormatEx(timername, sizeof(timername), "plyid-%i", client.id);
+        gamemode.timer.RemoveIsContains(timername);
+
         Call_StartForward(OnClientClearForward);
         Call_PushCellRef(client);
         Call_Finish();
@@ -404,7 +423,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
         int doorId = GetEntProp(caller, Prop_Data, "m_iHammerID");
 
         if (gamemode.config.debug)
-            PrintToChatAll(" \x07[SCP Admin] \x01Door/Button id: (%i)", doorId);
+            PrintToChat(ply.id, " \x07[SCP Admin] \x01Door/Button id: (%i)", doorId);
 
         gamemode.nuke.Controller(doorId);
 
@@ -425,7 +444,8 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
 
             if (doorId == StringToInt(doorKey))
             {
-                int idpad = GetEntPropEnt(caller, Prop_Data, "m_hMoveChild");
+                int entid = GetEntPropEnt(caller, Prop_Data, "m_hMoveChild");
+                Entity idpad = (entid != -1) ? new Entity(entid) : null;
                 
                 if (IsWarmup())
                 {
@@ -439,22 +459,27 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 {
                     return Plugin_Continue;
                 }
-                else if (ply.access >= door.access || ply.inv.Check("access", door.access))
+                else if ((gamemode.config.usablecards && ply.Check("dooraccess", door.access)) || (!gamemode.config.usablecards && ply.inv.Check("access", door.access))) // old check = ply.inv.Check("access", door.access)
                 {
-                    if (idpad != -1)
+                    if (gamemode.config.usablecards)
+                        ply.RemoveValue("dooraccess");
+
+                    if (idpad)
                     {
-                        SetEntProp(idpad, Prop_Send, "m_nSkin", (ply.lang == 22) ? 1 : 4); // 22 = ru lang code
-                        gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad);
+                        idpad.SetProp("m_nSkin", (ply.lang == 22) ? 1 : 4); // 22 = ru lang code
+                        gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
                     }
+                    delete idpad;
                     return Plugin_Continue;
                 }
                 else
                 {
-                    if (idpad != -1)
+                    if (idpad)
                     {
-                        SetEntProp(idpad, Prop_Send, "m_nSkin", (ply.lang == 22) ? 2 : 5);
-                        gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad);
+                        idpad.SetProp("m_nSkin", (ply.lang == 22) ? 2 : 5);
+                        gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
                     }
+                    delete idpad;
                     return Plugin_Stop;
                 }
             }
@@ -559,7 +584,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         {
             char entclass[32];
             
-            Item itm = vic.inv.Drop();
+            InvItem itm = vic.inv.Drop();
             itm.GetEntClass(entclass, sizeof(entclass));
 
             delete itm;
@@ -573,6 +598,10 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         vic.inv.Clear();
 
         vic.active = false;
+
+        char timername[32];
+        FormatEx(timername, sizeof(timername), "plyid-%i", vic.id);
+        gamemode.timer.RemoveIsContains(timername);
 
         Call_StartForward(OnClientClearForward);
         Call_PushCellRef(vic);
@@ -591,19 +620,6 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
     }
 
     return Plugin_Handled;
-}
-
-public void Event_OnTriggerActivation(const char[] output, int caller, int activator, float delay)
-{
-    if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsClientInSpec(activator))
-    {
-        int iTrigger = GetEntProp(caller, Prop_Data, "m_iHammerID");
-
-        if(gamemode.config.debug)
-        {
-            PrintToChatAll(" \x07[SCP Admin] \x01T_ID: %i", iTrigger);
-        }
-    }
 }
 
 public Action OnLookAtWeaponPressed(int client, const char[] command, int argc)
@@ -816,23 +832,27 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int item)
     else if (action == MenuAction_Select) 
     {
         Client ply = Clients.Get(client);
-        Item itm = ply.inv.Get(item);
+        InvItem itm = ply.inv.Get(item);
 
-        char class[32], name[32];
+        char class[32];
         itm.GetEntClass(class, sizeof(class));
-        itm.name(name, sizeof(name));
         
         EntityMeta entdata = gamemode.meta.GetEntity(class);
 
         Menu InvItmMenu = new Menu(InventoryItemHandler);
 
-        InvItmMenu.SetTitle(name);
+        char bstr[128];
+
+        FormatEx(bstr, sizeof(bstr), "%T", class, ply.id);
+        InvItmMenu.SetTitle(bstr);
 
         char itemid[3];
         IntToString(item, itemid, sizeof(itemid));
 
-        InvItmMenu.AddItem(itemid, "Use", entdata.onuse ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
-        InvItmMenu.AddItem(itemid, "Drop", ITEMDRAW_DEFAULT);
+        FormatEx(bstr, sizeof(bstr), "%T", "Use", ply.id);
+        InvItmMenu.AddItem(itemid, bstr, entdata.onuse ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+        FormatEx(bstr, sizeof(bstr), "%T", "Drop", ply.id);
+        InvItmMenu.AddItem(itemid, bstr, ITEMDRAW_DEFAULT);
 
         InvItmMenu.Display(ply.id, 30);
     }
@@ -855,7 +875,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
         {
             case 0:
             {
-                Item itm = ply.inv.Get(StringToInt(itemid));
+                InvItem itm = ply.inv.Get(StringToInt(itemid));
                 char entclass[32];
                 itm.GetEntClass(entclass, sizeof(entclass));
                 EntityMeta entdata = gamemode.meta.GetEntity(entclass);
@@ -865,11 +885,12 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
 
                 Call_StartFunction(entdata.onuse.hndl, GetFunctionByName(entdata.onuse.hndl, funcname));
                 Call_PushCellRef(ply);
+                Call_PushCellRef(itm);
                 Call_Finish();
             }
             case 1:
             {
-                Item itm = ply.inv.Drop(StringToInt(itemid));
+                InvItem itm = ply.inv.Drop(StringToInt(itemid));
                 char entclass[32];
                 itm.GetEntClass(entclass, sizeof(entclass));
                 delete itm;
@@ -890,9 +911,46 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
 //
 //////////////////////////////////////////////////////////////////////////////
 
+public void PlyHideOverlay(Client ply)
+{
+    ply.HideOverlay();
+}
+
+public void InitKeyCards()
+{
+    gamemode.meta.RegEntOnUse("card_o5", "SetPlyDoorAccess");
+    gamemode.meta.RegEntOnUse("card_facility_manager", "SetPlyDoorAccess");
+    gamemode.meta.RegEntOnUse("card_containment_engineer", "SetPlyDoorAccess");
+    gamemode.meta.RegEntOnUse("card_mog_commander", "SetPlyDoorAccess");
+    gamemode.meta.RegEntOnUse("card_mog_lieutenant", "SetPlyDoorAccess");
+    gamemode.meta.RegEntOnUse("card_guard", "SetPlyDoorAccess");
+    gamemode.meta.RegEntOnUse("card_senior_guard", "SetPlyDoorAccess");
+    gamemode.meta.RegEntOnUse("card_zone_manager", "SetPlyDoorAccess");
+    gamemode.meta.RegEntOnUse("card_major_scientist", "SetPlyDoorAccess");
+    gamemode.meta.RegEntOnUse("card_scientist", "SetPlyDoorAccess");
+    gamemode.meta.RegEntOnUse("card_janitor", "SetPlyDoorAccess");
+    gamemode.meta.RegEntOnUse("card_chaos", "SetPlyDoorAccess");
+}
+
 public void ResetIdPad(int entid)
 {
     SetEntProp(entid, Prop_Send, "m_nSkin", (gamemode.mngr.serverlang == 22) ? 0 : 3);
+}
+
+public void SetPlyDoorAccess(Client &ply, InvItem &item)
+{
+    char filter[1][32] = {"func_button"};
+    ArrayList list = Ents.FindInPVS(ply, 55, 90, filter);
+
+    if (list.Length != 0)
+    {
+        char entclass[32];
+        item.GetEntClass(entclass, sizeof(entclass));
+        ply.SetList("dooraccess", gamemode.meta.GetEntity(entclass).GetList("access"));
+        view_as<Entity>(list.Get(0)).Input("Use", ply);
+    }
+
+    delete list;
 }
 
 public void SetupMapRegions() 
@@ -1064,12 +1122,29 @@ public Action CmdEnts(int args)
 
 public Action CmdSCP(int args)
 {
-    char command[32];
-    GetCmdArgString(command, sizeof(command));
 
-    if (StrEqual(command, "status", false))
+    char arg1[32], arg2[32];
+
+    GetCmdArg(1, arg1, sizeof(arg1));
+    GetCmdArg(2, arg2, sizeof(arg2));
+
+    if (StrEqual(arg1, "status", false))
     {
         gamemode.mngr.PrintTeamStatus();
+    }
+    if (StrEqual(arg1, "timers", false))
+    {
+        ArrayList timers = gamemode.timer.GetList("timers");
+
+        PrintToServer("------------Timers------------");
+
+        for (int i=0; i < timers.Length; i++)
+        {
+            char timername[64];
+            Tmr timer = timers.Get(i);
+            timer.name(timername, sizeof(timername));
+            PrintToServer("Name: %s", timername);
+        }
     }
 }
 
@@ -1239,7 +1314,10 @@ public void InventoryDisplay(Client ply)
 {
     Menu InvMenu = new Menu(InventoryHandler);
 
-    InvMenu.SetTitle("Инвентарь");
+    char bstr[128];
+
+    FormatEx(bstr, sizeof(bstr), "%T", "Inventory", ply.id);
+    InvMenu.SetTitle(bstr);
     
     ArrayList inv;
     ply.inv.GetValue("inventory", inv);
@@ -1248,12 +1326,13 @@ public void InventoryDisplay(Client ply)
     {
         for (int i=0; i < inv.Length; i++)
         {
-            char itemid[8], itemName[32];
+            char itemid[8], itemClass[32];
 
             IntToString(i, itemid, sizeof(itemid));
-            view_as<Item>(inv.Get(i, 0)).name(itemName, sizeof(itemName));
-            
-            InvMenu.AddItem(itemid, itemName, ITEMDRAW_DEFAULT);
+            view_as<InvItem>(inv.Get(i, 0)).GetEntClass(itemClass, sizeof(itemClass));
+
+            FormatEx(bstr, sizeof(bstr), "%T", itemClass, ply.id);
+            InvMenu.AddItem(itemid, bstr, ITEMDRAW_DEFAULT);
         }
     }
     else
