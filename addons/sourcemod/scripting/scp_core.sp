@@ -755,8 +755,6 @@ public void LoadEntities(char[] mapName)
             sent.GetKey(k, keyname, kl);
             if (json_is_meta_key(keyname)) continue;
 
-            entdata.class(entclass);
-
             switch(ent.GetKeyType(keyname))
             {
                 case 0: {
@@ -779,7 +777,7 @@ public void LoadEntities(char[] mapName)
             }
         }
         
-        gamemode.meta.RegisterEntity(entdata);
+        gamemode.meta.RegisterEntity(entclass, entdata);
     }
 }
 

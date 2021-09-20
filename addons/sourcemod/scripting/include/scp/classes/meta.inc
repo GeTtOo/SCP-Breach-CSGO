@@ -71,8 +71,6 @@ methodmap EntityMeta < Base {
         public set(OnPickupMeta val) { this.SetValue("onpickup", val); }
         public get() { OnPickupMeta val; return this.GetValue("onpickup", val) ? val : null; }
     }
-
-    public void class(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("class", buffer) : this.GetString("class", buffer, max_size); }
     
     public void name(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("name", buffer) : this.GetString("name", buffer, max_size); }
 
@@ -83,32 +81,13 @@ methodmap Meta < Base {
 
     public Meta() {
         Meta meta = view_as<Meta>(new Base());
-        meta.CreateArrayList("entities");
+        meta.CreateList("entities");
         return meta;
     }
 
-    public void RegisterEntity(EntityMeta entmeta) {
-        this.GetArrayList("entities").Push(entmeta);
-    }
+    public void RegisterEntity(char[] entclass, EntityMeta entmeta) { this.GetList("entities").Set(entclass, entmeta); }
 
-    public EntityMeta GetEntity(char[] entclass) {
-        ArrayList entsmeta = this.GetArrayList("entities");
-
-        for (int i=0; i < entsmeta.Length; i++)
-        {
-            EntityMeta entdata = entsmeta.Get(i);
-
-            char entmetaclass[32];
-            entdata.class(entmetaclass, sizeof(entmetaclass));
-
-            if (StrEqual(entclass, entmetaclass))
-            {
-                return entdata;
-            }
-        }
-
-        return view_as<EntityMeta>(null);
-    }
+    public EntityMeta GetEntity(char[] entclass) { return this.GetList("entities").Get(entclass); }
 
     public void RegEntOnUse(char[] entclass, char[] funcname) {
         EntityMeta entdata = this.GetEntity(entclass);
