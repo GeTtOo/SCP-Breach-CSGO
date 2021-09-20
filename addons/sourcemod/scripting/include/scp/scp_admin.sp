@@ -40,29 +40,31 @@ methodmap AdminAction < Base
 
     public void ShowPlayerClass()
     {
+        ArrayList clients = Clients.GetAll();
         Client ply;
 
-        for(int target = 0; target < MAXPLAYERS; target++)
+        for(int i = 0; i < clients.Length; i++)
         {
-            if(IsClientExist(target))
+            ply = clients.Get(i);
+
+            if(IsClientExist(ply.id))
             {
-                if(IsClientInSpec(target))
+                if(IsClientInSpec(ply.id))
                 {
-                    PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x04%t", target, "Spectator");
+                    PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x04%t", ply.id, "Spectator");
                 }
-                else if(IsPlayerAlive(target))
+                else if(ply.IsAlive())
                 {
                     char team[32], subclass[32];
 
-                    ply = Clients.Get(target);
                     ply.Team(team, sizeof(team));
                     ply.class.Name(subclass, sizeof(subclass));
                     
-                    PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x07%s: %s", target, team, subclass);
+                    PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x07%s: %s", ply.id, team, subclass);
                 }
                 else
                 {
-                    PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x03%t", target, "Dead");
+                    PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x03%t", ply.id, "Dead");
                 }
             }
         }
