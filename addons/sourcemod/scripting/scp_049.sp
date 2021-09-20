@@ -108,6 +108,8 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 		damage += 70;
 		return Plugin_Changed;
 	}
+
+	if (vic == null || vic.class == null) return Plugin_Continue;
 	
 	if(vic.class.Is("049") && vic.GetBool("049_reviving"))
 	{

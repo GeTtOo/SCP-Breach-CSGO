@@ -36,13 +36,16 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
     
     if (atk == null || atk.class == null) return Plugin_Continue;
     
+    if(atk != null && atk.class.Is("457") && atk.id != vic.id)
+    {
+        IgniteEntity(vic.id, 20.0);
+    }
+
+    if (vic == null || vic.class == null) return Plugin_Continue;
+
     if(vic.class.Is("457") && damagetype == DMG_BURN)
     {
         return Plugin_Handled;
-    }
-    else if(atk != null && atk.class.Is("457") && atk.id != vic.id)
-    {
-        IgniteEntity(vic.id, 20.0);
     }
 
     return Plugin_Continue;
