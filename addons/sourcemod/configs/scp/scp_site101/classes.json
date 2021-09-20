@@ -2,7 +2,7 @@
     "Personnel": {
         "percent":40,
         "priority":true,
-        "Classes": {
+        "classes": {
             "D Class": {
                 "percent":60,
                 "priority":true,
@@ -44,7 +44,7 @@
                 "escape":{
                     "trigger":330025,
                     "team":"MOG",
-                    "class":"Operator-Medic"
+                    "class":"Lieutenant-Medic"
                 },
                 "overlay":"medic"
             },
@@ -59,7 +59,7 @@
                 "escape":{
                     "trigger":330025,
                     "team":"MOG",
-                    "class":"Operator"
+                    "class":"Cadet"
                 },
                 "overlay":"guard"
             }
@@ -68,7 +68,7 @@
     "MOG": {
         "percent":40,
         "priority":false,
-        "Classes": {
+        "classes": {
             "Commander": {
                 "model":"models/player/custom_player/scp/mog.mdl",
                 "bodygroup":[[0,1],5,0,1,0,[1,2],0,[1,3],1,[1,2]],
@@ -98,7 +98,7 @@
                 "weapons":["weapon_m4a1", "weapon_hkp2000"],
                 "overlay":"lieutenant"
             },
-            "Operator": {
+            "Cadet": {
                 "model":"models/player/custom_player/scp/mog.mdl",
                 "bodygroup":[[0,1],1,0,1,0,[1,2],0,[1,3],1,[1,2]],
                 "pos":{"vec":[-10800,-5950,1715]},
@@ -113,11 +113,11 @@
                 "items":["card_senior_guard"],
                 "weapons":["weapon_m4a1", "weapon_hkp2000", "weapon_hegrenade", "weapon_breachcharge"]
             },
-            "Operator-Medic": {
+            "Lieutenant-Medic": {
                 "pos":{"vec":[-10800,-5950,1715]},
                 "percent":0,
                 "items":["card_scientist"],
-                "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 5]],
+                "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 5], "weapon_breachcharge"],
                 "overlay":"lieutenant_medic"
             }
         }
@@ -125,7 +125,7 @@
     "Chaos": {
         "percent":0,
         "priority":false,
-        "Classes": {
+        "classes": {
             "Soldier": {
                 "model":"models/player/custom_player/scp/chaos_unit.mdl",
                 "bodygroup":1,
@@ -144,7 +144,7 @@
     "SCP": {
         "percent":20,
         "priority":true,
-        "Classes": {
+        "classes": {
             "035": {
                 "percent":0,
                 "health":12000,

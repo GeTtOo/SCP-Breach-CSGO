@@ -23,7 +23,7 @@ methodmap GTeam < JSON_OBJECT {
     }
 
     property Classes classes {
-        public get() { return view_as<Classes>(this.GetObject("Classes")); }
+        public get() { return view_as<Classes>(this.GetObject("classes")); }
     }
 
     public Class class(char[] name) {
@@ -31,7 +31,7 @@ methodmap GTeam < JSON_OBJECT {
     }
 
     public StringMapSnapshot GetClassNames() {
-        return this.GetObject("Classes").Snapshot();
+        return this.GetObject("classes").Snapshot();
     }
 }
 
