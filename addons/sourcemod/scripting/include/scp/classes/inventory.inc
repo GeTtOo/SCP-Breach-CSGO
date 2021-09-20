@@ -25,16 +25,16 @@ methodmap Inventory < Base {
 
     public Inventory() {
         Inventory inv = view_as<Inventory>(new Base());
-        inv.CreateList("inventory");
+        inv.CreateArrayList("inventory");
         return inv;
     }
 
     property ArrayList items {
-        public get() { return this.GetList("inventory"); }
+        public get() { return this.GetArrayList("inventory"); }
     }
 
     public bool Check(char[] val, int check) {
-        ArrayList list = this.GetList("inventory");
+        ArrayList list = this.GetArrayList("inventory");
 
         for (int i=0; i < list.Length; i++) {
             char itemname[32];
@@ -42,7 +42,7 @@ methodmap Inventory < Base {
 
             EntityMeta entdata = gamemode.meta.GetEntity(itemname);
             if (entdata != null) {
-                ArrayList checklist = entdata.GetList(val);
+                ArrayList checklist = entdata.GetArrayList(val);
 
                 if (checklist != null) {
                     for (int k=0; k < checklist.Length; k++)
@@ -61,7 +61,7 @@ methodmap Inventory < Base {
     }
 
     public bool Add(char[] entclass) {
-        ArrayList inv = this.GetList("inventory");
+        ArrayList inv = this.GetArrayList("inventory");
 
         if (inv.Length <= gamemode.config.invsize) {
             inv.Push(new InvItem(entclass));
@@ -72,7 +72,7 @@ methodmap Inventory < Base {
     }
 
     public bool Remove(char[] entname) {
-        ArrayList inv = this.GetList("inventory");
+        ArrayList inv = this.GetArrayList("inventory");
         char entclass[32];
 
         for (int i=0; i < inv.Length; i++) {
@@ -89,11 +89,11 @@ methodmap Inventory < Base {
     }
 
     public InvItem Get(int index = 0) {
-        return this.GetList("inventory").Get(index);
+        return this.GetArrayList("inventory").Get(index);
     }
 
     public InvItem Drop(int index = 0) {
-        ArrayList inv = this.GetList("inventory");
+        ArrayList inv = this.GetArrayList("inventory");
 
         InvItem itm = inv.Get(index);
         inv.Erase(index);
@@ -102,6 +102,6 @@ methodmap Inventory < Base {
     }
 
     public void Clear() {
-        this.GetList("inventory").Clear();
+        this.GetArrayList("inventory").Clear();
     }
 }

@@ -83,16 +83,16 @@ methodmap Meta < Base {
 
     public Meta() {
         Meta meta = view_as<Meta>(new Base());
-        meta.CreateList("entities");
+        meta.CreateArrayList("entities");
         return meta;
     }
 
     public void RegisterEntity(EntityMeta entmeta) {
-        this.GetList("entities").Push(entmeta);
+        this.GetArrayList("entities").Push(entmeta);
     }
 
     public EntityMeta GetEntity(char[] entclass) {
-        ArrayList entsmeta = this.GetList("entities");
+        ArrayList entsmeta = this.GetArrayList("entities");
 
         for (int i=0; i < entsmeta.Length; i++)
         {

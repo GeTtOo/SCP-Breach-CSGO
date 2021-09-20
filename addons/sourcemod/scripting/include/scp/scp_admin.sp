@@ -117,13 +117,13 @@ methodmap AdminMenuSingleton < Base
 
     public void Add(Client ply)
     {
-        this.GetList("admins").Push(new AdminAction(ply));
+        this.GetArrayList("admins").Push(new AdminAction(ply));
     }
 
     public AdminAction Get(int client)
     {
         Client ply = Clients.Get(client);
-        ArrayList list = this.GetList("admins");
+        ArrayList list = this.GetArrayList("admins");
         
         for(int i = 0; i < list.Length; i++)
         {

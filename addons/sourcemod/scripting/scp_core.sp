@@ -774,7 +774,7 @@ public void LoadEntities(char[] mapName)
                     for (int v=0; v < arr.Length; v++)
                         list.Push(arr.GetInt(v));
 
-                    entdata.SetList(keyname, list);
+                    entdata.SetArrayList(keyname, list);
                 }
             }
         }
@@ -946,7 +946,7 @@ public void SetPlyDoorAccess(Client &ply, InvItem &item)
     {
         char entclass[32];
         item.GetEntClass(entclass, sizeof(entclass));
-        ply.SetList("dooraccess", gamemode.meta.GetEntity(entclass).GetList("access"));
+        ply.SetArrayList("dooraccess", gamemode.meta.GetEntity(entclass).GetArrayList("access"));
         view_as<Entity>(list.Get(0)).Input("Use", ply);
     }
 
@@ -1134,7 +1134,7 @@ public Action CmdSCP(int args)
     }
     if (StrEqual(arg1, "timers", false))
     {
-        ArrayList timers = gamemode.timer.GetList("timers");
+        ArrayList timers = gamemode.timer.GetArrayList("timers");
 
         PrintToServer("------------Timers------------");
 

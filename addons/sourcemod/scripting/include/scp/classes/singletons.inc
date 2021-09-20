@@ -2,7 +2,7 @@ methodmap ClientSingleton < Base {
 
     public ClientSingleton() {
         ClientSingleton self = view_as<ClientSingleton>(new Base());
-        self.CreateList("Clients", 2);
+        self.CreateArrayList("Clients", 2);
         
         return self;
     }
@@ -11,12 +11,12 @@ methodmap ClientSingleton < Base {
         any data[2];
         data[0] = id;
         data[1] = new Client(id);
-        this.GetList("Clients").PushArray(data);
+        this.GetArrayList("Clients").PushArray(data);
     }
 
     public Client Remove(int id) {
-        int idx = this.GetList("Clients").FindValue(id, 0);
-        this.GetList("Clients").Erase(idx);
+        int idx = this.GetArrayList("Clients").FindValue(id, 0);
+        this.GetArrayList("Clients").Erase(idx);
     }
 
     public native ArrayList GetAll();
@@ -38,12 +38,12 @@ methodmap EntitySingleton < Base {
 
     public EntitySingleton() {
         EntitySingleton self = view_as<EntitySingleton>(new Base());
-        self.CreateList("entities");
-        self.CreateList("metadata");
+        self.CreateArrayList("entities");
+        self.CreateArrayList("metadata");
         return self;
     }
 
-    public ArrayList GetAll() { return this.GetList("entities"); }
+    public ArrayList GetAll() { return this.GetArrayList("entities"); }
 
     public Entity Add(int id) {
         ArrayList entArr;

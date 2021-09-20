@@ -54,18 +54,18 @@ methodmap Timers < Base {
 
     public Timers() {
         Timers self = view_as<Timers>(new Base());
-        self.CreateList("timers");
+        self.CreateArrayList("timers");
         return self;
     }
 
     public Tmr Create(char[] name, int delay, int repeations, char[] funcname, any args = false) {
         Tmr timer = new Tmr(GetMyHandle(), name, (float(delay) / float(1000)), repeations, funcname, args);
-        this.GetList("timers").Push(timer);
+        this.GetArrayList("timers").Push(timer);
         return timer;
     }
 
     public bool Remove(char[] name) {
-        ArrayList list = this.GetList("timers");
+        ArrayList list = this.GetArrayList("timers");
         
         for (int i=0; i < list.Length; i++) {
             char timername[64];
@@ -80,7 +80,7 @@ methodmap Timers < Base {
     }
 
     public bool RemoveIsContains(char[] name) {
-        ArrayList list = this.GetList("timers");
+        ArrayList list = this.GetArrayList("timers");
         
         for (int i=0; i < list.Length; i++) {
             char timername[64];
@@ -94,11 +94,11 @@ methodmap Timers < Base {
     }
 
     public void ClearAll() {
-        this.GetList("timers").Clear();
+        this.GetArrayList("timers").Clear();
     }
 
     public void PluginClear() {
-        ArrayList list = this.GetList("timers");
+        ArrayList list = this.GetArrayList("timers");
         if (list.Length != 0)
             for (int i=0; i < list.Length; i++)
                 if (view_as<Tmr>(list.Get(i)).ph == GetMyHandle())
@@ -113,7 +113,7 @@ methodmap Timers < Base {
     }
 
     public void Update() {
-        ArrayList list = this.GetList("timers");
+        ArrayList list = this.GetArrayList("timers");
 
         for (int i=0; i < list.Length; i++) {
             Tmr timer = list.Get(i);

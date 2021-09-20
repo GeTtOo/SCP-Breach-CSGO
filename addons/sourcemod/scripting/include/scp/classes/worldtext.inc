@@ -35,12 +35,12 @@ methodmap WorldTextSingleton < Base {
     
     public WorldTextSingleton() {
         WorldTextSingleton self = view_as<WorldTextSingleton>(new Base());
-        self.CreateList("wtlist");
+        self.CreateArrayList("wtlist");
         return self;
     }
     
     property ArrayList list {
-        public get() { return this.GetList("wtlist"); }
+        public get() { return this.GetArrayList("wtlist"); }
     }
 
     public WorldText Create(Vector vec, Angle ang, int type = 1) {

@@ -169,7 +169,7 @@ methodmap Client < Entity {
     }
 
     public bool Check(char[] val, int check) {
-        ArrayList checklist = this.GetList(val);
+        ArrayList checklist = this.GetArrayList(val);
         if (checklist != null) {
             for (int k=0; k < checklist.Length; k++)
                 if (checklist.Get(k) == check)

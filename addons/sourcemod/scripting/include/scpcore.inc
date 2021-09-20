@@ -75,7 +75,7 @@ public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
 }
 
 public any NativeClients_GetAll(Handle Plugin, int numArgs) {
-    ArrayList clients = Clients.GetList("Clients");
+    ArrayList clients = Clients.GetArrayList("Clients");
     ArrayList players = new ArrayList();
     for (int i=0; i < clients.Length; i++)
         if (view_as<Client>(clients.Get(i)) != null)
@@ -85,9 +85,9 @@ public any NativeClients_GetAll(Handle Plugin, int numArgs) {
 
 public any NativeClients_Get(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
-    int idx = Clients.GetList("Clients").FindValue(id, 0);
+    int idx = Clients.GetArrayList("Clients").FindValue(id, 0);
     if (idx == -1) return view_as<Client>(null);
-    return Clients.GetList("Clients").Get(idx, 1);
+    return Clients.GetArrayList("Clients").Get(idx, 1);
 }
 
 public any NativeClients_GetRandom(Handle Plugin, int numArgs) {
@@ -165,7 +165,7 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
     entity.SetString("class", EntName);
     
     if (view_as<bool>(GetNativeCell(3)))
-        Ents.GetList("entities").Push(entity);
+        Ents.GetArrayList("entities").Push(entity);
 
     return entity;
 }
