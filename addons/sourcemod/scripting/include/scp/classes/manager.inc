@@ -179,8 +179,6 @@ methodmap Manager < Base {
                 char winTeam[32];
                 if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
                     this.EndGame(winTeam);
-
-                PrintToServer(winTeam);
             }
         }
         else if (Clients.InGame() != 0)

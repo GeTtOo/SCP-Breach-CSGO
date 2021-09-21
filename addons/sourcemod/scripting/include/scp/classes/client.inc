@@ -112,6 +112,13 @@ methodmap Client < Entity {
 
     public void Team(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("team", buffer) : this.GetString("team", buffer, max_size); }
 
+    public void PrintNotify(const char[] format, any ...) {
+        int len = strlen(format) + 255;
+        char[] formattedText = new char[len];
+        VFormat(formattedText, len, format, 3);
+        PrintCenterText(this.id, "%s", formattedText);
+    }
+
     public void TimerSimple(int delay, char[] funcname, any args = false) {
         char timername[64], pname[64];
         GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));

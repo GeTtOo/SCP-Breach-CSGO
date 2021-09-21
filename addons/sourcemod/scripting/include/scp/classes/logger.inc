@@ -62,13 +62,11 @@ methodmap Logger < Base
         }
     }
 
-    public void Info(const char[] msg, any arg1 = false, any arg2 = false, any arg3 = false, any arg4 = false, any arg5 = false)
+    public void Info(const char[] format, any ...)
     {
-        int len = strlen(msg) + 256;
-        char[] formtext = new char[len];
-
-        FormatEx(formtext, len, msg, arg1, arg2, arg3, arg4, arg5);
-
-        this.SendMessage(0, formtext);
+        int len = strlen(format) + 255;
+        char[] text = new char[len];
+        VFormat(text, len, format, 3);
+        this.SendMessage(0, text);
     }
 }

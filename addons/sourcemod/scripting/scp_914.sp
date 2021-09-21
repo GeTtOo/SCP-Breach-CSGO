@@ -68,10 +68,27 @@ public SDKHookCB Callback_EntUse(int eid, int cid) {
     ent.GetClass(entClassName, sizeof(entClassName));
 
     if (gamemode.meta.GetEntity(entClassName) != null)
-        if (ply.inv.Add(entClassName))
-            Ents.Remove(ent.id);
+    {
+        EntityMeta entdata = gamemode.meta.GetEntity(entClassName);
+
+        if (entdata.onpickup)
+        {
+            char funcname[32];
+            entdata.onpickup.name(funcname, sizeof(funcname));
+
+            Call_StartFunction(entdata.onpickup.hndl, GetFunctionByName(entdata.onpickup.hndl, funcname));
+            Call_PushCellRef(ply);
+            Call_Finish();
+        }
+
+        if (!entdata.onpickup || !entdata.onpickup.invblock)
+            if (ply.inv.Add(entClassName))
+                Ents.Remove(ent.id);
+            else
+                ply.PrintNotify("%t", "Inventory full");
         else
-            PrintToChat(ply.id, " \x07[SCP] \x01Твой инвентарь переполнен");
+            Ents.Remove(ent.id);
+    }
 }
 
 public void SCP_OnButtonPressed(Client &ply, int doorId) {

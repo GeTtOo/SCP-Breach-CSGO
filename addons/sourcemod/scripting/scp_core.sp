@@ -815,7 +815,7 @@ public SDKHookCB CB_EntUse(int entity, int client)
             if (ply.inv.Add(entClassName))
                 Ents.Remove(ent.id);
             else
-                PrintToChat(ply.id, " \x07[SCP] \x01%t", "Inventory full");
+                ply.PrintNotify("%t", "Inventory full");
         else
             Ents.Remove(ent.id);
     }
@@ -1335,7 +1335,7 @@ public void InventoryDisplay(Client ply)
     }
     else
     {
-        PrintCenterText(ply.id, "%t", "Inventory empty");
+        ply.PrintNotify("%t", "Inventory empty");
     }
 
     InvMenu.Display(ply.id, 30);
