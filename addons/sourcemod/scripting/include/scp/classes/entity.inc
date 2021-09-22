@@ -42,6 +42,13 @@ methodmap Entity < Base {
         public get() { return this.GetBool("disabled"); }
     }
 
+    public void TimerSimple(int delay, char[] funcname, any args = false) {
+        char timername[64], pname[64];
+        GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
+        FormatEx(timername, sizeof(timername), "%s_plyid-%i_%i_%i", pname, this.id, GetTime(), GetRandomInt(1, 1000));
+        gamemode.timer.Create(timername, delay, 1, funcname, args);
+    }
+
     public Entity CreateObject() {
         int id = CreateEntityByName("prop_physics_override");
         char modelName[128], mass[12], name[32], bodygroup[12], skin[12];

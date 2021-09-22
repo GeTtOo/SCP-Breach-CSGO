@@ -136,6 +136,10 @@ methodmap Inventory < Base {
     }
 
     public void Clear() {
+        this.GetArrayList("inventory").Clear();
+    }
+
+    public void FullClear() {
         ArrayList items = this.GetArrayList("inventory");
         ArrayList ents = view_as<Base>(gamemode).GetBase("ents").GetArrayList("entities");
 

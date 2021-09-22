@@ -11,28 +11,28 @@
         "mass":0.2,
         "skin":1,
         "spawnflags":4356,
-        "access":[1,2,3,4,5,9,10]
+        "access":[1,2,3,7,8,9,10]
     },
     "card_containment_engineer": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":2,
         "spawnflags":4356,
-        "access":[1,2,3,5,9,10]
+        "access":[1,2,3,7,8,10]
     },
     "card_mog_commander": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":3,
         "spawnflags":4356,
-        "access":[1,2,4,6,7,8,9,10]
+        "access":[1,2,4,5,6,7,8,9]
     },
     "card_mog_lieutenant": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":4,
         "spawnflags":4356,
-        "access":[1,2,4,6,7,9]
+        "access":[1,2,4,5,7,9]
     },
     "card_guard": {
         "model":"models/eternity/props/keycard.mdl",
@@ -46,21 +46,21 @@
         "mass":0.2,
         "skin":6,
         "spawnflags":4356,
-        "access":[1,2,6,7,9]
+        "access":[1,2,4,5,7]
     },
     "card_zone_manager": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":7,
         "spawnflags":4356,
-        "access":[1,9]
+        "access":[1,7]
     },
     "card_major_scientist": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":8,
         "spawnflags":4356,
-        "access":[1,2,3,4]
+        "access":[1,2,7]
     },
     "card_scientist": {
         "model":"models/eternity/props/keycard.mdl",
@@ -80,7 +80,7 @@
         "model":"models/eternity/props/chaos_card.mdl",
         "mass":0.2,
         "spawnflags":4356,
-        "access":[1,2,4,6,7,8,9,10]
+        "access":[1,2,3,4,5,6,7,8,9]
     },
     "iron_ingot": {
         "model":"models/eternity/props/ingot.mdl",

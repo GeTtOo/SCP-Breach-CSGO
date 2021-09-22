@@ -131,13 +131,6 @@ methodmap Client < Entity {
         PrintCenterText(this.id, "%s", formattedText);
     }
 
-    public void TimerSimple(int delay, char[] funcname, any args = false) {
-        char timername[64], pname[64];
-        GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
-        FormatEx(timername, sizeof(timername), "%s_plyid-%i_%i_%i", pname, this.id, GetTime(), GetRandomInt(1, 1000));
-        gamemode.timer.Create(timername, delay, 1, funcname, args);
-    }
-
     public void ShowOverlay(char[] name) {
         char overlay[128];
         Format(overlay, sizeof(overlay), "r_screenoverlay models/eternity/overlays/%s", name);
@@ -183,7 +176,7 @@ methodmap Client < Entity {
 
     public void SilenceKill() {
         this.RestrictWeapons();
-        this.inv.Clear();
+        this.inv.FullClear();
         this.Kill();
     }
 
@@ -350,7 +343,7 @@ methodmap Client < Entity {
         if (!IsPlayerAlive(this.id))
             CS_RespawnPlayer(this.id);
         this.RestrictWeapons();
-        this.inv.Clear();
+        this.inv.FullClear();
         this.Setup();
     }
 }

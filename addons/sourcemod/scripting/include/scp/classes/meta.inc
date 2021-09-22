@@ -31,6 +31,20 @@ methodmap OnPickupMeta < Base {
     public void name(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("name", buffer) : this.GetString("name", buffer, max_size); }
 }
 
+methodmap OnDropMeta < Base {
+
+    public OnDropMeta() {
+        return view_as<OnDropMeta>(new Base());
+    }
+    
+    property Handle hndl {
+        public set(Handle val) { this.SetValue("hndl", val); }
+        public get() { Handle val; return this.GetValue("hndl", val) ? val : null; }
+    }
+
+    public void name(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("name", buffer) : this.GetString("name", buffer, max_size); }
+}
+
 methodmap EntityMeta < Base {
 
     public EntityMeta() {
@@ -72,6 +86,11 @@ methodmap EntityMeta < Base {
         public get() { OnPickupMeta val; return this.GetValue("onpickup", val) ? val : null; }
     }
     
+    property OnDropMeta ondrop {
+        public set(OnDropMeta val) { this.SetValue("ondrop", val); }
+        public get() { OnDropMeta val; return this.GetValue("ondrop", val) ? val : null; }
+    }
+
     public void name(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("name", buffer) : this.GetString("name", buffer, max_size); }
 
     public void model(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("model", buffer) : this.GetString("model", buffer, max_size); }
@@ -104,5 +123,13 @@ methodmap Meta < Base {
         entdata.onpickup.hndl = GetMyHandle();
         entdata.onpickup.name(funcname);
         entdata.onpickup.invblock = invblock;
+    }
+
+    public void RegEntOnDrop(char[] entclass, char[] funcname) {
+        EntityMeta entdata = this.GetEntity(entclass);
+        entdata.ondrop = new OnDropMeta();
+
+        entdata.ondrop.hndl = GetMyHandle();
+        entdata.ondrop.name(funcname);
     }
 }

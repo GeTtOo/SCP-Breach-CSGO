@@ -373,6 +373,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
 
         client.class = null;
         client.haveclass = false;
+        client.inv.Clear();
         client.active = false;
         client.spawned = true;
         
@@ -480,6 +481,10 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                     {
                         idpad.SetProp("m_nSkin", (ply.lang == 22) ? 2 : 5);
                         gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
+                        char dn[15], aln[128];
+                        FormatEx(dn, sizeof(dn), "AccessLevel_%i", door.access);
+                        FormatEx(aln, sizeof(aln), "%t", dn);
+                        ply.PrintWarning("%t", "Door access denied", aln);
                     }
                     delete idpad;
                     return Plugin_Stop;
@@ -585,6 +590,17 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         while (inv.Length != 0)
         {   
             Entity item = vic.inv.Drop();
+
+            if (item.meta.ondrop)
+            {
+                char funcname[32];
+                item.meta.ondrop.name(funcname, sizeof(funcname));
+
+                Call_StartFunction(item.meta.ondrop.hndl, GetFunctionByName(item.meta.ondrop.hndl, funcname));
+                Call_PushCellRef(vic);
+                Call_PushCellRef(item);
+                Call_Finish();
+            }
 
             item
             .CreateObject()
@@ -880,6 +896,17 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
             case 1:
             {
                 Entity item = ply.inv.Drop(StringToInt(itemid));
+
+                if (item.meta.ondrop)
+                {
+                    char funcname[32];
+                    item.meta.ondrop.name(funcname, sizeof(funcname));
+
+                    Call_StartFunction(item.meta.ondrop.hndl, GetFunctionByName(item.meta.ondrop.hndl, funcname));
+                    Call_PushCellRef(ply);
+                    Call_PushCellRef(item);
+                    Call_Finish();
+                }
 
                 item
                 .CreateObject()

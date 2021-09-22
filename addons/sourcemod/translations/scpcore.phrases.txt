@@ -6,16 +6,6 @@
         "en"        "Your class {1} - {2}"
         "ru"        "Ваш класс {1} - {2}"
     }
-    "Inventory full"
-    {
-        "en"        "Your inventory is full"
-        "ru"        "Ваш инвентарь переполнен"
-    }
-    "Inventory empty"
-    {
-        "en"        "Your inventory is empty"
-        "ru"        "Ваш инвентарь пуст"
-    }
     "Site destroy"
     {
         "en"        "The complex is destroyed! No survivors were found..."
@@ -137,6 +127,16 @@
         "en"        "Inventory"
         "ru"        "Инвентарь"
     }
+    "Inventory full"
+    {
+        "en"        "Your inventory is full"
+        "ru"        "Ваш инвентарь переполнен"
+    }
+    "Inventory empty"
+    {
+        "en"        "Your inventory is empty"
+        "ru"        "Ваш инвентарь пуст"
+    }
     "Use"
     {
         "en"        "Use"
@@ -146,5 +146,61 @@
     {
         "en"        "Drop"
         "ru"        "Выбросить"
+    }
+    "Door access denied"
+    {
+        "#format"   "{1:s}"
+        "en"        "That door needed level access: ({1})"
+        "ru"        "Необходимый уровень доступа: {1}"
+    }
+    "AccessLevel_1"
+    {
+        "en"        "Containment Chamber Tier 1"
+        "ru"        "Камеры содержания, уровень 1"
+    }
+    "AccessLevel_2"
+    {
+        "en"        "Containment Chamber Tier 2"
+        "ru"        "Камеры содержания, уровень 2"
+    }
+    "AccessLevel_3"
+    {
+        "en"        "Containment Chamber Tier 3"
+        "ru"        "Камеры содержания, уровень 2"
+    }
+    "AccessLevel_4"
+    {
+        "en"        "Armory Tier 1"
+        "ru"        "Оружейные, уровень 1"
+    }
+    "AccessLevel_5"
+    {
+        "en"        "Armory Tier 2"
+        "ru"        "Оружейные, уровень 2"
+    }
+    "AccessLevel_6"
+    {
+        "en"        "Armory Tier 3"
+        "ru"        "Оружейные, уровень 3"
+    }
+    "AccessLevel_7"
+    {
+        "en"        "Checkpoints"
+        "ru"        "Контрольно-пропускные пункты"
+    }
+    "AccessLevel_8"
+    {
+        "en"        "Intercom"
+        "ru"        "Внутренняя связь"
+    }
+    "AccessLevel_9"
+    {
+        "en"        "Exit"
+        "ru"        "Выходы"
+    }
+    "AccessLevel_10"
+    {
+        "en"        "Nuke"
+        "ru"        "Альфа-боеголовка"
     }
 }
