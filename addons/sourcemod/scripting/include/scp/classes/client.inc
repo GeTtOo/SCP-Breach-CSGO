@@ -23,6 +23,11 @@ methodmap Client < Entity {
         return client;
     }
 
+    property bool active {
+        public set(bool value) { this.SetBool("active", value); }
+        public get() { return this.GetBool("active"); }
+    }
+
     property int lang {
         public get() { return GetClientLanguage(this.id); }
     }
@@ -113,6 +118,13 @@ methodmap Client < Entity {
     public void Team(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("team", buffer) : this.GetString("team", buffer, max_size); }
 
     public void PrintNotify(const char[] format, any ...) {
+        int len = strlen(format) + 255;
+        char[] formattedText = new char[len];
+        VFormat(formattedText, len, format, 3);
+        PrintHintText(this.id, "%s", formattedText);
+    }
+
+    public void PrintWarning(const char[] format, any ...) {
         int len = strlen(format) + 255;
         char[] formattedText = new char[len];
         VFormat(formattedText, len, format, 3);

@@ -9,22 +9,67 @@
 
 methodmap Entity < Base {
 
-    public Entity(int id) {
+    public Entity(int id = -1) {
         Entity entity = view_as<Entity>(new Base());
-
         entity.SetValue("id", id);
-        entity.SetValue("active", true);
+        entity.SetValue("spawned", true);
 
         return entity;
     }
 
+    property EntityMeta meta {
+        public set(EntityMeta value) { this.SetValue("meta", value); }
+        public get() { EntityMeta meta; return this.GetValue("meta", meta) ? meta : null; }
+    }
+
     property int id {
+        public set(int id) { this.SetInt("id", id); }
         public get() { return this.GetInt("id"); }
     }
 
-    property bool active {
-        public set(bool value) { this.SetBool("active", value); }
-        public get() { return this.GetBool("active"); }
+    property bool spawned {
+        public set(bool value) { this.SetBool("spawned", value); }
+        public get() { return this.GetBool("spawned"); }
+    }
+
+    property bool picked {
+        public set(bool value) { this.SetBool("picked", value); }
+        public get() { return this.GetBool("picked"); }
+    }
+
+    property bool disabled {
+        public set(bool value) { this.SetBool("disabled", value); }
+        public get() { return this.GetBool("disabled"); }
+    }
+
+    public Entity CreateObject() {
+        int id = CreateEntityByName("prop_physics_override");
+        char modelName[128], mass[12], name[32], bodygroup[12], skin[12];
+        this.meta.model(modelName, sizeof(modelName));
+        this.meta.name(name, sizeof(name));
+        FloatToString(this.meta.mass, mass, sizeof(mass));
+        IntToString(this.meta.bodygroup, bodygroup, sizeof(bodygroup));
+        IntToString(this.meta.skin, skin, sizeof(skin));
+
+        DispatchKeyValue(id, "model", modelName);
+        DispatchKeyValue(id, "physicsmode", "2");
+        DispatchKeyValue(id, "massScale", mass);
+        DispatchKeyValue(id, "Solid", "6");
+        DispatchKeyValue(id, "body", bodygroup);
+        DispatchKeyValue(id, "skin", skin);
+        if (this.meta.spawnflags != 0) {
+            char flags[8];
+            IntToString(this.meta.spawnflags, flags, sizeof(flags));
+            DispatchKeyValue(id, "spawnflags", flags);
+        }
+        if (this.meta.usable) {
+            char funcname[32];
+            this.meta.GetString("function", funcname, sizeof(funcname));
+        }
+        
+        this.id = id;
+
+        return this;
     }
 
     public void GetClass(char[] name, int max_size) { if (!this.GetString("class", name, max_size)) GetEntityClassname(this.id, name, max_size); }
@@ -39,7 +84,7 @@ methodmap Entity < Base {
         if (ang != null)
             ang.GetArr(angleArr);
         
-        if (this.active)
+        if (this.spawned)
             TeleportEntity(this.id, vectorArr, (ang == null) ? NULL_VECTOR : angleArr, NULL_VECTOR);
         else
         {
@@ -94,6 +139,12 @@ methodmap Entity < Base {
 
     public Entity Input(char[] input, Entity activator = null, Entity caller = null) {
         AcceptEntityInput(this.id, input, (activator) ? activator.id : -1, (caller) ? caller.id : -1);
+    }
+
+    public void WorldRemove() {
+        RemoveEntity(this.id);
+        this.spawned = false;
+        this.id = -1;
     }
 
     public void Remove() {

@@ -119,6 +119,9 @@ public void OnMapStart()
 
     GetCurrentMap(mapName, sizeof(mapName));
     gamemode = new GameMode(mapName);
+
+    gamemode.SetValue("clients", Clients);
+    gamemode.SetValue("ents", Ents);
     
     gamemode.SetValue("Manager", new Manager());
     gamemode.SetValue("Nuke", new NuclearWarhead());
@@ -370,7 +373,6 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
 
         client.class = null;
         client.haveclass = false;
-        client.inv.Clear();
         client.active = false;
         client.spawned = true;
         
@@ -581,21 +583,15 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         ArrayList inv = vic.inv.items;
 
         while (inv.Length != 0)
-        {
-            char entclass[32];
-            
-            InvItem itm = vic.inv.Drop();
-            itm.GetEntClass(entclass, sizeof(entclass));
+        {   
+            Entity item = vic.inv.Drop();
 
-            delete itm;
-
-            Ents.Create(entclass)
-            .SetPos(vic.GetPos() + new Vector(GetRandomFloat(-30.0,30.0), GetRandomFloat(-30.0,30.0), 0.0))
+            item
+            .CreateObject()
             .UseCB(view_as<SDKHookCB>(CB_EntUse))
+            .SetPos(vic.GetPos() + new Vector(GetRandomFloat(-30.0,30.0), GetRandomFloat(-30.0,30.0), 0.0))
             .Spawn();
         }
-        
-        vic.inv.Clear();
 
         vic.active = false;
 
@@ -794,34 +790,34 @@ public SDKHookCB CB_EntUse(int entity, int client)
 
     if (ply.IsSCP) return;
 
-    char entClassName[32];
-    ent.GetClass(entClassName, sizeof(entClassName));
-
-    if (gamemode.meta.GetEntity(entClassName) != null)
+    if (ent.meta)
     {
-        EntityMeta entdata = gamemode.meta.GetEntity(entClassName);
-
-        if (entdata.onpickup)
+        if (ent.meta.onpickup)
         {
             char funcname[32];
-            entdata.onpickup.name(funcname, sizeof(funcname));
+            ent.meta.onpickup.name(funcname, sizeof(funcname));
 
-            Call_StartFunction(entdata.onpickup.hndl, GetFunctionByName(entdata.onpickup.hndl, funcname));
+            Call_StartFunction(ent.meta.onpickup.hndl, GetFunctionByName(ent.meta.onpickup.hndl, funcname));
             Call_PushCellRef(ply);
+            Call_PushCellRef(ent);
             Call_Finish();
         }
 
-        if (!entdata.onpickup || !entdata.onpickup.invblock)
-            if (ply.inv.Add(entClassName))
-                Ents.Remove(ent.id);
+        if (!ent.meta.onpickup || !ent.meta.onpickup.invblock)
+            if (ply.inv.Pickup(ent))
+                ent.WorldRemove();
             else
+            {
                 ply.PrintNotify("%t", "Inventory full");
+            }
         else
-            Ents.Remove(ent.id);
+        {
+            ent.WorldRemove();
+        }
     }
 }
 
-public int InventoryHandler(Menu hMenu, MenuAction action, int client, int item)
+public int InventoryHandler(Menu hMenu, MenuAction action, int client, int idx)
 {
     if (action == MenuAction_End)
     {
@@ -830,12 +826,10 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int item)
     else if (action == MenuAction_Select) 
     {
         Client ply = Clients.Get(client);
-        InvItem itm = ply.inv.Get(item);
+        Entity item = ply.inv.Get(idx);
 
         char class[32];
-        itm.GetEntClass(class, sizeof(class));
-        
-        EntityMeta entdata = gamemode.meta.GetEntity(class);
+        item.GetClass(class, sizeof(class));
 
         Menu InvItmMenu = new Menu(InventoryItemHandler);
 
@@ -845,10 +839,10 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int item)
         InvItmMenu.SetTitle(bstr);
 
         char itemid[3];
-        IntToString(item, itemid, sizeof(itemid));
+        IntToString(idx, itemid, sizeof(itemid));
 
         FormatEx(bstr, sizeof(bstr), "%T", "Use", ply.id);
-        InvItmMenu.AddItem(itemid, bstr, entdata.onuse ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+        InvItmMenu.AddItem(itemid, bstr, (item.meta.onuse && !item.disabled) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
         FormatEx(bstr, sizeof(bstr), "%T", "Drop", ply.id);
         InvItmMenu.AddItem(itemid, bstr, ITEMDRAW_DEFAULT);
 
@@ -856,7 +850,7 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int item)
     }
 }
 
-public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int item)
+public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int idx)
 {
     if (action == MenuAction_End)
     {
@@ -867,35 +861,30 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
         Client ply = Clients.Get(client);
         
         char itemid[3];
-        hMenu.GetItem(item, itemid, sizeof(itemid));
+        hMenu.GetItem(idx, itemid, sizeof(itemid));
 
-        switch (item)
+        switch (idx)
         {
             case 0:
             {
-                InvItem itm = ply.inv.Get(StringToInt(itemid));
-                char entclass[32];
-                itm.GetEntClass(entclass, sizeof(entclass));
-                EntityMeta entdata = gamemode.meta.GetEntity(entclass);
+                Entity item = ply.inv.Get(StringToInt(itemid));
                 
                 char funcname[32];
-                entdata.onuse.name(funcname, sizeof(funcname));
+                item.meta.onuse.name(funcname, sizeof(funcname));
 
-                Call_StartFunction(entdata.onuse.hndl, GetFunctionByName(entdata.onuse.hndl, funcname));
+                Call_StartFunction(item.meta.onuse.hndl, GetFunctionByName(item.meta.onuse.hndl, funcname));
                 Call_PushCellRef(ply);
-                Call_PushCellRef(itm);
+                Call_PushCellRef(item);
                 Call_Finish();
             }
             case 1:
             {
-                InvItem itm = ply.inv.Drop(StringToInt(itemid));
-                char entclass[32];
-                itm.GetEntClass(entclass, sizeof(entclass));
-                delete itm;
+                Entity item = ply.inv.Drop(StringToInt(itemid));
 
-                Ents.Create(entclass)
-                .SetPos(ply.GetAng().Forward(ply.EyePos(), 5.0) - new Vector(0.0, 0.0, 15.0))
+                item
+                .CreateObject()
                 .UseCB(view_as<SDKHookCB>(CB_EntUse))
+                .SetPos(ply.GetAng().Forward(ply.EyePos(), 5.0) - new Vector(0.0, 0.0, 15.0))
                 .Spawn()
                 .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
             }
@@ -935,16 +924,14 @@ public void ResetIdPad(int entid)
     SetEntProp(entid, Prop_Send, "m_nSkin", (gamemode.mngr.serverlang == 22) ? 0 : 3);
 }
 
-public void SetPlyDoorAccess(Client &ply, InvItem &item)
+public void SetPlyDoorAccess(Client &ply, Entity &item)
 {
     char filter[1][32] = {"func_button"};
     ArrayList list = Ents.FindInPVS(ply, 55, 90, filter);
 
     if (list.Length != 0)
     {
-        char entclass[32];
-        item.GetEntClass(entclass, sizeof(entclass));
-        ply.SetArrayList("dooraccess", gamemode.meta.GetEntity(entclass).GetArrayList("access"));
+        ply.SetArrayList("dooraccess", item.meta.GetArrayList("access"));
         view_as<Entity>(list.Get(0)).Input("Use", ply);
     }
 
@@ -1110,8 +1097,11 @@ public Action CmdEnts(int args)
             char name[32];
 
             ent.GetClass(name, sizeof(name));
-            
-            PrintToServer("%s id: %i", name, ent.id);
+
+            if (ent.id != -1)
+                PrintToServer("%s id: %i", name, ent.id);
+            else
+                PrintToServer("%s (not spawned)", name, ent.id);
         }
 
         PrintToServer("Count: %i", ents.Length);
@@ -1327,7 +1317,7 @@ public void InventoryDisplay(Client ply)
             char itemid[8], itemClass[32];
 
             IntToString(i, itemid, sizeof(itemid));
-            view_as<InvItem>(inv.Get(i, 0)).GetEntClass(itemClass, sizeof(itemClass));
+            view_as<Entity>(inv.Get(i, 0)).GetClass(itemClass, sizeof(itemClass));
 
             FormatEx(bstr, sizeof(bstr), "%T", itemClass, ply.id);
             InvMenu.AddItem(itemid, bstr, ITEMDRAW_DEFAULT);

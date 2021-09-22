@@ -64,30 +64,30 @@ public SDKHookCB Callback_EntUse(int eid, int cid) {
 
     if (ply.IsSCP) return;
 
-    char entClassName[32];
-    ent.GetClass(entClassName, sizeof(entClassName));
-
-    if (gamemode.meta.GetEntity(entClassName) != null)
+    if (ent.meta)
     {
-        EntityMeta entdata = gamemode.meta.GetEntity(entClassName);
-
-        if (entdata.onpickup)
+        if (ent.meta.onpickup)
         {
             char funcname[32];
-            entdata.onpickup.name(funcname, sizeof(funcname));
+            ent.meta.onpickup.name(funcname, sizeof(funcname));
 
-            Call_StartFunction(entdata.onpickup.hndl, GetFunctionByName(entdata.onpickup.hndl, funcname));
+            Call_StartFunction(ent.meta.onpickup.hndl, GetFunctionByName(ent.meta.onpickup.hndl, funcname));
             Call_PushCellRef(ply);
+            Call_PushCellRef(ent);
             Call_Finish();
         }
 
-        if (!entdata.onpickup || !entdata.onpickup.invblock)
-            if (ply.inv.Add(entClassName))
-                Ents.Remove(ent.id);
+        if (!ent.meta.onpickup || !ent.meta.onpickup.invblock)
+            if (ply.inv.Pickup(ent))
+                ent.WorldRemove();
             else
+            {
                 ply.PrintNotify("%t", "Inventory full");
+            }
         else
-            Ents.Remove(ent.id);
+        {
+            ent.WorldRemove();
+        }
     }
 }
 

@@ -10,6 +10,16 @@ methodmap InvItem < Base {
         return self;
     }
 
+    property bool active {
+        public set(bool val) { this.SetBool("active", val); }
+        public get() { return this.GetBool("active", true); }
+    }
+
+    property bool disabled {
+        public set(bool val) { this.SetBool("disabled", val); }
+        public get() { return this.GetBool("disabled", false); }
+    }
+
     public InvItem SetEntClass(char[] class) {
         this.SetString("entclass", class);
         return this;
@@ -38,11 +48,11 @@ methodmap Inventory < Base {
 
         for (int i=0; i < list.Length; i++) {
             char itemname[32];
-            view_as<InvItem>(list.Get(i)).GetEntClass(itemname, sizeof(itemname));
+            Entity item = list.Get(i);
+            item.GetClass(itemname, sizeof(itemname));
 
-            EntityMeta entdata = gamemode.meta.GetEntity(itemname);
-            if (entdata != null) {
-                ArrayList checklist = entdata.GetArrayList(val);
+            if (item.meta != null) {
+                ArrayList checklist = item.meta.GetArrayList(val);
 
                 if (checklist != null) {
                     for (int k=0; k < checklist.Length; k++)
@@ -51,7 +61,7 @@ methodmap Inventory < Base {
                 }
                 else
                 {
-                    if (entdata.GetInt(val) == check)
+                    if (item.meta.GetInt(val) == check)
                         return true;
                 }
             }
@@ -64,7 +74,31 @@ methodmap Inventory < Base {
         ArrayList inv = this.GetArrayList("inventory");
 
         if (inv.Length <= gamemode.config.invsize) {
-            inv.Push(new InvItem(entclass));
+            EntityMeta entdata = gamemode.meta.GetEntity(entclass);
+    
+            if (entdata != null)
+            {
+                Entity ent = new Entity();
+                ent.meta = entdata;
+                ent.spawned = false;
+                ent.SetString("class", entclass);
+                Base ents;
+                gamemode.GetValue("ents", ents);
+                ents.GetArrayList("entities").Push(ent);
+                inv.Push(ent);
+
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    public bool Pickup(Entity item) {
+        ArrayList inv = this.GetArrayList("inventory");
+
+        if (inv.Length <= gamemode.config.invsize) {
+            inv.Push(item);
             return true;
         }
         
@@ -76,8 +110,8 @@ methodmap Inventory < Base {
         char entclass[32];
 
         for (int i=0; i < inv.Length; i++) {
-            InvItem item = inv.Get(i);
-            item.GetEntClass(entclass, sizeof(entclass));
+            Entity item = inv.Get(i);
+            item.GetClass(entclass, sizeof(entclass));
 
             if (StrEqual(entclass, entname)) {
                 inv.Erase(i);
@@ -88,20 +122,26 @@ methodmap Inventory < Base {
         return false;
     }
 
-    public InvItem Get(int index = 0) {
+    public Entity Get(int index = 0) {
         return this.GetArrayList("inventory").Get(index);
     }
 
-    public InvItem Drop(int index = 0) {
+    public Entity Drop(int index = 0) {
         ArrayList inv = this.GetArrayList("inventory");
 
-        InvItem itm = inv.Get(index);
+        Entity itm = inv.Get(index);
         inv.Erase(index);
 
         return itm;
     }
 
     public void Clear() {
-        this.GetArrayList("inventory").Clear();
+        ArrayList items = this.GetArrayList("inventory");
+        ArrayList ents = view_as<Base>(gamemode).GetBase("ents").GetArrayList("entities");
+
+        for (int i=0; i < items.Length; i++) {
+            Entity item = items.Get(i);
+            ents.Erase(ents.FindValue(item));
+        }
     }
 }

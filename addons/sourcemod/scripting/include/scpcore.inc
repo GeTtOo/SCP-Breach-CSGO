@@ -131,37 +131,16 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
     Entity entity;
     if (entdata != null)
     {
-        entity = new Entity(CreateEntityByName("prop_physics_override"));
-
-        char modelName[128], mass[12], name[32], bodygroup[12], skin[12];
-        entdata.model(modelName, sizeof(modelName));
-        entdata.name(name, sizeof(name));
-        FloatToString(entdata.mass, mass, sizeof(mass));
-        IntToString(entdata.bodygroup, bodygroup, sizeof(bodygroup));
-        IntToString(entdata.skin, skin, sizeof(skin));
-
-        DispatchKeyValue(entity.id, "model", modelName);
-        DispatchKeyValue(entity.id, "physicsmode", "2");
-        DispatchKeyValue(entity.id, "massScale", mass);
-        DispatchKeyValue(entity.id, "Solid", "6");
-        DispatchKeyValue(entity.id, "body", bodygroup);
-        DispatchKeyValue(entity.id, "skin", skin);
-        if (entdata.spawnflags != 0) {
-            char flags[8];
-            IntToString(entdata.spawnflags, flags, sizeof(flags));
-            DispatchKeyValue(entity.id, "spawnflags", flags);
-        }
-        if (entdata.usable) {
-            char funcname[32];
-            entdata.GetString("function", funcname, sizeof(funcname));
-        }
+        entity = new Entity();
+        entity.meta = entdata;
+        entity.CreateObject();
     }
     else
     {
         entity = new Entity(CreateEntityByName(EntName));
     }
 
-    entity.active = false;
+    entity.spawned = false;
     entity.SetString("class", EntName);
     
     if (view_as<bool>(GetNativeCell(3)))
@@ -172,9 +151,7 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
 
 public any NativeEntities_Remove(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
-
-    ArrayList entArr;
-    Ents.GetValue("entities", entArr);
+    ArrayList entArr = Ents.GetArrayList("entities");
 
     for(int i=0; i < entArr.Length; i++)
         if (view_as<Entity>(entArr.Get(i, 0)).id == id) {
@@ -204,5 +181,5 @@ public any NativeEntities_TryGetOrAdd(Handle Plugin, int numArgs) {
         if (view_as<Entity>(entArr.Get(i)).id == id)
             return view_as<Entity>(entArr.Get(i));
 
-    return view_as<Entity>(Ents.Add(id));
+    return view_as<Entity>(Ents.AddNativeEnt(id));
 }

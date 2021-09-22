@@ -45,12 +45,28 @@ methodmap EntitySingleton < Base {
 
     public ArrayList GetAll() { return this.GetArrayList("entities"); }
 
-    public Entity Add(int id) {
+    public Entity Add(char[] entclass) {
+        EntityMeta entdata = gamemode.meta.GetEntity(entclass);
+    
+        if (entdata != null)
+        {
+            Entity ent = new Entity();
+            ent.meta = entdata;
+            ent.spawned = false;
+            ent.SetString("class", entclass);
+            this.GetArrayList("entities").Push(ent);
+            return ent;
+        }
+
+        return null;
+    }
+
+    public Entity AddNativeEnt(int id) {
         ArrayList entArr;
         this.GetValue("entities", entArr);
 
         Entity ent = new Entity(id);
-        ent.active = true;
+        ent.spawned = true;
 
         char entName[32];
         GetEntityClassname(id, entName, sizeof(entName));
