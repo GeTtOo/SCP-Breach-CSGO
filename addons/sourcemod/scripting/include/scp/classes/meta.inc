@@ -1,3 +1,9 @@
+enum InventoryEvents {
+    ON_PICKUP = 0,
+    ON_DROP,
+    ON_USE
+}
+
 methodmap OnUseMeta < Base {
 
     public OnUseMeta() {
@@ -108,28 +114,29 @@ methodmap Meta < Base {
 
     public EntityMeta GetEntity(char[] entclass) { return this.GetList("entities").Get(entclass); }
 
-    public void RegEntOnUse(char[] entclass, char[] funcname) {
+    public void RegEntEvent(InventoryEvents eid, char[] entclass, char[] funcname, bool invblock = false) {
         EntityMeta entdata = this.GetEntity(entclass);
-        entdata.onuse = new OnUseMeta();
+        
+        switch (eid) {
+            case ON_PICKUP: {
+                entdata.onpickup = new OnPickupMeta();
 
-        entdata.onuse.hndl = GetMyHandle();
-        entdata.onuse.name(funcname);
-    }
+                entdata.onpickup.hndl = GetMyHandle();
+                entdata.onpickup.name(funcname);
+                entdata.onpickup.invblock = invblock;
+            }
+            case ON_DROP: {
+                entdata.ondrop = new OnDropMeta();
 
-    public void RegEntOnPickup(char[] entclass, char[] funcname, bool invblock = false) {
-        EntityMeta entdata = this.GetEntity(entclass);
-        entdata.onpickup = new OnPickupMeta();
+                entdata.ondrop.hndl = GetMyHandle();
+                entdata.ondrop.name(funcname);
+            }
+            case ON_USE: {
+                entdata.onuse = new OnUseMeta();
 
-        entdata.onpickup.hndl = GetMyHandle();
-        entdata.onpickup.name(funcname);
-        entdata.onpickup.invblock = invblock;
-    }
-
-    public void RegEntOnDrop(char[] entclass, char[] funcname) {
-        EntityMeta entdata = this.GetEntity(entclass);
-        entdata.ondrop = new OnDropMeta();
-
-        entdata.ondrop.hndl = GetMyHandle();
-        entdata.ondrop.name(funcname);
+                entdata.onuse.hndl = GetMyHandle();
+                entdata.onuse.name(funcname);
+            }
+        }
     }
 }
