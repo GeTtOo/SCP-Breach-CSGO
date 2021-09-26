@@ -117,6 +117,11 @@ methodmap NuclearWarhead < Base {
 
             WT.Create(data.GetVector("pos"), data.GetAngle("ang"), 2).SetSize(data.GetInt("size")).SetColor(data.GetColor("color")).SetText("Disabled");
         }
+
+        /*for (int i=0; i < this.GetArrayList("displays").Length; i++)
+        {
+            int display idx = this.GetArrayList("displays").Get(i);
+        }*/
         
     }
     

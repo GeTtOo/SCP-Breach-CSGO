@@ -589,7 +589,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
         while (inv.Length != 0)
         {   
-            Entity item = vic.inv.Drop();
+            InvItem item = vic.inv.Drop();
 
             if (item.meta.ondrop)
             {
@@ -608,6 +608,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
             .SetPos(vic.GetPos() + new Vector(GetRandomFloat(-30.0,30.0), GetRandomFloat(-30.0,30.0), 0.0))
             .Spawn();
         }
+
+        vic.progress.Stop();
 
         vic.active = false;
 
@@ -842,25 +844,21 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int idx)
     else if (action == MenuAction_Select) 
     {
         Client ply = Clients.Get(client);
-        Entity item = ply.inv.Get(idx);
+        InvItem item = ply.inv.Get(idx);
 
         char class[32];
         item.GetClass(class, sizeof(class));
 
-        Menu InvItmMenu = new Menu(InventoryItemHandler);
+        Menu InvItmMenu = new Menu(InventoryItemHandler, MenuAction_DrawItem | MenuAction_DisplayItem | MenuAction_Select | MenuAction_End);
 
-        char bstr[128];
+        char bstr[128], itemid[3];
 
         FormatEx(bstr, sizeof(bstr), "%T", class, ply.id);
-        InvItmMenu.SetTitle(bstr);
-
-        char itemid[3];
         IntToString(idx, itemid, sizeof(itemid));
-
-        FormatEx(bstr, sizeof(bstr), "%T", "Use", ply.id);
-        InvItmMenu.AddItem(itemid, bstr, (item.meta.onuse && !item.disabled) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
-        FormatEx(bstr, sizeof(bstr), "%T", "Drop", ply.id);
-        InvItmMenu.AddItem(itemid, bstr, ITEMDRAW_DEFAULT);
+        
+        InvItmMenu.SetTitle(bstr);
+        InvItmMenu.AddItem(itemid, "use");
+        InvItmMenu.AddItem(itemid, "drop");
 
         InvItmMenu.Display(ply.id, 30);
     }
@@ -868,55 +866,108 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int idx)
 
 public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int idx)
 {
-    if (action == MenuAction_End)
+    switch (action)
     {
-        delete hMenu;
-    }
-    else if (action == MenuAction_Select) 
-    {
-        Client ply = Clients.Get(client);
-        
-        char itemid[3];
-        hMenu.GetItem(idx, itemid, sizeof(itemid));
-
-        switch (idx)
+        case MenuAction_DrawItem:
         {
-            case 0:
+            switch (idx)
             {
-                Entity item = ply.inv.Get(StringToInt(itemid));
-                
-                char funcname[32];
-                item.meta.onuse.name(funcname, sizeof(funcname));
-
-                Call_StartFunction(item.meta.onuse.hndl, GetFunctionByName(item.meta.onuse.hndl, funcname));
-                Call_PushCellRef(ply);
-                Call_PushCellRef(item);
-                Call_Finish();
-            }
-            case 1:
-            {
-                Entity item = ply.inv.Drop(StringToInt(itemid));
-
-                if (item.meta.ondrop)
+                case 0:
                 {
-                    char funcname[32];
-                    item.meta.ondrop.name(funcname, sizeof(funcname));
+                    Client ply = Clients.Get(client);
 
-                    Call_StartFunction(item.meta.ondrop.hndl, GetFunctionByName(item.meta.ondrop.hndl, funcname));
+                    char itemid[3];
+                    hMenu.GetItem(idx, itemid, sizeof(itemid));
+
+                    InvItem item = ply.inv.Get(StringToInt(itemid));
+                    
+                    return (item.meta.onuse && !item.disabled) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED;
+                }
+            }
+        }
+        case MenuAction_DisplayItem:
+        {
+            Client ply = Clients.Get(client);
+
+            char itemid[3];
+            hMenu.GetItem(idx, itemid, sizeof(itemid));
+
+            InvItem item = ply.inv.Get(StringToInt(itemid));
+
+            switch (idx)
+            {
+                case 0:
+                {
+                    char bstr[64], fullstr[128];
+                    FormatEx(bstr, sizeof(bstr), "%T", "Use", ply.id);
+                    float timeremain = item.cdr - GetGameTime();
+                    if (timeremain <= 0.0) item.cdr = 0.0;
+                    if (item.cdr <= 0.0) return RedrawMenuItem(bstr);
+                    FormatEx(fullstr, sizeof(fullstr), "%s (%i:%i)", bstr, RoundToNearest(timeremain) / 60, RoundFloat(timeremain) % 60);
+                    return RedrawMenuItem(fullstr);
+                }
+                case 1:
+                {
+                    char bstr[64];
+                    FormatEx(bstr, sizeof(bstr), "%T", "Drop", ply.id);
+                    return RedrawMenuItem(bstr);
+                }
+            }
+        }
+        case MenuAction_Select:
+        {
+            Client ply = Clients.Get(client);
+            
+            char itemid[3];
+            hMenu.GetItem(idx, itemid, sizeof(itemid));
+
+            switch (idx)
+            {
+                case 0:
+                {
+                    InvItem item = ply.inv.Get(StringToInt(itemid));
+                    
+                    char funcname[32];
+                    item.meta.onuse.name(funcname, sizeof(funcname));
+
+                    Call_StartFunction(item.meta.onuse.hndl, GetFunctionByName(item.meta.onuse.hndl, funcname));
                     Call_PushCellRef(ply);
                     Call_PushCellRef(item);
                     Call_Finish();
                 }
+                case 1:
+                {
+                    InvItem item = ply.inv.Drop(StringToInt(itemid));
 
-                item
-                .CreateObject()
-                .UseCB(view_as<SDKHookCB>(CB_EntUse))
-                .SetPos(ply.GetAng().Forward(ply.EyePos(), 5.0) - new Vector(0.0, 0.0, 15.0))
-                .Spawn()
-                .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
+                    if (item.meta.ondrop)
+                    {
+                        char funcname[32];
+                        item.meta.ondrop.name(funcname, sizeof(funcname));
+
+                        Call_StartFunction(item.meta.ondrop.hndl, GetFunctionByName(item.meta.ondrop.hndl, funcname));
+                        Call_PushCellRef(ply);
+                        Call_PushCellRef(item);
+                        Call_Finish();
+
+                        ply.progress.Stop();
+                    }
+
+                    item
+                    .CreateObject()
+                    .UseCB(view_as<SDKHookCB>(CB_EntUse))
+                    .SetPos(ply.GetAng().Forward(ply.EyePos(), 5.0) - new Vector(0.0, 0.0, 15.0))
+                    .Spawn()
+                    .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
+                }
             }
         }
+        case MenuAction_End:
+        {
+            delete hMenu;
+        }
     }
+
+    return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -932,18 +983,18 @@ public void PlyHideOverlay(Client ply)
 
 public void InitKeyCards()
 {
-    gamemode.meta.RegEntOnUse("card_o5", "SetPlyDoorAccess");
-    gamemode.meta.RegEntOnUse("card_facility_manager", "SetPlyDoorAccess");
-    gamemode.meta.RegEntOnUse("card_containment_engineer", "SetPlyDoorAccess");
-    gamemode.meta.RegEntOnUse("card_mog_commander", "SetPlyDoorAccess");
-    gamemode.meta.RegEntOnUse("card_mog_lieutenant", "SetPlyDoorAccess");
-    gamemode.meta.RegEntOnUse("card_guard", "SetPlyDoorAccess");
-    gamemode.meta.RegEntOnUse("card_senior_guard", "SetPlyDoorAccess");
-    gamemode.meta.RegEntOnUse("card_zone_manager", "SetPlyDoorAccess");
-    gamemode.meta.RegEntOnUse("card_major_scientist", "SetPlyDoorAccess");
-    gamemode.meta.RegEntOnUse("card_scientist", "SetPlyDoorAccess");
-    gamemode.meta.RegEntOnUse("card_janitor", "SetPlyDoorAccess");
-    gamemode.meta.RegEntOnUse("card_chaos", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_o5", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_facility_manager", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_containment_engineer", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_mog_commander", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_mog_lieutenant", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_guard", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_senior_guard", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_zone_manager", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_major_scientist", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_scientist", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_janitor", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_chaos", "SetPlyDoorAccess");
 }
 
 public void ResetIdPad(int entid)
@@ -1128,7 +1179,7 @@ public Action CmdEnts(int args)
             if (ent.id != -1)
                 PrintToServer("%s id: %i", name, ent.id);
             else
-                PrintToServer("%s (not spawned)", name, ent.id);
+                PrintToServer("%s (picked)", name, ent.id);
         }
 
         PrintToServer("Count: %i", ents.Length);
@@ -1334,8 +1385,7 @@ public void InventoryDisplay(Client ply)
     FormatEx(bstr, sizeof(bstr), "%T", "Inventory", ply.id);
     InvMenu.SetTitle(bstr);
     
-    ArrayList inv;
-    ply.inv.GetValue("inventory", inv);
+    ArrayList inv = ply.inv.GetArrayList("inventory");
 
     if (inv.Length)
     {
@@ -1344,7 +1394,7 @@ public void InventoryDisplay(Client ply)
             char itemid[8], itemClass[32];
 
             IntToString(i, itemid, sizeof(itemid));
-            view_as<Entity>(inv.Get(i, 0)).GetClass(itemClass, sizeof(itemClass));
+            view_as<InvItem>(inv.Get(i, 0)).GetClass(itemClass, sizeof(itemClass));
 
             FormatEx(bstr, sizeof(bstr), "%T", itemClass, ply.id);
             InvMenu.AddItem(itemid, bstr, ITEMDRAW_DEFAULT);

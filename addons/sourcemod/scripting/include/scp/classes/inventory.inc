@@ -2,32 +2,21 @@
 /*---------------------------------------------------Player inventory---------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
-methodmap InvItem < Base {
-
-    public InvItem(char[] class) {
-        InvItem self = view_as<InvItem>(new Base());
-        self.SetString("entclass", class);
-        return self;
-    }
-
-    property bool active {
-        public set(bool val) { this.SetBool("active", val); }
-        public get() { return this.GetBool("active", true); }
-    }
+methodmap InvItem < Entity {
 
     property bool disabled {
-        public set(bool val) { this.SetBool("disabled", val); }
-        public get() { return this.GetBool("disabled", false); }
+        public set(bool value) { this.SetBool("disabled", value); }
+        public get() { return this.GetBool("disabled"); }
     }
 
-    public InvItem SetEntClass(char[] class) {
-        this.SetString("entclass", class);
-        return this;
+    property float cdr {
+        public set(float value) { this.SetFloat("cdr", value); }
+        public get() { return this.GetFloat("cdr"); }
     }
 
-    public InvItem GetEntClass(char[] class, int max_len) {
-        this.GetString("entclass", class, max_len);
-        return this;
+    public void StartCooldown(int time, char[] funcname, any arg) {
+        this.TimerSimple(time, funcname, arg);
+        this.cdr = GetGameTime() + float(time / 1000);
     }
 }
 
@@ -122,14 +111,14 @@ methodmap Inventory < Base {
         return false;
     }
 
-    public Entity Get(int index = 0) {
+    public InvItem Get(int index = 0) {
         return this.GetArrayList("inventory").Get(index);
     }
 
-    public Entity Drop(int index = 0) {
+    public InvItem Drop(int index = 0) {
         ArrayList inv = this.GetArrayList("inventory");
 
-        Entity itm = inv.Get(index);
+        InvItem itm = inv.Get(index);
         inv.Erase(index);
 
         return itm;
@@ -144,7 +133,7 @@ methodmap Inventory < Base {
         ArrayList ents = view_as<Base>(gamemode).GetBase("ents").GetArrayList("entities");
 
         for (int i=0; i < items.Length; i++) {
-            Entity item = items.Get(i);
+            InvItem item = items.Get(i);
             ents.Erase(ents.FindValue(item));
         }
     }

@@ -82,6 +82,11 @@ methodmap EntityMeta < Base {
         public get() { this.GetBool("usable"); }
     }
 
+    property int cd {
+        public set(int val) { this.SetInt("cd", val); }
+        public get() { this.GetInt("cd"); }
+    }
+
     property OnUseMeta onuse {
         public set(OnUseMeta val) { this.SetValue("onuse", val); }
         public get() { OnUseMeta val; return this.GetValue("onuse", val) ? val : null; }

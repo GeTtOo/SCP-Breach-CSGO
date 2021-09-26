@@ -17,7 +17,7 @@ public Plugin myinfo = {
 };
 
 public void SCP_RegisterMetaData() {
-    gamemode.meta.RegEntOnPickup("035_mask", "Logic", true);
+    gamemode.meta.RegEntEvent(ON_PICKUP, "035_mask", "Logic", true);
 }
 
 public void SCP_OnPlayerJoin(Client &ply)

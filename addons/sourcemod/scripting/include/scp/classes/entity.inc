@@ -37,11 +37,6 @@ methodmap Entity < Base {
         public get() { return this.GetBool("picked"); }
     }
 
-    property bool disabled {
-        public set(bool value) { this.SetBool("disabled", value); }
-        public get() { return this.GetBool("disabled"); }
-    }
-
     public void TimerSimple(int delay, char[] funcname, any args = false) {
         char timername[64], pname[64];
         GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
