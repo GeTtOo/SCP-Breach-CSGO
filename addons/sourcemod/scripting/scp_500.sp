@@ -14,7 +14,7 @@ public Plugin myinfo = {
 };
 
 public void SCP_RegisterMetaData() {
-    gamemode.meta.RegEntOnUse("500_panacea", "OnUse");
+    gamemode.meta.RegEntEvent(ON_USE, "500_panacea", "OnUse");
 }
 
 public void OnUse(Client &ply) {
