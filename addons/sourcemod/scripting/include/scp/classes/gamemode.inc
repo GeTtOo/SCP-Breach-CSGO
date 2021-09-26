@@ -82,6 +82,10 @@ methodmap GameMode < JSON_OBJECT {
     property Logger log {
         public native get();
     }
+    
+    property int lang {
+        public get() { return GetServerLanguage(); }
+    }
 
     public native GTeam team(char[] name);
 

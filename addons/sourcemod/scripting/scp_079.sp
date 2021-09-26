@@ -61,7 +61,7 @@ public void SCP_OnRoundStart() {
     CamList = new ArrayList();
 
     int entId = 0;
-    while ((entId = FindEntityByClassname(entId, "*")) != -1) {
+    while ((entId = FindEntityByClassname(entId, "prop_dynamic")) != -1) {
         if (!IsValidEntity(entId)) continue;
 
         char ModelName[128];

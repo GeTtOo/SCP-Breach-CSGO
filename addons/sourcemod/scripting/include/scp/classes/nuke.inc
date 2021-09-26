@@ -7,7 +7,14 @@
 methodmap NuclearWarhead < Base {
 
     public NuclearWarhead() {
-        return view_as<NuclearWarhead>(new Base());
+        NuclearWarhead controller = view_as<NuclearWarhead>(new Base());
+        controller.CreateArrayList("monitors");
+        return controller;
+    }
+
+    property ArrayList monitors {
+        public set(ArrayList value) { this.SetArrayList("monitors", value); }
+        public get() { return this.GetArrayList("monitors"); }
     }
 
     property bool IsNuked {
@@ -35,14 +42,16 @@ methodmap NuclearWarhead < Base {
         public get() { return this.GetFloat("resumetime"); }
     }
 
-    public void Update(char[] text) {
-        ArrayList displays = WT.GetAll(2);
+    public void Update(char[] text, int size = 0) {
+        ArrayList displays = WT.GetAll(NukeMonitor);
 
         if (displays.Length > 0)
             for (int i=0; i < displays.Length; i++) {
                 WorldText display = displays.Get(i);
 
                 display.SetText(text);
+                if (size != 0)
+                    display.SetSize(size);
             }
 
         delete displays;
@@ -54,7 +63,7 @@ methodmap NuclearWarhead < Base {
 
     public void Ready() {
         this.ready = true;
-        this.Update("Ready");
+        this.Update(" Ready");
     }
 
     public void Activate() {
@@ -87,6 +96,12 @@ methodmap NuclearWarhead < Base {
             //gamemode.timer.Create("SCP_ALPHA_WARHEAD_COUNTDOWN", 10, RoundToNearest(this.resumetime) * 100000, "SCP_AlphaWarheadCountdown");
 
         this.active = true;
+
+        for (int i=0; i < this.monitors.Length; i++) {
+            Entity display = this.monitors.Get(i);
+            
+            display.SetProp("m_nSkin", (gamemode.lang == 22) ? 1 : 3);
+        }
     }
 
     public void Cancel() {
@@ -108,6 +123,28 @@ methodmap NuclearWarhead < Base {
         this.Update("Canceled");
     }
 
+    public void AddCounterToDisplay() {
+        int entId = 0;
+        while ((entId = FindEntityByClassname(entId, "prop_dynamic")) != -1) {
+            if (!IsValidEntity(entId)) continue;
+
+            char ModelName[128];
+            GetEntPropString(entId, Prop_Data, "m_ModelName", ModelName, sizeof(ModelName));
+
+            if (StrEqual(ModelName, "models/eternity/map/monitor.mdl"))
+                this.monitors.Push(Ents.TryGetOrAdd(entId));
+        }
+
+        for (int i=0; i < this.monitors.Length; i++) {
+            Entity display = this.monitors.Get(i);
+            
+            Vector dp = (display.GetAng() - new Angle(10.0,90.0,0.0)).Up((display.GetAng() - new Angle(10.0,90.0,0.0)).Right((display.GetAng() - new Angle(10.0,90.0,0.0)).Forward(display.GetPos(), -8.0), -37.5), -17.0);
+            Angle da = display.GetAng() - new Angle(10.0,90.0,0.0);
+
+            WT.Create(dp, da, NukeMonitor).SetSize(15).SetColor(new Colour(180,0,0));
+        }
+    }
+
     public void SpawnDisplay() {
         
         JSON_ARRAY spawnlist = gamemode.config.nuke.spawnlist;
@@ -115,9 +152,10 @@ methodmap NuclearWarhead < Base {
         for (int i=0; i < spawnlist.Length; i++) {
             JSON_OBJECT data = view_as<JSON_OBJECT>(spawnlist.GetObject(i));
 
-            WT.Create(data.GetVector("pos"), data.GetAngle("ang"), 2).SetSize(data.GetInt("size")).SetColor(data.GetColor("color")).SetText("Disabled");
+            WT.Create(data.GetVector("pos"), data.GetAngle("ang"), NukeMonitor).SetSize(data.GetInt("size")).SetColor(data.GetColor("color")).SetText("Disabled");
         }
         
+        this.AddCounterToDisplay();
     }
     
     public void Controller(int btnId) {
@@ -135,15 +173,18 @@ methodmap NuclearWarhead < Base {
         this.active = false;
         this.resumetime = 0.0;
         this.detonationtime = 0.0;
+        this.monitors.Clear();
     }
 }
 
 public void SCP_AlphaWarheadCountdown() {
     char time[32], time2[10], time3[3];
     float cursec = gamemode.nuke.detonationtime - GetGameTime();
+    int min = RoundToNearest(cursec) / 60;
+    int sec = RoundFloat(cursec) % 60;
     FloatToString(FloatFraction(cursec), time2, sizeof(time2));
     strcopy(time3, sizeof(time3), time2[2]);
-    Format(time, sizeof(time), "%i:%i:%s",  RoundToNearest(cursec) / 60, RoundFloat(cursec) % 60, time3);
+    Format(time, sizeof(time), (min < 10 ) ? ((sec < 10 ) ? "0%i:0%i:%s" : "0%i:%i:%s") : ((sec < 10 ) ? "%i:0%i:%s" : "%i:%i:%s"),  RoundToNearest(cursec) / 60, RoundFloat(cursec) % 60, time3);
     gamemode.nuke.Update(time);
 
     //if ((gamemode.nuke.detonationtime - GetGameTime()) < 0.1)
@@ -193,5 +234,5 @@ public void NukeExplode() {
 
     gamemode.timer.Remove("SCP_ALPHA_WARHEAD_COUNTDOWN");
 
-    gamemode.nuke.Update("Site destroyed");
+    gamemode.nuke.Update("Site destroyed", 8);
 }

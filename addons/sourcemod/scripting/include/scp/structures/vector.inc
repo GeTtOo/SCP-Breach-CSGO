@@ -178,6 +178,34 @@ methodmap Angle < Vector {
 
         return new Vector(endposarr[0], endposarr[1], endposarr[2]);
     }
+
+    public Vector Right(Vector startpos, float scale) {
+        float startposarr[3], angarr[3], rightarr[3], endposarr[3];
+        startpos.GetArr(startposarr);
+        this.GetArr(angarr);
+        GetAngleVectors(angarr, NULL_VECTOR, rightarr, NULL_VECTOR);
+        ScaleVector(rightarr, scale);
+        AddVectors(startposarr, rightarr, endposarr);
+
+        delete this;
+        delete startpos;
+
+        return new Vector(endposarr[0], endposarr[1], endposarr[2]);
+    }
+
+    public Vector Up(Vector startpos, float scale) {
+        float startposarr[3], angarr[3], uparr[3], endposarr[3];
+        startpos.GetArr(startposarr);
+        this.GetArr(angarr);
+        GetAngleVectors(angarr, NULL_VECTOR, NULL_VECTOR, uparr);
+        ScaleVector(uparr, scale);
+        AddVectors(startposarr, uparr, endposarr);
+
+        delete this;
+        delete startpos;
+
+        return new Vector(endposarr[0], endposarr[1], endposarr[2]);
+    }
 }
 
 stock Angle operator+(Angle first, Angle second) {
