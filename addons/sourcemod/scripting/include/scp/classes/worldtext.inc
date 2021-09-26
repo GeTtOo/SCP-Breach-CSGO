@@ -2,6 +2,12 @@
 /*-------------------------------------------------World Text controller------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
+enum TypeWorldText {
+    All = 0,
+    Text,
+    NukeMonitor
+}
+
 methodmap WorldText < Entity {
     
     public WorldText(int id) {
@@ -9,9 +15,9 @@ methodmap WorldText < Entity {
         return self;
     }
 
-    property int type {
-        public set(int val) { this.SetInt("type", val); }
-        public get() { return this.GetInt("type", 1); }
+    property TypeWorldText type {
+        public set(TypeWorldText val) { this.SetInt("type", view_as<int>(val)); }
+        public get() { return view_as<TypeWorldText>(this.GetInt("type", 0)); }
     }
     
     public WorldText SetText(char[] text) {
@@ -43,7 +49,7 @@ methodmap WorldTextSingleton < Base {
         public get() { return this.GetArrayList("wtlist"); }
     }
 
-    public WorldText Create(Vector vec, Angle ang, int type = 1) {
+    public WorldText Create(Vector vec, Angle ang, TypeWorldText type = Text) {
         WorldText wt = new WorldText(CreateEntityByName("point_worldtext"));
 
         wt.type = type;
@@ -58,14 +64,14 @@ methodmap WorldTextSingleton < Base {
         return this.list.Get(id);
     }
 
-    public ArrayList GetAll(int type = 0) {
+    public ArrayList GetAll(TypeWorldText type = Text) {
         ArrayList list = this.list;
         ArrayList sortedlist = new ArrayList();
 
         for (int i=0; i < list.Length; i++) {
             WorldText wt = list.Get(i);
 
-            if (wt != null && (wt.type == type || type == 0))
+            if (wt != null && (wt.type == type || type == All))
                 sortedlist.Push(wt);
         }
 
