@@ -464,15 +464,12 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 }
                 else if ((gamemode.config.usablecards && ply.Check("dooraccess", door.access)) || (!gamemode.config.usablecards && ply.inv.Check("access", door.access))) // old check = ply.inv.Check("access", door.access)
                 {
-                    if (gamemode.config.usablecards)
-                        ply.RemoveValue("dooraccess");
-
                     if (idpad)
                     {
                         idpad.SetProp("m_nSkin", (ply.lang == 22) ? 1 : 4); // 22 = ru lang code
                         gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
                     }
-                    delete idpad;
+                    idpad.Dispose();
                     return Plugin_Continue;
                 }
                 else
@@ -486,7 +483,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                         FormatEx(aln, sizeof(aln), "%t", dn);
                         ply.PrintWarning("%t", "Door access denied", aln);
                     }
-                    delete idpad;
+                    idpad.Dispose();
                     return Plugin_Stop;
                 }
             }
@@ -1009,9 +1006,26 @@ public void SetPlyDoorAccess(Client &ply, Entity &item)
 
     if (list.Length != 0)
     {
-        ply.SetArrayList("dooraccess", item.meta.GetArrayList("access"));
-        view_as<Entity>(list.Get(0)).Input("Use", ply);
+        Entity door = list.Get(0);
+        char doorid[8];
+        IntToString(door.GetProp("m_iHammerID", Prop_Data), doorid, sizeof(doorid));
+        if (gamemode.config.doors.HasKey(doorid))
+        {
+            ply.SetArrayList("dooraccess", item.meta.GetArrayList("access"));
+            view_as<Entity>(list.Get(0)).Input("Use", ply);
+        }
+        else
+        {
+            ply.PrintWarning("%t", "ID pad not found");
+        }
     }
+    else
+    {
+        ply.PrintWarning("%t", "ID pad not found");
+    }
+
+    if (gamemode.config.usablecards)
+        ply.RemoveValue("dooraccess");
 
     delete list;
 }

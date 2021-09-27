@@ -32,6 +32,11 @@
         "en"        "Ignoring access cards"
         "ru"        "Игнорирование карт доступа"
     }
+    "ID pad not found"
+    {
+        "en"        "ID pad not found"
+        "ru"        "Считывающее устройство не обнаружено"
+    }
     "Enable"
     {
         "en"        "enabled"
