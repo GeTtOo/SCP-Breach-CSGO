@@ -142,11 +142,11 @@
     "276975": {
         "location":"SCP 914",
         "access":1,
-        "scp":false
+        "scp":true
     },
     "276978": {
         "location":"SCP 914",
         "access":1,
-        "scp":false
+        "scp":true
     }
 }

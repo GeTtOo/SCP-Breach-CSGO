@@ -183,3 +183,15 @@ public any NativeEntities_TryGetOrAdd(Handle Plugin, int numArgs) {
 
     return view_as<Entity>(Ents.AddNativeEnt(id));
 }
+
+public any NativeEntities_TryGetOrNew(Handle Plugin, int numArgs) {
+    int id = GetNativeCell(2);
+    ArrayList entArr;
+    Ents.GetValue("entities", entArr);
+
+    for(int i=0; i < entArr.Length; i++)
+        if (view_as<Entity>(entArr.Get(i)).id == id)
+            return view_as<Entity>(entArr.Get(i));
+
+    return view_as<Entity>(new Entity(id));
+}

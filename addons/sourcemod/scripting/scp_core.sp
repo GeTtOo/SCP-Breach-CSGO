@@ -56,6 +56,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("EntitySingleton.Remove", NativeEntities_Remove);
     CreateNative("EntitySingleton.Get", NativeEntities_Get);
     CreateNative("EntitySingleton.TryGetOrAdd", NativeEntities_TryGetOrAdd);
+    CreateNative("EntitySingleton.TryGetOrNew", NativeEntities_TryGetOrNew);
     
     OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_CellByRef);
     OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_CellByRef);
@@ -458,11 +459,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 {
                     return Plugin_Continue;
                 }
-                else if (ply.IsSCP && door.scp)
-                {
-                    return Plugin_Continue;
-                }
-                else if ((gamemode.config.usablecards && ply.Check("dooraccess", door.access)) || (!gamemode.config.usablecards && ply.inv.Check("access", door.access))) // old check = ply.inv.Check("access", door.access)
+                else if ((gamemode.config.usablecards && ply.Check("dooraccess", door.access)) || (!gamemode.config.usablecards && ply.inv.Check("access", door.access)) || (ply.IsSCP && door.scp)) // old check = ply.inv.Check("access", door.access)
                 {
                     if (idpad)
                     {
@@ -478,10 +475,14 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                     {
                         idpad.SetProp("m_nSkin", (ply.lang == 22) ? 2 : 5);
                         gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
-                        char dn[15], aln[128];
-                        FormatEx(dn, sizeof(dn), "AccessLevel_%i", door.access);
-                        FormatEx(aln, sizeof(aln), "%t", dn);
-                        ply.PrintWarning("%t", "Door access denied", aln);
+
+                        if (!ply.IsSCP)
+                        {
+                            char dn[15], aln[128];
+                            FormatEx(dn, sizeof(dn), "AccessLevel_%i", door.access);
+                            FormatEx(aln, sizeof(aln), "%t", dn);
+                            ply.PrintWarning("%t", "Door access denied", aln);
+                        }
                     }
                     idpad.Dispose();
                     return Plugin_Stop;

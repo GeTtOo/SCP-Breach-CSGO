@@ -91,6 +91,8 @@ methodmap EntitySingleton < Base {
     
     public native Entity TryGetOrAdd(int id);
 
+    public native Entity TryGetOrNew(int id);
+
     public native Entity Create(char[] EntName, bool register = true);
 
     public native void Remove(int id);
@@ -122,7 +124,7 @@ methodmap EntitySingleton < Base {
                     Vector vecEnt = new Vector(vec[0], vec[1], vec[2]);
 
                     if ((vecMin.x < vecEnt.x < vecMax.x) && (vecMin.y < vecEnt.y < vecMax.y) && (vecMin.z < vecEnt.z < vecMax.z)) {
-                        PushArrayCell(entArr, this.TryGetOrAdd(entId));
+                        entArr.Push(this.TryGetOrNew(entId));
                     }
 
                     delete vecEnt;
@@ -160,7 +162,7 @@ methodmap EntitySingleton < Base {
                     bool isInCone = atp.DotProduct(axis.Clone()) / axis.Clone().Length() < axis.Length();
 
                     if (!isInInfCone && isInCone)
-                        PushArrayCell(entArr, this.TryGetOrAdd(entId));
+                        entArr.Push(this.TryGetOrNew(entId));
                 }
             }
         }
