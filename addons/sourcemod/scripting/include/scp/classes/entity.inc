@@ -134,6 +134,18 @@ methodmap Entity < Base {
         return this;
     }
 
+    public int GetProp(char[] name, any type = Prop_Send, int element = 0) {
+        return GetEntProp(this.id, type, name, _, element);
+    }
+
+    public float GetPropFloat(char[] name, any type = Prop_Send) {
+        return GetEntPropFloat(this.id, type, name);
+    }
+
+    public int GetPropString(char[] name, char[] value, int max_size, any type = Prop_Send) {
+        return GetEntPropString(this.id, type, name, value, max_size);
+    }
+
     public Entity Spawn() {
         DispatchSpawn(this.id);
         return this;
@@ -151,6 +163,10 @@ methodmap Entity < Base {
 
     public void Remove() {
         RemoveEntity(this.id);
+        delete this;
+    }
+
+    public void Dispose() {
         delete this;
     }
 }
