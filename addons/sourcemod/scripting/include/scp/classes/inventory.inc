@@ -14,7 +14,7 @@ methodmap InvItem < Entity {
         public get() { return this.GetFloat("cdr"); }
     }
 
-    public void StartCooldown(int time, char[] funcname, any arg) {
+    public void CooldownStart(int time, char[] funcname, any arg) {
         this.TimerSimple(time, funcname, arg);
         this.cdr = GetGameTime() + float(time / 1000);
     }
@@ -71,9 +71,14 @@ methodmap Inventory < Base {
                 ent.meta = entdata;
                 ent.spawned = false;
                 ent.SetString("class", entclass);
+
+                any data[2];
+                data[0] = ent.id;
+                data[1] = ent;
+                
                 Base ents;
                 gamemode.GetValue("ents", ents);
-                ents.GetArrayList("entities").Push(ent);
+                ents.GetArrayList("entities").PushArray(data);
                 inv.Push(ent);
 
                 return true;
@@ -134,7 +139,9 @@ methodmap Inventory < Base {
 
         for (int i=0; i < items.Length; i++) {
             InvItem item = items.Get(i);
-            ents.Erase(ents.FindValue(item));
+            ents.Erase(ents.FindValue(item, 1));
+            item.Dispose();
+            items.Erase(i);
         }
     }
 }

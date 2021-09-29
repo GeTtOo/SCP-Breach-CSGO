@@ -9,7 +9,7 @@
 
 methodmap Entity < Base {
 
-    public Entity(int id = -1) {
+    public Entity(int id = 5000) {
         Entity entity = view_as<Entity>(new Base());
         entity.SetValue("id", id);
         entity.SetValue("spawned", true);
@@ -40,7 +40,7 @@ methodmap Entity < Base {
     public void TimerSimple(int delay, char[] funcname, any args = false) {
         char timername[64], pname[64];
         GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
-        FormatEx(timername, sizeof(timername), "%s_plyid-%i_%i_%i", pname, this.id, GetTime(), GetRandomInt(1, 1000));
+        FormatEx(timername, sizeof(timername), "%s_entid-%i_%i_%i", pname, this.id, GetTime(), GetRandomInt(1, 1000));
         gamemode.timer.Create(timername, delay, 1, funcname, args);
     }
 
@@ -158,7 +158,7 @@ methodmap Entity < Base {
     public void WorldRemove() {
         RemoveEntity(this.id);
         this.spawned = false;
-        this.id = -1;
+        this.id = 5000;
     }
 
     public void Remove() {

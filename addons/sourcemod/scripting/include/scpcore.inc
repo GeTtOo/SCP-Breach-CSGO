@@ -74,20 +74,44 @@ public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
     return view_as<Teams>(gamemode.GetObject("Teams")).get(name);
 }
 
-public any NativeClients_GetAll(Handle Plugin, int numArgs) {
-    ArrayList clients = Clients.GetArrayList("Clients");
-    ArrayList players = new ArrayList();
-    for (int i=0; i < clients.Length; i++)
-        if (view_as<Client>(clients.Get(i)) != null)
-            players.Push(clients.Get(i, 1));
-    return players;
+public any NativeClients_Add(Handle Plugin, int numArgs) {
+    int id = GetNativeCell(2);
+    any data[2];
+    data[0] = id;
+    data[1] = new Client(id);
+    Ents.list.PushArray(data);
+}
+
+public any NativeClients_Remove(Handle Plugin, int numArgs) {
+    int id = GetNativeCell(2);
+    ArrayList ents = Ents.list;
+    int idx = ents.FindValue(id, 0);
+    ents.Erase(idx);
 }
 
 public any NativeClients_Get(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
-    int idx = Clients.GetArrayList("Clients").FindValue(id, 0);
+    ArrayList ents = Ents.list;
+    int idx = ents.FindValue(id, 0);
     if (idx == -1) return view_as<Client>(null);
-    return Clients.GetArrayList("Clients").Get(idx, 1);
+    return ents.Get(idx, 1);
+}
+
+public any NativeClients_GetAll(Handle Plugin, int numArgs) {
+    ArrayList ents = Ents.list;
+
+    ArrayList players = new ArrayList();
+    for (int i=0; i < ents.Length; i++)
+    {
+        int id = ents.Get(i, 0);
+        if (id <= MaxClients && id > 0)
+        {
+            Client ply = ents.Get(i, 1);
+            if (ply != null)
+                players.Push(ply);
+        }
+    }
+    return players;
 }
 
 public any NativeClients_GetRandom(Handle Plugin, int numArgs) {
@@ -144,54 +168,67 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
     entity.SetString("class", EntName);
     
     if (view_as<bool>(GetNativeCell(3)))
-        Ents.GetArrayList("entities").Push(entity);
+    {
+        any data[2];
+        data[0] = entity.id;
+        data[1] = entity;
+
+        Ents.list.PushArray(data);
+    }
 
     return entity;
 }
 
 public any NativeEntities_Remove(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
-    ArrayList entArr = Ents.GetArrayList("entities");
+    ArrayList ents = Ents.list;
+    int idx = ents.FindValue(id, 0);
+    view_as<Entity>(ents.Get(idx, 1)).Remove();
+    Ents.list.Erase(idx);
+}
 
-    for(int i=0; i < entArr.Length; i++)
-        if (view_as<Entity>(entArr.Get(i, 0)).id == id) {
-            view_as<Entity>(entArr.Get(i, 0)).Remove();
-            entArr.Erase(i);
+public any NativeEntities_Clear(Handle Plugin, int numArgs) {
+    ArrayList ents = Ents.list;
+
+    for(int i=0; i < ents.Length; i++)
+    {
+        int id = ents.Get(i, 0);
+
+        if (id > MaxClients)
+        {
+            Entity ent = ents.Get(i, 1);
+            ent.Dispose();
         }
+    }
+    
+    ents.Resize(Clients.InGame());
 }
 
 public any NativeEntities_Get(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
-    ArrayList entArr;
-    Ents.GetValue("entities", entArr);
-
-    for(int i=0; i < entArr.Length; i++)
-        if (view_as<Entity>(entArr.Get(i)).id == id)
-            return view_as<Entity>(entArr.Get(i));
-
-    return view_as<Entity>(null);
+    ArrayList ents = Ents.list;
+    int idx = ents.FindValue(id, 0);
+    if (idx == -1) return view_as<Entity>(null);
+    return ents.Get(idx, 1);
 }
 
-public any NativeEntities_TryGetOrAdd(Handle Plugin, int numArgs) {
-    int id = GetNativeCell(2);
-    ArrayList entArr;
-    Ents.GetValue("entities", entArr);
-
-    for(int i=0; i < entArr.Length; i++)
-        if (view_as<Entity>(entArr.Get(i)).id == id)
-            return view_as<Entity>(entArr.Get(i));
-
-    return view_as<Entity>(Ents.AddNativeEnt(id));
+public any NativeEntities_GetAll(Handle Plugin, int numArgs) {
+    ArrayList entities = Ents.list;
+    ArrayList ents = new ArrayList();
+    for (int i=0; i < entities.Length; i++)
+    {
+        Entity ent = entities.Get(i, 1);
+        if (ent != null)
+            ents.Push(ent);
+    }
+    return ents;
 }
 
-public any NativeEntities_TryGetOrNew(Handle Plugin, int numArgs) {
+public any NativeEntities_TryGet(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
-    ArrayList entArr;
-    Ents.GetValue("entities", entArr);
-
-    for(int i=0; i < entArr.Length; i++)
-        if (view_as<Entity>(entArr.Get(i)).id == id)
-            return view_as<Entity>(entArr.Get(i));
-
-    return view_as<Entity>(new Entity(id));
+    ArrayList ents = Ents.list;
+    int idx = ents.FindValue(id, 0);
+    if (idx == -1) return false;
+    SetNativeCellRef(3, ents.Get(idx, 1));
+    return true;
 }

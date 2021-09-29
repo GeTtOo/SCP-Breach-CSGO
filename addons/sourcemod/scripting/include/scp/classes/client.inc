@@ -246,7 +246,16 @@ methodmap Client < Entity {
                 if (view_as<int>(this.class.weapons.GetKeyType(i)) != 4) {
                     char weapon[32];
                     this.class.weapons.GetString(i, weapon, sizeof(weapon));
-                    this.Give(weapon);
+                    Entity ent = new Entity(this.Give(weapon));
+                    ent.SetString("class", weapon);
+
+                    any data[2];
+                    data[0] = ent.id;
+                    data[1] = ent;
+                    
+                    Base ents;
+                    gamemode.GetValue("ents", ents);
+                    ents.GetArrayList("entities").PushArray(data);
                 }
                 else
                 {
@@ -256,7 +265,16 @@ methodmap Client < Entity {
                     {
                         char weapon[32];
                         multigive.GetString(0, weapon, sizeof(weapon));
-                        this.Give(weapon);
+                        Entity ent = new Entity(this.Give(weapon));
+                        ent.SetString("class", weapon);
+
+                        any data[2];
+                        data[0] = ent.id;
+                        data[1] = ent;
+                        
+                        Base ents;
+                        gamemode.GetValue("ents", ents);
+                        ents.GetArrayList("entities").PushArray(data);
                     }
                 }
             }

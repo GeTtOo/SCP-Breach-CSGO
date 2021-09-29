@@ -46,17 +46,20 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("GameMode.timer.get", NativeGameMode_Timers);
     CreateNative("GameMode.log.get", NativeGameMode_Logger);
 
-    CreateNative("ClientSingleton.GetAll", NativeClients_GetAll);
+    CreateNative("ClientSingleton.Add", NativeClients_Add);
+    CreateNative("ClientSingleton.Remove", NativeClients_Remove);
     CreateNative("ClientSingleton.Get", NativeClients_Get);
+    CreateNative("ClientSingleton.GetAll", NativeClients_GetAll);
     CreateNative("ClientSingleton.GetRandom", NativeClients_GetRandom);
     CreateNative("ClientSingleton.InGame", NativeClients_InGame);
     CreateNative("ClientSingleton.Alive", NativeClients_Alive);
 
     CreateNative("EntitySingleton.Create", NativeEntities_Create);
     CreateNative("EntitySingleton.Remove", NativeEntities_Remove);
+    CreateNative("EntitySingleton.Clear", NativeEntities_Clear);
     CreateNative("EntitySingleton.Get", NativeEntities_Get);
-    CreateNative("EntitySingleton.TryGetOrAdd", NativeEntities_TryGetOrAdd);
-    CreateNative("EntitySingleton.TryGetOrNew", NativeEntities_TryGetOrNew);
+    CreateNative("EntitySingleton.TryGet", NativeEntities_TryGet);
+    CreateNative("EntitySingleton.GetAll", NativeEntities_GetAll);
     
     OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_CellByRef);
     OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_CellByRef);
@@ -86,13 +89,13 @@ public void OnPluginStart()
     LoadTranslations("scpcore.phrases");
     LoadTranslations("scpcore.regions");
     LoadTranslations("scpcore.entities");
-    
-    RegServerCmd("ents", CmdEnts);                                                          // ¯\_(ツ)_/¯
+                                                           // ¯\_(ツ)_/¯
     RegServerCmd("scp", CmdSCP);                                                            // ¯\_(ツ)_/¯
 
     RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_CUSTOM1);
     RegAdminCmd("scp_spawn", PlayerSpawn, ADMFLAG_CUSTOM1);
 
+    AddCommandListener(Command_Ents, "ents");
     AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
     AddCommandListener(GetClientPos, "getmypos");                                           // ¯\_(ツ)_/¯
     AddCommandListener(TpTo, "tp");                                                   // ¯\_(ツ)_/¯
@@ -197,7 +200,7 @@ public void OnClientDisconnect_Post(int id)
     gamemode.mngr.GameCheck(ply);
 
     char timername[32];
-    FormatEx(timername, sizeof(timername), "plyid-%i", ply.id);
+    FormatEx(timername, sizeof(timername), "entid-%i", ply.id);
     gamemode.timer.RemoveIsContains(timername);
 
     Call_StartForward(OnClientClearForward);
@@ -361,7 +364,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
         Client client = players.Get(i);
 
         char timername[32];
-        FormatEx(timername, sizeof(timername), "plyid-%i", client.id);
+        FormatEx(timername, sizeof(timername), "entid-%i", client.id);
         gamemode.timer.RemoveIsContains(timername);
 
         Call_StartForward(OnClientClearForward);
@@ -605,6 +608,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
             .UseCB(view_as<SDKHookCB>(CB_EntUse))
             .SetPos(vic.GetPos() + new Vector(GetRandomFloat(-30.0,30.0), GetRandomFloat(-30.0,30.0), 0.0))
             .Spawn();
+
+            Ents.list.Set(Ents.list.FindValue(item, 1), item.id, 0);
         }
 
         vic.progress.Stop();
@@ -612,7 +617,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         vic.active = false;
 
         char timername[32];
-        FormatEx(timername, sizeof(timername), "plyid-%i", vic.id);
+        FormatEx(timername, sizeof(timername), "entid-%i", vic.id);
         gamemode.timer.RemoveIsContains(timername);
 
         Call_StartForward(OnClientClearForward);
@@ -946,9 +951,9 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                         Call_PushCellRef(ply);
                         Call_PushCellRef(item);
                         Call_Finish();
-
-                        ply.progress.Stop();
                     }
+
+                    ply.progress.Stop();
 
                     item
                     .CreateObject()
@@ -956,6 +961,8 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                     .SetPos(ply.GetAng().Forward(ply.EyePos(), 5.0) - new Vector(0.0, 0.0, 15.0))
                     .Spawn()
                     .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
+
+                    Ents.list.Set(Ents.list.FindValue(item, 1), item.id, 0);
                 }
             }
         }
@@ -1175,32 +1182,6 @@ stock bool IsCleintInSpec(int client)
 
 //-----------------------------Server-----------------------------//
 
-public Action CmdEnts(int args) 
-{
-    char command[32];
-    GetCmdArgString(command, sizeof(command));
-
-    if (StrEqual(command, "getall", false)) 
-    {
-        ArrayList ents = Ents.GetAll();
-
-        for (int i=0; i < ents.Length; i++) 
-        {
-            Entity ent = ents.Get(i);
-            char name[32];
-
-            ent.GetClass(name, sizeof(name));
-
-            if (ent.id != -1)
-                PrintToServer("%s id: %i", name, ent.id);
-            else
-                PrintToServer("%s (picked)", name, ent.id);
-        }
-
-        PrintToServer("Count: %i", ents.Length);
-    }
-}
-
 public Action CmdSCP(int args)
 {
 
@@ -1237,6 +1218,40 @@ public Action Command_AdminMenu(int client, int args)
     {
         DisplayAdminMenu(client);
     }
+}
+
+public Action Command_Ents(int client, const char[] command, int argc)
+{
+    Client ply = Clients.Get(client);
+
+    char arg[32], arg2[32];
+
+    GetCmdArg(1, arg, sizeof(arg));
+    GetCmdArg(2, arg2, sizeof(arg2));
+
+    if (StrEqual(arg, "getall", false))
+    {
+        ArrayList ents = Ents.GetAll();
+
+        for (int i=0; i < ents.Length; i++) 
+        {
+            Entity ent = ents.Get(i);
+            char name[32];
+
+            ent.GetClass(name, sizeof(name));
+
+            if (ent.id != 5000)
+                PrintToConsole(ply.id, "%s id: %i", name, ent.id);
+            else
+                PrintToConsole(ply.id, "%s (picked)", name, ent.id);
+        }
+
+        PrintToConsole(ply.id, "------------------------");
+
+        PrintToConsole(ply.id, "Count: %i", ents.Length);
+    }
+    
+    return Plugin_Stop;
 }
 
 public Action GetClientPos(int client, const char[] command, int argc)

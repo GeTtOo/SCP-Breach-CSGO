@@ -132,7 +132,7 @@ methodmap NuclearWarhead < Base {
             GetEntPropString(entId, Prop_Data, "m_ModelName", ModelName, sizeof(ModelName));
 
             if (StrEqual(ModelName, "models/eternity/map/monitor.mdl"))
-                this.monitors.Push(Ents.TryGetOrAdd(entId));
+                this.monitors.Push(new Entity(entId));
         }
 
         for (int i=0; i < this.monitors.Length; i++) {
