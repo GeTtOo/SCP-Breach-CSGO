@@ -10,7 +10,7 @@ public Plugin myinfo = {
     author = "Any",
     description = "Plugin example for CS:GO modification - SCP Foundation",
     version = "1.0",
-    url = "https://github.com/Eternity-Development-Team/csgo_scp"
+    url = "https://github.com/GeTtOo/csgo_scp"
 };
 
 public void OnPluginStart() {

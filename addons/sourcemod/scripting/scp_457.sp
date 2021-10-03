@@ -13,7 +13,7 @@ public Plugin myinfo = {
 	author = "GeTtOo",
 	description = "SCP-457",
 	version = "1.0",
-	url = "https://github.com/Eternity-Development-Team/csgo_scp"
+	url = "https://github.com/GeTtOo/csgo_scp"
 };
 
 public void SCP_OnPlayerJoin(Client &ply)
