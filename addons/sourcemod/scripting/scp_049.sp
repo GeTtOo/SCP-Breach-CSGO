@@ -26,7 +26,7 @@ public Plugin myinfo = {
 	author = "Andrey::Dono, GeTtOo",
 	description = "SCP 049 for CS:GO SCP modification",
 	version = "1.0",
-	url = "https://github.com/Eternity-Development-Team/csgo_scp"
+	url = "https://github.com/GeTtOo/csgo_scp"
 };
 
 public void SCP_OnPlayerJoin(Client &ply) 
@@ -124,7 +124,7 @@ public void SCP_OnPressF(Client &ply)
 
 		int rnd = GetRandomInt(0, 9);
 		EmitAmbientSound(sounds[rnd], pos, ply.id);
-		gamemode.timer.Simple(15000, "AllowMusicPlay");
+		gamemode.timer.Simple(1500, "AllowMusicPlay");
 	}
 }
 
