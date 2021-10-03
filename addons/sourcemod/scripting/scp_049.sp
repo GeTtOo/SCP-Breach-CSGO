@@ -34,14 +34,6 @@ public void SCP_OnPlayerJoin(Client &ply)
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
 }
 
-public void OnMapStart()
-{
-    for(int y = 0; y < 10; y++)
-    {
-        FakePrecacheSound(sounds[y]);
-    }
-}
-
 public void SCP_OnInput(Client &ply, int buttons)
 {
 	if (buttons & IN_USE && ply.class.Is("049") && !ply.GetBool("049_reviving"))
@@ -61,7 +53,8 @@ public void SCP_OnInput(Client &ply, int buttons)
 	}
 }
 
-public void Revive(Client ply) {
+public void Revive(Client ply) 
+{
 	ply.progress.Stop();
 	ply.SetBool("049_reviving", false);
 
@@ -120,8 +113,10 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 	return Plugin_Continue;
 }
 
-public void SCP_OnPressF(Client &ply) {
-    if (ply.class.Is("049") && !g_MusicPlay) {
+public void SCP_OnPressF(Client &ply)
+{
+    if (ply.class.Is("049") && !g_MusicPlay)
+	{
 		g_MusicPlay = true;
 		
 		float pos[3];
@@ -137,11 +132,6 @@ public Action AllowMusicPlay()
 {
 	g_MusicPlay = false;
 	return Plugin_Stop;
-}
-
-void FakePrecacheSound(const char[] szPath)
-{
-    AddToStringTable(FindStringTable( "soundprecache" ), szPath);
 }
 
 stock bool IsClientExist(int client)
