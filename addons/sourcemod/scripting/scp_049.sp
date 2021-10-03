@@ -9,16 +9,16 @@
 bool g_MusicPlay = false;
 
 char sounds[10][32] = {
-    { "*/049_2.wav" },
-    { "*/049_3.wav" }, 
-    { "*/049_4.wav" },  
-    { "*/049_5.wav" }, 
-    { "*/049_6.wav" },
-    { "*/049_7.wav" },
-    { "*/049_8.wav" },
-    { "*/049_alert_1.wav" },
-    { "*/049_alert_2.wav" },
-    { "*/049_alert_3.wav" }
+    { "*/scp/049/049_2.wav" },
+    { "*/scp/049/049_3.wav" }, 
+    { "*/scp/049/049_4.wav" },  
+    { "*/scp/049/049_5.wav" }, 
+    { "*/scp/049/049_6.wav" },
+    { "*/scp/049/049_7.wav" },
+    { "*/scp/049/049_8.wav" },
+    { "*/scp/049/049_alert_1.wav" },
+    { "*/scp/049/049_alert_2.wav" },
+    { "*/scp/049/049_alert_3.wav" }
 };
 
 public Plugin myinfo = {
@@ -124,7 +124,7 @@ public void SCP_OnPressF(Client &ply)
 
 		int rnd = GetRandomInt(0, 9);
 		EmitAmbientSound(sounds[rnd], pos, ply.id);
-		gamemode.timer.Simple(1500, "AllowMusicPlay");
+		gamemode.timer.Simple(15000, "AllowMusicPlay");
 	}
 }
 
