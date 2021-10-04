@@ -15,7 +15,7 @@
     "meta": [
         {"model":"models/player/custom_player/scp/mog.mdl","bgdata":[3,5,1,2,1,2,15,3,1,2]}
     ],
-    "nuke":{
+    "nuke": {
         "time":110,
         "killpos":1690,
         "sound":"*/scp/warhead_announcement.mp3",
@@ -24,5 +24,31 @@
         "activebtn":356023,
         "cancelbtn":356001,
         "spawnlist":[]
+    },
+    "teleport": {
+        "SCP-914":{"vec":[3100,-2231,0],"ang":[0,0,0]},
+        "D spawn":{"vec":[-2413,-5632,0],"ang":[0,0,0]},
+        "MOG spawn":{"vec":[-10739,-5920,1712],"ang":[0,0,0]},
+        "Chaos spawn":{"vec":[-7128,-5693,1712],"ang":[0,-135,0]},
+        "Light armory":{"vec":[-5753,-1513,0],"ang":[0,-135,0]},
+        "Heavy armory":{"vec":[-9423,2250,0],"ang":[0,90,0]},
+        "Nuke room":{"vec":[-7821,-5978,200],"ang":[0,0,0]},
+        "Nuke site":{"vec":[-7939,-5752,0],"ang":[0,135,0]}
+    },
+    "914": {
+        "usemathcounter":true,
+        "countername": "scp_914_logic_counter",
+        "switchbutton": 443873,
+        "runbutton": 516151,
+        "runtime": 8,
+        "searchzone":[[3630, -2072, 20],[3762, -1947, 90]],
+        "distance":[0, 425, 0]
+    },
+    "049": {
+        "revive":{
+            "time":3,
+            "multi":true,
+            "inpvs":true
+        }
     }
 }

@@ -32,11 +32,6 @@ methodmap Entity < Base {
         public get() { return this.GetBool("spawned"); }
     }
 
-    property bool picked {
-        public set(bool value) { this.SetBool("picked", value); }
-        public get() { return this.GetBool("picked"); }
-    }
-
     public void TimerSimple(int delay, char[] funcname, any args = false) {
         char timername[64], pname[64];
         GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
@@ -44,8 +39,8 @@ methodmap Entity < Base {
         gamemode.timer.Create(timername, delay, 1, funcname, args);
     }
 
-    public Entity CreateObject() {
-        int id = CreateEntityByName("prop_physics_override");
+    public Entity Create(char[] entclass = "prop_physics_override") {
+        int id = CreateEntityByName(entclass);
         char modelName[128], mass[12], name[32], bodygroup[12], skin[12];
         this.meta.model(modelName, sizeof(modelName));
         this.meta.name(name, sizeof(name));
@@ -73,6 +68,8 @@ methodmap Entity < Base {
 
         return this;
     }
+
+    public Entity SetClass(char[] name) { this.SetString("class", name); return this; }
 
     public void GetClass(char[] name, int max_size) { if (!this.GetString("class", name, max_size)) GetEntityClassname(this.id, name, max_size); }
 
@@ -146,6 +143,10 @@ methodmap Entity < Base {
         return GetEntPropString(this.id, type, name, value, max_size);
     }
 
+    public Entity GetPropEnt(char[] name, any type = Prop_Send, int element = 0) {
+        return new Entity(GetEntPropEnt(this.id, type, name, element));
+    }
+
     public Entity Spawn() {
         DispatchSpawn(this.id);
         return this;
@@ -153,6 +154,10 @@ methodmap Entity < Base {
 
     public Entity Input(char[] input, Entity activator = null, Entity caller = null) {
         AcceptEntityInput(this.id, input, (activator) ? activator.id : -1, (caller) ? caller.id : -1);
+    }
+
+    public void Dispose() {
+        delete this;
     }
 
     public void WorldRemove() {
@@ -163,10 +168,6 @@ methodmap Entity < Base {
 
     public void Remove() {
         RemoveEntity(this.id);
-        delete this;
-    }
-
-    public void Dispose() {
-        delete this;
+        this.Dispose();
     }
 }

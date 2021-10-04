@@ -82,20 +82,11 @@
         "spawnflags":4356,
         "access":[1,2,3,4,5,6,7,8,9]
     },
-    "iron_ingot": {
-        "model":"models/eternity/props/ingot.mdl",
-        "mass":0.2,
-        "spawnflags":4356
-    },
-    "plastic": {
-        "model":"models/eternity/props/plastic.mdl",
-        "mass":0.2,
-        "spawnflags":4356
-    },
     "005_picklock": {
         "model":"models/eternity/props/scp/scp_005.mdl",
         "mass":0.2,
-        "spawnflags":4356
+        "spawnflags":4356,
+        "access":[1,2,3,4,5,6,7,8,9,10]
     },
     "500_panacea": {
         "model":"models/eternity/props/keycard.mdl",
@@ -115,6 +106,16 @@
     "035_mask": {
         "model":"models/eternity/props/scp/scp_035.mdl",
         "mass":0.5,
+        "spawnflags":4356
+    },
+    "iron_ingot": {
+        "model":"models/eternity/props/ingot.mdl",
+        "mass":0.2,
+        "spawnflags":4356
+    },
+    "plastic": {
+        "model":"models/eternity/props/plastic.mdl",
+        "mass":0.2,
         "spawnflags":4356
     }
 }

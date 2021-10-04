@@ -21,6 +21,8 @@ char sounds[10][32] = {
     { "*/scp/049/049_alert_3.wav" }
 };
 
+Base config;
+
 public Plugin myinfo = {
 	name = "[SCP] 049",
 	author = "Andrey::Dono, GeTtOo",
@@ -34,14 +36,26 @@ public void SCP_OnPlayerJoin(Client &ply)
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
 }
 
+public void SCP_RegisterMetaData()
+{
+	config = gamemode.config.GetBase("049");
+}
+
 public void SCP_OnInput(Client &ply, int buttons)
 {
 	if (buttons & IN_USE && ply.class.Is("049") && !ply.GetBool("049_reviving"))
 	{
 		if (buttons & IN_USE)
 		{
-			ply.SetBool("049_reviving", true);
-			ply.progress.Start(3000, "Revive");
+			char filter[1][32] = {"prop_ragdoll"};
+			ArrayList ragdolls = Ents.FindInPVS(ply, _, _, filter);
+			
+			if (ragdolls.Length > 0)
+			{
+				ply.SetBool("049_reviving", true);
+				ply.progress.Start((config.GetBase("revive").GetBool("multi", true)) ? config.GetBase("revive").GetInt("time", 3000) * 1000 * ragdolls.Length : config.GetBase("revive").GetInt("time", 3000) * 1000, "Revive");
+				ply.PrintNotify("Reviving");
+			}
 		}
 	}
 
@@ -58,27 +72,70 @@ public void Revive(Client ply)
 	ply.progress.Stop();
 	ply.SetBool("049_reviving", false);
 
-	ArrayList players = Clients.GetAll();
-
-	Client vic;
-	for(int i=0; i < players.Length; i++)
+	if (config.GetBase("revive").GetBool("inpvs", true))
 	{
-		vic = players.Get(i);
+		char filter[1][32] = {"prop_ragdoll"};
+		ArrayList ragdolls = Ents.FindInPVS(ply, _, _, filter);
 
-		if (ply == vic) continue;
-		if (vic.IsAlive()) continue;
-
-		if ((ply.GetPos() - new Vector(200.0, 200.0, 100.0)) < vic.deathpos && (ply.GetPos() + new Vector(200.0, 200.0, 100.0)) > vic.deathpos)
+		if (ragdolls.Length > 0)
 		{
-			vic.Team("SCP");
-			vic.class = gamemode.team("SCP").class("049_2");
+			for (int i=0; i < ragdolls.Length; i++)
+			{
+				Entity vicrag = ragdolls.Get(i);
 
-			vic.Spawn();
-			vic.SetPos(vic.deathpos, ply.GetAng() - new Angle(0.0, 180.0, 0.0));
+				ArrayList players = Clients.GetAll();
+
+				Client vic;
+				for(int k=0; k < players.Length; k++)
+				{
+					vic = players.Get(k);
+
+					if (vic != ply && !vic.IsAlive() && vic.ragdoll)
+					{
+						if (vic.ragdoll.id == vicrag.id)
+						{
+							vic.Team("SCP");
+							vic.class = gamemode.team("SCP").class("049_2");
+
+							vic.Spawn();
+							vic.SetPos(vic.ragdoll.GetPos(), ply.GetAng() - new Angle(0.0, 180.0, 0.0));
+						}
+					}
+				}
+
+				delete players;
+
+				if (!config.GetBase("revive").GetBool("multi", true)) break;
+			}
 		}
-	}
 
-	delete players;
+		delete ragdolls;
+	}
+	else
+	{
+		ArrayList players = Clients.GetAll();
+
+		Client vic;
+		for(int i=0; i < players.Length; i++)
+		{
+			vic = players.Get(i);
+
+			if (ply == vic) continue;
+			if (vic.IsAlive()) continue;
+			if (!vic.ragdoll) continue;
+
+			if ((ply.GetPos() - new Vector(200.0, 200.0, 100.0)) < vic.ragdoll.GetPos() && (ply.GetPos() + new Vector(200.0, 200.0, 100.0)) > vic.ragdoll.GetPos())
+			{
+				vic.Team("SCP");
+				vic.class = gamemode.team("SCP").class("049_2");
+
+				vic.Spawn();
+				vic.SetPos(vic.ragdoll.GetPos(), ply.GetAng() - new Angle(0.0, 180.0, 0.0));
+			}
+		}
+
+		delete players;
+	}
 }
 
 public void ReviveUnlock(Client ply) {

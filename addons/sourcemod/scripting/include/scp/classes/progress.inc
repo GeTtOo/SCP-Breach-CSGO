@@ -19,6 +19,11 @@ methodmap ProgressBar < Base {
         public get() { return this.ply.GetInt("id"); } 
     }
 
+    property bool active {
+        public set(bool val) { this.SetBool("active", val); }
+        public get() { return this.GetBool("active"); }
+    }
+
     property bool stop {
         public set(bool val) { this.SetBool("stop", val); }
         public get() { return this.GetBool("stop"); }
@@ -44,8 +49,7 @@ methodmap ProgressBar < Base {
 
         this.timername(timername);
 
-        Format(timername, sizeof(timername), "progress_bar_r_ply_%i", this.clientID);
-        gamemode.timer.Create(timername, time, 1, "Remove", this);
+        this.active = true;
     }
 
     public void Stop() {
@@ -57,11 +61,9 @@ methodmap ProgressBar < Base {
             SetEntData(this.clientID, gamemode.config.GetInt("pbd"), 0, 1, true);
             
             gamemode.timer.Remove(timername);
+            
+            this.active = false;
         }
         if (!this.stop) this.stop = true;
     }
-}
-
-public void Remove(ProgressBar pb) {
-    pb.Stop();
 }

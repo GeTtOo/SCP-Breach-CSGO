@@ -56,6 +56,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 
     CreateNative("EntitySingleton.Create", NativeEntities_Create);
     CreateNative("EntitySingleton.Remove", NativeEntities_Remove);
+    CreateNative("EntitySingleton.IndexUpdate", NativeEntities_IndexUpdate);
     CreateNative("EntitySingleton.Clear", NativeEntities_Clear);
     CreateNative("EntitySingleton.Get", NativeEntities_Get);
     CreateNative("EntitySingleton.TryGet", NativeEntities_TryGet);
@@ -81,11 +82,6 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 
 public void OnPluginStart()
 {
-    Clients = new ClientSingleton();
-    Ents = new EntitySingleton();
-    WT = new WorldTextSingleton();
-    AdminMenu = new AdminMenuSingleton();
-
     LoadTranslations("scpcore.phrases");
     LoadTranslations("scpcore.regions");
     LoadTranslations("scpcore.entities");
@@ -93,14 +89,8 @@ public void OnPluginStart()
     RegServerCmd("scp", CmdSCP);                                                            // ¯\_(ツ)_/¯
 
     RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_CUSTOM1);
-    RegAdminCmd("scp_spawn", PlayerSpawn, ADMFLAG_CUSTOM1);
 
-    AddCommandListener(Command_Ents, "ents");
     AddCommandListener(OnLookAtWeaponPressed, "+lookatweapon");
-    AddCommandListener(GetClientPos, "getmypos");                                           // ¯\_(ツ)_/¯
-    AddCommandListener(TpTo, "tp");                                                   // ¯\_(ツ)_/¯
-    AddCommandListener(Set, "set");
-    AddCommandListener(Reinforcement, "reinforce");
     
     HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
     HookEvent("round_start", OnRoundStart);
@@ -119,6 +109,11 @@ bool fixCache = false;
 
 public void OnMapStart() 
 {
+    Ents = new EntitySingleton();
+    Clients = new ClientSingleton();
+    WT = new WorldTextSingleton();
+    AdminMenu = new AdminMenuSingleton();
+
     char mapName[128];
 
     GetCurrentMap(mapName, sizeof(mapName));
@@ -137,6 +132,14 @@ public void OnMapStart()
     gamemode.config.SetInt("pbd", FindSendPropInfo("CCSPlayer", "m_iProgressBarDuration"));
     gamemode.config.SetInt("buaip", FindSendPropInfo("CCSPlayer", "m_iBlockingUseActionInProgress"));
 
+    if (gamemode.config.debug)
+    {
+        AddCommandListener(Command_Ents, "ents");
+        AddCommandListener(Command_GetMyPos, "getmypos");
+        AddCommandListener(Command_GetEntsInBox, "getentsinbox");
+        AddCommandListener(Command_Debug, "debug");
+    }
+
     LoadEntities(mapName);
     if (gamemode.config.usablecards)
         InitKeyCards();
@@ -152,6 +155,15 @@ public void OnMapStart()
         ForceChangeLevel(mapName, "Fix sound cached");
         fixCache = true;
     }
+}
+
+public void OnMapEnd()
+{
+    delete Ents;
+    delete Clients;
+    delete WT;
+    delete AdminMenu;
+    delete gamemode;
 }
 
 public void OnGameFrame()
@@ -216,6 +228,8 @@ public void OnClientDisconnect_Post(int id)
 
 public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
 {
+    if (gamemode.mngr.IsWarmup) return Plugin_Stop;
+
     Client ply = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
 
     if (IsClientExist(ply.id) && GetClientTeam(ply.id) > 1 && !ply.active) {
@@ -232,6 +246,12 @@ public void Timer_PlayerSpawn(Client ply)
 {
     if(ply.spawned && IsClientExist(ply.id) && ply != null && ply.class != null)
     {
+        if (ply.ragdoll)
+        {
+            ply.ragdoll.Remove();
+            ply.ragdoll = null;
+        }
+        
         gamemode.mngr.SetCollisionGroup(ply.id, 2);
         ply.RestrictWeapons();
 
@@ -262,7 +282,7 @@ public void Timer_PlayerSpawn(Client ply)
 
 public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 {
-    if(!IsWarmup())
+    if(!gamemode.mngr.IsWarmup)
     {
         gamemode.mngr.RoundComplete = false;
         
@@ -348,6 +368,8 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         
         gamemode.timer.Create("SCP_Combat_Reinforcement", gamemode.config.reinforce.GetInt("time") * 1000, 0, "CombatReinforcement");
 
+        //gamemode.timer.Create("Entities_Limit_Checker", gamemode.config.GetInt("elc", 30) * 1000, 0, "EntitiesLimitChecker");
+
         CheckNewPlayers(gamemode.config.psars);
 
         Call_StartForward(OnRoundStartForward);
@@ -357,45 +379,52 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 
 public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
 {
-    ArrayList players = Clients.GetAll();
-
-    for (int i=0; i < players.Length; i++)
+    if (!gamemode.mngr.IsWarmup)
     {
-        Client client = players.Get(i);
+        ArrayList players = Clients.GetAll();
 
-        char timername[32];
-        FormatEx(timername, sizeof(timername), "entid-%i", client.id);
-        gamemode.timer.RemoveIsContains(timername);
+        for (int i=0; i < players.Length; i++)
+        {
+            Client ply = players.Get(i);
 
-        Call_StartForward(OnClientClearForward);
-        Call_PushCellRef(client);
+            char timername[32];
+            FormatEx(timername, sizeof(timername), "entid-%i", ply.id);
+            gamemode.timer.RemoveIsContains(timername);
+
+            Call_StartForward(OnClientClearForward);
+            Call_PushCellRef(ply);
+            Call_Finish();
+
+            Call_StartForward(OnClientResetForward);
+            Call_PushCellRef(ply);
+            Call_Finish();
+
+            ply.class = null;
+            ply.haveclass = false;
+            ply.inv.Clear();
+            ply.active = false;
+            ply.spawned = true;
+            
+            if (ply.ragdoll)
+            {
+                ply.ragdoll.Dispose();
+                ply.ragdoll = null;
+            }
+        }
+
+        Ents.Clear();
+        WT.Clear();
+        gamemode.nuke.Reset();
+        gamemode.timer.ClearAll();
+
+        Call_StartForward(OnRoundEndForward);
         Call_Finish();
-
-        Call_StartForward(OnClientResetForward);
-        Call_PushCellRef(client);
-        Call_Finish();
-
-        client.class = null;
-        client.haveclass = false;
-        client.inv.Clear();
-        client.active = false;
-        client.spawned = true;
-        
-        client.RemoveValue("deathpos");
     }
-
-    Ents.Clear();
-    WT.Clear();
-    gamemode.nuke.Reset();
-    gamemode.timer.ClearAll();
-
-    Call_StartForward(OnRoundEndForward);
-    Call_Finish();
 }
 
 public Action CS_OnTerminateRound(float& delay, CSRoundEndReason& reason)
 {
-    if(IsWarmup())
+    if(gamemode.mngr.IsWarmup)
 	{
 		return Plugin_Continue;
 	}
@@ -454,7 +483,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 int entid = GetEntPropEnt(caller, Prop_Data, "m_hMoveChild");
                 Entity idpad = (entid != -1) ? new Entity(entid) : null;
                 
-                if (IsWarmup())
+                if (gamemode.mngr.IsWarmup)
                 {
                     return Plugin_Continue;
                 }
@@ -544,20 +573,23 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
         if(IsClientExist(attacker))
         {
             atk = Clients.Get(attacker);
-            if(vic.IsSCP && atk.IsSCP)
+            if (vic != null && vic.class != null)
             {
-                return Plugin_Stop;
-            }
-            else if(!gamemode.config.ff)
-            {
-                char vicTeam[32], atkTeam[32];
-                
-                vic.Team(vicTeam, sizeof(vicTeam));
-                atk.Team(atkTeam, sizeof(atkTeam));
-                
-                if(StrEqual(vicTeam, atkTeam))
+                if(vic.IsSCP && atk.IsSCP)
                 {
                     return Plugin_Stop;
+                }
+                else if(!gamemode.config.ff)
+                {
+                    char vicTeam[32], atkTeam[32];
+                    
+                    vic.Team(vicTeam, sizeof(vicTeam));
+                    atk.Team(atkTeam, sizeof(atkTeam));
+                    
+                    if(StrEqual(vicTeam, atkTeam))
+                    {
+                        return Plugin_Stop;
+                    }
                 }
             }
         }
@@ -581,10 +613,12 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 
 public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
-    if(!IsWarmup())
+    if(!gamemode.mngr.IsWarmup)
     {
         Client vic = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
         Client atk = Clients.Get(GetClientOfUserId(GetEventInt(event, "attacker")));
+        
+        vic.ragdoll = vic.CreateRagdoll();
 
         ArrayList inv = vic.inv.items;
 
@@ -604,15 +638,17 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
             }
 
             item
-            .CreateObject()
+            .Create()
             .UseCB(view_as<SDKHookCB>(CB_EntUse))
             .SetPos(vic.GetPos() + new Vector(GetRandomFloat(-30.0,30.0), GetRandomFloat(-30.0,30.0), 0.0))
             .Spawn();
 
-            Ents.list.Set(Ents.list.FindValue(item, 1), item.id, 0);
+            if (Ents.IndexUpdate(item))
+                continue;
         }
 
-        vic.progress.Stop();
+        if (vic.progress.active)
+            vic.progress.Stop();
 
         vic.active = false;
 
@@ -626,7 +662,6 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
         vic.Team("Dead");
         vic.class = null;
-        vic.deathpos = vic.GetPos() - new Vector(0.0, 0.0, 63.0);
 
         gamemode.mngr.GameCheck(atk);
 
@@ -656,7 +691,6 @@ public Action OnWeaponTake(int client, int iWeapon)
 
     if (ply != null && ply.class != null && ply.class.weapons != null)
     {
-        
         ArrayList meleeFix = new ArrayList(32);
         meleeFix.PushString("weapon_axe");
         meleeFix.PushString("weapon_spanner");
@@ -683,16 +717,16 @@ public Action OnWeaponTake(int client, int iWeapon)
         }
 
         delete meleeFix;
-    }
 
-    if(ply.IsSCP && !weaponAllow)
-    {
-        return Plugin_Stop;
-    }
+        if(ply.IsSCP && !weaponAllow)
+        {
+            return Plugin_Stop;
+        }
 
-    if (StrEqual(classname, "weapon_melee") || StrEqual(classname, "weapon_knife"))
-    {
-        EquipPlayerWeapon(client, iWeapon);
+        if (StrEqual(classname, "weapon_melee") || StrEqual(classname, "weapon_knife"))
+        {
+            EquipPlayerWeapon(client, iWeapon);
+        }
     }
 
     return Plugin_Continue;
@@ -826,7 +860,10 @@ public SDKHookCB CB_EntUse(int entity, int client)
 
         if (!ent.meta.onpickup || !ent.meta.onpickup.invblock)
             if (ply.inv.Pickup(ent))
+            {
                 ent.WorldRemove();
+                Ents.IndexUpdate(ent);
+            }
             else
             {
                 ply.PrintNotify("%t", "Inventory full");
@@ -834,6 +871,7 @@ public SDKHookCB CB_EntUse(int entity, int client)
         else
         {
             ent.WorldRemove();
+            Ents.IndexUpdate(ent);
         }
     }
 }
@@ -953,16 +991,17 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                         Call_Finish();
                     }
 
-                    ply.progress.Stop();
+                    if (ply.progress.active)
+                        ply.progress.Stop();
 
                     item
-                    .CreateObject()
+                    .Create()
                     .UseCB(view_as<SDKHookCB>(CB_EntUse))
                     .SetPos(ply.GetAng().Forward(ply.EyePos(), 5.0) - new Vector(0.0, 0.0, 15.0))
                     .Spawn()
                     .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
 
-                    Ents.list.Set(Ents.list.FindValue(item, 1), item.id, 0);
+                    Ents.IndexUpdate(item);
                 }
             }
         }
@@ -980,6 +1019,11 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
 //                                Functions
 //
 //////////////////////////////////////////////////////////////////////////////
+
+public void EntitiesLimitChecker()
+{
+    gamemode.mngr.CheckLimitEntities();
+}
 
 public void PlyHideOverlay(Client ply)
 {
@@ -1000,6 +1044,7 @@ public void InitKeyCards()
     gamemode.meta.RegEntEvent(ON_USE, "card_scientist", "SetPlyDoorAccess");
     gamemode.meta.RegEntEvent(ON_USE, "card_janitor", "SetPlyDoorAccess");
     gamemode.meta.RegEntEvent(ON_USE, "card_chaos", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "005_picklock", "SetPlyDoorAccess");
 }
 
 public void ResetIdPad(int entid)
@@ -1108,6 +1153,8 @@ public void PSARS()
             char team[32], class[32];
             gamemode.config.DefaultGlobalClass(team, sizeof(team));
             gamemode.config.DefaultClass(class, sizeof(class));
+            if (ply.IsAlive())
+                ply.SilenceKill();
             ply.Team(team);
             ply.class = gamemode.team(team).class(class);
             ply.haveclass = true;
@@ -1152,16 +1199,6 @@ stock bool IsClientInSpec(int client)
     }
 
     return true;
-}
-
-stock bool IsWarmup()
-{
-    if(GameRules_GetProp("m_bWarmupPeriod"))
-    {
-        return true;
-    }
-
-    return false;
 }
 
 stock bool IsCleintInSpec(int client)
@@ -1254,23 +1291,21 @@ public Action Command_Ents(int client, const char[] command, int argc)
     return Plugin_Stop;
 }
 
-public Action GetClientPos(int client, const char[] command, int argc)
+public Action Command_GetMyPos(int client, const char[] command, int argc)
 {
     Client ply = Clients.Get(client);
-
     Vector plyPos = ply.GetPos();
     Angle plyAng = ply.GetAng();
-    PrintToChat(ply.id, "Your pos is: %f, %f, %f", plyPos.x, plyPos.y, plyPos.z);
-    
+
     PrintToConsole(ply.id, "{\"vec\":[%i,%i,%i],\"ang\":[%i,%i,%i]}", RoundFloat(plyPos.x), RoundFloat(plyPos.y), RoundFloat(plyPos.z), RoundFloat(plyAng.x), RoundFloat(plyAng.y), RoundFloat(plyAng.z));
 
     delete plyPos;
+    delete plyAng;
 
-    PrintEntInCone(client, command, argc);
-    PrintEntInBox(client, command, argc);
+    return Plugin_Stop;
 }
 
-public Action PrintEntInBox(int client, const char[] command, int argc)
+public Action Command_GetEntsInBox(int client, const char[] command, int argc)
 {
     Client ply = Clients.Get(client);
 
@@ -1289,114 +1324,41 @@ public Action PrintEntInBox(int client, const char[] command, int argc)
     }
 
     delete entArr;
+
+    return Plugin_Stop;
 }
 
-public Action PrintEntInCone(int client, const char[] command, int argc)
+public Action Command_Debug(int client, const char[] command, int argc)
 {
     Client ply = Clients.Get(client);
 
-    char filter[1][32] = {"player"};
+    char arg1[32], arg2[32], arg3[32];
 
-    ArrayList entArr = Ents.FindInCone(ply.EyePos(), ply.GetAng().Forward(ply.EyePos(), 1000.0), 90, filter, sizeof(filter));
-
-    for(int i=0; i < entArr.Length; i++) 
-    {
-        Client ent = entArr.Get(i, 0);
-        
-        PrintToChat(ply.id, "Player: %i", ent.id);
-    }
-
-    delete entArr;
-}
-
-public Action TpTo(int client, const char[] command, int argc)
-{
-    Client ply = Clients.Get(client);
-
-    char arg[32];
-
-    GetCmdArg(1, arg, sizeof(arg));
-
-    if (StrEqual(arg, "914", false))
-    {
-        ply.SetPos(new Vector(3100.0, -2231.0, 0.0), new Angle(0.0, 0.0, 0.0));
-    }
-    if (StrEqual(arg, "d", false))
-    {
-        ply.SetPos(new Vector(-2413.0, -5632.0, 0.0), new Angle(0.0, 0.0, 0.0));
-    }
-    if (StrEqual(arg, "mog", false))
-    {
-        ply.SetPos(new Vector(-10739.0, -5920.0, 1712.0), new Angle(0.0, 0.0, 0.0));
-    }
-    if (StrEqual(arg, "ha", false))
-    {
-        ply.SetPos(new Vector(-9423.0,2250.0,0.0), new Angle(0.0, 90.0, 0.0));
-    }
-    if (StrEqual(arg, "nuke", false))
-    {
-        ply.SetPos(new Vector(-7821.0, -5978.0, 200.0), new Angle(0.0, 0.0, 0.0));
-    }
-}
-
-public Action Set(int client, const char[] command, int argc)
-{
-    Client ply = Clients.Get(client);
-
-    char arg[32], arg2[32];
-
-    GetCmdArg(1, arg, sizeof(arg));
+    GetCmdArg(1, arg1, sizeof(arg1));
     GetCmdArg(2, arg2, sizeof(arg2));
-
-    if (StrEqual(arg, "body", false))
-    {
-        ply.SetProp("m_nBody", StringToInt(arg2));
-    }
-    if (StrEqual(arg, "skin", false))
-    {
-        ply.SetProp("m_nSkin", StringToInt(arg2));
-    }
-}
-
-public Action Reinforcement(int client, const char[] command, int argc) {
-    char arg[32];
-
-    GetCmdArg(1, arg, sizeof(arg));
-    gamemode.mngr.CombatReinforcement(arg);
-}
-
-public Action PlayerSpawn(int client,int args)
-{
-    if (IsPlayerAlive(client))
-    {
-        PrintToConsole(client, "Сменить класс возможно только мёртвым игрокам");
-        return Plugin_Stop;
-    }
-
-    char teamName[32], className[32];
-    GetCmdArg(1, teamName, sizeof(teamName));
-    GetCmdArg(2, className, sizeof(className));
+    GetCmdArg(3, arg3, sizeof(arg3));
     
-    Client ply = Clients.Get(client);
-
-    GTeam gteam = gamemode.team(teamName);
-
-    if (gteam != null && gteam.classes.HasKey(className))
+    if (StrEqual(arg1, "set", false))
     {
-        char curTeam[32];
-
-        ply.Team(curTeam, sizeof(curTeam));
-        ply.Team(teamName);
-        ply.class = gteam.class(className);
-        
-        //ply.Setup();
-        ply.Spawn();
+        if (StrEqual(arg2, "body", false))
+        {
+            ply.SetProp("m_nBody", StringToInt(arg3));
+        }
+        if (StrEqual(arg2, "skin", false))
+        {
+            ply.SetProp("m_nSkin", StringToInt(arg3));
+        }
     }
-    else
+    if (StrEqual(arg1, "flashlight", false))
+        ply.SetProp("m_fEffects", ply.GetProp("m_fEffects") ^ 4);
+    if (StrEqual(arg1, "round", false))
     {
-        PrintToConsole(ply.id, "Ошибка в идентификаторе команды/класса");
+        if (StrEqual(arg2, "lock", false))
+            gamemode.mngr.RoundLock = true;
+        if (StrEqual(arg2, "unlock", false))
+            gamemode.mngr.RoundLock = false;
     }
-    
+
     return Plugin_Stop;
 }
 

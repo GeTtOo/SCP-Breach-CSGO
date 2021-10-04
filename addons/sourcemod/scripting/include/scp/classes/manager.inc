@@ -17,10 +17,24 @@ methodmap Manager < Base {
         public set(int value) { this.SetInt("collisiongroup", value); }
         public get() { return this.GetInt("collisiongroup"); }
     }
+    
+    property bool IsWarmup {
+        public get() { return (GameRules_GetProp("m_bWarmupPeriod")) ? true : false; }
+    }
 
     property bool RoundComplete {
         public set(bool value) { this.SetBool("roundcomplete", value); }
         public get() { return this.GetBool("roundcomplete"); }
+    }
+
+    property bool RoundLock {
+        public set(bool value) { this.SetBool("roundlock", value); }
+        public get() { return this.GetBool("roundlock", false); }
+    }
+
+    public void CheckLimitEntities() {
+        if (Ents.list.Length > 300)
+            Ents.SpawnedClear();
     }
 
     public void SetCollisionGroup(int entity, int group) {
@@ -165,25 +179,28 @@ methodmap Manager < Base {
     }
 
     public void GameCheck(Client ply) {
-        if(Clients.Alive() == 0 && Clients.InGame() != 0)
+        if (!this.RoundLock)
         {
-            this.EndGame("nuke");
-        }
-        else if(Clients.Alive() != 0)
-        {
-            if (ply != null)
+            if(Clients.Alive() == 0 && Clients.InGame() != 0)
             {
-                char team[32];
-                ply.Team(team, sizeof(team));
-                
-                char winTeam[32];
-                if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
-                    this.EndGame(winTeam);
+                this.EndGame("nuke");
             }
-        }
-        else if (Clients.InGame() != 0)
-        {
-            this.EndGame("nobody");
+            else if(Clients.Alive() != 0)
+            {
+                if (ply != null)
+                {
+                    char team[32];
+                    ply.Team(team, sizeof(team));
+                    
+                    char winTeam[32];
+                    if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
+                        this.EndGame(winTeam);
+                }
+            }
+            else if (Clients.InGame() != 0)
+            {
+                this.EndGame("nobody");
+            }
         }
     }
 
@@ -202,7 +219,7 @@ methodmap Manager < Base {
 
         GTeam team = gamemode.team(teamName);
         StringMapSnapshot classNameS = team.GetClassNames();
-        int classKeyLen, classCount = 0;
+        int classKeyLen;
 
         for (int v = 0; v < classNameS.Length; v++)
         {
@@ -213,8 +230,7 @@ methodmap Manager < Base {
 
             Class class = team.class(classKey);
 
-            classCount = deadPlayers.Length * class.percent / 100;
-            classCount = (classCount != 0 || !class.priority) ? classCount : 1;
+            int classCount = GetRandomInt(deadPlayers.Length * class.percent / 100, deadPlayers.Length);
 
             for (int scc = 1; scc <= classCount; scc++)
             {

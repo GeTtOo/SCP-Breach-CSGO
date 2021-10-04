@@ -75,6 +75,16 @@
         "en"        "SCP-500 Panacea"
         "ru"        "SCP-500 Панацея"
     }
+    "005_picklock"
+    {
+        "en"        "SCP-005 Picklock"
+        "ru"        "SCP-005 Отмычка"
+    }
+    "427_amulet"
+    {
+        "en"        "SCP-427 Lovecraftian locket"
+        "ru"        "SCP-427 Лавкрафтовский амулет"
+    }
     "268_cap"
     {
         "en"        "SCP-268 Cap"

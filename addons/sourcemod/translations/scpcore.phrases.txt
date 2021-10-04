@@ -72,6 +72,11 @@
         "en"        "Teleport the player"
         "ru"        "Телепортировать игрока"
     }
+    "Reinforce"
+    {
+        "en"        "Team reinforcement"
+        "ru"        "Вызвать подкрепление"
+    }
     "Move to spec"
     {
         "en"        "Move to spectators"
@@ -126,6 +131,11 @@
     {
         "en"        "Select a class"
         "ru"        "Выберите класс:"
+    }
+    "Select point"
+    {
+        "en"        "Select a point"
+        "ru"        "Выберите точку:"
     }
     "Inventory"
     {

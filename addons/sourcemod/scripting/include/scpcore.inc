@@ -157,7 +157,7 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
     {
         entity = new Entity();
         entity.meta = entdata;
-        entity.CreateObject();
+        entity.Create();
     }
     else
     {
@@ -185,6 +185,19 @@ public any NativeEntities_Remove(Handle Plugin, int numArgs) {
     int idx = ents.FindValue(id, 0);
     view_as<Entity>(ents.Get(idx, 1)).Remove();
     Ents.list.Erase(idx);
+}
+
+public any NativeEntities_IndexUpdate(Handle Plugin, int numArgs) {
+    Entity ent = GetNativeCell(2);
+    ArrayList ents = Ents.list;
+    int idx = ents.FindValue(ent, 1);
+    if (idx != -1)
+    {
+        ents.Set(idx, ent.id, 0);
+        return true;
+    }
+    else
+        return false;
 }
 
 public any NativeEntities_Clear(Handle Plugin, int numArgs) {

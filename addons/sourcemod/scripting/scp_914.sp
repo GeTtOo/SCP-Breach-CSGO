@@ -36,7 +36,11 @@ public void OnMapStart() {
     GetCurrentMap(mapName, sizeof(mapName));
 
     gconfig = ReadConfig(mapName, "914");
-    config = gconfig.GetObject("config");
+}
+
+public void SCP_RegisterMetaData()
+{
+	config = gamemode.config.GetObject("914");
 }
 
 public Action OnRoundStart(Event ev, const char[] name, bool dbroadcast) {
@@ -79,7 +83,10 @@ public SDKHookCB Callback_EntUse(int eid, int cid) {
 
         if (!ent.meta.onpickup || !ent.meta.onpickup.invblock)
             if (ply.inv.Pickup(ent))
+            {
                 ent.WorldRemove();
+                Ents.IndexUpdate(ent);
+            }
             else
             {
                 ply.PrintNotify("%t", "Inventory full");
@@ -87,6 +94,7 @@ public SDKHookCB Callback_EntUse(int eid, int cid) {
         else
         {
             ent.WorldRemove();
+            Ents.IndexUpdate(ent);
         }
     }
 }

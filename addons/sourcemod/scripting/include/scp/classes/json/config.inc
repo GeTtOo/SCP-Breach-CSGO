@@ -22,6 +22,8 @@ methodmap Config < JSON_OBJECT {
     public void Add(char[] name, any value) {
         this.SetValue(name, value);
     }
+
+    public Base GetBase(char[] name) { return view_as<Base>(this.GetObject(name)); }
     
     public void DefaultGlobalClass(char[] team, int max_size) {
         this.GetString("DefaultGlobalClass", team, max_size);

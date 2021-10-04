@@ -81,9 +81,9 @@ methodmap Client < Entity {
         public get() { return this.GetBool("spawned", false); }
     }
 
-    property Vector deathpos {
-        public set(Vector val) { this.RemoveValue("deathpos"); this.SetVector("deathpos", val); }
-        public get() { return view_as<Vector>(this.GetVector("deathpos", null)); }
+    property Entity ragdoll {
+        public set(Entity val) { this.RemoveValue("ragdoll"); this.SetValue("ragdoll", val); }
+        public get() { Entity val; return this.GetValue("ragdoll", val) ? val : null; }
     }
 
     property Inventory inv {
@@ -112,6 +112,8 @@ methodmap Client < Entity {
     public Angle GetAng() { float angarr[3]; GetClientEyeAngles(this.id, angarr); return new Angle(angarr[0], angarr[1], angarr[2]); }
 
     public void SetModel(char[] model) { SetEntityModel(this.id, model); }
+
+    public void GetModel(char[] model, int max_size) { GetClientModel(this.id, model, max_size); }
 
     public void SetHandsModel(char[] model) { SetEntPropString(this.id, Prop_Send, "m_szArmsModel", model); }
 
@@ -170,16 +172,6 @@ methodmap Client < Entity {
         }
     }
 
-    //public void SetCollisionGroup(int group) { gamemode.mngr.SetCollisionGroup(this.id, group); }
-
-    public void Kill() { ForcePlayerSuicide(this.id); }
-
-    public void SilenceKill() {
-        this.RestrictWeapons();
-        this.inv.FullClear();
-        this.Kill();
-    }
-
     public bool Check(char[] val, int check) {
         ArrayList checklist = this.GetArrayList(val);
         if (checklist != null) {
@@ -194,6 +186,44 @@ methodmap Client < Entity {
         }
 
         return false;
+    }
+    
+    public Entity CreateRagdoll() {
+        Entity ragdoll;
+        
+        ragdoll = this.GetPropEnt("m_hRagdoll");
+
+        if (ragdoll != null && ragdoll.id != -1)
+            ragdoll.Input("Kill");
+
+        ragdoll.Dispose();
+
+        ragdoll = new Entity();
+
+        char model[128];
+        this.GetModel(model, sizeof(model));
+
+        ragdoll.meta = new EntityMeta();
+        ragdoll.meta.model(model);
+        ragdoll.meta.bodygroup = this.GetProp("m_nBody");
+        ragdoll.meta.skin = this.GetProp("m_nSkin");
+        ragdoll.meta.spawnflags = 4;
+
+        ragdoll.Create("prop_ragdoll");
+        ragdoll.Spawn();
+        ragdoll.SetPos(this.GetPos(), this.GetAng());
+
+        return ragdoll;
+    }
+
+    //public void SetCollisionGroup(int group) { gamemode.mngr.SetCollisionGroup(this.id, group); }
+
+    public void Kill() { ForcePlayerSuicide(this.id); }
+
+    public void SilenceKill() {
+        this.RestrictWeapons();
+        this.inv.FullClear();
+        this.Kill();
     }
 
     public void Kick(char[] reason) { KickClient(this.id, reason); }

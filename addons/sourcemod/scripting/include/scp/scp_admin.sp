@@ -1,21 +1,24 @@
 #include <adminmenu>
 
-const SHOW_PLAYER_CLASS   = 0;
-const RESPAWN_PLAYER      = 1;
-const TELEPORT            = 2;
-const MOVE_TO_SPEC        = 3;
-const MOVE_TO_ADMIN_ZONE  = 4;
-const IGNORE_DOOR_ACCESS  = 5;
-const GIVE_PLAYER_ITEM    = 6;
-const ROUND_RESTART       = 7;
-const DESTROY_SITE        = 8;
-
+enum TypeAdminAction
+{
+    SHOW_PLAYER_CLASS = 0,
+    RESPAWN_PLAYER,
+    TELEPORT,
+    REINFORCE,
+    //MOVE_TO_SPEC,
+    MOVE_TO_ADMIN_ZONE,
+    IGNORE_DOOR_ACCESS,
+    GIVE_PLAYER_ITEM,
+    ROUND_RESTART,
+    DESTROY_SITE
+}
 
 methodmap AdminAction < Base
 {
     public AdminAction(Client ply)
     {
-        AdminAction menu = view_as<AdminAction>(CreateTrie());
+        AdminAction menu = view_as<AdminAction>(new Base());
         menu.SetValue("admin", ply);
         return menu;
     }
@@ -155,8 +158,10 @@ void DisplayAdminMenu(int client)
         hMenu.AddItem("item2", buffer, ITEMDRAW_DEFAULT);
         FormatEx(buffer, sizeof(buffer), "%T", "Teleport", client);
         hMenu.AddItem("item3", buffer, ITEMDRAW_DEFAULT);
-        FormatEx(buffer, sizeof(buffer), "%T", "Move to spec", client);
+        FormatEx(buffer, sizeof(buffer), "%T", "Reinforce", client);
         hMenu.AddItem("item4", buffer, ITEMDRAW_DEFAULT);
+        /*FormatEx(buffer, sizeof(buffer), "%T", "Move to spec", client);
+        hMenu.AddItem("item4", buffer, ITEMDRAW_DEFAULT);*/
         FormatEx(buffer, sizeof(buffer), "%T", "Talk", client);
         hMenu.AddItem("item5", buffer, ITEMDRAW_DEFAULT);
         FormatEx(buffer, sizeof(buffer), "%T", "Door access", client);
@@ -186,6 +191,10 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
             {
                 AdminMenu.Get(client).ShowPlayerClass();
             }
+            case REINFORCE:
+            {
+                RenderReinforceMenu(client);
+            }
             case IGNORE_DOOR_ACCESS:
             {
                 AdminMenu.Get(client).IgnoreDoorAccess();
@@ -198,6 +207,8 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
             }
             case DESTROY_SITE:
             {
+                gamemode.nuke.ready = true;
+                gamemode.nuke.active = true;
                 gamemode.nuke.Activate();
             }
             default:
@@ -256,15 +267,15 @@ public int MenuHandler_ScpAdminMenuTarget(Menu hMenu, MenuAction action, int cli
                 }
                 case TELEPORT:
                 {
-                    AdminMenu.Get(client).PlayerTeleport();
+                    RenderTeleportMenu(client);
                 }
-                case MOVE_TO_SPEC:
+                /*case MOVE_TO_SPEC:
                 {
                     if(IsClientExist(target))
                     {
                         ChangeClientTeam(target, 1);
                     }
-                }
+                }*/
                 case MOVE_TO_ADMIN_ZONE:
                 {
                     if(AdminMenu.Get(client).target && IsPlayerAlive(target) && !IsCleintInSpec(target))
@@ -379,6 +390,98 @@ public int MenuHandler_GetClass(Menu hMenu, MenuAction action, int client, int i
             AdminMenu.Get(client).target.Team(team);
             AdminMenu.Get(client).target.class = gamemode.team(team).class(class);
             AdminMenu.Get(client).target.Spawn();
+        }
+    }
+}
+
+void RenderTeleportMenu(int client)
+{
+    int Keylen;
+    char buffer[64];
+    
+    Menu hMenu = new Menu(MenuHandler_GetTeleportPoint);
+    FormatEx(buffer, sizeof(buffer), "%T", "Select point", client);
+    hMenu.SetTitle(buffer);
+
+    StringMapSnapshot stp = gamemode.config.GetObject("teleport").Snapshot();
+
+    for(int i = 0; i < stp.Length; i++)
+    {
+        Keylen = stp.KeyBufferSize(i);
+        char[] pointName = new char[Keylen];
+        stp.GetKey(i, pointName, Keylen);
+
+        if(json_is_meta_key(pointName))
+            continue;
+
+        hMenu.AddItem(pointName, pointName, ITEMDRAW_DEFAULT);
+    }
+
+    delete stp;
+
+    hMenu.Display(client, 30);
+}
+
+public int MenuHandler_GetTeleportPoint(Menu hMenu, MenuAction action, int client, int item)
+{
+    if (action == MenuAction_End)
+    {
+        delete hMenu;
+    }
+    else if (action == MenuAction_Select)
+    {
+        if(AdminMenu.Get(client).target && !IsCleintInSpec(AdminMenu.Get(client).target.id))
+        {
+            char tpname[32];
+            hMenu.GetItem(item, tpname, sizeof(tpname));
+
+            JSON_OBJECT pos = gamemode.config.GetObject("teleport").GetObject(tpname);
+
+            AdminMenu.Get(client).target.SetPos(pos.GetVector("vec"), pos.GetAngle("ang"));
+        }
+    }
+}
+
+void RenderReinforceMenu(int client)
+{
+    int teamKeylen;
+    char buffer[64];
+    
+    Menu hMenu = new Menu(MenuHandler_Reinforce);
+    FormatEx(buffer, sizeof(buffer), "%T", "Select team", client);
+    hMenu.SetTitle(buffer);
+
+    StringMapSnapshot teamSnap = gamemode.GetTeamNames();
+
+    for(int i = 0; i < teamSnap.Length; i++)
+    {
+        teamKeylen = teamSnap.KeyBufferSize(i);
+        char[] teamName = new char[teamKeylen];
+        teamSnap.GetKey(i, teamName, teamKeylen);
+
+        if(json_is_meta_key(teamName))
+            continue;
+
+        hMenu.AddItem(teamName, teamName, ITEMDRAW_DEFAULT);
+    }
+
+    hMenu.Display(client, 30);
+}
+
+public int MenuHandler_Reinforce(Menu hMenu, MenuAction action, int client, int item)
+{
+    if (action == MenuAction_End)
+    {
+        delete hMenu;
+    }
+    else if (action == MenuAction_Select)
+    {
+        if(AdminMenu.Get(client).target && !IsCleintInSpec(AdminMenu.Get(client).target.id))
+        {
+            char team[32];
+            hMenu.GetItem(item, team, sizeof(team));
+
+            gamemode.mngr.CombatReinforcement(team);
         }
     }
 }

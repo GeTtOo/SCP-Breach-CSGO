@@ -1,18 +1,9 @@
 {
-    "config": {
-        "usemathcounter":true,
-        "countername": "scp_914_logic_counter",
-        "switchbutton": 443873,
-        "runbutton": 516151,
-        "runtime": 8,
-        "searchzone":[[3630, -2072, 20],[3762, -1947, 90]],
-        "distance":[0, 425, 0],
-        "decsription": [
-            "Recipe template <itemname> [chance critical failed craft] [chance successful craft].",
-            "Recipe player template [chance get status].",
-            "Player status effect list: regeneration, speed, berserk, death."
-        ]
-    },
+    "decsription": [
+        "Recipe template <itemname> [chance critical failed craft] [chance successful craft].",
+        "Recipe player template [chance get status].",
+        "Player status effect list: regeneration, speed, berserk, death."
+    ],
     "recipes": {
         "rough": {
             "player": [

@@ -45,7 +45,25 @@ methodmap EntitySingleton < Base {
 
     public native void Remove(int id);
 
+    public native bool IndexUpdate(Entity ent);
+
     public native void Clear();
+
+    public void SpawnedClear() {
+        ArrayList list = this.list;
+
+        for (int i=0; i < list.Length; i++)
+        {
+            Entity ent = list.Get(i, 1);
+
+            if (ent != null && ent.id > MaxClients && ent.id != 5000)
+            {
+                ent.Remove();
+                list.Erase(i);
+                i--;
+            }
+        }
+    }
 
     public ArrayList FindInBox(Vector vecMin, Vector vecMax, char[][] filter, int filter_size) {
         int entId = 0;
