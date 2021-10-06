@@ -29,4 +29,8 @@ methodmap Base < StringMap {
     public ArrayList GetArrayList(char[] index) { ArrayList list; return this.GetValue(index, list) ? list : null; }
 
     public bool RemoveValue(char[] index) { return this.Remove(index); }
+
+    property int Length {
+        public get() { StringMapSnapshot snap = this.Snapshot(); int len = snap.Length; delete snap; return len; }
+    }
 }

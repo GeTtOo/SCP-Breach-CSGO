@@ -4,7 +4,12 @@
         "priority":true,
         "classes": {
             "D Class": {
-                "model":"models/player/custom_player/eternity/d_class.mdl",
+                "modelid":"dclass",
+                "bodygroup":{
+                    "base":0,
+                    "head":[0,6],
+                    "eyes":[0,4]
+                },
                 "percent":60,
                 "priority":true,
                 "health":100,
@@ -16,7 +21,12 @@
                 "overlay":"dclass"
             },
             "Scientist": {
-                "model":"models/player/custom_player/eternity/scientists.mdl",
+                "modelid":"scientist",
+                "bodygroup":{
+                    "base":0,
+                    "head":[0,6],
+                    "eyes":[0,3]
+                },
                 "percent":20,
                 "pos":[
                     {"vec":[-2751,-2967,0]},
@@ -34,7 +44,12 @@
                 "overlay":"scientist"
             },
             "Medic": {
-                "model":"models/player/custom_player/eternity/scientists.mdl",
+                "modelid":"scientist",
+                "bodygroup":{
+                    "base":1,
+                    "head":5,
+                    "eyes":3
+                },
                 "pos":[
                     {"vec":[-6602,-7230,0],"ang":[0,90,0]},
                     {"vec":[-6992,-7271,0],"ang":[0,90,0]},
@@ -52,8 +67,7 @@
                 "overlay":"medic"
             },
             "Security": {
-                "model":"models/player/custom_player/eternity/mog.mdl",
-                "bodygroup":[1,[0,1],0,0,0,[0,1],0,0,1,2],
+                "modelid":"mog",
                 "skin":3,
                 "pos":{"vec":[-11040,-1735,2]},
                 "percent":10,
@@ -69,12 +83,11 @@
         }
     },
     "MOG": {
+        "modelid":"mog",
         "percent":40,
         "priority":false,
         "classes": {
             "Commander": {
-                "model":"models/player/custom_player/eternity/mog.mdl",
-                "bodygroup":[[0,1],5,0,1,0,[1,2],0,[1,3],1,[1,2]],
                 "pos":{"vec":[-10423,-5806,1736],"ang":[13,149,0]},
                 "percent":10,
                 "priority":true,
@@ -89,8 +102,7 @@
                 "comment":"test"
             },
             "Lieutenant": {
-                "model":"models/player/custom_player/eternity/mog.mdl",
-                "bodygroup":[[0,1],4,0,1,0,[1,2],0,[1,3],1,[1,2]],
+                "modelid":"mog",
                 "pos":[
                     {"vec":[-10505,-6066,1736],"ang":[4,-131,0]},
                     {"vec":[-10557,-6127,1736],"ang":[4,-131,0]},
@@ -102,8 +114,7 @@
                 "overlay":"lieutenant"
             },
             "Cadet": {
-                "model":"models/player/custom_player/eternity/mog.mdl",
-                "bodygroup":[[0,1],1,0,1,0,[1,2],0,[1,3],1,[1,2]],
+                "modelid":"mog",
                 "pos":{"vec":[-10800,-5950,1715]},
                 "percent":25,
                 "items":["card_senior_guard"],
@@ -111,6 +122,7 @@
                 "overlay":"cadet"
             },
             "Sapper": {
+                "modelid":"mog",
                 "model":"models/player/custom_player/eternity/mog.mdl",
                 "pos":{"vec":[-10800,-5950,1715]},
                 "percent":5,
@@ -118,6 +130,7 @@
                 "weapons":["weapon_m4a1", "weapon_hkp2000", "weapon_hegrenade", "weapon_breachcharge"]
             },
             "Lieutenant-Medic": {
+                "modelid":"mog",
                 "model":"models/player/custom_player/eternity/mog.mdl",
                 "pos":{"vec":[-10800,-5950,1715]},
                 "percent":0,
@@ -132,9 +145,24 @@
         "priority":false,
         "classes": {
             "Soldier": {
-                "model":"models/player/custom_player/eternity/chaos.mdl",
-                "bodygroup":1,
-                "pos":{"vec":[-7316,-5968,1712],"ang":[0,180,0]},
+                "modelid":"chaos",
+                "pos":[
+                    {"vec":[-7200,-5950,1712],"ang":[0,180,0]},
+                    {"vec":[-7250,-5950,1712],"ang":[0,180,0]},
+                    {"vec":[-7300,-5950,1712],"ang":[0,180,0]},
+                    {"vec":[-7350,-5950,1712],"ang":[0,180,0]},
+                    {"vec":[-7400,-5950,1712],"ang":[0,180,0]},
+                    {"vec":[-7200,-5900,1712],"ang":[0,180,0]},
+                    {"vec":[-7250,-5900,1712],"ang":[0,180,0]},
+                    {"vec":[-7300,-5900,1712],"ang":[0,180,0]},
+                    {"vec":[-7350,-5900,1712],"ang":[0,180,0]},
+                    {"vec":[-7400,-5900,1712],"ang":[0,180,0]},
+                    {"vec":[-7200,-6000,1712],"ang":[0,180,0]},
+                    {"vec":[-7250,-6000,1712],"ang":[0,180,0]},
+                    {"vec":[-7300,-6000,1712],"ang":[0,180,0]},
+                    {"vec":[-7350,-6000,1712],"ang":[0,180,0]},
+                    {"vec":[-7400,-6000,1712],"ang":[0,180,0]}
+                ],
                 "ang":[0,180,0],
                 "percent":20,
                 "health":180,
@@ -158,7 +186,6 @@
                 "overlay":"scp-035"
             },
             "049": {
-                "model":"models/player/custom_player/eternity/scp_049.mdl",
                 "pos":{"vec":[-8455,975,2],"ang":[0,125,0]},
                 "priority":true,
                 "percent":20,

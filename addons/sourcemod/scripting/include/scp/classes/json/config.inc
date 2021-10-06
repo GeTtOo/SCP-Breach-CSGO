@@ -13,7 +13,7 @@ methodmap Config < JSON_OBJECT {
         Config self = view_as<Config>(ReadConfig(mapname, "config"));
 
         self.SetObject("Doors", view_as<Doors>(ReadConfig(mapname, "doors")));
-        self.SetObject("SpawnMap", view_as<JSON_OBJECT>(ReadConfig(mapname, "spawn_map")));
+        self.SetObject("SpawnMap", view_as<JSON_OBJECT>(ReadConfig(mapname, "spawnlist")));
         self.SetObject("Regions", view_as<JSON_ARRAY>(ReadConfig(mapname, "regions")));
 
         return self;

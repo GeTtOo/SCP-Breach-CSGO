@@ -18,8 +18,13 @@ methodmap Entity < Base {
     }
 
     property EntityMeta meta {
-        public set(EntityMeta value) { this.SetValue("meta", value); }
-        public get() { EntityMeta meta; return this.GetValue("meta", meta) ? meta : null; }
+        public set(EntityMeta value) { this.SetValue("entmeta", value); }
+        public get() { EntityMeta meta; return this.GetValue("entmeta", meta) ? meta : null; }
+    }
+
+    property ModelMeta mdlmeta {
+        public set(ModelMeta value) { this.SetValue("mdlmeta", value); }
+        public get() { ModelMeta meta; return this.GetValue("mdlmeta", meta) ? meta : null; }
     }
 
     property int id {

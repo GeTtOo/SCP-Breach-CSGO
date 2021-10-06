@@ -140,7 +140,8 @@ public void OnMapStart()
         AddCommandListener(Command_Debug, "debug");
     }
 
-    LoadEntities(mapName);
+    LoadMetaData(mapName);
+    
     if (gamemode.config.usablecards)
         InitKeyCards();
 
@@ -775,6 +776,12 @@ public void LoadFileToDownload()
     }
 }
 
+public void LoadMetaData(char[] mapName)
+{
+    LoadModels();
+    LoadEntities(mapName);
+}
+
 public void LoadEntities(char[] mapName)
 {
     JSON_OBJECT ents = ReadConfig(mapName, "entities");
@@ -829,6 +836,33 @@ public void LoadEntities(char[] mapName)
         }
         
         gamemode.meta.RegisterEntity(entclass, entdata);
+    }
+}
+
+public void LoadModels()
+{
+    JSON_ARRAY modelsdata = gamemode.config.GetObject("meta").GetArray("models");
+
+    for (int i=0; i < modelsdata.Length; i++)
+    {
+        JSON_OBJECT mdlmeta = view_as<JSON_OBJECT>(modelsdata.GetObject(i));
+
+        char index[32], path[128];
+        mdlmeta.GetString("path", path, sizeof(path));
+        mdlmeta.GetString("index", index, sizeof(index));
+        
+        JSON_ARRAY mdlbg = mdlmeta.GetArray("bginf");
+        
+        ModelMeta modeldata = new ModelMeta();
+        ArrayList groups = new ArrayList();
+        
+        for (int k=0; k < mdlbg.Length; k++)
+            groups.Push(mdlbg.GetInt(k));
+        
+        modeldata.Path(path);
+        modeldata.SetArrayList("bg", groups);
+
+        gamemode.meta.RegisterModel(index, modeldata);
     }
 }
 

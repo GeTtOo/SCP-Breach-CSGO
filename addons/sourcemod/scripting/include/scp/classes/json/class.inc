@@ -79,6 +79,10 @@ methodmap Class < JSON_OBJECT {
         this.GetString("model", buffer, max_size);
     }
 
+    public bool ModelId(char[] buffer, int max_size) {
+        this.GetString("modelid", buffer, max_size);
+    }
+
     public bool HandsModel(char[] buffer, int max_size) {
         this.GetString("handsmodel", buffer, max_size);
     }

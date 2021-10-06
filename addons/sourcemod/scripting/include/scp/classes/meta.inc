@@ -74,17 +74,17 @@ methodmap EntityMeta < Base {
 
     property int spawnflags {
         public set(int val) { this.SetInt("spawnflags", val); }
-        public get() { return this.GetInt("spawnflags"); }
+        public get() { return this.GetInt("spawnflags", 4356); }
     }
 
     property bool usable {
         public set(bool val) { this.SetBool("usable", val); }
-        public get() { this.GetBool("usable"); }
+        public get() { return this.GetBool("usable"); }
     }
 
     property int cd {
-        public set(int val) { this.SetInt("cd", val); }
-        public get() { this.GetInt("cd"); }
+        public set(int val) { this.SetInt("cooldown", val); }
+        public get() { return this.GetInt("cooldown"); }
     }
 
     property OnUseMeta onuse {
@@ -107,11 +107,59 @@ methodmap EntityMeta < Base {
     public void model(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("model", buffer) : this.GetString("model", buffer, max_size); }
 }
 
+methodmap ModelMeta < Base {
+
+    public ModelMeta() {
+        return view_as<ModelMeta>(new Base());
+    }
+    
+    property ArrayList bg {
+        public get() { return this.GetArrayList("bg"); }
+    }
+
+    public void Path(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("path", buffer) : this.GetString("path", buffer, max_size); }
+
+    public int GetBgIdx(char[] name, int idx) {
+        int bgidx = 1;
+        char bgnames[11][12] = {"base","head","eyes","helmet","mask",/*"flag",*/"rank","body","belt","legs","pl","pr"};
+
+        for (int i=0; i < this.bg.Length; i++)
+        {
+            if (StrEqual(bgnames[i], name)) break;
+            
+            int id = this.bg.Get(i);
+            
+            if (id == 0) continue;
+
+            bgidx += bgidx * id;
+            
+            if (StrEqual(bgnames[i], name))
+            {
+                break;
+            }
+        }
+
+        return bgidx * idx;
+    }
+
+    public int GetBgId(char[] name) {
+        int id = 0;
+        char bgnames[11][12] = {"base","head","eyes","helmet","mask",/*"flag",*/"rank","body","belt","legs","pl","pr"};
+        for (int i=0; i < this.bg.Length; i++) {
+            if (StrEqual(bgnames[i], name)) break;
+            id++;
+        }
+
+        return id;
+    }
+}
+
 methodmap Meta < Base {
 
     public Meta() {
         Meta meta = view_as<Meta>(new Base());
         meta.CreateList("entities");
+        meta.CreateList("models");
         return meta;
     }
 
@@ -144,4 +192,8 @@ methodmap Meta < Base {
             }
         }
     }
+
+    public void RegisterModel(char[] modelid, ModelMeta mdlmeta) { this.GetList("models").Set(modelid, mdlmeta); }
+
+    public ModelMeta GetModel(char[] modelid) { return this.GetList("models").Get(modelid); }
 }

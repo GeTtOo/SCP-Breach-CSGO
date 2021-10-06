@@ -81,6 +81,11 @@ methodmap Client < Entity {
         public get() { return this.GetBool("spawned", false); }
     }
 
+    property ArrayList activebg {
+        public set(ArrayList list) { this.SetArrayList("activebg", list); }
+        public get() { return this.GetArrayList("activebg"); }
+    }
+
     property Entity ragdoll {
         public set(Entity val) { this.RemoveValue("ragdoll"); this.SetValue("ragdoll", val); }
         public get() { Entity val; return this.GetValue("ragdoll", val) ? val : null; }
@@ -111,7 +116,24 @@ methodmap Client < Entity {
 
     public Angle GetAng() { float angarr[3]; GetClientEyeAngles(this.id, angarr); return new Angle(angarr[0], angarr[1], angarr[2]); }
 
-    public void SetModel(char[] model) { SetEntityModel(this.id, model); }
+    public void SetModel(char[] model) {
+        SetEntityModel(this.id, model);
+    }
+
+    public void SetModelById(char[] modelid) {
+        this.mdlmeta = gamemode.meta.GetModel(modelid);
+
+        char path[128];
+        this.mdlmeta.Path(path, sizeof(path));
+        SetEntityModel(this.id, path);
+
+        int len = this.mdlmeta.bg.Length;
+
+        ArrayList list = new ArrayList();
+        for (int i=0; i < len; i++)
+            list.Push(0);
+        this.activebg = list;
+    }
 
     public void GetModel(char[] model, int max_size) { GetClientModel(this.id, model, max_size); }
 
@@ -186,6 +208,19 @@ methodmap Client < Entity {
         }
 
         return false;
+    }
+
+    public void SetBodyGroup(char[] name, int idx) {
+        char plymdl[128];
+        this.GetModel(plymdl, sizeof(plymdl));
+
+        this.activebg.Set(this.mdlmeta.GetBgId(name), this.mdlmeta.GetBgIdx(name, idx));
+
+        int bgmath = 0;
+        for (int i=0; i < this.activebg.Length; i++)
+            bgmath += this.activebg.Get(i);
+
+        this.SetProp("m_nBody", bgmath);
     }
     
     public Entity CreateRagdoll() {
@@ -313,10 +348,10 @@ methodmap Client < Entity {
             for (int i=0; i < this.class.doors.Length; i++)
                 AcceptEntityInput(this.class.doors.GetInt(i), "Open");
 
-        if (this.class.HasKey("model")) {
-            char playerModel[128];
-            this.class.Model(playerModel, sizeof(playerModel));
-            this.SetModel(playerModel);
+        if (this.class.HasKey("modelid")) {
+            char modelid[32];
+            this.class.ModelId(modelid, sizeof(modelid));
+            this.SetModelById(modelid);
 
             if (this.class.HasKey("bodygroup"))
                 if (view_as<int>(this.class.GetKeyType("bodygroup")) == 1) {
@@ -324,47 +359,21 @@ methodmap Client < Entity {
                 }
                 else
                 {
-                    ArrayList modelMetaData = new ArrayList();
+                    JSON_OBJECT pgi = this.class.GetObject("bodygroup");
+                    StringMapSnapshot spgi = pgi.Snapshot();
                     
-                    JSON_ARRAY metaArr = gamemode.config.meta;
-
-                    for (int i=0; i < metaArr.Length; i++) {
-                        JSON_OBJECT metaobj = view_as<JSON_OBJECT>(metaArr.GetObject(i));
+                    int keylen;
+                    for (int i=0; i < spgi.Length; i++) {
+                        keylen = spgi.KeyBufferSize(i);
+                        char[] name = new char[keylen];
+                        spgi.GetKey(i, name, keylen);
+                        if (json_is_meta_key(name)) continue;
                         
-                        char modelName[128];
-                        metaobj.GetString("model", modelName, sizeof(modelName));
-
-                        if (StrEqual(playerModel, modelName)) {
-                            JSON_ARRAY bgdata = metaobj.GetArray("bgdata");
-
-                            for (int k=0; k < bgdata.Length; k++) {
-                                modelMetaData.Push(bgdata.GetInt(k));
-                            }
-                        }
-                    }
-
-                    JSON_ARRAY sbgarr = this.class.GetArray("bodygroup");
-
-                    int bodyGroupAddress = 0;
-                    
-                    for (int groupIndex = 0; groupIndex < sbgarr.Length; groupIndex++) {
-                        int groupValue;
-                        
-                        if (view_as<int>(sbgarr.GetKeyType(groupIndex)) == 1)
-                            groupValue = sbgarr.GetInt(groupIndex);
+                        if (view_as<int>(pgi.GetKeyType(name)) == 1)
+                            this.SetBodyGroup(name, pgi.GetInt(name));
                         else
-                            groupValue = GetRandomInt(sbgarr.GetArray(groupIndex).GetInt(0), sbgarr.GetArray(groupIndex).GetInt(1));
-
-                        int idx = 1;
-                        if (groupValue != 0) {
-                            for (int k=0; k < groupIndex; k++)
-                            idx += idx * modelMetaData.Get(k);
-
-                            bodyGroupAddress += idx * groupValue;
-                        }
+                            this.SetBodyGroup(name, GetRandomInt(pgi.GetArray(name).GetInt(0), pgi.GetArray(name).GetInt(1)));
                     }
-
-                    this.SetProp("m_nBody", bodyGroupAddress);
                 }
 
             this.SetProp("m_nSkin", this.class.GetInt("skin", 0));

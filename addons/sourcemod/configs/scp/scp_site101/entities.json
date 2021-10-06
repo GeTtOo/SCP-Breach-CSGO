@@ -3,119 +3,101 @@
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":0,
-        "spawnflags":4356,
         "access":[1,2,3,4,5,6,7,8,9,10]
     },
     "card_facility_manager": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":1,
-        "spawnflags":4356,
         "access":[1,2,3,7,8,9,10]
     },
     "card_containment_engineer": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":2,
-        "spawnflags":4356,
         "access":[1,2,3,7,8,10]
     },
     "card_mog_commander": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":3,
-        "spawnflags":4356,
         "access":[1,2,4,5,6,7,8,9]
     },
     "card_mog_lieutenant": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":4,
-        "spawnflags":4356,
         "access":[1,2,4,5,7,9]
     },
     "card_guard": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":5,
-        "spawnflags":4356,
         "access":[1,4,7]
     },
     "card_senior_guard": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":6,
-        "spawnflags":4356,
         "access":[1,2,4,5,7]
     },
     "card_zone_manager": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":7,
-        "spawnflags":4356,
         "access":[1,7]
     },
     "card_major_scientist": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":8,
-        "spawnflags":4356,
         "access":[1,2,7]
     },
     "card_scientist": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":9,
-        "spawnflags":4356,
         "access":[1,2]
     },
     "card_janitor": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
         "skin":10,
-        "spawnflags":4356,
         "access":[1]
     },
     "card_chaos": {
         "model":"models/eternity/props/chaos_card.mdl",
         "mass":0.2,
-        "spawnflags":4356,
         "access":[1,2,3,4,5,6,7,8,9]
     },
     "005_picklock": {
         "model":"models/eternity/props/scp/scp_005.mdl",
         "mass":0.2,
-        "spawnflags":4356,
         "access":[1,2,3,4,5,6,7,8,9,10]
     },
     "500_panacea": {
         "model":"models/eternity/props/keycard.mdl",
-        "mass":0.2,
-        "spawnflags":4356
+        "mass":0.2
     },
     "427_amulet": {
         "model":"models/eternity/props/scp/scp_427.mdl",
-        "mass":0.2,
-        "spawnflags":4356
+        "mass":0.2
     },
     "268_cap": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
-        "spawnflags":4356
+        "cooldown":60
     },
     "035_mask": {
         "model":"models/eternity/props/scp/scp_035.mdl",
-        "mass":0.5,
-        "spawnflags":4356
+        "mass":0.5
     },
     "iron_ingot": {
         "model":"models/eternity/props/ingot.mdl",
-        "mass":0.2,
-        "spawnflags":4356
+        "mass":0.2
     },
     "plastic": {
         "model":"models/eternity/props/plastic.mdl",
-        "mass":0.2,
-        "spawnflags":4356
+        "mass":0.2
     }
 }
