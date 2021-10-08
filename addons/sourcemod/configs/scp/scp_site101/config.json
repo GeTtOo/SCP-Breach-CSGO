@@ -14,10 +14,10 @@
     },
     "meta": {
         "models": [
-            {"index":"dclass","path":"models/player/custom_player/eternity/d_class.mdl","bginf":[0,7,4,1,0,0,1,0,1,0,0]},
-            {"index":"scientist","path":"models/player/custom_player/eternity/scientists.mdl","bginf":[1,6,4,0,0,0,0,0,0,0,0]},
-            {"index":"mog","path":"models/player/custom_player/eternity/mog.mdl","bginf":[0,4,3,5,2,15,3,3,0,1,1]},
-            {"index":"chaos","path":"models/player/custom_player/eternity/chaos.mdl","bginf":[3,4,4,4,2,0,0,0,3,0,0]}
+            {"id":"dclass","path":"models/player/custom_player/eternity/d_class.mdl","bginf":[0,7,4,1,0,0,1,0,1,0,0]},
+            {"id":"scientist","path":"models/player/custom_player/eternity/scientists.mdl","bginf":[1,6,4,0,0,0,0,0,0,0,0]},
+            {"id":"mog","path":"models/player/custom_player/eternity/mog.mdl","bginf":[0,4,3,5,2,15,3,3,0,1,1]},
+            {"id":"chaos","path":"models/player/custom_player/eternity/chaos.mdl","bginf":[3,4,4,4,2,0,0,0,3,0,0]}
         ]
     },
     "nuke": {

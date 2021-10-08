@@ -847,9 +847,9 @@ public void LoadModels()
     {
         JSON_OBJECT mdlmeta = view_as<JSON_OBJECT>(modelsdata.GetObject(i));
 
-        char index[32], path[128];
+        char id[32], path[128];
         mdlmeta.GetString("path", path, sizeof(path));
-        mdlmeta.GetString("index", index, sizeof(index));
+        mdlmeta.GetString("id", id, sizeof(id));
         
         JSON_ARRAY mdlbg = mdlmeta.GetArray("bginf");
         
@@ -862,7 +862,7 @@ public void LoadModels()
         modeldata.Path(path);
         modeldata.SetArrayList("bg", groups);
 
-        gamemode.meta.RegisterModel(index, modeldata);
+        gamemode.meta.RegisterModel(id, modeldata);
     }
 }
 
@@ -1366,11 +1366,12 @@ public Action Command_Debug(int client, const char[] command, int argc)
 {
     Client ply = Clients.Get(client);
 
-    char arg1[32], arg2[32], arg3[32];
+    char arg1[32], arg2[32], arg3[32], arg4[32];
 
     GetCmdArg(1, arg1, sizeof(arg1));
     GetCmdArg(2, arg2, sizeof(arg2));
     GetCmdArg(3, arg3, sizeof(arg3));
+    GetCmdArg(4, arg4, sizeof(arg4));
     
     if (StrEqual(arg1, "set", false))
     {
@@ -1391,6 +1392,14 @@ public Action Command_Debug(int client, const char[] command, int argc)
             gamemode.mngr.RoundLock = true;
         if (StrEqual(arg2, "unlock", false))
             gamemode.mngr.RoundLock = false;
+    }
+
+    if (StrEqual(arg1, "voice", false))
+    {
+        if (StrEqual(arg2, "mute", false))
+            SetListenOverride(StringToInt(arg3), StringToInt(arg4), Listen_No);
+        if (StrEqual(arg2, "unmute", false))
+            SetListenOverride(StringToInt(arg3), StringToInt(arg4), Listen_Yes);
     }
 
     return Plugin_Stop;

@@ -4,11 +4,13 @@
         "priority":true,
         "classes": {
             "D Class": {
-                "modelid":"dclass",
-                "bodygroup":{
-                    "base":0,
-                    "head":[0,6],
-                    "eyes":[0,4]
+                "model":{
+                    "id":"dclass",
+                    "bodygroups":{
+                        "base":0,
+                        "head":[0,6],
+                        "eyes":[0,4]
+                    }
                 },
                 "percent":60,
                 "priority":true,
@@ -21,11 +23,14 @@
                 "overlay":"dclass"
             },
             "Scientist": {
-                "modelid":"scientist",
-                "bodygroup":{
-                    "base":0,
-                    "head":[0,6],
-                    "eyes":[0,3]
+                "model":{
+                    "id":"scientist",
+                    "bodygroups":{
+                        "base":0,
+                        "head":[0,5],
+                        "eyes":[0,3]
+                    },
+                    "skin":0
                 },
                 "percent":20,
                 "pos":[
@@ -44,11 +49,14 @@
                 "overlay":"scientist"
             },
             "Medic": {
-                "modelid":"scientist",
-                "bodygroup":{
-                    "base":1,
-                    "head":5,
-                    "eyes":3
+                "model":{
+                    "id":"scientist",
+                    "bodygroups":{
+                        "base":1,
+                        "head":[0,6],
+                        "eyes":[0,3]
+                    },
+                    "skin":0
                 },
                 "pos":[
                     {"vec":[-6602,-7230,0],"ang":[0,90,0]},
