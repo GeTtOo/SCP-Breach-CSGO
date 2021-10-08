@@ -462,8 +462,6 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
         if (gamemode.config.debug)
             PrintToChat(ply.id, " \x07[SCP Admin] \x01Door/Button id: (%i)", doorId);
 
-        gamemode.nuke.Controller(doorId);
-
         StringMapSnapshot doorsSnapshot = gamemode.config.doors.GetAll();
         int doorKeyLen;
 
@@ -482,7 +480,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
             if (doorId == StringToInt(doorKey))
             {
                 int entid = GetEntPropEnt(caller, Prop_Data, "m_hMoveChild");
-                Entity idpad = (entid != -1) ? new Entity(entid) : null;
+                Entity idpad = (entid != -1) ? new Entity(entid) : new Entity(caller);
                 
                 if (gamemode.mngr.IsWarmup)
                 {
@@ -506,8 +504,11 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 {
                     if (idpad)
                     {
-                        idpad.SetProp("m_nSkin", (ply.lang == 22) ? 2 : 5);
-                        gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
+                        if (idpad.HasProp("m_nSkin"))
+                        {
+                            idpad.SetProp("m_nSkin", (ply.lang == 22) ? 2 : 5);
+                            gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
+                        }
 
                         if (!ply.IsSCP)
                         {
@@ -549,6 +550,8 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
             if (savepos)
                 ply.SetPos(opp, opa);
         }
+
+        gamemode.nuke.Controller(doorId);
 
         Call_StartForward(OnButtonPressedForward);
         Call_PushCellRef(ply);

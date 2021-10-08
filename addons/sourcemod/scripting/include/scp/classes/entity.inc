@@ -42,6 +42,10 @@ methodmap Entity < Base {
         public get() { return this.GetArrayList("bglist"); }
     }
 
+    public bool HasProp(char[] name, any type = Prop_Send) {
+        return HasEntProp(this.id, type, name);
+    }
+
     public Entity SetProp(char[] name, any value, any type = Prop_Send, int element = 0) {
         SetEntProp(this.id, type, name, value, _, element);
         return this;
