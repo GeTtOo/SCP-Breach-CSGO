@@ -77,7 +77,11 @@
             "Security": {
                 "modelid":"mog",
                 "skin":3,
-                "pos":{"vec":[-11040,-1735,2]},
+                "pos":[
+                    {"vec":[-10369,-2740,-1008],"ang":[3,90,0]},
+                    {"vec":[-11804,-2769,-1008],"ang":[2,90,0]},
+                    {"vec":[-11098,-2904,-1008],"ang":[1,92,0]}
+                ],
                 "percent":10,
                 "items":["card_guard", "005_picklock", "427_amulet"],
                 "weapons":["weapon_mp5sd","weapon_usp_silencer"],
@@ -198,7 +202,7 @@
                 "priority":true,
                 "percent":20,
                 "health":7800,
-                "doors":[180,181],
+                "doors":[315,314],
                 "weapons":["weapon_fists"],
                 "overlay":"scp-049",
                 "comment":"The Doctor ʕ•ᴥ•ʔ"
@@ -220,7 +224,7 @@
                 "percent":20,
                 "health":25000,
                 "speed":130,
-                "doors":[138,139],
+                "doors":[274,273],
                 "comment":"096",
                 "overlay":"scp-096"
             },
@@ -240,7 +244,7 @@
                 "speed":250,
                 "multipler":4.2,
                 "fists":false,
-                "doors":[183,184],
+                "doors":[318,317],
                 "overlay":"scp-173",
                 "comment":"173"
             },
@@ -251,7 +255,7 @@
                 "armor":2000,
                 "speed":250,
                 "multipler":1.2,
-                "doors":[468],
+                "doors":[602],
                 "weapons":["weapon_fists"],
                 "overlay":"scp-457",
                 "comment":"Fire man"
@@ -263,7 +267,7 @@
                 "armor":2000,
                 "speed":250,
                 "multipler":1.2,
-                "doors":[468],
+                "doors":[656,655],
                 "weapons":["weapon_fists"],
                 "overlay":"scp-996",
                 "comment":"Fire man"
