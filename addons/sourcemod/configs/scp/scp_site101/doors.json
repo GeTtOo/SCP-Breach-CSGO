@@ -1,111 +1,31 @@
 {
-    "274319": {
-        "location":"Main Gate",
-        "access":0,
-        "scp":false
-    },
     "354154": {
-        "location":"A Gate Hall",
+        "location":"Gate A Up",
         "access":9,
         "scp":false
     },
     "354066": {
-        "location":"A Gate Hall",
+        "location":"Gate A Down",
         "access":9,
         "scp":false
     },
     "329781": {
-        "location":"B Gate",
+        "location":"Gate B Up",
         "access":9,
-        "scp":false
-    },
-    "311839": {
-        "location":"B Gate",
-        "access":9,
-        "scp":false
-    },
-    "311842": {
-        "location":"Hall zone checkpoint",
-        "access":7,
-        "scp":false
-    },
-    "311929": {
-        "location":"Hall zone checkpoint",
-        "access":7,
-        "scp":false
-    },
-    "311920": {
-        "location":"Light zone checkpoint",
-        "access":7,
         "scp":false
     },
     "329820": {
-        "location":"Light zone checkpoint",
-        "access":7,
-        "scp":false
-    },
-    "299713": {
-        "location":"Light zone checkpoint",
-        "access":7,
-        "scp":false
-    },
-    "299710": {
-        "location":"Light zone checkpoint",
-        "access":7,
-        "scp":false
-    },
-    "299838": {
-        "location":"Heavy zone checkpoint",
-        "access":7,
-        "scp":false
-    },
-    "299847": {
-        "location":"Heavy zone checkpoint",
-        "access":7,
-        "scp":false
-    },
-    "562394": {
-        "location":"Light zone Armory",
-        "access":4,
-        "scp":false
-    },
-    "562388": {
-        "location":"Light zone Armory",
-        "access":4,
-        "scp":false
-    },
-    "553431": {
-        "location":"Heavy zone Armory",
-        "access":5,
-        "scp":false
-    },
-    "553424": {
-        "location":"Heavy zone Armory",
-        "access":5,
+        "location":"Gate B Down",
+        "access":9,
         "scp":false
     },
     "311385": {
-        "location":"Nuclear warhead site",
-        "access":6,
-        "scp":true
-    },
-    "311379": {
-        "location":"Nuclear warhead site",
-        "access":6,
-        "scp":true
-    },
-    "356001": {
-        "location":"Nuclear control panel",
-        "access":6,
-        "scp":true
-    },
-    "311748": {
-        "location":"Nuclear warhead site",
+        "location":"Nuke Door Down 1",
         "access":10,
         "scp":false
     },
-    "311745": {
-        "location":"Nuclear warhead site",
+    "311379": {
+        "location":"Nuke Door Down 2",
         "access":10,
         "scp":false
     },
@@ -114,39 +34,129 @@
         "access":10,
         "scp":false
     },
-    "490772": {
-        "location":"096 camera",
-        "access":4,
-        "scp":true
+    "553431": {
+        "location":"Heavy armory 1",
+        "access":5,
+        "scp":false
     },
-    "312244": {
-        "location":"079 door",
-        "access":3,
-        "scp":true
+    "553424": {
+        "location":"Heavy armory 2",
+        "access":5,
+        "scp":false
     },
     "370644": {
-        "location":"049 camera",
-        "access":4,
-        "scp":true
-    },
-    "354434": {
-        "location":"457 camera",
-        "access":4,
-        "scp":true
+        "location":"SCP-049",
+        "access":2,
+        "scp":false
     },
     "302774": {
-        "location":"SCP 996 camera",
-        "access":4,
+        "location":"SCP-996",
+        "access":2,
+        "scp":false
+    },
+    "354434": {
+        "location":"SCP-035",
+        "access":3,
+        "scp":false
+    },
+    "286460": {
+        "location":"SCP-457",
+        "access":2,
+        "scp":false
+    },
+    "299838": {
+        "location":"Heave gate 1",
+        "access":7,
         "scp":true
     },
-    "276975": {
-        "location":"SCP 914",
-        "access":1,
+    "299847": {
+        "location":"Heave gate 2",
+        "access":7,
+        "scp":true
+    },
+    "299710": {
+        "location":"Heave gate 3",
+        "access":7,
+        "scp":true
+    },
+    "299713": {
+        "location":"Heave gate 4",
+        "access":7,
+        "scp":true
+    },
+    "562394": {
+        "location":"Light armory 1",
+        "access":4,
+        "scp":false
+    },
+    "562388": {
+        "location":"Light armory 1",
+        "access":4,
+        "scp":false
+    },
+    "312244": {
+        "location":"SCP-079",
+        "access":3,
+        "scp":false
+    },
+    "312255": {
+        "location":"SCP-079",
+        "access":3,
         "scp":false
     },
     "276978": {
-        "location":"SCP 914",
+        "location":"SCP-914",
         "access":1,
+        "scp":false
+    },
+    "276975": {
+        "location":"SCP-914",
+        "access":1,
+        "scp":false
+    },
+    "490772": {
+        "location":"SCP-096",
+        "access":3,
+        "scp":false
+    },
+    "863713": {
+        "location":"Main armory 1",
+        "access":6,
+        "scp":false
+    },
+    "863723": {
+        "location":"Main armory 2",
+        "access":6,
+        "scp":false
+    },
+    "311929": {
+        "location":"Office gate 1",
+        "access":7,
+        "scp":true
+    },
+    "311920": {
+        "location":"Office gate 2",
+        "access":7,
+        "scp":true
+    },
+    "311842": {
+        "location":"Office gate 3",
+        "access":7,
+        "scp":true
+    },
+    "311839": {
+        "location":"Office gate 4",
+        "access":7,
+        "scp":true
+    },
+    "311748": {
+        "location":"Nuke control door 1",
+        "access":10,
+        "scp":false
+    },
+    "311745": {
+        "location":"Nuke control door 2",
+        "access":10,
         "scp":false
     }
 }
