@@ -37,6 +37,76 @@ methodmap Entity < Base {
         public get() { return this.GetBool("spawned"); }
     }
 
+    property ArrayList bglist {
+        public set(ArrayList list) { this.SetArrayList("bglist", list); }
+        public get() { return this.GetArrayList("bglist"); }
+    }
+
+    public Entity SetProp(char[] name, any value, any type = Prop_Send, int element = 0) {
+        SetEntProp(this.id, type, name, value, _, element);
+        return this;
+    }
+
+    public Entity SetPropFloat(char[] name, any value, any type = Prop_Send) {
+        SetEntPropFloat(this.id, type, name, float(value));
+        return this;
+    }
+
+    public Entity SetPropString(char[] name, char[] value, any type = Prop_Send) {
+        SetEntPropString(this.id, type, name, value);
+        return this;
+    }
+
+    public int GetProp(char[] name, any type = Prop_Send, int element = 0) {
+        return GetEntProp(this.id, type, name, _, element);
+    }
+
+    public float GetPropFloat(char[] name, any type = Prop_Send) {
+        return GetEntPropFloat(this.id, type, name);
+    }
+
+    public int GetPropString(char[] name, char[] value, int max_size, any type = Prop_Send) {
+        return GetEntPropString(this.id, type, name, value, max_size);
+    }
+
+    public Entity GetPropEnt(char[] name, any type = Prop_Send, int element = 0) {
+        return new Entity(GetEntPropEnt(this.id, type, name, element));
+    }
+
+    public void SetModel(char[] modelName) { SetEntityModel(this.id, modelName); }
+
+    public void GetModel(char[] modelName, int max_size) { this.GetPropString("m_ModelName", modelName, max_size, Prop_Data); }
+
+    public void SetModelById(char[] modelid) {
+        this.mdlmeta = gamemode.meta.GetModel(modelid);
+
+        char path[128];
+        this.mdlmeta.Path(path, sizeof(path));
+        SetEntityModel(this.id, path);
+
+        int len = this.mdlmeta.bg.Length;
+
+        ArrayList list = new ArrayList();
+        for (int i=0; i < len; i++)
+            list.Push(0);
+        this.bglist = list;
+    }
+
+    public void SetBodyGroup(char[] name, int idx) {
+        char plymdl[128];
+        this.GetModel(plymdl, sizeof(plymdl));
+
+        this.bglist.Set(this.mdlmeta.GetBgId(name), this.mdlmeta.GetBgIdx(name, idx));
+
+        int bgmath = 0;
+        for (int i=0; i < this.bglist.Length; i++)
+            bgmath += this.bglist.Get(i);
+
+        this.SetProp("m_nBody", bgmath);
+    }
+
+    public void SetSkin(int skin) { this.SetProp("m_nSkin", skin); }
+
     public void TimerSimple(int delay, char[] funcname, any args = false) {
         char timername[64], pname[64];
         GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
@@ -121,37 +191,6 @@ methodmap Entity < Base {
         return this;
     }
 
-    public Entity SetProp(char[] name, any value, any type = Prop_Send, int element = 0) {
-        SetEntProp(this.id, type, name, value, _, element);
-        return this;
-    }
-
-    public Entity SetPropFloat(char[] name, any value, any type = Prop_Send) {
-        SetEntPropFloat(this.id, type, name, float(value));
-        return this;
-    }
-
-    public Entity SetPropString(char[] name, char[] value, any type = Prop_Send) {
-        SetEntPropString(this.id, type, name, value);
-        return this;
-    }
-
-    public int GetProp(char[] name, any type = Prop_Send, int element = 0) {
-        return GetEntProp(this.id, type, name, _, element);
-    }
-
-    public float GetPropFloat(char[] name, any type = Prop_Send) {
-        return GetEntPropFloat(this.id, type, name);
-    }
-
-    public int GetPropString(char[] name, char[] value, int max_size, any type = Prop_Send) {
-        return GetEntPropString(this.id, type, name, value, max_size);
-    }
-
-    public Entity GetPropEnt(char[] name, any type = Prop_Send, int element = 0) {
-        return new Entity(GetEntPropEnt(this.id, type, name, element));
-    }
-
     public Entity Spawn() {
         DispatchSpawn(this.id);
         return this;
@@ -162,6 +201,7 @@ methodmap Entity < Base {
     }
 
     public void Dispose() {
+        delete this.bglist;
         delete this;
     }
 

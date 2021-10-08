@@ -86,6 +86,7 @@ public any NativeClients_Remove(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
     ArrayList ents = Ents.list;
     int idx = ents.FindValue(id, 0);
+    view_as<Client>(ents.Get(idx, 1)).Dispose();
     ents.Erase(idx);
 }
 
