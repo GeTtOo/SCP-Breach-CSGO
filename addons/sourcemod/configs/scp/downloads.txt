@@ -207,6 +207,9 @@ materials/models/eternity/players/mog/atcgasmask.vtf
 materials/models/eternity/players/mog/atcgasmask_n.vtf
 materials/models/eternity/players/mog/beret_green.vmt
 materials/models/eternity/players/mog/beret_green.vtf
+materials/models/eternity/players/mog/belt02.vmt
+materials/models/eternity/players/mog/belt02.vtf
+materials/models/eternity/players/mog/belt02_ref.vtf
 materials/models/eternity/players/mog/botas.vmt
 materials/models/eternity/players/mog/botas.vtf
 materials/models/eternity/players/mog/botas_exp.vtf
