@@ -89,7 +89,7 @@ methodmap AdminAction < Base
 
     public void PlayerTeleport()
     {
-        if(this.target && IsPlayerAlive(this.target.id) && !IsCleintInSpec(this.target.id))
+        if(this.target && IsPlayerAlive(this.target.id) && !IsClientInSpec(this.target.id))
         {
             Handle hTrace;
             float eyePos[3], angPos[3], targetPos[3];
@@ -278,7 +278,7 @@ public int MenuHandler_ScpAdminMenuTarget(Menu hMenu, MenuAction action, int cli
                 }*/
                 case MOVE_TO_ADMIN_ZONE:
                 {
-                    if(AdminMenu.Get(client).target && IsPlayerAlive(target) && !IsCleintInSpec(target))
+                    if(AdminMenu.Get(client).target && IsPlayerAlive(target) && !IsClientInSpec(target))
                     {
                         AdminMenu.Get(client).target.SetPos(gamemode.config.AdminRoom);
                     }
@@ -303,25 +303,20 @@ public bool GetLookPos_Filter(int entity, int contentsMask, any data)
 
 void RenderTeamMenu(int client)
 {
-    int teamKeylen;
     char buffer[64];
     
     Menu hMenu = new Menu(MenuHandler_GetTeams);
     FormatEx(buffer, sizeof(buffer), "%T", "Select team", client);
     hMenu.SetTitle(buffer);
 
-    StringMapSnapshot teamSnap = gamemode.GetTeamNames();
+    ArrayList teams = gamemode.GetTeamList(false);
 
-    for(int i = 0; i < teamSnap.Length; i++)
+    for(int i = 0; i < teams.Length; i++)
     {
-        teamKeylen = teamSnap.KeyBufferSize(i);
-        char[] teamName = new char[teamKeylen];
-        teamSnap.GetKey(i, teamName, teamKeylen);
+        char teamname[32];
+        teams.GetString(i, teamname, sizeof(teamname));
 
-        if(json_is_meta_key(teamName))
-            continue;
-
-        hMenu.AddItem(teamName, teamName, ITEMDRAW_DEFAULT);
+        hMenu.AddItem(teamname, teamname, ITEMDRAW_DEFAULT);
     }
 
     hMenu.Display(client, 30);
@@ -329,25 +324,20 @@ void RenderTeamMenu(int client)
 
 void RenderClassMenu(int client, char[] teamName)
 {
-    int classKeylen;
     char buffer[64];
     
     Menu hMenu = new Menu(MenuHandler_GetClass);
     FormatEx(buffer, sizeof(buffer), "%T", "Select class", client);
     hMenu.SetTitle(buffer);
 
-    StringMapSnapshot classSnap = gamemode.team(teamName).GetClassNames();
+    ArrayList classes = gamemode.team(teamName).GetClassList(false);
 
-    for(int x = 0; x < classSnap.Length; x++)
+    for(int x = 0; x < classes.Length; x++)
     {
-        classKeylen = classSnap.KeyBufferSize(x);
-        char[] className = new char[classKeylen];
-        classSnap.GetKey(x, className, classKeylen);
+        char classname[32];
+        classes.GetString(x, classname, sizeof(classname));
 
-        if(json_is_meta_key(className))
-            continue;
-
-        hMenu.AddItem(teamName, className, ITEMDRAW_DEFAULT);
+        hMenu.AddItem(teamName, classname, ITEMDRAW_DEFAULT);
     }
 
     hMenu.Display(client, 30);
@@ -361,7 +351,7 @@ public int MenuHandler_GetTeams(Menu hMenu, MenuAction action, int client, int i
     }
     else if (action == MenuAction_Select)
     {
-        if(AdminMenu.Get(client).target && !IsCleintInSpec(AdminMenu.Get(client).target.id))
+        if(AdminMenu.Get(client).target && !IsClientInSpec(AdminMenu.Get(client).target.id))
         {
             char team[32];
             hMenu.GetItem(item, team, sizeof(team));
@@ -379,7 +369,7 @@ public int MenuHandler_GetClass(Menu hMenu, MenuAction action, int client, int i
     }
     else if (action == MenuAction_Select)
     {
-        if(AdminMenu.Get(client).target && !IsCleintInSpec(AdminMenu.Get(client).target.id))
+        if(AdminMenu.Get(client).target && !IsClientInSpec(AdminMenu.Get(client).target.id))
         {
             char team[32], class[32];
             hMenu.GetItem(item, team, sizeof(team), _, class, sizeof(class));
@@ -430,7 +420,7 @@ public int MenuHandler_GetTeleportPoint(Menu hMenu, MenuAction action, int clien
     }
     else if (action == MenuAction_Select)
     {
-        if(AdminMenu.Get(client).target && !IsCleintInSpec(AdminMenu.Get(client).target.id))
+        if(AdminMenu.Get(client).target && !IsClientInSpec(AdminMenu.Get(client).target.id))
         {
             char tpname[32];
             hMenu.GetItem(item, tpname, sizeof(tpname));
@@ -444,25 +434,20 @@ public int MenuHandler_GetTeleportPoint(Menu hMenu, MenuAction action, int clien
 
 void RenderReinforceMenu(int client)
 {
-    int teamKeylen;
     char buffer[64];
     
     Menu hMenu = new Menu(MenuHandler_Reinforce);
     FormatEx(buffer, sizeof(buffer), "%T", "Select team", client);
     hMenu.SetTitle(buffer);
 
-    StringMapSnapshot teamSnap = gamemode.GetTeamNames();
+    ArrayList teams = gamemode.GetTeamList(false);
 
-    for(int i = 0; i < teamSnap.Length; i++)
+    for(int i = 0; i < teams.Length; i++)
     {
-        teamKeylen = teamSnap.KeyBufferSize(i);
-        char[] teamName = new char[teamKeylen];
-        teamSnap.GetKey(i, teamName, teamKeylen);
+        char teamname[32];
+        teams.GetString(i, teamname, sizeof(teamname));
 
-        if(json_is_meta_key(teamName))
-            continue;
-
-        hMenu.AddItem(teamName, teamName, ITEMDRAW_DEFAULT);
+        hMenu.AddItem(teamname, teamname, ITEMDRAW_DEFAULT);
     }
 
     hMenu.Display(client, 30);
@@ -476,7 +461,7 @@ public int MenuHandler_Reinforce(Menu hMenu, MenuAction action, int client, int 
     }
     else if (action == MenuAction_Select)
     {
-        if(AdminMenu.Get(client).target && !IsCleintInSpec(AdminMenu.Get(client).target.id))
+        if(AdminMenu.Get(client).target && !IsClientInSpec(AdminMenu.Get(client).target.id))
         {
             char team[32];
             hMenu.GetItem(item, team, sizeof(team));

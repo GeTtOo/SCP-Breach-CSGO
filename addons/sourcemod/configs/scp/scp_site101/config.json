@@ -65,5 +65,8 @@
             "multi":true,
             "inpvs":true
         }
+    },
+    "457": {
+        "ignitetime":10
     }
 }

@@ -27,11 +27,15 @@ methodmap Class < JSON_OBJECT {
     }
 
     property int percent {
-        public get() { return this.GetInt("percent"); }
+        public get() { return this.GetInt("percent", 0); }
     }
 
     property bool priority {
         public get() { return this.GetBool("priority", false); }
+    }
+
+    property bool autospawn {
+        public get() { return this.GetBool("autospawn", true); }
     }
 
     property int health {

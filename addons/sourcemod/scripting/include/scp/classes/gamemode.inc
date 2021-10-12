@@ -22,6 +22,10 @@ methodmap GTeam < JSON_OBJECT {
         public get() { return this.GetBool("priority"); }
     }
 
+    property bool randompick {
+        public get() { return this.GetBool("randompick"); }
+    }
+
     property Classes classes {
         public get() { return view_as<Classes>(this.GetObject("classes")); }
     }
@@ -32,6 +36,42 @@ methodmap GTeam < JSON_OBJECT {
 
     public StringMapSnapshot GetClassNames() {
         return this.GetObject("classes").Snapshot();
+    }
+
+    public ArrayList GetClassList(bool filter = true) {
+        ArrayList list = new ArrayList(32);
+        StringMapSnapshot snap = this.GetClassNames();
+        int keylength;
+        for (int i=0; i < snap.Length; i++) {
+            keylength = snap.KeyBufferSize(i);
+            char[] className = new char[keylength];
+            snap.GetKey(i, className, keylength);
+            if (json_is_meta_key(className)) continue;
+            if (filter && (this.class(className).percent == 0 || !this.class(className).autospawn)) continue;
+            list.PushString(className);
+        }
+        delete snap;
+        return list;
+    }
+    
+    public Class GetClassById(int id) {
+        ArrayList list = this.GetClassList();
+
+        char className[32];
+        list.GetString(id / 2, className, sizeof(className));
+        delete list;
+
+        return this.class(className);
+    }
+
+    public Class GetRandomClass() {
+        ArrayList list = this.GetClassList();
+
+        char className[32];
+        list.GetString(GetRandomInt(0, list.Length - 1), className, sizeof(className));
+        delete list;
+
+        return this.class(className);
     }
 }
 
@@ -48,7 +88,7 @@ methodmap Teams < JSON_OBJECT {
     public GTeam get(char[] name) { return view_as<GTeam>(this.GetObject(name)); }
 }
 
-methodmap GameMode < JSON_OBJECT {
+methodmap GameMode < Base {
     
     public GameMode(char[] mapname) {
         GameMode self = view_as<GameMode>(new JSON_OBJECT());
@@ -82,16 +122,14 @@ methodmap GameMode < JSON_OBJECT {
     property Logger log {
         public native get();
     }
+
+    public native ArrayList GetTeamList(bool filter = true);
     
     property int lang {
         public get() { return GetServerLanguage(); }
     }
 
     public native GTeam team(char[] name);
-
-    public StringMapSnapshot GetTeamNames() {
-        return this.GetObject("Teams").Snapshot();
-    }
 }
 
 public JSON_OBJECT ReadConfig(char[] mapname, char[] filename) {

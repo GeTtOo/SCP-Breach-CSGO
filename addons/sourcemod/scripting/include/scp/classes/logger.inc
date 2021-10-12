@@ -69,4 +69,12 @@ methodmap Logger < Base
         VFormat(text, len, format, 3);
         this.SendMessage(0, text);
     }
+
+    public void Warning(const char[] format, any ...)
+    {
+        int len = strlen(format) + 255;
+        char[] text = new char[len];
+        VFormat(text, len, format, 3);
+        this.SendMessage(1, text);
+    }
 }

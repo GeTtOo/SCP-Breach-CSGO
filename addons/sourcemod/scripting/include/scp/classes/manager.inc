@@ -178,7 +178,7 @@ methodmap Manager < Base {
         CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TargetBombed, false);
     }
 
-    public void GameCheck(Client ply) {
+    public void GameCheck() {
         if (!this.RoundLock)
         {
             if(Clients.Alive() == 0 && Clients.InGame() != 0)
@@ -187,15 +187,9 @@ methodmap Manager < Base {
             }
             else if(Clients.Alive() != 0)
             {
-                if (ply != null)
-                {
-                    char team[32];
-                    ply.Team(team, sizeof(team));
-                    
-                    char winTeam[32];
-                    if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
-                        this.EndGame(winTeam);
-                }
+                char winTeam[32];
+                if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
+                    this.EndGame(winTeam);
             }
             else if (Clients.InGame() != 0)
             {

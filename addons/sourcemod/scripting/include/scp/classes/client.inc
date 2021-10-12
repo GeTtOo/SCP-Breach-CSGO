@@ -17,7 +17,7 @@ methodmap Client < Entity {
         Client client = view_as<Client>(new Entity(id));
         client.SetValue("active", false);
         client.SetValue("haveсlass", false);
-        client.SetValue("inventory", new Inventory());
+        client.SetValue("inventory", new Inventory(client));
         client.SetValue("progress", new ProgressBar(client));
 
         return client;
@@ -106,6 +106,8 @@ methodmap Client < Entity {
     public bool GetName(char[] buffer, int max_size = 0) { return GetClientName(this.id, buffer, max_size); }
 
     public bool IsAlive() { return IsPlayerAlive(this.id); }
+
+    public bool InGame() { return IsClientInGame(this.id); }
 
     public Vector EyePos() { float vecarr[3]; GetClientEyePosition(this.id, vecarr); return new Vector(vecarr[0], vecarr[1], vecarr[2]); }
 
@@ -312,7 +314,7 @@ methodmap Client < Entity {
         if (this.class.HasKey("model")) {
             if (view_as<int>(this.class.GetKeyType("model")) == 0)
             {
-                char modelName[32];
+                char modelName[256];
                 this.class.Model(modelName, sizeof(modelName));
                 this.SetModel(modelName);
             }
@@ -343,7 +345,7 @@ methodmap Client < Entity {
                             if (view_as<int>(pgi.GetKeyType(name)) == 1)
                                 this.SetBodyGroup(name, pgi.GetInt(name));
                             else
-                                this.SetBodyGroup(name, GetRandomInt(pgi.GetArray(name).GetInt(0), pgi.GetArray(name).GetInt(1)));
+                                this.SetBodyGroup(name, pgi.GetArray(name).GetInt(GetRandomInt(0, pgi.GetArray(name).Length - 1)));
                         }
                     }
 

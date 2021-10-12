@@ -22,10 +22,15 @@ methodmap InvItem < Entity {
 
 methodmap Inventory < Base {
 
-    public Inventory() {
+    public Inventory(Base ply) {
         Inventory inv = view_as<Inventory>(new Base());
+        inv.SetValue("ply", ply);
         inv.CreateArrayList("inventory");
         return inv;
+    }
+
+    property Base ply {
+        public get() { Base val; return this.GetValue("ply", val) ? val : null; }
     }
 
     property ArrayList items {
@@ -82,6 +87,10 @@ methodmap Inventory < Base {
                 inv.Push(ent);
 
                 return true;
+            }
+            else
+            {
+                gamemode.log.Warning("Can't give item: %s to the player id: %i. (Not registered in entities list)", entclass, this.ply.GetInt("id"));
             }
         }
         

@@ -12,6 +12,7 @@
 #include "scp/structures/json"
 #include "scp/classes/meta"
 #include "scp/classes/gamemode"
+#include "scp/classes/logger"
 
 GameMode gamemode;
 
@@ -28,7 +29,6 @@ WorldTextSingleton WT;
 
 #include "scp/classes/manager"
 #include "scp/classes/nuke"
-#include "scp/classes/logger"
 
 forward void SCP_OnPlayerJoin(Client &ply);
 
@@ -40,7 +40,7 @@ forward void SCP_OnPlayerReset(Client &ply);
 
 forward void SCP_OnPlayerClear(Client &ply);
 
-forward Action SCP_OnTakeDamage(Client vic, Client atk, float &damage, int &damagetype);
+forward Action SCP_OnTakeDamage(Client &vic, Client &atk, float &damage, int &damagetype);
 
 forward void SCP_OnPlayerDeath(Client &vic, Client &atk);
 
@@ -52,26 +52,43 @@ forward void SCP_OnRoundEnd();
 
 forward void SCP_OnInput(Client &ply, int buttons);
 
-forward void SCP_OnPRessF(Client &ply);
+forward void SCP_OnCallActionMenu(Client &ply);
 
 forward void SCP_RegisterMetaData();
 
-public any NativeGameMode_Config(Handle Plugin, int numArgs) { return view_as<Config>(gamemode.GetObject("Config")); }
+public any NativeGameMode_Config(Handle Plugin, int numArgs) { return view_as<Config>(view_as<JSON_OBJECT>(gamemode).GetObject("Config")); }
 
-public any NativeGameMode_Meta(Handle Plugin, int numArgs) { return view_as<Meta>(gamemode.GetObject("Meta")); }
+public any NativeGameMode_Meta(Handle Plugin, int numArgs) { return view_as<Meta>(view_as<JSON_OBJECT>(gamemode).GetObject("Meta")); }
 
-public any NativeGameMode_Manager(Handle Plugin, int numArgs) { return view_as<Manager>(gamemode.GetObject("Manager")); }
+public any NativeGameMode_Manager(Handle Plugin, int numArgs) { return view_as<Manager>(view_as<JSON_OBJECT>(gamemode).GetObject("Manager")); }
 
-public any NativeGameMode_Nuke(Handle Plugin, int numArgs) { return view_as<NuclearWarhead>(gamemode.GetObject("Nuke")); }
+public any NativeGameMode_Nuke(Handle Plugin, int numArgs) { return view_as<NuclearWarhead>(view_as<JSON_OBJECT>(gamemode).GetObject("Nuke")); }
 
-public any NativeGameMode_Timers(Handle Plugin, int numArgs) { return view_as<Timers>(gamemode.GetObject("Timers")); }
+public any NativeGameMode_Timers(Handle Plugin, int numArgs) { return view_as<Timers>(view_as<JSON_OBJECT>(gamemode).GetObject("Timers")); }
 
-public any NativeGameMode_Logger(Handle Plugin, int numArgs) { return view_as<Logger>(gamemode.GetObject("Logger")); }
+public any NativeGameMode_Logger(Handle Plugin, int numArgs) { return view_as<Logger>(view_as<JSON_OBJECT>(gamemode).GetObject("Logger")); }
+
+public any NativeGameMode_TeamList(Handle Plugin, int numArgs) {
+    bool filter = GetNativeCell(2);
+    ArrayList list = new ArrayList(32);
+    StringMapSnapshot snap = view_as<JSON_OBJECT>(gamemode).GetObject("Teams").Snapshot();
+    int keylength;
+    for (int i=0; i < snap.Length; i++) {
+        keylength = snap.KeyBufferSize(i);
+        char[] teamName = new char[keylength];
+        snap.GetKey(i, teamName, keylength);
+        if (json_is_meta_key(teamName)) continue;
+        if (filter && gamemode.team(teamName).percent == 0) continue;
+        list.PushString(teamName);
+    }
+    delete snap;
+    return list;
+}
 
 public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
     char name[32];
     GetNativeString(2, name, sizeof(name));
-    return view_as<Teams>(gamemode.GetObject("Teams")).get(name);
+    return view_as<Teams>(view_as<JSON_OBJECT>(gamemode).GetObject("Teams")).get(name);
 }
 
 public any NativeClients_Add(Handle Plugin, int numArgs) {

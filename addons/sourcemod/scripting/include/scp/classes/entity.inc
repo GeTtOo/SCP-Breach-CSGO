@@ -46,6 +46,11 @@ methodmap Entity < Base {
         return HasEntProp(this.id, type, name);
     }
 
+    public Entity SetKV(char[] name, char[] value) {
+        DispatchKeyValue(this.id, name, value);
+        return this;
+    }
+
     public Entity SetProp(char[] name, any value, any type = Prop_Send, int element = 0) {
         SetEntProp(this.id, type, name, value, _, element);
         return this;
@@ -77,6 +82,11 @@ methodmap Entity < Base {
         return new Entity(GetEntPropEnt(this.id, type, name, element));
     }
 
+    public Entity Input(char[] input, Entity activator = null, Entity caller = null) {
+        AcceptEntityInput(this.id, input, (activator) ? activator.id : -1, (caller) ? caller.id : -1);
+        return this;
+    }
+
     public void SetModel(char[] modelName) { SetEntityModel(this.id, modelName); }
 
     public void GetModel(char[] modelName, int max_size) { this.GetPropString("m_ModelName", modelName, max_size, Prop_Data); }
@@ -84,7 +94,7 @@ methodmap Entity < Base {
     public void SetModelById(char[] modelid) {
         this.mdlmeta = gamemode.meta.GetModel(modelid);
 
-        char path[128];
+        char path[256];
         this.mdlmeta.Path(path, sizeof(path));
         SetEntityModel(this.id, path);
 
@@ -111,6 +121,8 @@ methodmap Entity < Base {
 
     public void SetSkin(int skin) { this.SetProp("m_nSkin", skin); }
 
+    public void SetRenderMode(RenderMode mode) { SetEntityRenderMode(this.id, mode); }
+
     public void TimerSimple(int delay, char[] funcname, any args = false) {
         char timername[64], pname[64];
         GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
@@ -119,31 +131,43 @@ methodmap Entity < Base {
     }
 
     public Entity Create(char[] entclass = "prop_physics_override") {
-        int id = CreateEntityByName(entclass);
-        char modelName[128], mass[12], name[32], bodygroup[12], skin[12];
-        this.meta.model(modelName, sizeof(modelName));
-        this.meta.name(name, sizeof(name));
-        FloatToString(this.meta.mass, mass, sizeof(mass));
-        IntToString(this.meta.bodygroup, bodygroup, sizeof(bodygroup));
-        IntToString(this.meta.skin, skin, sizeof(skin));
 
-        DispatchKeyValue(id, "model", modelName);
-        DispatchKeyValue(id, "physicsmode", "2");
-        DispatchKeyValue(id, "massScale", mass);
-        DispatchKeyValue(id, "Solid", "6");
-        DispatchKeyValue(id, "body", bodygroup);
-        DispatchKeyValue(id, "skin", skin);
-        if (this.meta.spawnflags != 0) {
-            char flags[8];
-            IntToString(this.meta.spawnflags, flags, sizeof(flags));
-            DispatchKeyValue(id, "spawnflags", flags);
+        this.id = CreateEntityByName(entclass);
+
+        if (this.id == -1)
+        {
+            gamemode.log.Warning("Can't create a %s entity. (Invalid classname)", entclass);
+            return this;
         }
-        if (this.meta.usable) {
-            char funcname[32];
-            this.meta.GetString("function", funcname, sizeof(funcname));
+
+        if (this.meta == null && this.id == 5000)
+            gamemode.log.Warning("Can't find a %s entity metadata.", entclass);
+
+        if (this.meta)
+        {
+            char modelName[128], mass[12], name[32], bodygroup[12], skin[12];
+            this.meta.model(modelName, sizeof(modelName));
+            this.meta.name(name, sizeof(name));
+            FloatToString(this.meta.mass, mass, sizeof(mass));
+            IntToString(this.meta.bodygroup, bodygroup, sizeof(bodygroup));
+            IntToString(this.meta.skin, skin, sizeof(skin));
+
+            this.SetKV("model", modelName);
+            this.SetKV("physicsmode", "2");
+            this.SetKV("massScale", mass);
+            this.SetKV("Solid", "6");
+            this.SetKV("body", bodygroup);
+            this.SetKV("skin", skin);
+            if (this.meta.spawnflags != 0) {
+                char flags[8];
+                IntToString(this.meta.spawnflags, flags, sizeof(flags));
+                this.SetKV("spawnflags", flags);
+            }
+            if (this.meta.usable) {
+                char funcname[32];
+                this.meta.GetString("function", funcname, sizeof(funcname));
+            }
         }
-        
-        this.id = id;
 
         return this;
     }
@@ -167,7 +191,8 @@ methodmap Entity < Base {
         else
         {
             DispatchKeyValueVector(this.id, "origin", vectorArr);
-            DispatchKeyValueVector(this.id, "angles", angleArr);
+            if (ang != null)
+                DispatchKeyValueVector(this.id, "angles", angleArr);
         }
 
         delete vec;
@@ -200,8 +225,9 @@ methodmap Entity < Base {
         return this;
     }
 
-    public Entity Input(char[] input, Entity activator = null, Entity caller = null) {
-        AcceptEntityInput(this.id, input, (activator) ? activator.id : -1, (caller) ? caller.id : -1);
+    public Entity Activate() {
+        ActivateEntity(this.id);
+        return this;
     }
 
     public void Dispose() {
