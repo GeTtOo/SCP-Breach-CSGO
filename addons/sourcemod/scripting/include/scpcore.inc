@@ -141,12 +141,12 @@ public any NativeClients_GetRandom(Handle Plugin, int numArgs) {
             sortedPlayers.Push(players.Get(i));
     }
 
-    return sortedPlayers.Get(GetRandomInt(0, sortedPlayers.Length-1));
+    return sortedPlayers.Get(GetRandomInt(0, sortedPlayers.Length - 1));
 }
 
 public any NativeClients_InGame(Handle Plugin, int numArgs) {
     int client = 1;
-    while (IsClientInGame(client) && GetClientTeam(client) > 1)
+    while (IsClientInGame(client) && GetClientTeam(client) >= 2)
         client++;
     client--;
     return client;
@@ -155,7 +155,7 @@ public any NativeClients_InGame(Handle Plugin, int numArgs) {
 public any NativeClients_Alive(Handle Plugin, int numArgs) {
     int client = 1;
     int clientAlive = 1;
-    while (IsClientInGame(client) && GetClientTeam(client) > 1) {
+    while (IsClientInGame(client) && GetClientTeam(client) >= 2) {
         if (IsPlayerAlive(client))
             clientAlive++;
         client++;
@@ -183,7 +183,7 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
     }
 
     entity.spawned = false;
-    entity.SetString("class", EntName);
+    entity.SetClass(EntName);
     
     if (view_as<bool>(GetNativeCell(3)))
     {

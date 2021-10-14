@@ -15,17 +15,11 @@ methodmap Client < Entity {
 
     public Client(int id) {
         Client client = view_as<Client>(new Entity(id));
-        client.SetValue("active", false);
-        client.SetValue("haveсlass", false);
+        client.SetBool("spawned", false);
         client.SetValue("inventory", new Inventory(client));
         client.SetValue("progress", new ProgressBar(client));
 
         return client;
-    }
-
-    property bool active {
-        public set(bool value) { this.SetBool("active", value); }
-        public get() { return this.GetBool("active"); }
     }
 
     property int lang {
@@ -52,11 +46,6 @@ methodmap Client < Entity {
         public get() { return GetEntPropFloat(this.id, Prop_Send, "m_flLaggedMovementValue"); }
     }
 
-    property bool haveclass {
-        public set(bool value) { this.SetBool("haveсlass", value); }
-        public get() { return this.GetBool("haveсlass", false); }
-    }
-
     property Class class {
         public set(Class val) { this.SetValue("class", val); }
         public get() { Class val; return this.GetValue("class", val) ? val : null; }
@@ -74,11 +63,6 @@ methodmap Client < Entity {
     property bool FirstSpawn {
         public set(bool val) { this.SetBool("firstspawn", val); }
         public get() { return this.GetBool("firstspawn", true); }
-    }
-
-    property bool spawned {
-        public set(bool val) { this.SetBool("spawned", val); }
-        public get() { return this.GetBool("spawned", false); }
     }
 
     property Entity ragdoll {

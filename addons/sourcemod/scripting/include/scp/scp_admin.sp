@@ -142,7 +142,7 @@ methodmap AdminMenuSingleton < Base
 
 AdminMenuSingleton AdminMenu;
 
-void DisplayAdminMenu(int client)
+public void DisplayAdminMenu(int client)
 {
     if(IsClientExist(client))
     {
@@ -220,7 +220,7 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
     }
 }
 
-void DisplayTargetMenu(int client)
+public void DisplayTargetMenu(int client)
 {
     char buffer[64];
     Menu hMenu = new Menu(MenuHandler_ScpAdminMenuTarget);
@@ -285,7 +285,7 @@ public int MenuHandler_ScpAdminMenuTarget(Menu hMenu, MenuAction action, int cli
                 }
                 case GIVE_PLAYER_ITEM:
                 {
-                    PrintToChat(client, "┬─┬ ノ( ゜-゜ノ)");
+                    RenderGiveMenu(client);
                 }
                 default:
                 {
@@ -301,7 +301,7 @@ public bool GetLookPos_Filter(int entity, int contentsMask, any data)
     return data != entity;
 }
 
-void RenderTeamMenu(int client)
+public void RenderTeamMenu(int client)
 {
     char buffer[64];
     
@@ -322,7 +322,7 @@ void RenderTeamMenu(int client)
     hMenu.Display(client, 30);
 }
 
-void RenderClassMenu(int client, char[] teamName)
+public void RenderClassMenu(int client, char[] teamName)
 {
     char buffer[64];
     
@@ -384,7 +384,7 @@ public int MenuHandler_GetClass(Menu hMenu, MenuAction action, int client, int i
     }
 }
 
-void RenderTeleportMenu(int client)
+public void RenderTeleportMenu(int client)
 {
     int Keylen;
     char buffer[64];
@@ -432,7 +432,7 @@ public int MenuHandler_GetTeleportPoint(Menu hMenu, MenuAction action, int clien
     }
 }
 
-void RenderReinforceMenu(int client)
+public void RenderReinforceMenu(int client)
 {
     char buffer[64];
     
@@ -467,6 +467,46 @@ public int MenuHandler_Reinforce(Menu hMenu, MenuAction action, int client, int 
             hMenu.GetItem(item, team, sizeof(team));
 
             gamemode.mngr.CombatReinforcement(team);
+        }
+    }
+}
+
+public void RenderGiveMenu(int client)
+{
+    char buffer[64];
+    
+    Menu hMenu = new Menu(MenuHandler_GiveMenu);
+    FormatEx(buffer, sizeof(buffer), "%T", "Give Item", client);
+    hMenu.SetTitle(buffer);
+
+    ArrayList entlist = gamemode.meta.GetList("entities").GetKeys();
+
+    for(int i = 0; i < entlist.Length; i++)
+    {
+        char entclass[32], entname[128];
+        entlist.GetString(i, entclass, sizeof(entclass));
+        FormatEx(entname, sizeof(entname), "%T", entclass, client);
+
+        hMenu.AddItem(entclass, entname, ITEMDRAW_DEFAULT);
+    }
+
+    hMenu.Display(client, 30);
+}
+
+public int MenuHandler_GiveMenu(Menu hMenu, MenuAction action, int client, int item)
+{
+    if (action == MenuAction_End)
+    {
+        delete hMenu;
+    }
+    else if (action == MenuAction_Select)
+    {
+        if(AdminMenu.Get(client).target && !IsClientInSpec(AdminMenu.Get(client).target.id))
+        {
+            char itemclass[32];
+            hMenu.GetItem(item, itemclass, sizeof(itemclass));
+
+            AdminMenu.Get(client).target.inv.Add(itemclass);
         }
     }
 }

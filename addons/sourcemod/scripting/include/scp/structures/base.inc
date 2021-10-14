@@ -4,6 +4,24 @@ methodmap List < StringMap {
 
     public bool Set(char[] idx, any value) { return this.SetValue(idx, value); }
     public any Get(char[] idx) { any value; return this.GetValue(idx, value) ? value : false; }
+
+    public ArrayList GetKeys() {
+        ArrayList list = new ArrayList(32);
+        StringMapSnapshot snap = this.Snapshot();
+
+        int keylength;
+        for (int i=0; i < snap.Length; i++) {
+            keylength = snap.KeyBufferSize(i);
+            char[] keyname = new char[keylength];
+            snap.GetKey(i, keyname, keylength);
+            if (json_is_meta_key(keyname)) continue;
+            
+            list.PushString(keyname);
+        }
+
+        delete snap;
+        return list;
+    }
 }
 
 methodmap Base < StringMap {

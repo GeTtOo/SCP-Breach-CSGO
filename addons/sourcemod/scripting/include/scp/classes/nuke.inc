@@ -235,4 +235,6 @@ public void NukeExplode() {
     gamemode.timer.Remove("SCP_ALPHA_WARHEAD_COUNTDOWN");
 
     gamemode.nuke.Update("Site destroyed", 8);
+
+    gamemode.mngr.EndGame("nuke");
 }

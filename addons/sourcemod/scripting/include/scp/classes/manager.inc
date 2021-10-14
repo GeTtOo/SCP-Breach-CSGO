@@ -181,19 +181,16 @@ methodmap Manager < Base {
     public void GameCheck() {
         if (!this.RoundLock)
         {
-            if(Clients.Alive() == 0 && Clients.InGame() != 0)
-            {
-                this.EndGame("nuke");
-            }
-            else if(Clients.Alive() != 0)
+            if(Clients.Alive() != 0 && Clients.InGame() != 0)
             {
                 char winTeam[32];
                 if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
                     this.EndGame(winTeam);
             }
-            else if (Clients.InGame() != 0)
+            else if (Clients.InGame() == 0)
             {
-                this.EndGame("nobody");
+                //ServerCommand("mp_restartgame 1");
+                //ServerCommand("mp_warmup_start");
             }
         }
     }
@@ -234,7 +231,6 @@ methodmap Manager < Base {
                 deadPlayers.Erase(id);
                 player.Team(teamName);
                 player.class = class;
-                player.haveclass = true;
                 
                 player.UpdateClass();
             }

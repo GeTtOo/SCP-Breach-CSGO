@@ -137,6 +137,11 @@
         "en"        "Select a point"
         "ru"        "Выберите точку:"
     }
+    "Give Item"
+    {
+        "en"        "Give item"
+        "ru"        "Выберите предмет"
+    }
     "Inventory"
     {
         "en"        "Inventory"

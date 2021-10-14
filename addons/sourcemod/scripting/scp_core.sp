@@ -91,7 +91,6 @@ public void OnPluginStart()
 
     RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_CUSTOM1);
     
-    HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_prestart", OnRoundPreStart);
     HookEvent("player_death", Event_PlayerDeath, EventHookMode_Pre);
@@ -191,6 +190,7 @@ public void OnClientPostAdminCheck(int id)
     }
 
     SDKHook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
+    SDKHook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
     SDKHook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
 
@@ -198,8 +198,11 @@ public void OnClientPostAdminCheck(int id)
     Call_PushCellRef(ply);
     Call_Finish();
 
-    if (!ply.active && !IsFakeClient(ply.id))
+    if (!IsFakeClient(ply.id))
         ply.SetPropFloat("m_fForceTeam", 0.0);
+
+    if (!IsFakeClient(ply.id))
+        SendConVarValue(ply.id, FindConVar("game_type"), "6");
 }
 
 public void OnClientDisconnect_Post(int id)
@@ -215,6 +218,11 @@ public void OnClientDisconnect_Post(int id)
     FormatEx(timername, sizeof(timername), "entid-%i", ply.id);
     gamemode.timer.RemoveIsContains(timername);
 
+    SDKUnhook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
+    SDKUnhook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
+    SDKUnhook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
+    SDKUnhook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
+
     Call_StartForward(OnClientClearForward);
     Call_PushCellRef(ply);
     Call_Finish();
@@ -223,20 +231,26 @@ public void OnClientDisconnect_Post(int id)
     Call_PushCellRef(ply);
     Call_Finish();
 
+    Entity ragdoll = ply.ragdoll;
+    if (ragdoll)
+        ragdoll.Remove();
+
     Clients.Remove(id);
 }
 
-public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
+public Action OnPlayerSpawn(int client)
 {
-    if (gamemode.mngr.IsWarmup) return Plugin_Stop;
+    if (!gamemode.mngr.IsWarmup)
+    {
+        Client ply = Clients.Get(client);
 
-    Client ply = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
+        if (IsClientExist(ply.id) && GetClientTeam(ply.id) > 1) {
+            gamemode.timer.Simple(1, "Timer_PlayerSpawn", ply);
+            if (ply.FirstSpawn)
+                ply.FirstSpawn = false;
+        }
 
-    if (IsClientExist(ply.id) && GetClientTeam(ply.id) > 1 && !ply.active) {
-        if (ply.FirstSpawn)
-            ply.FirstSpawn = false;
-        ply.active = true;
-        gamemode.timer.Simple(1, "Timer_PlayerSpawn", ply);
+        if (ply.spawned) return Plugin_Handled;
     }
 
     return Plugin_Continue;
@@ -244,7 +258,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 
 public void Timer_PlayerSpawn(Client ply)
 {
-    if(ply.spawned && IsClientExist(ply.id) && ply != null && ply.class != null)
+    if(IsClientExist(ply.id) && ply != null && ply.class != null)
     {
         if (ply.ragdoll)
         {
@@ -264,9 +278,6 @@ public void Timer_PlayerSpawn(Client ply)
 
         ply.Setup();
 
-        if (!IsFakeClient(ply.id))
-            SendConVarValue(ply.id, FindConVar("game_type"), "6");
-
         if (ply.class.HasKey("overlay"))
         {
             char name[32];
@@ -275,9 +286,16 @@ public void Timer_PlayerSpawn(Client ply)
         
             ply.TimerSimple(gamemode.config.tsto * 1000, "PlyHideOverlay", ply);
         }
-    }
 
-    ply.spawned = true;
+        ply.spawned = true;
+        
+        ply.Spawn();
+    }
+}
+
+public Action OnPlayerSpawnPost(int client)
+{
+    SetEntProp(client, Prop_Send, "m_iHideHUD", 1<<12);
 }
 
 public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
@@ -337,7 +355,6 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
                     sortedPlayers.Erase(id);
                     player.Team(teamname);
                     player.class = class;
-                    player.haveclass = true;
 
                     if (gamemode.config.debug)
                         gamemode.log.Info("[Class] %s random setup on player: %i", classname, player.id);
@@ -371,7 +388,6 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
                     sortedPlayers.Erase(id);
                     player.Team(teamname);
                     player.class = class;
-                    player.haveclass = true;
 
                     if (gamemode.config.debug)
                         gamemode.log.Info("[Class] %s setup on player: %i", classname, player.id);
@@ -395,7 +411,6 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 
             player.Team(team);
             player.class = gamemode.team(team).class(class);
-            player.haveclass = true;
 
             if (gamemode.config.debug)
                 gamemode.log.Info("[Extra] Team: %s, Class: %s setup on player: %i", team, class, player.id);
@@ -443,11 +458,9 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
             Call_PushCellRef(ply);
             Call_Finish();
 
+            ply.spawned = false;
             ply.class = null;
-            ply.haveclass = false;
             ply.inv.Clear();
-            ply.active = false;
-            ply.spawned = true;
             
             if (ply.ragdoll)
             {
@@ -463,22 +476,6 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
 
         Call_StartForward(OnRoundEndForward);
         Call_Finish();
-    }
-}
-
-public Action CS_OnTerminateRound(float& delay, CSRoundEndReason& reason)
-{
-    if(gamemode.mngr.IsWarmup)
-	{
-		return Plugin_Continue;
-	}
-    else if(gamemode.mngr.RoundComplete)
-    {
-        return Plugin_Continue;
-    }
-    else
-    {
-        return Plugin_Handled;
     }
 }
 
@@ -524,11 +521,13 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 {
                     if (idpad)
                     {
-                        idpad.SetProp("m_nSkin", (ply.lang == 22) ? 1 : 4); // 22 = ru lang code
-                        gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
+                        if (idpad.HasProp("m_nSkin"))
+                        {
+                            idpad.SetProp("m_nSkin", (ply.lang == 22) ? 1 : 4); // 22 = ru lang code
+                            gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
+                        }
                     }
                     idpad.Dispose();
-                    return Plugin_Continue;
                 }
                 else
                 {
@@ -590,11 +589,6 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
     }
     
     return Plugin_Continue;
-}
-
-public Action OnPlayerSpawnPost(int client)
-{
-    SetEntProp(client, Prop_Send, "m_iHideHUD", 1<<12);
 }
 
 public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
@@ -677,7 +671,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
             item
             .Create()
             .UseCB(view_as<SDKHookCB>(CB_EntUse))
-            .SetPos(vic.GetPos() + new Vector(GetRandomFloat(-30.0,30.0), GetRandomFloat(-30.0,30.0), 0.0))
+            .SetPos(vic.GetPos() + new Vector(GetRandomFloat(-30.0,30.0), GetRandomFloat(-30.0,30.0), 0.0), vic.GetAng())
             .Spawn();
 
             if (Ents.IndexUpdate(item))
@@ -687,7 +681,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         if (vic.progress.active)
             vic.progress.Stop();
 
-        vic.active = false;
+        vic.spawned = false;
 
         char timername[32];
         FormatEx(timername, sizeof(timername), "entid-%i", vic.id);
@@ -749,18 +743,40 @@ public Action OnWeaponTake(int client, int iWeapon)
 
         delete meleeFix;
 
-        if(ply.IsSCP && !weaponAllow)
-        {
-            return Plugin_Stop;
-        }
-
-        if (StrEqual(classname, "weapon_melee") || StrEqual(classname, "weapon_knife"))
+        if(ply.IsSCP && weaponAllow)
         {
             EquipPlayerWeapon(client, iWeapon);
+            return Plugin_Continue;
         }
     }
 
+    if(ply.IsSCP)
+    {
+        return Plugin_Handled;
+    }
+
+    if (StrEqual(classname, "weapon_melee") || StrEqual(classname, "weapon_knife"))
+    {
+        EquipPlayerWeapon(client, iWeapon);
+    }
+
     return Plugin_Continue;
+}
+
+public Action CS_OnTerminateRound(float& delay, CSRoundEndReason& reason)
+{
+    if(gamemode.mngr.IsWarmup)
+	{
+		return Plugin_Continue;
+	}
+    else if(gamemode.mngr.RoundComplete)
+    {
+        return Plugin_Continue;
+    }
+    else
+    {
+        return Plugin_Handled;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1074,7 +1090,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                     item
                     .Create()
                     .UseCB(view_as<SDKHookCB>(CB_EntUse))
-                    .SetPos(ply.GetAng().Forward(ply.EyePos(), 5.0) - new Vector(0.0, 0.0, 15.0))
+                    .SetPos(ply.GetAng().Forward(ply.EyePos(), 5.0) - new Vector(0.0, 0.0, 15.0), ply.GetAng())
                     .Spawn()
                     .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
 
@@ -1234,7 +1250,6 @@ public void PSARS()
                 ply.SilenceKill();
             ply.Team(team);
             ply.class = gamemode.team(team).class(class);
-            ply.haveclass = true;
             ply.Spawn();
         }
     }
@@ -1328,10 +1343,11 @@ public Action Command_Ents(int client, const char[] command, int argc)
 {
     Client ply = Clients.Get(client);
 
-    char arg[32], arg2[32];
+    char arg[32], buf[4096];
 
     GetCmdArg(1, arg, sizeof(arg));
-    GetCmdArg(2, arg2, sizeof(arg2));
+
+    int counter = 0;
 
     if (StrEqual(arg, "getall", false))
     {
@@ -1344,10 +1360,21 @@ public Action Command_Ents(int client, const char[] command, int argc)
 
             ent.GetClass(name, sizeof(name));
 
-            if (ent.id != 5000)
-                PrintToConsole(ply.id, "%s id: %i", name, ent.id);
+            if (counter != 40)
+            {
+                counter++;
+
+                if (ent.id != 5000)
+                    Format(buf, sizeof(buf), (counter != 40) ? "%s%s id: %i\n" : "%s%s id: %i", buf, name, ent.id);
+                else
+                    Format(buf, sizeof(buf), (counter != 40) ? "%s%s (picked)\n" : "%s%s (picked)", buf, name);
+            }
             else
-                PrintToConsole(ply.id, "%s (picked)", name, ent.id);
+            {
+                PrintToConsole(ply.id, buf);
+                Format(buf, sizeof(buf), "");
+                counter = 0;
+            }
         }
 
         PrintToConsole(ply.id, "------------------------");
@@ -1386,8 +1413,14 @@ public Action Command_GetEntsInBox(int client, const char[] command, int argc)
 
         char entclass[32];
         ent.GetClass(entclass, sizeof(entclass));
+
+        Vector entPos = ent.GetPos();
+        Angle entAng = ent.GetAng();
         
-        PrintToChat(ply.id, "class: %s, id: %i", entclass, ent.id);
+        PrintToChat(ply.id, "class: %s, id: %i, pos: {\"vec\":[%i,%i,%i],\"ang\":[%i,%i,%i]}", entclass, ent.id, RoundFloat(entPos.x), RoundFloat(entPos.y), RoundFloat(entPos.z), RoundFloat(entAng.x), RoundFloat(entAng.y), RoundFloat(entAng.z));
+
+        delete entPos;
+        delete entAng;
     }
 
     delete entArr;
