@@ -402,6 +402,7 @@
                 "fists":false,
                 "doors":[323,324],
                 "overlay":"scp-173",
+                "model":"models/player/custom_player/eternity/173.mdl",
                 "comment":"173"
             },
             "457": {

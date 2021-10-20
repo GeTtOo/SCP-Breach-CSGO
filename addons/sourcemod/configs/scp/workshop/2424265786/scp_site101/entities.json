@@ -84,7 +84,7 @@
         "mass":0.2
     },
     "268_cap": {
-        "model":"models/eternity/props/keycard.mdl",
+        "model":"models/eternity/props/scp/scp_267.mdl",
         "mass":0.2,
         "cooldown":60
     },
