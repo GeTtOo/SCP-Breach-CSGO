@@ -72,20 +72,20 @@
     },
     "005_picklock": {
         "model":"models/eternity/props/scp/scp_005.mdl",
-        "mass":0.2,
+        "mass":2.0,
         "access":[1,2,3,4,5,6,7,8,9,10]
     },
     "500_panacea": {
         "model":"models/eternity/props/keycard.mdl",
-        "mass":0.2
+        "mass":0.5
     },
     "427_amulet": {
         "model":"models/eternity/props/scp/scp_427.mdl",
-        "mass":0.2
+        "mass":3.5
     },
     "268_cap": {
         "model":"models/eternity/props/scp/scp_267.mdl",
-        "mass":0.2,
+        "mass":1.0,
         "cooldown":60
     },
     "035_mask": {
@@ -94,10 +94,14 @@
     },
     "iron_ingot": {
         "model":"models/eternity/props/ingot.mdl",
-        "mass":0.2
+        "mass":10.0
     },
     "plastic": {
         "model":"models/eternity/props/plastic.mdl",
-        "mass":0.2
+        "mass":2.0
+    },
+    "flashlight": {
+        "model":"models/props/coop_autumn/autumn_flashlight/autumn_flashlight.mdl",
+        "mass":2.0
     }
 }
