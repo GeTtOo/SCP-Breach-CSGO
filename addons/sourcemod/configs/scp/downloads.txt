@@ -403,6 +403,9 @@ sound/scp/049/049_8.wav
 sound/scp/049/049_alert_1.wav
 sound/scp/049/049_alert_2.wav
 sound/scp/049/049_alert_3.wav
+sound/scp/173/death1.mp3
+sound/scp/173/death2.mp3
+sound/scp/173/death3.mp3
 sound/scp/914_player_rough.mp3
 sound/scp/scp-096_crying.mp3
 sound/scp/scp-096_rage_start.mp3
@@ -410,6 +413,3 @@ sound/scp/scp-096_rage.mp3
 sound/scp/scp-096_tranquility.mp3
 sound/scp/warhead_announcement.mp3
 sound/scp/warhead_canceled.mp3
-sound/death_screams/death1.mp3
-sound/death_screams/death2.mp3
-sound/death_screams/death3.mp3
