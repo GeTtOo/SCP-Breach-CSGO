@@ -33,16 +33,6 @@ methodmap Config < JSON_OBJECT {
         this.GetString("DefaultClass", class, max_size);
     }
 
-    property JSON_OBJECT pl {
-        public get() {
-            char pname[64];
-            GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
-            if (!StrEqual(pname, "[SCP] GameMode"))
-                return this.GetObject(pname);
-            return null;
-        }
-    }
-
     property Doors doors {
         public get() { return view_as<Doors>(this.GetObject("Doors")); }
     }

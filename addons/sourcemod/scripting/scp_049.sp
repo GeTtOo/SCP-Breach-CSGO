@@ -41,7 +41,7 @@ public void SCP_OnInput(Client &ply, int buttons)
 			if (ragdolls.Length > 0)
 			{
 				ply.SetBool("049_reviving", true);
-				ply.progress.Start((gamemode.config.pl.GetObject("revive").GetBool("multi", true)) ? gamemode.config.pl.GetObject("revive").GetInt("time", 3000) * 1000 * ragdolls.Length : gamemode.config.pl.GetObject("revive").GetInt("time", 3000) * 1000, "Revive");
+				ply.progress.Start((gamemode.plconfig.GetObject("revive").GetBool("multi", true)) ? gamemode.plconfig.GetObject("revive").GetInt("time", 3000) * 1000 * ragdolls.Length : gamemode.plconfig.GetObject("revive").GetInt("time", 3000) * 1000, "Revive");
 				ply.PrintNotify("Reviving");
 			}
 		}
@@ -60,7 +60,7 @@ public void Revive(Client ply)
 	ply.progress.Stop();
 	ply.SetBool("049_reviving", false);
 
-	if (gamemode.config.pl.GetObject("revive").GetBool("inpvs", true))
+	if (gamemode.plconfig.GetObject("revive").GetBool("inpvs", true))
 	{
 		char filter[1][32] = {"prop_ragdoll"};
 		ArrayList ragdolls = Ents.FindInPVS(ply, _, _, filter);
@@ -104,7 +104,7 @@ public void Revive(Client ply)
 
 				delete players;
 
-				if (!gamemode.config.pl.GetObject("revive").GetBool("multi", true)) break;
+				if (!gamemode.plconfig.GetObject("revive").GetBool("multi", true)) break;
 			}
 		}
 

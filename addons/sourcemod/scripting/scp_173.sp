@@ -38,13 +38,10 @@ public void SCP_OnPlayerClear(Client &ply)
 public void SCP_OnPlayerDeath(Client &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("173")) {
-        char sound[3][128] = {
-            "*/scp/173/death1.mp3",
-            "*/scp/173/death2.mp3",
-            "*/scp/173/death3.mp3"
-        };
-        
-        gamemode.mngr.PlayAmbient(sound[GetRandomInt(0,2)], ply);
+        char sound[128];
+        JSON_ARRAY ds = gamemode.plconfig.GetObject("sound").GetArray("death");
+        ds.GetString(GetRandomInt(0, ds.Length - 1), sound, sizeof(sound));
+        gamemode.mngr.PlayAmbient(sound, ply);
     }
 }
 

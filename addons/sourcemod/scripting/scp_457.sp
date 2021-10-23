@@ -42,7 +42,7 @@ public Action SCP_OnTakeDamage(Client &vic, Client &atk, float &damage, int &dam
 {
     if(atk.class.Is("457") && atk.id != vic.id)
     {
-        IgniteEntity(vic.id, float(gamemode.config.pl.GetInt("ignitetime", 20)));
+        IgniteEntity(vic.id, float(gamemode.plconfig.GetInt("ignitetime", 20)));
     }
 
     if(vic.class.Is("457") && damagetype == DMG_BURN)

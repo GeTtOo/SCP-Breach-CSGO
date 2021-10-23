@@ -103,6 +103,16 @@ methodmap GameMode < Base {
         public native get();
     }
 
+    property JSON_OBJECT plconfig {
+        public get() {
+            char pname[64];
+            GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
+            if (!StrEqual(pname, "[SCP] GameMode"))
+                return this.config.GetObject(pname);
+            return view_as<JSON_OBJECT>(null);
+        }
+    }
+
     property Meta meta {
         public native get();
     }

@@ -24,7 +24,6 @@ public Plugin myinfo = {
 
 public void SCP_OnLoad() {
     LoadTranslations("scpcore.phrases");
-    HookEvent("round_start", OnRoundStart);
 }
 
 public void SCP_OnUnload() {
@@ -38,13 +37,13 @@ public void OnMapStart() {
     gconfig = ReadConfig(mapName, "914");
 }
 
-public Action OnRoundStart(Event ev, const char[] name, bool dbroadcast) {
-    if (gamemode.config.pl.GetBool("usemathcounter")) {
+public void SCP_OnRoundStart() {
+    if (gamemode.plconfig.GetBool("usemathcounter")) {
         int entId = 0;
         while ((entId = FindEntityByClassname(entId, "math_counter")) != -1) {
             char findedCounterName[32], configCounterName[32];
             GetEntPropString(entId, Prop_Data, "m_iName", findedCounterName, sizeof(findedCounterName));
-            gamemode.config.pl.GetString("countername", configCounterName, sizeof(configCounterName));
+            gamemode.plconfig.GetString("countername", configCounterName, sizeof(configCounterName));
             if (StrEqual(findedCounterName, configCounterName))
                 Counter = entId;
         }
@@ -58,11 +57,11 @@ public Action OnRoundStart(Event ev, const char[] name, bool dbroadcast) {
 }
 
 public void SCP_OnButtonPressed(Client &ply, int doorId) {
-    if (doorId == gamemode.config.pl.GetInt("runbutton"))
-        gamemode.timer.Simple(gamemode.config.pl.GetInt("runtime") * 1000, "Transform", ply);
+    if (doorId == gamemode.plconfig.GetInt("runbutton"))
+        gamemode.timer.Simple(gamemode.plconfig.GetInt("runtime") * 1000, "Transform", ply);
     
-    if (doorId == gamemode.config.pl.GetInt("switchbutton"))
-        if (gamemode.config.pl.GetBool("usemathcounter"))
+    if (doorId == gamemode.plconfig.GetInt("switchbutton"))
+        if (gamemode.plconfig.GetBool("usemathcounter"))
             curmode = modes[RoundToZero(GetEntDataFloat(Counter, MATH_COUNTER_VALUE_OFFSET))];
         else
             if (Counter < 4) {
@@ -82,7 +81,7 @@ public void Transform(Client ply) {
 
     char filter[3][32] = {"prop_physics", "weapon_", "player"};
     
-    ArrayList ents = Ents.FindInBox(gamemode.config.pl.GetArray("searchzone").GetVector(0), gamemode.config.pl.GetArray("searchzone").GetVector(1), filter, sizeof(filter));
+    ArrayList ents = Ents.FindInBox(gamemode.plconfig.GetArray("searchzone").GetVector(0), gamemode.plconfig.GetArray("searchzone").GetVector(1), filter, sizeof(filter));
 
     if (gamemode.config.debug)
         PrintToChatAll("Ents count: %i", ents.Length);
@@ -110,7 +109,7 @@ public void Transform(Client ply) {
             if (json_is_meta_key(ientclass)) continue;
 
             if (StrEqual(entclass, ientclass)) {
-                Vector oitempos = ent.GetPos() - gamemode.config.pl.GetVector("distance");
+                Vector oitempos = ent.GetPos() - gamemode.plconfig.GetVector("distance");
 
                 JSON_OBJECT oentdata = recipes.GetObject(ientclass);
                 JSON_ARRAY recipe;
@@ -208,7 +207,7 @@ public void Transform(Client ply) {
         }
 
         if (!upgraded) {
-            Vector oitempos = ent.GetPos() - gamemode.config.pl.GetVector("distance");
+            Vector oitempos = ent.GetPos() - gamemode.plconfig.GetVector("distance");
 
             if (StrEqual(entclass, "player"))
             {

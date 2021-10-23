@@ -68,6 +68,18 @@
             "inpvs":true
         }
     },
+    "[SCP] 173": {
+        "radius":2000,
+        "blinktime":5,
+        "sound": {
+            "neckbroke":"*/scp/173/neckbroke.mp3",
+            "death": [
+                "*/scp/173/death1.mp3",
+                "*/scp/173/death2.mp3",
+                "*/scp/173/death3.mp3"
+            ]
+        }
+    },
     "[SCP] 457": {
         "ignitetime":10
     }
