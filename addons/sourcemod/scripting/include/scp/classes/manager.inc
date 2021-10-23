@@ -209,31 +209,65 @@ methodmap Manager < Base {
         deadPlayers.Sort(Sort_Random, Sort_Integer);
 
         GTeam team = gamemode.team(teamName);
-        StringMapSnapshot classNameS = team.GetClassNames();
-        int classKeyLen;
+        
+        ArrayList classes = team.GetClassList();
 
-        for (int v = 0; v < classNameS.Length; v++)
+        if (team.randompick)
         {
-            classKeyLen = classNameS.KeyBufferSize(v);
-            char[] classKey = new char[classKeyLen];
-            classNameS.GetKey(v, classKey, classKeyLen);
-            if (json_is_meta_key(classKey)) continue;
-
-            Class class = team.class(classKey);
-
-            int classCount = GetRandomInt(deadPlayers.Length * class.percent / 100, deadPlayers.Length);
-
-            for (int scc = 1; scc <= classCount; scc++)
+            for (int scc = 1; scc <= deadPlayers.Length; scc++)
             {
                 int id = deadPlayers.Length - 1;
                 if (id < 0) break;
+                
+                int classid = GetRandomInt(0, classes.Length - 1);
+
+                char classname[32];
+                classes.GetString(classid, classname, sizeof(classname));
+                classes.Erase(classid);
+
+                Class class = team.class(classname);
+
                 Client player = deadPlayers.Get(id);
                 deadPlayers.Erase(id);
                 player.Team(teamName);
                 player.class = class;
-                
-                player.UpdateClass();
+                player.Spawn();
+
+                if (gamemode.config.debug)
+                    gamemode.log.Info("[Class] %s random setup on player: %i", classname, player.id);
             }
         }
+        else
+        {
+            for (int v = 0; v < classes.Length; v++)
+            {
+                char classname[32];
+                classes.GetString(v, classname, sizeof(classname));
+
+                Class class = team.class(classname);
+
+                int classCount = deadPlayers.Length * class.percent / 100;
+                classCount = (classCount != 0 || !class.priority) ? classCount : 1;
+
+                /*if (gamemode.config.debug)
+                    gamemode.log.Info("[Class] %s trying setup on %i players", classname, classCount);*/
+
+                for (int scc = 1; scc <= classCount; scc++)
+                {
+                    int id = deadPlayers.Length - 1;
+                    if (id < 0) break;
+                    Client player = deadPlayers.Get(id);
+                    deadPlayers.Erase(id);
+                    player.Team(teamName);
+                    player.class = class;
+                    player.Spawn();
+
+                    if (gamemode.config.debug)
+                        gamemode.log.Info("[Class] %s setup on player: %i", classname, player.id);
+                }
+            }
+        }
+
+        delete classes;
     }
 }

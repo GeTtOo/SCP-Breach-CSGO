@@ -58,12 +58,19 @@ methodmap AdminAction < Base
                 }
                 else if(ply.IsAlive())
                 {
-                    char team[32], subclass[32];
+                    if (ply.class != null)
+                    {
+                        char team[32], subclass[32];
 
-                    ply.Team(team, sizeof(team));
-                    ply.class.Name(subclass, sizeof(subclass));
-                    
-                    PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x07%s: %s", ply.id, team, subclass);
+                        ply.Team(team, sizeof(team));
+                        ply.class.Name(subclass, sizeof(subclass));
+                        
+                        PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x07%s: %s", ply.id, team, subclass);
+                    }
+                    else
+                    {
+                        PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x07Не инициализирован", ply.id);
+                    }
                 }
                 else
                 {
@@ -373,10 +380,10 @@ public int MenuHandler_GetClass(Menu hMenu, MenuAction action, int client, int i
         {
             char team[32], class[32];
             hMenu.GetItem(item, team, sizeof(team), _, class, sizeof(class));
-
+            
             if(IsPlayerAlive(AdminMenu.Get(client).target.id))
                 AdminMenu.Get(client).target.SilenceKill();
-            
+
             AdminMenu.Get(client).target.Team(team);
             AdminMenu.Get(client).target.class = gamemode.team(team).class(class);
             AdminMenu.Get(client).target.Spawn();

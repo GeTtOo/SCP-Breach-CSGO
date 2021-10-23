@@ -25,9 +25,11 @@
         "killpos":1690,
         "sound":"*/scp/warhead_announcement.mp3",
         "cancelsound":"*/scp/warhead_canceled.mp3",
-        "readybtn":356001,
-        "activebtn":356023,
-        "cancelbtn":356001,
+        "buttons":{
+            "ready":356001,
+            "active":356023,
+            "cancel":356001
+        },
         "spawnlist":[]
     },
     "teleport": {
@@ -50,7 +52,7 @@
         "SCP-914":{"vec":[3100,-2231,0],"ang":[0,0,0]},
         "SCP-996":{"vec":[-5406,2626,4],"ang":[-2,-1,0]}
     },
-    "914": {
+    "[SCP] 914": {
         "usemathcounter":true,
         "countername": "scp_914_logic_counter",
         "switchbutton": 443873,
@@ -59,14 +61,14 @@
         "searchzone":[[3630, -2072, 20],[3762, -1947, 90]],
         "distance":[0, 425, 0]
     },
-    "049": {
+    "[SCP] 049": {
         "revive":{
             "time":3,
             "multi":true,
             "inpvs":true
         }
     },
-    "457": {
+    "[SCP] 457": {
         "ignitetime":10
     }
 }

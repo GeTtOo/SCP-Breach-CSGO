@@ -159,11 +159,11 @@ methodmap NuclearWarhead < Base {
     }
     
     public void Controller(int btnId) {
-        if (gamemode.config.nuke.readybtn == btnId && !this.ready && !this.IsNuked)
+        if (gamemode.config.nuke.buttons.ready == btnId && !this.ready && !this.IsNuked)
             this.Ready();
-        else if (gamemode.config.nuke.activebtn == btnId && this.ready && !this.active && !this.IsNuked)
+        else if (gamemode.config.nuke.buttons.active == btnId && this.ready && !this.active && !this.IsNuked)
             this.Activate();
-        else if (gamemode.config.nuke.cancelbtn == btnId && this.ready && this.active)
+        else if (gamemode.config.nuke.buttons.cancel == btnId && this.ready && this.active)
             this.Cancel();
     }
     

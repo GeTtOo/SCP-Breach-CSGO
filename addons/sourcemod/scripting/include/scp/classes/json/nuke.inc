@@ -3,6 +3,21 @@
 
 #include <json>
 
+methodmap NukeButtons < JSON_OBJECT {
+
+    property int ready {
+        public get() { return this.GetInt("ready"); }
+    }
+
+    property int active {
+        public get() { return this.GetInt("active"); }
+    }
+
+    property int cancel {
+        public get() { return this.GetInt("cancel"); }
+    }
+}
+
 methodmap NukeConfig < JSON_OBJECT {
 
     property int time {
@@ -17,16 +32,8 @@ methodmap NukeConfig < JSON_OBJECT {
         public get() { return float(this.GetInt("killpos")); }
     }
 
-    property int readybtn {
-        public get() { return this.GetInt("readybtn"); }
-    }
-
-    property int activebtn {
-        public get() { return this.GetInt("activebtn"); }
-    }
-
-    property int cancelbtn {
-        public get() { return this.GetInt("cancelbtn"); }
+    property NukeButtons buttons {
+        public get() { return view_as<NukeButtons>(this.GetObject("buttons")); }
     }
 
     property JSON_ARRAY spawnlist {

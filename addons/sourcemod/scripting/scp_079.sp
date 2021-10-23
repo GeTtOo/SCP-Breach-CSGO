@@ -68,7 +68,7 @@ public void SCP_OnRoundStart() {
         GetEntPropString(entId, Prop_Data, "m_ModelName", ModelName, sizeof(ModelName));
 
         if (StrEqual(ModelName, "models/freeman/cctv_camera_fisheye.mdl"))
-            PushArrayCell(CamList, Ents.TryGetOrAdd(entId));
+            CamList.Push(new Entity(entId));
     }
 }
 
@@ -153,7 +153,7 @@ public void CameraUnlock(Client ply) {
     Camera.locked = false;
 }
 
-public void SCP_OnPressF(Client &ply) {
+public void SCP_OnCallActionMenu(Client &ply) {
     if (ply.class.Is("079"))
         ActionsMenu(ply);
 }

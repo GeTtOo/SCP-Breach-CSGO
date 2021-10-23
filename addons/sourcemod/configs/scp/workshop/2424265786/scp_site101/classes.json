@@ -19,7 +19,7 @@
                 "escape":{
                     "trigger":689698,
                     "team":"Chaos",
-                    "class":"Soldier",
+                    "class":"Alpha",
                     "wp":"Chaos"
                 }
             },
@@ -115,6 +115,7 @@
                 "escape":false,
                 "health":100,
                 "armor":250,
+                "helmet":true,
                 "speed":260,
                 "multipler":1.0,
                 "overlay":"commander",
@@ -137,6 +138,9 @@
             },
             "Lieutenant": {
                 "percent":25,
+                "health":100,
+                "armor":200,
+                "helmet":true,
                 "overlay":"lieutenant",
                 "items":["card_mog_lieutenant"],
                 "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer"],
@@ -162,6 +166,9 @@
             },
             "Cadet": {
                 "percent":65,
+                "health":100,
+                "armor":150,
+                "helmet":true,
                 "overlay":"cadet",
                 "items":["card_senior_guard"],
                 "weapons":["weapon_mp7", "weapon_p250"],
@@ -200,6 +207,9 @@
             },
             "Lieutenant-Medic": {
                 "percent":0,
+                "health":250,
+                "armor":500,
+                "helmet":true,
                 "overlay":"lieutenant_medic",
                 "items":["card_scientist"],
                 "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 5], "weapon_breachcharge"],

@@ -6,29 +6,34 @@
 #pragma dynamic 131072
 
 // ¯\_(ツ)_/¯
-#include "scp/structures/base"
-#include "scp/structures/vector"
-#include "scp/structures/color"
-#include "scp/structures/json"
-#include "scp/classes/meta"
-#include "scp/classes/gamemode"
-#include "scp/classes/logger"
+#include "scp\structures\base"
+#include "scp\structures\vector"
+#include "scp\structures\angle"
+#include "scp\structures\color"
+#include "scp\structures\json"
+#include "scp\classes\meta"
+#include "scp\classes\gamemode"
+#include "scp\classes\logger"
 
 GameMode gamemode;
 
-#include "scp/classes/entity"
-#include "scp/classes/client"
+#include "scp\classes\entity"
+#include "scp\classes\client"
 
-#include "scp/classes/singletons"
+#include "scp\classes\singletons"
 
-#include "scp/classes/worldtext"
+#include "scp\classes\worldtext"
 
 ClientSingleton Clients;
 EntitySingleton Ents;
 WorldTextSingleton WT;
 
-#include "scp/classes/manager"
-#include "scp/classes/nuke"
+#include "scp\classes\manager"
+#include "scp\classes\nuke"
+
+forward void OnLoad();
+
+forward void OnUnload();
 
 forward void SCP_OnPlayerJoin(Client &ply);
 
@@ -262,4 +267,42 @@ public any NativeEntities_TryGet(Handle Plugin, int numArgs) {
     if (idx == -1) return false;
     SetNativeCellRef(3, ents.Get(idx, 1));
     return true;
+}
+
+public SDKHookCB CB_EntUse(int entity, int client) 
+{
+    Client ply = Clients.Get(client);
+    Entity ent = Ents.Get(entity);
+
+    if (ply.IsSCP) return;
+
+    if (ent.meta)
+    {
+        if (ent.meta.onpickup)
+        {
+            char funcname[32];
+            ent.meta.onpickup.name(funcname, sizeof(funcname));
+
+            Call_StartFunction(ent.meta.onpickup.hndl, GetFunctionByName(ent.meta.onpickup.hndl, funcname));
+            Call_PushCellRef(ply);
+            Call_PushCellRef(ent);
+            Call_Finish();
+        }
+
+        if (!ent.meta.onpickup || !ent.meta.onpickup.invblock)
+            if (ply.inv.Pickup(ent))
+            {
+                ent.WorldRemove();
+                Ents.IndexUpdate(ent);
+            }
+            else
+            {
+                ply.PrintNotify("%t", "Inventory full");
+            }
+        else
+        {
+            ent.WorldRemove();
+            Ents.IndexUpdate(ent);
+        }
+    }
 }

@@ -6,11 +6,11 @@
 #pragma newdecls required
 
 public Plugin myinfo = {
-    name = "[SCP] SCP-096",
+    name = "[SCP] 096",
     author = "Andrey::Dono",
     description = "SCP-096 for CS:GO modification SCP Foundation",
     version = "1.0",
-    url = "https://github.com/GeTtOo/csgo_scp"
+    url = "https://github.com/Eternity-Development-Team/csgo_scp"
 };
 
 public void SCP_OnPlayerJoin(Client &ply) 
@@ -23,6 +23,9 @@ public void SCP_OnPlayerSpawn(Client &ply) {
 
         ply.SetBool("IsRage", false);
         ply.SetBool("cooldown", false);
+
+        gamemode.mngr.SetCollisionGroup(ply.id, 5);
+        SDKHook(ply.id, SDKHook_StartTouch, CheckSurface);
         
         char  timername[128];
         Format(timername, sizeof(timername), "SCP-096-%i", ply.id);
@@ -71,6 +74,22 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 	return Plugin_Continue;
 }
 
+public void CheckSurface(int client, int entity) {
+    Client ply = Clients.Get(client);
+
+    if (ply.GetBool("IsRage")) {
+        int pid = GetEntPropEnt(entity, Prop_Data, "m_hMoveParent");
+        if (pid != -1) {
+            char classname[32];
+            GetEntityClassname(pid, classname, sizeof(classname));
+            
+            if (StrEqual(classname, "func_door"))
+                RemoveEntity(pid);
+            //ply.PlayAmbient("")
+        }
+    }
+}
+
 public void CheckVision(Client ply) {
     if (ply != null && ply.class != null && ply.IsAlive() && ply.class.Is("096"))
     {
@@ -112,7 +131,7 @@ public void CheckVision(Client ply) {
 
                                 ply.StopSound("*/scp/scp-096_crying.mp3", 280);
                                 
-                                gamemode.timer.Simple(5500, "Rage", ply);
+                                ply.TimerSimple(5500, "Rage", ply);
                                 gamemode.mngr.PlayAmbient("*/scp/scp-096_rage_start.mp3", ply);
                             }
                         }
@@ -141,7 +160,7 @@ public void Rage(Client ply) {
 
     gamemode.mngr.PlayAmbient("*/scp/scp-096_rage.mp3", ply);
 
-    gamemode.timer.Simple(10500, "Tranquility", ply);
+    ply.TimerSimple(10500, "Tranquility", ply);
 }
 
 public void Tranquility(Client ply) {
@@ -153,8 +172,8 @@ public void Tranquility(Client ply) {
 
         gamemode.mngr.PlayAmbient("*/scp/scp-096_tranquility.mp3", ply);
 
-        gamemode.timer.Simple(25000, "CooldownReset", ply);
-        gamemode.timer.Simple(5900, "StartCrying", ply);
+        ply.TimerSimple(25000, "CooldownReset", ply);
+        ply.TimerSimple(5900, "StartCrying", ply);
     }
 }
 
@@ -174,9 +193,9 @@ public void CooldownReset(Client ply) {
     ply.SetBool("cooldown", false);
 }
 
-public void SCP_OnPressF(Client &ply) {
+public void SCP_OnCallActionMenu(Client &ply) {
     if (ply.GetBool("IsRage")){
-        gamemode.timer.Simple(1500, "DisableAbility", ply);
+        ply.TimerSimple(500, "DisableAbility", ply);
         ply.multipler *= 2;
     }
 }

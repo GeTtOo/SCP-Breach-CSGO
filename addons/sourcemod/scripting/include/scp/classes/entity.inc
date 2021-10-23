@@ -130,6 +130,8 @@ methodmap Entity < Base {
         gamemode.timer.Create(timername, delay, 1, funcname, args);
     }
 
+    public void SetMoveType(MoveType type) { SetEntityMoveType(this.id, type); }
+
     public Entity Create(char[] entclass = "prop_physics_override") {
 
         this.id = CreateEntityByName(entclass);

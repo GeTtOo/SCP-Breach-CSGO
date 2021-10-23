@@ -8,7 +8,6 @@
 #define MATH_COUNTER_VALUE_OFFSET 924
 
 JSON_OBJECT gconfig;
-JSON_OBJECT config;
 
 int Counter = 0;
 
@@ -23,11 +22,12 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void OnPluginStart() {
+public void SCP_OnLoad() {
+    LoadTranslations("scpcore.phrases");
     HookEvent("round_start", OnRoundStart);
 }
 
-public void OnPluginEnd() {
+public void SCP_OnUnload() {
     //gamemode.timer.PluginClear();
 }
 
@@ -38,18 +38,13 @@ public void OnMapStart() {
     gconfig = ReadConfig(mapName, "914");
 }
 
-public void SCP_RegisterMetaData()
-{
-	config = gamemode.config.GetObject("914");
-}
-
 public Action OnRoundStart(Event ev, const char[] name, bool dbroadcast) {
-    if (config.GetBool("usemathcounter")) {
+    if (gamemode.config.pl.GetBool("usemathcounter")) {
         int entId = 0;
         while ((entId = FindEntityByClassname(entId, "math_counter")) != -1) {
             char findedCounterName[32], configCounterName[32];
             GetEntPropString(entId, Prop_Data, "m_iName", findedCounterName, sizeof(findedCounterName));
-            config.GetString("countername", configCounterName, sizeof(configCounterName));
+            gamemode.config.pl.GetString("countername", configCounterName, sizeof(configCounterName));
             if (StrEqual(findedCounterName, configCounterName))
                 Counter = entId;
         }
@@ -62,49 +57,12 @@ public Action OnRoundStart(Event ev, const char[] name, bool dbroadcast) {
     gamemode.timer.PluginClear();
 }
 
-public SDKHookCB Callback_EntUse(int eid, int cid) {
-    Client ply = Clients.Get(cid);
-    Entity ent = Ents.Get(eid);
-
-    if (ply.IsSCP) return;
-
-    if (ent.meta)
-    {
-        if (ent.meta.onpickup)
-        {
-            char funcname[32];
-            ent.meta.onpickup.name(funcname, sizeof(funcname));
-
-            Call_StartFunction(ent.meta.onpickup.hndl, GetFunctionByName(ent.meta.onpickup.hndl, funcname));
-            Call_PushCellRef(ply);
-            Call_PushCellRef(ent);
-            Call_Finish();
-        }
-
-        if (!ent.meta.onpickup || !ent.meta.onpickup.invblock)
-            if (ply.inv.Pickup(ent))
-            {
-                ent.WorldRemove();
-                Ents.IndexUpdate(ent);
-            }
-            else
-            {
-                ply.PrintNotify("%t", "Inventory full");
-            }
-        else
-        {
-            ent.WorldRemove();
-            Ents.IndexUpdate(ent);
-        }
-    }
-}
-
 public void SCP_OnButtonPressed(Client &ply, int doorId) {
-    if (doorId == config.GetInt("runbutton"))
-        gamemode.timer.Simple(config.GetInt("runtime") * 1000, "Transform", ply);
+    if (doorId == gamemode.config.pl.GetInt("runbutton"))
+        gamemode.timer.Simple(gamemode.config.pl.GetInt("runtime") * 1000, "Transform", ply);
     
-    if (doorId == config.GetInt("switchbutton"))
-        if (config.GetBool("usemathcounter"))
+    if (doorId == gamemode.config.pl.GetInt("switchbutton"))
+        if (gamemode.config.pl.GetBool("usemathcounter"))
             curmode = modes[RoundToZero(GetEntDataFloat(Counter, MATH_COUNTER_VALUE_OFFSET))];
         else
             if (Counter < 4) {
@@ -124,7 +82,7 @@ public void Transform(Client ply) {
 
     char filter[3][32] = {"prop_physics", "weapon_", "player"};
     
-    ArrayList ents = Ents.FindInBox(config.GetArray("searchzone").GetVector(0), config.GetArray("searchzone").GetVector(1), filter, sizeof(filter));
+    ArrayList ents = Ents.FindInBox(gamemode.config.pl.GetArray("searchzone").GetVector(0), gamemode.config.pl.GetArray("searchzone").GetVector(1), filter, sizeof(filter));
 
     if (gamemode.config.debug)
         PrintToChatAll("Ents count: %i", ents.Length);
@@ -152,7 +110,7 @@ public void Transform(Client ply) {
             if (json_is_meta_key(ientclass)) continue;
 
             if (StrEqual(entclass, ientclass)) {
-                Vector oitempos = ent.GetPos() - config.GetVector("distance");
+                Vector oitempos = ent.GetPos() - gamemode.config.pl.GetVector("distance");
 
                 JSON_OBJECT oentdata = recipes.GetObject(ientclass);
                 JSON_ARRAY recipe;
@@ -229,7 +187,7 @@ public void Transform(Client ply) {
                         {
                             Ents.Create(oentclass)
                             .SetPos(oitempos, ent.GetAng())
-                            .UseCB(view_as<SDKHookCB>(Callback_EntUse))
+                            .UseCB(view_as<SDKHookCB>(CB_EntUse))
                             .Spawn();
 
                             Ents.Remove(ent.id);
@@ -250,7 +208,7 @@ public void Transform(Client ply) {
         }
 
         if (!upgraded) {
-            Vector oitempos = ent.GetPos() - config.GetVector("distance");
+            Vector oitempos = ent.GetPos() - gamemode.config.pl.GetVector("distance");
 
             if (StrEqual(entclass, "player"))
             {
@@ -258,7 +216,7 @@ public void Transform(Client ply) {
             }
             else
             {
-                Ents.Create(entclass).SetPos(oitempos, ent.GetAng()).UseCB(view_as<SDKHookCB>(Callback_EntUse)).Spawn();
+                Ents.Create(entclass).SetPos(oitempos, ent.GetAng()).UseCB(view_as<SDKHookCB>(CB_EntUse)).Spawn();
                 Ents.Remove(ent.id);
             }
         }

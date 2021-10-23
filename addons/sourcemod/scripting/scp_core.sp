@@ -8,6 +8,8 @@
 #include <scpcore>
 #include "include/scp/scp_admin.sp"
 
+Handle OnLoadGM;
+Handle OnUnloadGM;
 Handle OnClientJoinForward;
 Handle OnClientLeaveForward;
 Handle OnClientSpawnForward;
@@ -63,6 +65,8 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("EntitySingleton.TryGet", NativeEntities_TryGet);
     CreateNative("EntitySingleton.GetAll", NativeEntities_GetAll);
     
+    OnLoadGM = CreateGlobalForward("SCP_OnLoad", ET_Event);
+    OnUnloadGM = CreateGlobalForward("SCP_OnUnload", ET_Event);
     OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_CellByRef);
     OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_CellByRef);
     OnClientSpawnForward = CreateGlobalForward("SCP_OnPlayerSpawn", ET_Event, Param_CellByRef);
@@ -132,6 +136,7 @@ public void OnMapStart()
 
     if (gamemode.config.debug)
     {
+        AddCommandListener(Command_Kill, "kill");
         AddCommandListener(Command_Ents, "ents");
         AddCommandListener(Command_GetMyPos, "getmypos");
         AddCommandListener(Command_GetEntsInBox, "getentsinbox");
@@ -149,6 +154,9 @@ public void OnMapStart()
     PrecacheSound(NUKE_EXPLOSION_SOUND);
     LoadFileToDownload();
     
+    Call_StartForward(OnLoadGM);
+    Call_Finish();
+
     // ¯\_(ツ)_/¯
     if (!fixCache) {
         ForceChangeLevel(mapName, "Fix sound cached");
@@ -158,6 +166,9 @@ public void OnMapStart()
 
 public void OnMapEnd()
 {
+    Call_StartForward(OnUnloadGM);
+    Call_Finish();
+    
     delete Ents;
     delete Clients;
     delete WT;
@@ -193,6 +204,7 @@ public void OnClientPostAdminCheck(int id)
     SDKHook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
     SDKHook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
     SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
+    SDKHook(ply.id, SDKHook_OnTakeDamageAlivePost, OnTakeDamageAlivePost);
 
     Call_StartForward(OnClientJoinForward);
     Call_PushCellRef(ply);
@@ -222,6 +234,11 @@ public void OnClientDisconnect_Post(int id)
     SDKUnhook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
     SDKUnhook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
     SDKUnhook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
+    SDKUnhook(ply.id, SDKHook_OnTakeDamageAlivePost, OnTakeDamageAlivePost);
+
+    Base pos = ply.GetBase("spawnpos");
+    if (pos != null)
+        pos.SetBool("lock", false);
 
     Call_StartForward(OnClientClearForward);
     Call_PushCellRef(ply);
@@ -266,7 +283,7 @@ public void Timer_PlayerSpawn(Client ply)
             ply.ragdoll = null;
         }
         
-        gamemode.mngr.SetCollisionGroup(ply.id, 2);
+        //gamemode.mngr.SetCollisionGroup(ply.id, 2);
         ply.RestrictWeapons();
 
         Call_StartForward(OnClientSpawnForward);
@@ -462,6 +479,10 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
             ply.class = null;
             ply.inv.Clear();
             
+            Base pos = ply.GetBase("spawnpos");
+            if (pos != null)
+                pos.SetBool("lock", false);
+            
             if (ply.ragdoll)
             {
                 ply.ragdoll.Dispose();
@@ -570,6 +591,10 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 opp = ply.GetPos();
                 opa = ply.GetAng();
             }
+            
+            Base pos = ply.GetBase("spawnpos");
+            if (pos != null)
+                pos.SetBool("lock", false);
 
             ply.Team(teamName);
             ply.class = gamemode.team(teamName).class(className);
@@ -642,6 +667,17 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
     return Plugin_Continue;
 }
 
+public void OnTakeDamageAlivePost(int victim, int attacker, int inflictor, float damage, int damagetype)
+{   
+    if(IsClientExist(victim))
+    {
+        Client vic = Clients.Get(victim);
+
+        if (vic.health <= 0)
+            vic.DropWeapons();
+    }
+}
+
 public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
     if(!gamemode.mngr.IsWarmup)
@@ -691,15 +727,19 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         Call_PushCellRef(vic);
         Call_Finish();
 
-        vic.Team("Dead");
-        vic.class = null;
-
-        gamemode.mngr.GameCheck();
-
         Call_StartForward(OnPlayerDeathForward);
         Call_PushCellRef(vic);
         Call_PushCellRef(atk);
         Call_Finish();
+
+        vic.Team("Dead");
+        vic.class = null;
+
+        Base pos = vic.GetBase("spawnpos");
+        if (pos != null)
+            pos.SetBool("lock", false);
+
+        gamemode.mngr.GameCheck();
     }
 
     return Plugin_Handled;
@@ -928,44 +968,6 @@ public void OnPlayerRunCmdPost(int client, int buttons)
         Call_PushCellRef(ply);
         Call_PushCell(buttons);
         Call_Finish();
-    }
-}
-
-public SDKHookCB CB_EntUse(int entity, int client) 
-{
-    Client ply = Clients.Get(client);
-    Entity ent = Ents.Get(entity);
-
-    if (ply.IsSCP) return;
-
-    if (ent.meta)
-    {
-        if (ent.meta.onpickup)
-        {
-            char funcname[32];
-            ent.meta.onpickup.name(funcname, sizeof(funcname));
-
-            Call_StartFunction(ent.meta.onpickup.hndl, GetFunctionByName(ent.meta.onpickup.hndl, funcname));
-            Call_PushCellRef(ply);
-            Call_PushCellRef(ent);
-            Call_Finish();
-        }
-
-        if (!ent.meta.onpickup || !ent.meta.onpickup.invblock)
-            if (ply.inv.Pickup(ent))
-            {
-                ent.WorldRemove();
-                Ents.IndexUpdate(ent);
-            }
-            else
-            {
-                ply.PrintNotify("%t", "Inventory full");
-            }
-        else
-        {
-            ent.WorldRemove();
-            Ents.IndexUpdate(ent);
-        }
     }
 }
 
@@ -1339,11 +1341,21 @@ public Action Command_AdminMenu(int client, int args)
     }
 }
 
+public Action Command_Kill(int client, const char[] command, int argc)
+{
+    Client ply = Clients.Get(client);
+    
+    if (ply.IsAlive())
+        ply.Kill();
+
+    return Plugin_Stop;
+}
+
 public Action Command_Ents(int client, const char[] command, int argc)
 {
     Client ply = Clients.Get(client);
 
-    char arg[32], buf[4096];
+    char arg[32], buf[256];
 
     GetCmdArg(1, arg, sizeof(arg));
 
@@ -1360,14 +1372,14 @@ public Action Command_Ents(int client, const char[] command, int argc)
 
             ent.GetClass(name, sizeof(name));
 
-            if (counter != 40)
+            if (counter != 5)
             {
                 counter++;
 
                 if (ent.id != 5000)
-                    Format(buf, sizeof(buf), (counter != 40) ? "%s%s id: %i\n" : "%s%s id: %i", buf, name, ent.id);
+                    Format(buf, sizeof(buf), (counter != 5) ? "%s%s id: %i\n" : "%s%s id: %i", buf, name, ent.id);
                 else
-                    Format(buf, sizeof(buf), (counter != 40) ? "%s%s (picked)\n" : "%s%s (picked)", buf, name);
+                    Format(buf, sizeof(buf), (counter != 5) ? "%s%s (picked)\n" : "%s%s (picked)", buf, name);
             }
             else
             {

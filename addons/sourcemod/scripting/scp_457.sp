@@ -5,43 +5,45 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-// Время горения в конфиг
-int particle = -1;
-
 public Plugin myinfo = {
 	name = "[SCP] 457",
-	author = "GeTtOo",
+	author = "GeTtOo, Andrey::Dono",
 	description = "SCP-457",
 	version = "1.0",
 	url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void SCP_OnPlayerJoin(Client &ply)
-{
-    SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
-}
-
 public void SCP_OnPlayerSpawn(Client &ply)
 {
     if(ply.class.Is("457"))
     {
-        SetEntityRenderMode(ply.id, RENDER_NONE);
-        IgniteEffect(ply.id);
+        ply.SetRenderMode(RENDER_NONE);
+        
+        Entity effect = (new Entity()).Create("info_particle_system");
+
+        if(IsValidEdict(effect.id))
+        {   
+            effect.SetPos(ply.GetPos())
+            .SetKV("targetname", "tf2particle")
+            .SetKV("effect_name", "env_fire_large")
+            .Spawn();
+            
+            SetVariantString("!activator");
+            effect.Input("SetParent", ply)
+            .Input("Start")
+            .Activate();
+
+            ply.SetBase("457_effect", effect);
+        }
     }
 }
 
-public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
+public Action SCP_OnTakeDamage(Client &vic, Client &atk, float &damage, int &damagetype)
 {
-    Client vic = Clients.Get(victim), atk = Clients.Get(attacker);
-    
-    if (atk == null || atk.class == null) return Plugin_Continue;
-    
-    if(atk != null && atk.class.Is("457") && atk.id != vic.id)
+    if(atk.class.Is("457") && atk.id != vic.id)
     {
-        IgniteEntity(vic.id, 20.0);
+        IgniteEntity(vic.id, float(gamemode.config.pl.GetInt("ignitetime", 20)));
     }
-
-    if (vic == null || vic.class == null) return Plugin_Continue;
 
     if(vic.class.Is("457") && damagetype == DMG_BURN)
     {
@@ -53,56 +55,18 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 
 public void SCP_OnPlayerClear(Client &ply)
 {
-    if (ply != null && ply.class != null && ply.class.Is("457"))
+    if (ply != null && ply.class != null && ply.class.Is("457") && ply.InGame())
     {
-        SetEntityRenderMode(ply.id, RENDER_NORMAL);
+        ply.SetRenderMode(RENDER_NORMAL);
 
-        if(particle != -1)
-        {
-            AcceptEntityInput(particle, "Kill");
-            particle = -1;
-        }
-
-        int ent = GetEntPropEnt(ply.id, Prop_Send, "m_hRagdoll");
-        if (ent > MaxClients && IsValidEdict(ent))
-        {
-            AcceptEntityInput(ent, "Kill");
-        }
-    }
-}
-
-void IgniteEffect(int client)
-{
-    particle = CreateEntityByName("info_particle_system");
-
-    if(IsValidEdict(particle))
-    {
-        char name[64];
-        float position[3];
+        Entity ragdoll = ply.ragdoll;
         
-        GetEntPropVector(client, Prop_Send, "m_vecOrigin", position);
-        TeleportEntity(particle, position, NULL_VECTOR, NULL_VECTOR);
+        if (ragdoll)
+            ragdoll.Remove();
+
+        Entity effect = view_as<Entity>(ply.GetBase("457_effect"));
         
-        GetEntPropString(client, Prop_Data, "m_iName", name, sizeof(name));
-
-        DispatchKeyValue(particle, "targetname", "tf2particle");
-        DispatchKeyValue(particle, "parentname", name);
-        DispatchKeyValue(particle, "effect_name", "env_fire_large");
-        DispatchSpawn(particle);
-        
-        SetVariantString("!activator");
-        AcceptEntityInput(particle, "SetParent", client);
-        ActivateEntity(particle);
-        AcceptEntityInput(particle, "Start");
+        if (effect)
+            effect.Remove();
     }
-}
-
-stock bool IsClientExist(int client)
-{
-    if((0 < client < MaxClients) && IsClientInGame(client) && !IsClientSourceTV(client))
-    {
-        return true;
-    }
-
-    return false;
 }

@@ -30,6 +30,21 @@ public void SCP_OnPlayerClear(Client &ply)
         Format(timername, sizeof(timername), "SCP-173-%i", ply.id);
 
         gamemode.timer.Remove(timername);
+
+        ply.RemoveValue("173_isvis");
+    }
+}
+
+public void SCP_OnPlayerDeath(Client &ply)
+{
+    if (ply != null && ply.class != null && ply.class.Is("173")) {
+        char sound[3][128] = {
+            "*/scp/173/death1.mp3",
+            "*/scp/173/death2.mp3",
+            "*/scp/173/death3.mp3"
+        };
+        
+        gamemode.mngr.PlayAmbient(sound[GetRandomInt(0,2)], ply);
     }
 }
 
@@ -37,55 +52,60 @@ public void CheckVisualContact(Client ply)
 {
     if (ply != null && ply.class != null && ply.IsAlive() && ply.class.Is("173")) 
     {
-        bool isvis = false;
+        bool visible = false;
+
         float scpPosArr[3];
-        Vector pos = ply.EyePos();
-        pos.GetArr(scpPosArr);
-        delete pos;
+        ply.EyePos().GetArrD(scpPosArr);
 
         char filter[1][32] = {"player"};
-
         ArrayList players = Ents.FindInBox(ply.GetPos() - new Vector(2000.0, 2000.0, 400.0), ply.GetPos() + new Vector(2000.0, 2000.0, 400.0), filter, sizeof(filter));
 
         for (int i=0; i < players.Length; i++) {
-            Client cply = players.Get(i);
+            Client checkply = players.Get(i);
+            
+            if (ply == checkply || checkply.IsSCP || !checkply.IsAlive()) continue;
 
-            float playerPosArr[3];
-            Vector cpos = cply.EyePos();
-            cpos.GetArr(playerPosArr);
-            delete cpos;
+            float checkPlyPosArr[3];
+            checkply.EyePos().GetArrD(checkPlyPosArr);
 
-            if (cply.IsAlive()) {
-                ArrayList checklist = Ents.FindInPVS(cply, 2000);
+            ArrayList checklist = Ents.FindInPVS(checkply, 2000);
 
-                for (int v=0; v < checklist.Length; v++)
+            if (checklist.FindValue(ply) != -1)
+            {
+                Handle ray = TR_TraceRayFilterEx(checkPlyPosArr, scpPosArr, MASK_VISIBLE, RayType_EndPoint, RayFilter);
+                if (!TR_DidHit(ray))
                 {
-                    if (view_as<Client>(checklist.Get(v)).id == ply.id)
-                    {
-                        Handle ray = TR_TraceRayFilterEx(scpPosArr, playerPosArr, MASK_PLAYERSOLID_BRUSHONLY, RayType_EndPoint, RayFilter);
-                        if (!TR_DidHit(ray))
-                        {
-                            ply.multipler = 0.0;
-                            isvis = true;
-                        }
-
-                        delete ray;
-                    }
+                    visible = true;
                 }
 
-                delete checklist;
+                delete ray;
+            }
+
+            delete checklist;
+        }
+        
+        delete players;
+
+        if (visible)
+        {
+            if (!ply.GetBool("173_isvis"))
+            {
+                ply.SetMoveType(MOVETYPE_NONE);
+                ply.SetBool("173_isvis", true);
             }
         }
-
-        delete players;
-        
-        if(!isvis)
-            if (ply.multipler == 0.0)
-            ply.multipler = ply.class.multipler;
+        else
+        {
+            if (ply.GetBool("173_isvis"))
+            {
+                ply.SetMoveType(MOVETYPE_WALK);
+                ply.SetBool("173_isvis", false);
+            }
+        }
     }
 }
 
-public bool RayFilter(int ent, int mask, any data) 
+public bool RayFilter(int ent, int mask, any plyidx) 
 {
     if (ent >= 1 && ent <= MaxClients) return false;
     return true;
@@ -93,7 +113,7 @@ public bool RayFilter(int ent, int mask, any data)
 
 public void SCP_OnInput(Client &atk, int buttons)
 {
-    if (atk.class.Is("173") && buttons & IN_ATTACK)  // 2^0 +attack
+    if (atk.class.Is("173") && !atk.GetBool("173_isvis") && buttons & IN_ATTACK)  // 2^0 +attack
     {
         ArrayList entArr = Ents.FindInPVS(atk, 130);
 
@@ -102,6 +122,9 @@ public void SCP_OnInput(Client &atk, int buttons)
             
             if (atk.id != vic.id)
                 vic.Kill();
+
+            entArr.Erase(i);
+            delete vic;
         }
 
         delete entArr;

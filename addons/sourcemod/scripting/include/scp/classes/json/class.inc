@@ -15,15 +15,22 @@ methodmap Class < JSON_OBJECT {
 
     public JSON_OBJECT GetVecAng() {
         JSON_OBJECT posobj = this.GetObject("pos");
-        JSON_OBJECT vecang = null;
         
         if (posobj != null)
             if (!posobj.IsArray)
-                vecang = posobj;
+                return posobj;
             else
-                vecang = view_as<JSON_OBJECT>(view_as<JSON_ARRAY>(posobj).GetObject(GetRandomInt(0, view_as<JSON_ARRAY>(posobj).Length - 1)));
+            {
+                JSON_ARRAY posarr = view_as<JSON_ARRAY>(posobj);
+                for (int i=0; i < posarr.Length; i++)
+                {
+                    JSON_OBJECT pos = view_as<JSON_OBJECT>(posarr.GetObject(i));
+                    if (!pos.GetBool("lock"))
+                        return pos;
+                }
+            }
         
-        return vecang;
+        return null;
     }
 
     property int percent {
@@ -44,6 +51,10 @@ methodmap Class < JSON_OBJECT {
 
     property int armor {
         public get() { return this.GetInt("armor", 0); }
+    }
+
+    property bool helmet {
+        public get() { return this.GetBool("helmet", false); }
     }
 
     property float speed {

@@ -22,7 +22,7 @@ public void OnUse(Client &ply, InvItem &item) {
     if (!item.disabled) {
         SetEntityRenderMode(ply.id, RENDER_NONE);
         ply.progress.Start(15000, "InvisibleEffect");
-        item.CooldownStart(gamemode.config.GetInt("scp-268_cd", 60) * 1000, "ItemUnlocked", item);
+        item.CooldownStart(item.meta.cd * 1000, "ItemUnlocked", item);
         item.disabled = true;
     }
 }

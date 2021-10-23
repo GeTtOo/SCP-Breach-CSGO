@@ -21,8 +21,6 @@ char sounds[10][32] = {
     { "*/scp/049/049_alert_3.wav" }
 };
 
-Base config;
-
 public Plugin myinfo = {
 	name = "[SCP] 049",
 	author = "Andrey::Dono, GeTtOo",
@@ -30,16 +28,6 @@ public Plugin myinfo = {
 	version = "1.0",
 	url = "https://github.com/GeTtOo/csgo_scp"
 };
-
-public void SCP_OnPlayerJoin(Client &ply) 
-{
-    SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
-}
-
-public void SCP_RegisterMetaData()
-{
-	config = gamemode.config.GetBase("049");
-}
 
 public void SCP_OnInput(Client &ply, int buttons)
 {
@@ -53,7 +41,7 @@ public void SCP_OnInput(Client &ply, int buttons)
 			if (ragdolls.Length > 0)
 			{
 				ply.SetBool("049_reviving", true);
-				ply.progress.Start((config.GetBase("revive").GetBool("multi", true)) ? config.GetBase("revive").GetInt("time", 3000) * 1000 * ragdolls.Length : config.GetBase("revive").GetInt("time", 3000) * 1000, "Revive");
+				ply.progress.Start((gamemode.config.pl.GetObject("revive").GetBool("multi", true)) ? gamemode.config.pl.GetObject("revive").GetInt("time", 3000) * 1000 * ragdolls.Length : gamemode.config.pl.GetObject("revive").GetInt("time", 3000) * 1000, "Revive");
 				ply.PrintNotify("Reviving");
 			}
 		}
@@ -72,7 +60,7 @@ public void Revive(Client ply)
 	ply.progress.Stop();
 	ply.SetBool("049_reviving", false);
 
-	if (config.GetBase("revive").GetBool("inpvs", true))
+	if (gamemode.config.pl.GetObject("revive").GetBool("inpvs", true))
 	{
 		char filter[1][32] = {"prop_ragdoll"};
 		ArrayList ragdolls = Ents.FindInPVS(ply, _, _, filter);
@@ -94,10 +82,21 @@ public void Revive(Client ply)
 					{
 						if (vic.ragdoll.id == vicrag.id)
 						{
+							ArrayList bglist = vic.bglist;
+							char modelname[256];
+							
+							vic.ragdoll.meta.model(modelname, sizeof(modelname));
+							
 							vic.Team("SCP");
 							vic.class = gamemode.team("SCP").class("049_2");
 
 							vic.Spawn();
+							vic.SetModel(modelname);
+
+							vic.bglist = bglist;
+							//vic.SetBodyGroup("body", 0);
+							vic.SetSkin(1);
+							
 							vic.SetPos(vic.ragdoll.GetPos(), ply.GetAng() - new Angle(0.0, 180.0, 0.0));
 						}
 					}
@@ -105,7 +104,7 @@ public void Revive(Client ply)
 
 				delete players;
 
-				if (!config.GetBase("revive").GetBool("multi", true)) break;
+				if (!gamemode.config.pl.GetObject("revive").GetBool("multi", true)) break;
 			}
 		}
 
@@ -142,24 +141,18 @@ public void ReviveUnlock(Client ply) {
 	ply.SetBool("049_lock", false);
 }
 
-public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
+public Action SCP_OnTakeDamage(Client &vic, Client &atk, float &damage, int &damagetype)
 {
-	Client atk = Clients.Get(attacker);
-	Client vic = Clients.Get(victim);
-	if (atk == null || atk.class == null) return Plugin_Continue;
-
 	if(atk.class.Is("049"))
 	{
-		damage += 180;
+		damage += 250.0;
 		return Plugin_Changed;
 	}
 	else if(atk.class.Is("049_2"))
 	{
-		damage += 70;
+		damage += 70.0;
 		return Plugin_Changed;
 	}
-
-	if (vic == null || vic.class == null) return Plugin_Continue;
 	
 	if(vic.class.Is("049") && vic.GetBool("049_reviving"))
 	{
@@ -170,7 +163,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 	return Plugin_Continue;
 }
 
-public void SCP_OnPressF(Client &ply)
+public void SCP_OnCallActionMenu(Client &ply)
 {
     if (ply.class.Is("049") && !g_MusicPlay)
 	{
@@ -185,10 +178,9 @@ public void SCP_OnPressF(Client &ply)
 	}
 }
 
-public Action AllowMusicPlay()
+public void AllowMusicPlay()
 {
 	g_MusicPlay = false;
-	return Plugin_Stop;
 }
 
 stock bool IsClientExist(int client)

@@ -80,13 +80,6 @@ methodmap Client < Entity {
         public get() { ProgressBar pb; return this.GetValue("progress", pb) ? pb : null; }
     }
 
-    public void SetupBaseStats(Class class) {
-        this.health = class.health;
-        this.armor = class.armor;
-        this.speed = class.speed;
-        this.multipler = class.multipler;
-    }
-
     public bool GetName(char[] buffer, int max_size = 0) { return GetClientName(this.id, buffer, max_size); }
 
     public bool IsAlive() { return IsPlayerAlive(this.id); }
@@ -138,7 +131,7 @@ methodmap Client < Entity {
 
     public int Give(char[] item) { return GivePlayerItem(this.id, item); }
 
-    public void RestrictWeapons() {
+    public void DropWeapons() {
         int m_hMyWeapons_size = GetEntPropArraySize(this.id, Prop_Send, "m_hMyWeapons");
         int item;
 
@@ -147,10 +140,29 @@ methodmap Client < Entity {
             item = GetEntPropEnt(this.id, Prop_Send, "m_hMyWeapons", index);
 
             if(item != -1)
-            { 
+            {
+                CS_DropWeapon(this.id, item, false, false);
+            }
+        }
+    }
+
+    public void RestrictWeapons() {
+        ArrayList ents = view_as<Base>(gamemode).GetBase("ents").GetArrayList("entities");
+        int m_hMyWeapons_size = GetEntPropArraySize(this.id, Prop_Send, "m_hMyWeapons");
+        int item;
+
+        for(int index = 0; index < m_hMyWeapons_size; index++)
+        { 
+            item = GetEntPropEnt(this.id, Prop_Send, "m_hMyWeapons", index);
+
+            if(item != -1)
+            {
+                int idx = ents.FindValue(item, 0);
+                if (idx != -1)
+                    ents.Erase(idx);
                 RemovePlayerItem(this.id, item);
                 AcceptEntityInput(item, "Kill");
-            } 
+            }
         }
     }
 
@@ -200,7 +212,10 @@ methodmap Client < Entity {
 
     //public void SetCollisionGroup(int group) { gamemode.mngr.SetCollisionGroup(this.id, group); }
 
-    public void Kill() { ForcePlayerSuicide(this.id); }
+    public void Kill() {
+        this.DropWeapons();
+        ForcePlayerSuicide(this.id);
+    }
 
     public void SilenceKill() {
         this.RestrictWeapons();
@@ -210,12 +225,26 @@ methodmap Client < Entity {
 
     public void Kick(char[] reason) { KickClient(this.id, reason); }
 
+    public void SetupBaseStats(Class class) {
+        this.health = class.health;
+        if (class.armor != 0)
+            this.armor = class.armor;
+        if (class.helmet)
+            this.SetProp("m_bHasHelmet", 1);
+        this.speed = class.speed;
+        this.multipler = class.multipler;
+    }
+
     public void Setup() {
         this.SetupBaseStats(this.class);
 
         JSON_OBJECT pos = this.class.GetVecAng();
         if (pos != null)
+        {
             this.SetPos(pos.GetVector("vec"), pos.GetAngle("ang"));
+            pos.SetInt("lock", true);
+            this.SetBase("spawnpos", view_as<Base>(pos));
+        }
 
         if (this.class.items != null)
         {
@@ -358,6 +387,7 @@ methodmap Client < Entity {
     public void UpdateClass() {
         if (!IsPlayerAlive(this.id))
             CS_RespawnPlayer(this.id);
+        this.Clear();
         this.RestrictWeapons();
         this.inv.FullClear();
         this.Setup();
