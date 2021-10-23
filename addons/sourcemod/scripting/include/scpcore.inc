@@ -8,7 +8,6 @@
 // ¯\_(ツ)_/¯
 #include "scp\structures\base"
 #include "scp\structures\vector"
-#include "scp\structures\angle"
 #include "scp\structures\color"
 #include "scp\structures\json"
 #include "scp\classes\meta"
