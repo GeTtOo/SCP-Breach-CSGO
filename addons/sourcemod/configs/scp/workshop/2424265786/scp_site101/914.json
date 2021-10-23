@@ -213,11 +213,11 @@
             "weapon_healthshot": [
                 ["plastic", 50, 100]
             ],
-            "scp_500": [
+            "500_panacea": [
                 ["weapon_healthshot", 50, 100]
             ],
-            "scp_472": [
-                ["scp_500", 50, 100]
+            "427_amulet": [
+                ["500_panacea", 50, 100]
             ],
             "weapon_axe": [
                 ["iron_ingot", 50, 100],
@@ -571,13 +571,13 @@
                 ["iron_ingot", 0, 100],
                 ["weapon_decoy", 0, 100]
             ],
-            "scp_500": {
+            "500_panacea": {
                 "70":["plastic", 0, 100],
                 "30":["weapon_healthshot", 0, 100]
             },
-            "scp_472": {
+            "427_amulet": {
                 "70":["plastic", 0, 100],
-                "30":["scp_500", 0, 100]
+                "30":["500_panacea", 0, 100]
             },
             "weapon_axe": [
                 ["iron_ingot", 0, 100],
@@ -969,11 +969,11 @@
             "weapon_healthshot": [
                 ["weapon_healthshot", 0, 100]
             ],
-            "scp_500": [
-                ["scp_500", 0, 100]
+            "500_panacea": [
+                ["500_panacea", 0, 100]
             ],
-            "scp_472": [
-                ["scp_472", 0, 100]
+            "427_amulet": [
+                ["427_amulet", 0, 100]
             ],
             "weapon_axe": [
                 ["weapon_hammer", 0, 100],
@@ -1045,7 +1045,7 @@
                 ["card_o5", 0, 100]
             ],
             "card_o5": [
-                ["scp_005", 90, 100]
+                ["005_picklock", 90, 100]
             ],
             "weapon_hkp2000": [
                 ["weapon_mp9", 0, 100]
@@ -1166,14 +1166,14 @@
                 ["plastic", 0, 100]
             ],
             "weapon_healthshot": {
-                "10":["scp_500", 0, 100],
+                "10":["500_panacea", 0, 100],
                 "90":["plastic", 0, 100]
             },
-            "scp_500": {
-                "10":["scp_472", 0, 100],
+            "500_panacea": {
+                "10":["427_amulet", 0, 100],
                 "90":["plastic", 0, 100]
             },
-            "scp_472": [
+            "427_amulet": [
                 ["plastic", 0, 100],
                 ["iron_ingot", 0, 100],
                 ["card_o5", 0, 100]
@@ -1418,12 +1418,12 @@
                 ["plastic", 50, 100]
             ],
             "weapon_healthshot": [
-                ["scp_500", 50, 100]
+                ["500_panacea", 50, 100]
             ],
-            "scp_500": [
-                ["scp_472", 50, 100]
+            "500_panacea": [
+                ["427_amulet", 50, 100]
             ],
-            "scp_472": [
+            "427_amulet": [
                 ["iron_ingot", 0, 100]
             ],
             "weapon_axe": [
