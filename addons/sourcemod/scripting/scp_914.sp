@@ -186,7 +186,6 @@ public void Transform(Client ply) {
                         {
                             Ents.Create(oentclass)
                             .SetPos(oitempos, ent.GetAng())
-                            .UseCB(view_as<SDKHookCB>(CB_EntUse))
                             .Spawn();
 
                             Ents.Remove(ent.id);
@@ -215,7 +214,7 @@ public void Transform(Client ply) {
             }
             else
             {
-                Ents.Create(entclass).SetPos(oitempos, ent.GetAng()).UseCB(view_as<SDKHookCB>(CB_EntUse)).Spawn();
+                Ents.Create(entclass).SetPos(oitempos, ent.GetAng()).Spawn();
                 Ents.Remove(ent.id);
             }
         }

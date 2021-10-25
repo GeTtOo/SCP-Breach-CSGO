@@ -155,16 +155,16 @@ methodmap Entity < Base {
             IntToString(this.meta.skin, skin, sizeof(skin));
 
             this.SetKV("model", modelName);
-            this.SetKV("physicsmode", "2");
             this.SetKV("massScale", mass);
-            this.SetKV("Solid", "6");
             this.SetKV("body", bodygroup);
             this.SetKV("skin", skin);
+
             if (this.meta.spawnflags != 0) {
                 char flags[8];
                 IntToString(this.meta.spawnflags, flags, sizeof(flags));
                 this.SetKV("spawnflags", flags);
             }
+            
             if (this.meta.usable) {
                 char funcname[32];
                 this.meta.GetString("function", funcname, sizeof(funcname));
@@ -217,8 +217,13 @@ methodmap Entity < Base {
         return this;
     }
 
-    public Entity UseCB(SDKHookCB cb) {
-        SDKHook(this.id, SDKHook_Use, cb);
+    public Entity SetHook(SDKHookType type, SDKHookCB cb) {
+        SDKHook(this.id, type, cb);
+        return this;
+    }
+
+    public Entity RemoveHook(SDKHookType type, SDKHookCB cb) {
+        SDKUnhook(this.id, type, cb);
         return this;
     }
 

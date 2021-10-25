@@ -1,7 +1,8 @@
 enum InventoryEvents {
-    ON_PICKUP = 0,
-    ON_DROP,
-    ON_USE
+    ON_TOUCH = 0,
+    ON_PICKUP,
+    ON_USE,
+    ON_DROP
 }
 
 methodmap OnUseMeta < Base {
@@ -27,6 +28,20 @@ methodmap OnPickupMeta < Base {
     property bool invblock {
         public set(bool val) { this.SetBool("invblock", val); }
         public get() { return this.GetBool("invblock"); }
+    }
+    
+    property Handle hndl {
+        public set(Handle val) { this.SetValue("hndl", val); }
+        public get() { Handle val; return this.GetValue("hndl", val) ? val : null; }
+    }
+
+    public void name(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("name", buffer) : this.GetString("name", buffer, max_size); }
+}
+
+methodmap OnTouchMeta < Base {
+
+    public OnTouchMeta() {
+        return view_as<OnTouchMeta>(new Base());
     }
     
     property Handle hndl {
@@ -87,16 +102,21 @@ methodmap EntityMeta < Base {
         public get() { return this.GetInt("cooldown"); }
     }
 
-    property OnUseMeta onuse {
-        public set(OnUseMeta val) { this.SetValue("onuse", val); }
-        public get() { OnUseMeta val; return this.GetValue("onuse", val) ? val : null; }
+    property OnTouchMeta ontouch {
+        public set(OnTouchMeta val) { this.SetValue("ontouch", val); }
+        public get() { OnTouchMeta val; return this.GetValue("ontouch", val) ? val : null; }
     }
 
     property OnPickupMeta onpickup {
         public set(OnPickupMeta val) { this.SetValue("onpickup", val); }
         public get() { OnPickupMeta val; return this.GetValue("onpickup", val) ? val : null; }
     }
-    
+
+    property OnUseMeta onuse {
+        public set(OnUseMeta val) { this.SetValue("onuse", val); }
+        public get() { OnUseMeta val; return this.GetValue("onuse", val) ? val : null; }
+    }
+
     property OnDropMeta ondrop {
         public set(OnDropMeta val) { this.SetValue("ondrop", val); }
         public get() { OnDropMeta val; return this.GetValue("ondrop", val) ? val : null; }
@@ -171,6 +191,12 @@ methodmap Meta < Base {
         EntityMeta entdata = this.GetEntity(entclass);
         
         switch (eid) {
+            case ON_TOUCH: {
+                entdata.ontouch = new OnTouchMeta();
+
+                entdata.ontouch.hndl = GetMyHandle();
+                entdata.ontouch.name(funcname);
+            }
             case ON_PICKUP: {
                 entdata.onpickup = new OnPickupMeta();
 
@@ -178,17 +204,17 @@ methodmap Meta < Base {
                 entdata.onpickup.name(funcname);
                 entdata.onpickup.invblock = invblock;
             }
-            case ON_DROP: {
-                entdata.ondrop = new OnDropMeta();
-
-                entdata.ondrop.hndl = GetMyHandle();
-                entdata.ondrop.name(funcname);
-            }
             case ON_USE: {
                 entdata.onuse = new OnUseMeta();
 
                 entdata.onuse.hndl = GetMyHandle();
                 entdata.onuse.name(funcname);
+            }
+            case ON_DROP: {
+                entdata.ondrop = new OnDropMeta();
+
+                entdata.ondrop.hndl = GetMyHandle();
+                entdata.ondrop.name(funcname);
             }
         }
     }

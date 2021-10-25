@@ -118,14 +118,14 @@ methodmap Client < Entity {
         ClientCommand(this.id, "r_screenoverlay none");
     }
 
-    public void PlaySound(char[] path, int channel = 40, int level = 100, int entity = 0) {
+    public void PlaySound(char[] path, int channel = 1, int level = 100, int entity = 0) {
         int clients[1];
         clients[0] = this.id;
 
         EmitSound(clients, sizeof(clients), path, (entity == 0) ? this.id : entity, channel, level);
     }
 
-    public void StopSound(char[] path, int channel = 40) {
+    public void StopSound(char[] path, int channel = 1) {
         StopSound(this.id, channel, path);
     }
 
