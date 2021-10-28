@@ -410,14 +410,13 @@ methodmap Client < Entity {
     }
 
     public void Spawn() {
+        this.spawned = true;
         if (!IsPlayerAlive(this.id))
             CS_RespawnPlayer(this.id);
     }
 
     public void UpdateClass() {
-        if (!IsPlayerAlive(this.id))
-            CS_RespawnPlayer(this.id);
-        this.Clear();
+        this.Spawn();
         this.RestrictWeapons();
         this.inv.FullClear();
         this.Setup();

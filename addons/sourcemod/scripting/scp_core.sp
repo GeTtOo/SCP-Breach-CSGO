@@ -27,7 +27,7 @@
  * or <http://www.sourcemod.net/license.php>.
  *
  **/
- 
+
 #pragma semicolon 1
 #pragma newdecls required
 
@@ -271,9 +271,6 @@ public void OnClientDisconnect_Post(int id)
         pos.SetBool("lock", false);
 
     Call_StartForward(OnClientClearForward);
-    Call_PushCellRef(ply);
-    Call_Finish();
-
     Call_StartForward(OnClientLeaveForward);
     Call_PushCellRef(ply);
     Call_Finish();
@@ -292,18 +289,18 @@ public Action OnPlayerSpawn(int client)
         Client ply = Clients.Get(client);
 
         if (IsClientExist(ply.id) && GetClientTeam(ply.id) > 1) {
-            gamemode.timer.Simple(1, "Timer_PlayerSpawn", ply);
+            gamemode.timer.Simple(1, "PlayerSpawn", ply);
             if (ply.FirstSpawn)
                 ply.FirstSpawn = false;
         }
 
-        if (ply.spawned) return Plugin_Handled;
+        if (!ply.spawned) return Plugin_Handled;
     }
 
     return Plugin_Continue;
 }
 
-public void Timer_PlayerSpawn(Client ply)
+public void PlayerSpawn(Client ply)
 {
     if(IsClientExist(ply.id) && ply != null && ply.class != null)
     {
@@ -312,18 +309,13 @@ public void Timer_PlayerSpawn(Client ply)
             ply.ragdoll.Remove();
             ply.ragdoll = null;
         }
-        
-        //gamemode.mngr.SetCollisionGroup(ply.id, 2);
-        ply.RestrictWeapons();
 
-        Call_StartForward(OnClientSpawnForward);
-        Call_PushCellRef(ply);
-        Call_Finish();
+        ply.Spawn();
+
+        ply.RestrictWeapons();
 
         if (ply.class.fists)
             EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
-
-        ply.Setup();
 
         if (ply.class.HasKey("overlay"))
         {
@@ -333,10 +325,15 @@ public void Timer_PlayerSpawn(Client ply)
         
             ply.TimerSimple(gamemode.config.tsto * 1000, "PlyHideOverlay", ply);
         }
-
-        ply.spawned = true;
         
-        ply.Spawn();
+        ply.Setup();
+
+        Call_StartForward(OnClientSpawnForward);
+        Call_PushCellRef(ply);
+        Call_Finish();
+        
+        if (gamemode.config.debug)
+            gamemode.log.Info("Player with id %i spawned.", ply.id);
     }
 }
 
@@ -349,19 +346,8 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 {
     if(!gamemode.mngr.IsWarmup)
     {
-        gamemode.mngr.RoundComplete = false;
-        
-        ArrayList sortedPlayers = new ArrayList();
         ArrayList players = Clients.GetAll();
-
-        for (int i=0; i < players.Length; i++)
-        {
-            Client player = players.Get(i);
-            if (player.IsAlive())
-                sortedPlayers.Push(players.Get(i));
-        }
-
-        sortedPlayers.Sort(Sort_Random, Sort_Integer);
+        players.Sort(Sort_Random, Sort_Integer);
         
         int teamCount, classCount, extra = 0;
         
@@ -387,7 +373,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
                 for (int scc = 1; scc <= teamCount; scc++)
                 {
                     if (extra > Clients.InGame()) break;
-                    int id = sortedPlayers.Length - 1;
+                    int id = players.Length - 1;
                     if (id < 0) break;
                     
                     int classid = GetRandomInt(0, classes.Length - 1);
@@ -398,8 +384,8 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 
                     Class class = team.class(classname);
 
-                    Client player = sortedPlayers.Get(id);
-                    sortedPlayers.Erase(id);
+                    Client player = players.Get(id);
+                    players.Erase(id);
                     player.Team(teamname);
                     player.class = class;
 
@@ -429,10 +415,10 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
                 for (int scc = 1; scc <= classCount; scc++)
                 {
                     if (extra > Clients.InGame()) break;
-                    int id = sortedPlayers.Length - 1;
+                    int id = players.Length - 1;
                     if (id < 0) break;
-                    Client player = sortedPlayers.Get(id);
-                    sortedPlayers.Erase(id);
+                    Client player = players.Get(id);
+                    players.Erase(id);
                     player.Team(teamname);
                     player.class = class;
 
@@ -448,10 +434,10 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 
         for (int i = 1; i <= Clients.InGame() - extra; i++)
         {
-            int id = sortedPlayers.Length - 1;
+            int id = players.Length - 1;
             if (id < 0) break;
-            Client player = sortedPlayers.Get(id);
-            sortedPlayers.Erase(id);
+            Client player = players.Get(id);
+            players.Erase(id);
             char team[32], class[32];
             gamemode.config.DefaultGlobalClass(team, sizeof(team));
             gamemode.config.DefaultClass(class, sizeof(class));
@@ -465,7 +451,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 
         delete teams;
         
-        delete sortedPlayers;
+        delete players;
 
         SetupMapRegions();
         SpawnItemsOnMap();
@@ -498,14 +484,12 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
             gamemode.timer.RemoveIsContains(timername);
 
             Call_StartForward(OnClientClearForward);
-            Call_PushCellRef(ply);
-            Call_Finish();
-
             Call_StartForward(OnClientResetForward);
             Call_PushCellRef(ply);
             Call_Finish();
 
             ply.spawned = false;
+            ply.Team("None");
             ply.class = null;
             ply.inv.Clear();
             
@@ -522,6 +506,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
 
         Ents.Clear();
         WT.Clear();
+        gamemode.mngr.RoundComplete = false;
         gamemode.nuke.Reset();
         gamemode.timer.ClearAll();
 
@@ -752,9 +737,6 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         gamemode.timer.RemoveIsContains(timername);
 
         Call_StartForward(OnClientClearForward);
-        Call_PushCellRef(vic);
-        Call_Finish();
-
         Call_StartForward(OnPlayerDeathForward);
         Call_PushCellRef(vic);
         Call_PushCellRef(atk);

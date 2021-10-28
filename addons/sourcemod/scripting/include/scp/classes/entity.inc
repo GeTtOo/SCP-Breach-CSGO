@@ -96,6 +96,11 @@ methodmap Entity < Base {
         return this;
     }
 
+    public Entity SetPropEnt(char[] name, Entity ent, any type = Prop_Send) {
+        SetEntPropEnt(this.id, type, name, ent.id);
+        return this;
+    }
+
     public int GetProp(char[] name, any type = Prop_Send, int element = 0) {
         return GetEntProp(this.id, type, name, _, element);
     }
@@ -154,9 +159,8 @@ methodmap Entity < Base {
     public void SetRenderMode(RenderMode mode) { SetEntityRenderMode(this.id, mode); }
 
     public void TimerSimple(int delay, char[] funcname, any args = false) {
-        char timername[64], pname[64];
-        GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
-        FormatEx(timername, sizeof(timername), "%s_entid-%i_%i_%i", pname, this.id, GetTime(), GetRandomInt(1, 1000));
+        char timername[64];
+        FormatEx(timername, sizeof(timername), "ent_%i-time_%i-seed_%i", this.id, GetTime(), GetRandomInt(1, 1000));
         gamemode.timer.Create(timername, delay, 1, funcname, args);
     }
 
