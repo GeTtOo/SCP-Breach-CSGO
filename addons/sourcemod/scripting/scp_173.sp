@@ -46,7 +46,7 @@ public Plugin myinfo = {
 public void SCP_OnPlayerSpawn(Client &ply) 
 {
     if (ply.class != null && ply.class.Is("173")) {
-        char  timername[128];
+        char  timername[64];
         Format(timername, sizeof(timername), "SCP-173-%i", ply.id);
 
         gamemode.timer.Create(timername, 250, 0, "CheckVisualContact", ply);
@@ -56,7 +56,7 @@ public void SCP_OnPlayerSpawn(Client &ply)
 public void SCP_OnPlayerClear(Client &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("173")) {
-        char  timername[128];
+        char  timername[64];
         Format(timername, sizeof(timername), "SCP-173-%i", ply.id);
 
         gamemode.timer.Remove(timername);
