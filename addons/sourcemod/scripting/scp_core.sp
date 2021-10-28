@@ -241,10 +241,10 @@ public void OnClientPostAdminCheck(int id)
     Call_Finish();
 
     if (!IsFakeClient(ply.id))
-        ply.SetPropFloat("m_fForceTeam", 0.0);
-
-    if (!IsFakeClient(ply.id))
+    {
         SendConVarValue(ply.id, FindConVar("game_type"), "6");
+        ply.SetPropFloat("m_fForceTeam", 0.0);
+    }
 }
 
 public void OnClientDisconnect_Post(int id)
@@ -737,6 +737,9 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         gamemode.timer.RemoveIsContains(timername);
 
         Call_StartForward(OnClientClearForward);
+        Call_PushCellRef(vic);
+        Call_Finish();
+        
         Call_StartForward(OnPlayerDeathForward);
         Call_PushCellRef(vic);
         Call_PushCellRef(atk);
