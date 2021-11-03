@@ -896,18 +896,12 @@ public void LoadEntities(char[] mapName)
 
         JSON_OBJECT ent = ents.GetObject(entclass);
         StringMapSnapshot sent = ent.Snapshot();
-
-        char entname[32], entmodel[128];
-
-        ent.GetString("name", entname, sizeof(entname));
-        ent.GetString("model", entmodel, sizeof(entmodel));
         
         EntityMeta entdata = new EntityMeta();
-
-        int kl;
+        
         for (int k=0; k < sent.Length; k++)
         {
-            kl = sent.KeyBufferSize(k);
+            int kl = sent.KeyBufferSize(k);
             char[] keyname = new char[kl];
             sent.GetKey(k, keyname, kl);
             if (json_is_meta_key(keyname)) continue;
