@@ -54,14 +54,16 @@ public void SCP_OnPlayerSpawn(Client &ply)
         if(IsValidEdict(effect.id))
         {   
             effect.SetPos(ply.GetPos())
-            .SetKV("targetname", "tf2particle")
+            .SetKV("start_active", "1")
             .SetKV("effect_name", "env_fire_large")
             .Spawn();
-            
+
             SetVariantString("!activator");
-            effect.Input("SetParent", ply)
-            .Input("Start")
-            .Activate();
+            effect
+            .Input("SetParent", ply, effect)
+            .SetPropEnt("m_hOwnerEntity", ply, Prop_Data)
+            .Activate()
+            .Input("Start");
 
             ply.SetBase("457_effect", effect);
         }
