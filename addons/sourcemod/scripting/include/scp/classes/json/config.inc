@@ -113,6 +113,10 @@ methodmap Config < JSON_OBJECT {
         public get() { return this.GetBool("debug"); }
     }
 
+    property int logmode {
+        public get() { return this.GetInt("logmode"); }
+    }
+
     property bool ff {
         public get() { return this.GetBool("ff"); }
     }

@@ -156,7 +156,7 @@ public void OnMapStart()
     
     gamemode.SetValue("Manager", new Manager());
     gamemode.SetValue("Nuke", new NuclearWarhead());
-    gamemode.SetValue("Logger", new Logger());
+    gamemode.SetValue("Logger", new Logger("SCP_OnLog", gamemode.config.logmode));
     
     gamemode.mngr.CollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
     gamemode.config.SetInt("st", FindSendPropInfo("CBaseEntity", "m_flSimulationTime"));
@@ -227,7 +227,11 @@ public void OnClientPostAdminCheck(int id)
 
     if (gamemode.config.debug)
     {
-        gamemode.log.Info("Client joined | localId: (%i), steamId: (%i)", ply.id, GetSteamAccountID(ply.id));
+        char playername[32];
+
+        ply.GetName(playername, sizeof(playername));
+
+        gamemode.log.Info("Client %s joined | localId: (%i), steamId: (%i)", playername, ply.id, GetSteamAccountID(ply.id));
     }
 
     SDKHook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
@@ -333,7 +337,15 @@ public void PlayerSpawn(Client ply)
         Call_Finish();
         
         if (gamemode.config.debug)
-            gamemode.log.Info("Player with id %i spawned.", ply.id);
+        {
+            char playername[32], team[32], class[32];
+
+            ply.GetName(playername, sizeof(playername));
+            ply.Team(team, sizeof(team));
+            ply.class.GetString("name", class, sizeof(class));
+
+            gamemode.log.Info("Player %s spawned | Team/Class: (%s - %s) | LocalId: (%i)", playername, team, class, ply.id);
+        }
     }
 }
 
@@ -1026,8 +1038,8 @@ public void CB_EntTouch(int firstentity, int secondentity)
         ent1.meta.ontouch.name(funcname, sizeof(funcname));
 
         Call_StartFunction(ent1.meta.ontouch.hndl, GetFunctionByName(ent1.meta.ontouch.hndl, funcname));
-        Call_PushCellRef(ent1);
         Call_PushCellRef(ent2);
+        Call_PushCellRef(ent1);
         Call_Finish();
     }
 }

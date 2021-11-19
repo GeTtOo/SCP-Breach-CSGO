@@ -34,29 +34,39 @@
 
 methodmap Logger < Base
 {
-    public Logger()
+    public Logger(char[] fwname, int mode)
     {
-        Logger self = view_as<Logger>(new Base());
-        return self;
+        Logger logger = view_as<Logger>(new Base());
+        logger.SetHandle("fw", CreateGlobalForward(fwname, ET_Event, Param_String, Param_String, Param_String));
+        logger.SetInt("mode", mode);
+        return logger;
     }
 
-    public void SendMessageConsole(const char[] timestring, const char[] type, const char[] formatMessage)
+    property Handle fw {
+        public get() { return this.GetHandle("fw"); }
+    }
+
+    property int mode {
+        public get() { return this.GetInt("mode"); }
+    }
+
+    public void SendMessageToConsole(const char[] timestring, const char[] type, const char[] formatMessage)
     {
         PrintToServer("[%s][%s] %s", timestring, type, formatMessage);
-
-        /*if(StrEqual(formatMessage, "ERROR"))
-            LogError(formatMessage);
-        else
-            LogMessage("%s: %s", type, formatMessage);*/
     }
     
-    public void SendMessageDiscord(const char[] timestring, const char[] type, const char[] formatMessage)
+    public void SendMessageToFile(const char[] type, const char[] formatMessage)
     {
-        //Discord_StartMessage();
-        //Discord_SetUsername("SCP");
-        //Discord_SetContent("```md\n[%s][%s] %s```", timestring, type, formatMessage);
-        //Discord_EndMessage("scp_logger", true);
-        //PrintToChatAll("[%s][%s]: %s"timestring, type, formatMessage);
+        LogToFileEx("addons/sourcemod/logs/SCP.log", "[%s] %s", type, formatMessage);
+    }
+
+    public void SendMessageToForward(const char[] timestring, const char[] type, const char[] formatMessage)
+    {
+        Call_StartForward(this.fw);
+        Call_PushString(timestring);
+        Call_PushString(type);
+        Call_PushString(formatMessage);
+        Call_Finish();
     }
 
     public void SendMessage(int logType, const char[] text)
@@ -74,20 +84,25 @@ methodmap Logger < Base
         char timestring[10];
         FormatTime(timestring, 10, "%H:%M:%S");
 
-        switch(0) //gamemode.log.type
+        switch(this.mode)
         {
-            case 2:     
-            { 
-                this.SendMessageConsole(timestring, type, text);
-                this.SendMessageDiscord(timestring, type, text);
+            case 1:
+            {
+                this.SendMessageToConsole(timestring, type, text);
             }
-            case 1:     
-            { 
-                this.SendMessageDiscord(timestring, type, text); 
+            case 2:
+            {
+                this.SendMessageToFile(type, text);
+            }
+            case 3:
+            {
+                this.SendMessageToForward(timestring, type, text);
             }
             default:
             {
-                this.SendMessageConsole(timestring, type, text);
+                //this.SendMessageToConsole(timestring, type, text);
+                this.SendMessageToFile(type, text);
+                this.SendMessageToForward(timestring, type, text);
             }
         }
     }

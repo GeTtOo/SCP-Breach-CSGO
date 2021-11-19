@@ -1,6 +1,7 @@
 {
     "ff":true,
     "debug":true,
+    "logmode":0,
     "DefaultGlobalClass":"Personnel",
     "DefaultClass":"D Class",
     "invsize": 5,
