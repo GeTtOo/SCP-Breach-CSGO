@@ -14,6 +14,10 @@ models/eternity/props/scp/scp_427.mdl
 models/eternity/props/scp/scp_427.dx90.vtx
 models/eternity/props/scp/scp_427.vvd
 models/eternity/props/scp/scp_427.phy
+models/eternity/props/scp/scp_427_2.mdl
+models/eternity/props/scp/scp_427_2.dx90.vtx
+models/eternity/props/scp/scp_427_2.vvd
+models/eternity/props/scp/scp_427_2.phy
 models/eternity/props/chaos_card.mdl
 models/eternity/props/chaos_card.dx90.vtx
 models/eternity/props/chaos_card.vvd
@@ -278,6 +282,14 @@ materials/models/eternity/players/mog/tela_medic.vtf
 materials/models/eternity/players/mog/tela_norm.vtf
 materials/models/eternity/players/mog/tela_shitty.vmt
 materials/models/eternity/players/mog/tela_shitty.vtf
+materials/models/eternity/players/mog/tela_z.vmt
+materials/models/eternity/players/mog/tela_z.vtf
+materials/models/eternity/players/mog/tela_haz_z.vmt
+materials/models/eternity/players/mog/tela_haz_z.vtf
+materials/models/eternity/players/mog/tela_medic_z.vmt
+materials/models/eternity/players/mog/tela_medic_z.vtf
+materials/models/eternity/players/mog/tela_shitty_z.vmt
+materials/models/eternity/players/mog/tela_shitty_z.vtf
 materials/models/eternity/players/scientists/arms_black.vmt
 materials/models/eternity/players/scientists/arms_black.vtf
 materials/models/eternity/players/scientists/arms_normal.vtf
@@ -393,6 +405,10 @@ materials/models/eternity/props/scp-267/base_n.vtf
 materials/models/eternity/props/scp-267/base_r.vtf
 materials/models/eternity/props/scp-427/scp_427_texture.vmt
 materials/models/eternity/props/scp-427/scp_427_texture.vtf
+materials/models/eternity/props/scp-427_2/Base.vmt
+materials/models/eternity/props/scp-427_2/Base.vtf
+materials/models/eternity/props/scp-427_2/stone.vmt
+materials/models/eternity/props/scp-427_2/stone.vtf
 sound/scp/049/049_2.wav
 sound/scp/049/049_3.wav
 sound/scp/049/049_4.wav
