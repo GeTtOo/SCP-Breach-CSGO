@@ -332,17 +332,32 @@ public void PlayerSpawn(Client ply)
         
         ply.Setup();
 
+        char team[32], class[32];
+
+        ply.Team(team, sizeof(team));
+        ply.class.GetString("name", class, sizeof(class));
+
+        char notifytag[32];
+        FormatEx(notifytag, sizeof(notifytag), "%s-%s-Notify", team, class);
+
+        if (TranslationPhraseExists(notifytag))
+        {
+            char notify[2048];
+
+            FormatEx(notify, sizeof(notify), "%t", "ControlNotify", team, class);
+            Format(notify, sizeof(notify), "%s\n%t", notify, notifytag);
+            
+            ply.PrintNotify(notify);
+        }
+
         Call_StartForward(OnClientSpawnForward);
         Call_PushCellRef(ply);
         Call_Finish();
         
         if (gamemode.config.debug)
         {
-            char playername[32], team[32], class[32];
-
+            char playername[32];
             ply.GetName(playername, sizeof(playername));
-            ply.Team(team, sizeof(team));
-            ply.class.GetString("name", class, sizeof(class));
 
             gamemode.log.Info("Player %s spawned | Team/Class: (%s - %s) | LocalId: (%i)", playername, team, class, ply.id);
         }

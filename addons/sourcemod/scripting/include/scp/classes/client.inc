@@ -125,14 +125,14 @@ methodmap Client < Entity {
     public void Team(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("team", buffer) : this.GetString("team", buffer, max_size); }
 
     public void PrintNotify(const char[] format, any ...) {
-        int len = strlen(format) + 255;
+        int len = strlen(format) + 4096;
         char[] formattedText = new char[len];
         VFormat(formattedText, len, format, 3);
         PrintHintText(this.id, "%s", formattedText);
     }
 
     public void PrintWarning(const char[] format, any ...) {
-        int len = strlen(format) + 255;
+        int len = strlen(format) + 4096;
         char[] formattedText = new char[len];
         VFormat(formattedText, len, format, 3);
         PrintCenterText(this.id, "%s", formattedText);
