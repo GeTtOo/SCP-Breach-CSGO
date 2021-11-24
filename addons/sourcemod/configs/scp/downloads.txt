@@ -62,6 +62,10 @@ models/player/custom_player/eternity/scp_049.dx90.vtx
 models/player/custom_player/eternity/scp_049.mdl
 models/player/custom_player/eternity/scp_049.phy
 models/player/custom_player/eternity/scp_049.vvd
+models/player/custom_player/eternity/scp096.dx90.vtx
+models/player/custom_player/eternity/scp096.mdl
+models/player/custom_player/eternity/scp096.phy
+models/player/custom_player/eternity/scp096.vvd
 materials/models/eternity/overlays/cadet.vmt
 materials/models/eternity/overlays/cadet.vtf
 materials/models/eternity/overlays/chaos.vmt
@@ -350,6 +354,11 @@ materials/models/eternity/players/scp-173/scp173unity_normal.vtf
 materials/models/eternity/players/scp-173/scp173unity_phong.vtf
 materials/models/eternity/players/scp-173/scp173unitysheet.vmt
 materials/models/eternity/players/scp-173/scp173unitysheet.vtf
+materials/models/eternity/players/scp-096/scp096.vmt
+materials/models/eternity/players/scp-096/scp096.vtf
+materials/models/eternity/players/scp-096/scp096_eyes.vmt
+materials/models/eternity/players/scp-096/scp096_eyes.vtf
+materials/models/eternity/players/scp-096/scp096_wrp.vtf
 materials/models/eternity/props/ingot/ingot.vmt
 materials/models/eternity/props/ingot/ingot.vtf
 materials/models/eternity/props/ingot/ingot_normal.vtf
