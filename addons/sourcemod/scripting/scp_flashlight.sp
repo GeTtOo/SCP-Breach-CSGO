@@ -54,21 +54,21 @@ public void SCP_RegisterMetaData() {
 }
 
 public void OnPickup(Client &ply, InvItem &item) {
-    item.disabled = true;
+    item.SetBool("enable", true);
 }
 
 public void OnUse(Client &ply, InvItem &item) {
-    if(item.disabled == true)
-        item.disabled = false;
+    if(item.GetBool("enable") == true)
+        item.SetBool("enable", false);
     else
-        item.disabled = true;
+        item.SetBool("enable", true);
 
     ToogleFlashLight(ply);
 }
 
 public void OnDrop(Client &ply, InvItem &item) {
-    if(item.disabled == false) {
-        item.disabled = true;
+    if(item.GetBool("enable") == false) {
+        item.SetBool("enable", true);
         ToogleFlashLight(ply);
     }
 }
