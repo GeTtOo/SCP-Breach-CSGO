@@ -212,6 +212,8 @@ methodmap Entity < Base {
 
     public void GetClass(char[] name, int max_size) { if (!this.GetString("class", name, max_size)) GetEntityClassname(this.id, name, max_size); }
 
+    public bool IsClass(char[] equalClass) { char thisClass[32]; this.GetClass(thisClass, sizeof(thisClass)); return StrEqual(thisClass, equalClass); }
+
     public Vector GetPos() { float pos[3]; GetEntPropVector(this.id, Prop_Send, "m_vecOrigin", pos); return new Vector(pos[0], pos[1], pos[2]); }
 
     public Angle GetAng() { float ang[3]; GetEntPropVector(this.id, Prop_Send, "m_angRotation", ang); return new Angle(ang[0], ang[1], ang[2]); }
