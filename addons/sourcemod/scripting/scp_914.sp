@@ -171,26 +171,19 @@ public void Transform(Client ply) {
                 char oentclass[32];
                 recipe.GetString(0, oentclass, sizeof(oentclass));
                 
-                if (StrEqual(entclass, "player"))
+                if (ent.IsClass("player"))
                 {
-                    Handle umsg = StartMessageOne("Fade", ent.id, USERMSG_RELIABLE);
-                    PbSetInt(umsg, "duration", 800);
-                    PbSetInt(umsg, "hold_time", 3000);
-                    PbSetInt(umsg, "flags", 0x0001);
-                    PbSetColor(umsg, "clr", {0,0,0,255});
-                    EndMessage();
+                    Client entply = view_as<Client>(ent);
+                    
+                    gamemode.mngr.Fade(entply.id, 800, 3000, new Colour(0,0,0,255));
 
                     if (StrEqual(curmode, "rough") || StrEqual(curmode, "coarse")) {
                         if (!AmbientPlay) {
-                            Vector emitpos = ent.GetPos();
-                            float nativepos[3];
-                            emitpos.GetArr(nativepos);
-                            
-                            EmitAmbientSound("*/scp/914_player_rough.mp3", nativepos);
+                            gamemode.mngr.PlayAmbient("*/scp/914_player_rough.mp3", entply);
                             AmbientPlay = true;
                         }
                         
-                        EmitSoundToClient(ent.id, "*/scp/914_player_rough.mp3");
+                        entply.PlaySound("*/scp/914_player_rough.mp3");
                     }
 
                     if (recipe.GetInt(1) >= GetRandomInt(1, 100)) {
@@ -201,11 +194,11 @@ public void Transform(Client ply) {
                         Call_PushCell(ply);
                         Call_Finish();
                         
-                        ent.SetPos(oitempos);
+                        entply.SetPos(oitempos);
                     }
                     else
                     {
-                        ent.SetPos(oitempos);
+                        entply.SetPos(oitempos);
                     }
                 }
                 else
