@@ -186,7 +186,7 @@
     "AccessLevel_3"
     {
         "en"        "Containment Chamber Tier 3"
-        "ru"        "Камеры содержания, уровень 2"
+        "ru"        "Камеры содержания, уровень 3"
     }
     "AccessLevel_4"
     {
