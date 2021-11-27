@@ -148,7 +148,16 @@ public void SCP_OnInput(Client &atk, int buttons)
             Client vic = entArr.Get(i);
             
             if (atk.id != vic.id)
+            {
+                char sound[128];
+                JSON_ARRAY nbs = gamemode.plconfig.GetObject("sound").GetArray("neckbroke");
+                nbs.GetString(GetRandomInt(0, nbs.Length - 1), sound, sizeof(sound));
+                gamemode.mngr.PlayAmbient(sound, vic);
+                
                 vic.Kill();
+                
+                break;
+            }
 
             entArr.Erase(i);
             delete vic;
