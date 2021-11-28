@@ -1341,6 +1341,9 @@ public void SpawnItemsOnMap()
 
             delete sdata;
 
+            if (count != 0)
+                break;
+
             Vector pos = data.GetVector("vec");
             Angle ang = data.GetAngle("ang");
 
