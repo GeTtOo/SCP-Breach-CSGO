@@ -1307,6 +1307,38 @@ public void SpawnItemsOnMap()
         for (int v=0; v < rawDataArr.Length; v++) 
         {
             JSON_OBJECT data = view_as<JSON_OBJECT>(rawDataArr.GetObject(v));
+            StringMapSnapshot sdata = data.Snapshot();
+
+            int random = GetRandomInt(1,100);
+            int count = 0;
+            for (int k=0; k < sdata.Length; k++)
+            {
+                int chancekeylen = sdata.KeyBufferSize(k);
+                char[] strchance = new char[chancekeylen];
+                sdata.GetKey(k, strchance, chancekeylen);
+                if (json_is_meta_key(strchance)) continue;
+
+                int chance = StringToInt(strchance);
+
+                if (chance != 0)
+                {
+                    count += chance;
+                    if (count >= random) {
+                        data = data.GetObject(strchance);
+
+                        Vector pos = data.GetVector("vec");
+                        Angle ang = data.GetAngle("ang");
+
+                        Ents.Create(item)
+                        .SetPos(pos, ang)
+                        .Spawn();
+                        break;
+                    }
+                }
+            }
+
+            delete sdata;
+
             Vector pos = data.GetVector("vec");
             Angle ang = data.GetAngle("ang");
 
@@ -1316,6 +1348,8 @@ public void SpawnItemsOnMap()
                 .Spawn();
         }
     }
+
+    delete snapshot;
 }
 
 public void CheckNewPlayers(int seconds)
