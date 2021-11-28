@@ -1332,6 +1332,8 @@ public void SpawnItemsOnMap()
                         Ents.Create(item)
                         .SetPos(pos, ang)
                         .Spawn();
+                        
+                        delete sdata;
                         break;
                     }
                 }
