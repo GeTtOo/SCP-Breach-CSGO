@@ -18,13 +18,12 @@
 - [Менеджер]()  
 - [World Text]()  
 - [Logger]()  
-- [Описания функций и событий ядра]()  
+- [Событий ядра](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BRU%5D%20API.md#%D0%BE%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D1%8F-%D1%84%D1%83%D0%BD%D0%BA%D1%86%D0%B8%D0%B9-%D0%B8-%D1%81%D0%BE%D0%B1%D1%8B%D1%82%D0%B8%D0%B9-%D1%8F%D0%B4%D1%80%D0%B0)  
 
 ------------------
 
-## Описания функций и событий ядра  
+## Событий ядра  
 
-### События:  
 | Событие       | Описание |
 | ------------- | ---------|
 | `void SCP_RegisterMetaData()` | Событие, в котором регистрируется мета события для сущностей.  |
@@ -42,5 +41,3 @@
 | `void SCP_OnRoundEnd()` | Вызывается в конце раунда.  |
 | `void SCP_OnInput(Client &ply, int buttons)` | Аналог OnPlayerRunCmd.  |
 | `void SCP_OnCallActionMenu(Client &ply)` | Вызывается при открытии меню (клавиша TAB).  |
-
-### Функции:  
