@@ -95,4 +95,9 @@
         "en"        "SCP-035 Mask"
         "ru"        "SCP-035 Маска"
     }
+    "flashlight"
+    {
+        "en"        "Flashlight"
+        "ru"        "Фонарик"
+    }
 }

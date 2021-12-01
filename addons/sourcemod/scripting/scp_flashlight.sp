@@ -67,8 +67,8 @@ public void OnUse(Client &ply, InvItem &item) {
 }
 
 public void OnDrop(Client &ply, InvItem &item) {
-    if(item.GetBool("enable") == false) {
-        item.SetBool("enable", true);
+    if(item.GetBool("enable") == true) {
+        item.SetBool("enable", false);
         ToogleFlashLight(ply);
     }
 }
