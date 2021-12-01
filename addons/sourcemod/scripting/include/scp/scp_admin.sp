@@ -108,6 +108,8 @@ methodmap AdminAction < Base
                 }
             }
         }
+
+        gamemode.log.Admin("The player %L viewed the list of live players", this.admin.id);
     }
 
     public void IgnoreDoorAccess()
@@ -115,11 +117,13 @@ methodmap AdminAction < Base
         if(!this.admin.fullaccess)
         {
             PrintToChat(this.admin.id, " \x07[SCP] \x01%t \x06%t", "Door access", "Enable");
+            gamemode.log.Admin("%L: %t - %t", this.admin.id, "Door access", "Enable");
             this.admin.fullaccess = true;
         }
         else
         {
             PrintToChat(this.admin.id, " \x07[SCP] \x01%t \x06%t", "Door access", "Disable");
+            gamemode.log.Admin("%L: %t - %t", this.admin.id, "Door access", "Disable");
             this.admin.fullaccess = false;
         }
     }
@@ -138,6 +142,8 @@ methodmap AdminAction < Base
             CloseHandle(hTrace);
 
             TeleportEntity(this.target.id, targetPos, NULL_VECTOR, NULL_VECTOR);
+
+            gamemode.log.Admin("%L teleport player %L ", this.admin.id, this.target.id);
         }
         else
         {
@@ -241,12 +247,14 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
                 gamemode.mngr.RoundComplete = true;
                 CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TargetBombed, false);
                 PrintToChatAll(" \x07[SCP] \x01%t", "Rount restart");
+                gamemode.log.Admin("Round restart by %L", client);
             }
             case DESTROY_SITE:
             {
                 gamemode.nuke.ready = true;
                 gamemode.nuke.active = true;
                 gamemode.nuke.Activate();
+                gamemode.log.Admin("Site destroy by %L", client);
             }
             default:
             {
@@ -417,6 +425,7 @@ public int MenuHandler_GetClass(Menu hMenu, MenuAction action, int client, int i
             AdminMenu.Get(client).target.Team(team);
             AdminMenu.Get(client).target.class = gamemode.team(team).class(class);
             AdminMenu.Get(client).target.Spawn();
+            gamemode.log.Admin("%L spawn player %L", client, AdminMenu.Get(client).target.id);
         }
     }
 }
@@ -465,6 +474,7 @@ public int MenuHandler_GetTeleportPoint(Menu hMenu, MenuAction action, int clien
             JSON_OBJECT pos = gamemode.config.GetObject("teleport").GetObject(tpname);
 
             AdminMenu.Get(client).target.SetPos(pos.GetVector("vec"), pos.GetAngle("ang"));
+            gamemode.log.Admin("%L teleport %L", client, AdminMenu.Get(client).target.id);
         }
     }
 }
@@ -544,6 +554,7 @@ public int MenuHandler_GiveMenu(Menu hMenu, MenuAction action, int client, int i
             hMenu.GetItem(item, itemclass, sizeof(itemclass));
 
             AdminMenu.Get(client).target.inv.Add(itemclass);
+            gamemode.log.Admin("%L give %s item to %L ", client, itemclass, AdminMenu.Get(client).target.id);
         }
     }
 }

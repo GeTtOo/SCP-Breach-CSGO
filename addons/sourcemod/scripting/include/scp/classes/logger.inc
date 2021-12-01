@@ -76,8 +76,9 @@ methodmap Logger < Base
         switch(logType)
         {
             case 0:     { type = "Info";    }
-            case 1:     { type = "Warning"; }
-            case 2:    { type = "ERROR";   }
+            case 1:     { type = "Admin";    }
+            case 2:     { type = "Warning"; }
+            case 3:    { type = "ERROR";   }
             default:    { type = "Unknown";   }
         }
 
@@ -100,7 +101,7 @@ methodmap Logger < Base
             }
             default:
             {
-                //this.SendMessageToConsole(timestring, type, text);
+                this.SendMessageToConsole(timestring, type, text);
                 this.SendMessageToFile(type, text);
                 this.SendMessageToForward(timestring, type, text);
             }
@@ -115,11 +116,27 @@ methodmap Logger < Base
         this.SendMessage(0, text);
     }
 
-    public void Warning(const char[] format, any ...)
+    public void Admin(const char[] format, any ...)
     {
         int len = strlen(format) + 255;
         char[] text = new char[len];
         VFormat(text, len, format, 3);
         this.SendMessage(1, text);
+    }
+
+    public void Warning(const char[] format, any ...)
+    {
+        int len = strlen(format) + 255;
+        char[] text = new char[len];
+        VFormat(text, len, format, 3);
+        this.SendMessage(2, text);
+    }
+
+    public void Error(const char[] format, any ...)
+    {
+        int len = strlen(format) + 255;
+        char[] text = new char[len];
+        VFormat(text, len, format, 3);
+        this.SendMessage(3, text);
     }
 }

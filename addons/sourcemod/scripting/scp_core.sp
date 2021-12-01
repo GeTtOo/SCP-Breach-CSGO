@@ -120,8 +120,8 @@ public void OnPluginStart()
     LoadTranslations("scpcore.phrases");
     LoadTranslations("scpcore.regions");
     LoadTranslations("scpcore.entities");
-                                                           // ¯\_(ツ)_/¯
-    RegServerCmd("scp", CmdSCP);                                                            // ¯\_(ツ)_/¯
+
+    RegServerCmd("scp", CmdSCP);  // ¯\_(ツ)_/¯
 
     RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_CUSTOM1);
     
@@ -192,6 +192,8 @@ public void OnMapStart()
         ForceChangeLevel(mapName, "Fix sound cached");
         fixCache = true;
     }
+
+    gamemode.log.Info("Map %s started", mapName);
 }
 
 public void OnMapEnd()
@@ -231,7 +233,7 @@ public void OnClientPostAdminCheck(int id)
 
         ply.GetName(playername, sizeof(playername));
 
-        gamemode.log.Info("Client %s joined | localId: (%i), steamId: (%i)", playername, ply.id, GetSteamAccountID(ply.id));
+        gamemode.log.Info("Client %L joined", ply.id);
     }
 
     SDKHook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
@@ -256,7 +258,7 @@ public void OnClientDisconnect_Post(int id)
     Client ply = Clients.Get(id);
 
     if (gamemode.config.debug)
-        gamemode.log.Info("Client disconnected: %i", ply.id);
+        gamemode.log.Info("Client disconnected: %L", ply.id);
 
     gamemode.mngr.GameCheck();
 
@@ -359,7 +361,7 @@ public void PlayerSpawn(Client ply)
             char playername[32];
             ply.GetName(playername, sizeof(playername));
 
-            gamemode.log.Info("Player %s spawned | Team/Class: (%s - %s) | LocalId: (%i)", playername, team, class, ply.id);
+            gamemode.log.Info("Player %L spawned | Team/Class: (%s - %s)", ply.id, team, class);
         }
     }
 }
@@ -417,7 +419,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
                     player.class = class;
 
                     if (gamemode.config.debug)
-                        gamemode.log.Info("[Class] %s random setup on player: %i", classname, player.id);
+                        gamemode.log.Info("[Class] %s random setup on player: %L", classname, player.id);
 
                     extra++;
                 }
@@ -450,7 +452,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
                     player.class = class;
 
                     if (gamemode.config.debug)
-                        gamemode.log.Info("[Class] %s setup on player: %i", classname, player.id);
+                        gamemode.log.Info("[Class] %s setup on player: %L", classname, player.id);
 
                     extra++;
                 }
@@ -473,7 +475,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
             player.class = gamemode.team(team).class(class);
 
             if (gamemode.config.debug)
-                gamemode.log.Info("[Extra] Team: %s, Class: %s setup on player: %i", team, class, player.id);
+                gamemode.log.Info("[Extra] Team: %s, Class: %s setup on player: %L", team, class, player.id);
         }
 
         delete teams;
@@ -539,6 +541,8 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
 
         Call_StartForward(OnRoundEndForward);
         Call_Finish();
+
+        gamemode.log.Info("Round start");
     }
 }
 
