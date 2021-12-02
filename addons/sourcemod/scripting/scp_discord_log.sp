@@ -37,9 +37,9 @@
 #pragma newdecls required
 
 public Plugin myinfo = {
-    name = "[SCP] 035",
+    name = "[SCP] Discord logger",
     author = "GeTtOo",
-    description = "Added SCP-035",
+    description = "Discord logger",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"
 };
