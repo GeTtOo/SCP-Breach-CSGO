@@ -241,7 +241,7 @@
     }
     "Log_Admin_ShowClass"
     {
-        "#format"   "{1:s}, {2:s}"
+        "#format"   "{1:s},{2:s}"
         "en"        "Admin {1} <{2}> has viewed the teams of the players"
         "ru"        "Администратор {1} <{2}> просмотрел классы и команды игроков"
     }
