@@ -193,7 +193,7 @@ public void OnMapStart()
         fixCache = true;
     }
 
-    gamemode.log.Info("Map %s started", mapName);
+    gamemode.log.Info("%t", "Log_Core_MapStart", mapName);
 }
 
 public void OnMapEnd()
@@ -229,10 +229,6 @@ public void OnClientPostAdminCheck(int id)
 
     if (gamemode.config.debug)
     {
-        char playername[32];
-
-        ply.GetName(playername, sizeof(playername));
-
         gamemode.log.Info("Client %L joined", ply.id);
     }
 
@@ -358,9 +354,6 @@ public void PlayerSpawn(Client ply)
         
         if (gamemode.config.debug)
         {
-            char playername[32];
-            ply.GetName(playername, sizeof(playername));
-
             gamemode.log.Info("Player %L spawned | Team/Class: (%s - %s)", ply.id, team, class);
         }
     }
@@ -393,7 +386,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
             teamCount = (teamCount != 0 || !team.priority) ? teamCount : 1;
 
             if (gamemode.config.debug)
-                    gamemode.log.Info("[Team] %s trying setup on %i players", teamname, teamCount);
+                gamemode.log.Info("[Team] %s trying setup on %i players", teamname, teamCount);
 
             ArrayList classes = team.GetClassList();
 
@@ -542,7 +535,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
         Call_StartForward(OnRoundEndForward);
         Call_Finish();
 
-        gamemode.log.Info("Round start");
+        gamemode.log.Info("%t", "Log_Core_RoundStart");
     }
 }
 
@@ -784,6 +777,22 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
             pos.SetBool("lock", false);
 
         gamemode.mngr.GameCheck();
+
+        char vicname[32], vicauth[32];
+        vic.GetName(vicname, sizeof(vicname));
+        vic.GetAuth2(vicauth, sizeof(vicauth));
+        
+        if(atk) {
+            char atkname[32], atkauth[32];
+
+            atk.GetName(atkname, sizeof(atkname));
+            atk.GetAuth2(atkauth, sizeof(atkauth));
+
+            gamemode.log.Info("%t", "Log_Core_PlayerDead", vicname, vicauth, atkname, atkauth);
+        }
+        else {
+            gamemode.log.Info("%t", "Log_Core_Suicide",  vicname, vicauth);
+        }
     }
 
     return Plugin_Handled;

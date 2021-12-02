@@ -112,6 +112,8 @@ methodmap Client < Entity {
 
     public bool GetName(char[] buffer, int max_size = 0) { return GetClientName(this.id, buffer, max_size); }
 
+    public bool GetAuth2(char[] buffer, int max_size = 0) { return GetClientAuthId(this.id, AuthId_Steam2, buffer, max_size, true); }
+
     public bool IsAlive() { return IsPlayerAlive(this.id); }
 
     public bool InGame() { return IsClientInGame(this.id); }
