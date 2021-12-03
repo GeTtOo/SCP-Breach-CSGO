@@ -203,7 +203,20 @@ methodmap Manager < Base {
         else if(StrEqual(winteam, "nobody"))
             PrintToChatAll(" \x07[SCP] \x01%t", "Site destroy");
         else
+        {
             PrintToChatAll(" \x07[SCP] \x01%t", "Team Win", winteam);
+
+            char overlay[128];
+            Format(overlay, sizeof(overlay), "r_screenoverlay models/eternity/overlays/win_%s", winteam);
+            
+            Client ply;
+            for(int i = 0; i < Clients.Length; i++)
+            {
+                ply = Clients.Get(i);
+                ply.ShowOverlay(overlay);
+                ply.TimerSimple(gamemode.config.tsto * 1000, "PlyHideOverlay", ply);
+            }
+        }
 
         CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TargetBombed, false);
     }
@@ -217,11 +230,11 @@ methodmap Manager < Base {
                 if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
                     this.EndGame(winTeam);
             }
-            else if (Clients.InGame() == 0)
+            /*else if (Clients.InGame() == 0)
             {
-                //ServerCommand("mp_restartgame 1");
-                //ServerCommand("mp_warmup_start");
-            }
+                ServerCommand("mp_restartgame 1");
+                ServerCommand("mp_warmup_start");
+            }*/
         }
     }
 
