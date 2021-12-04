@@ -2,6 +2,7 @@
     "ff":true,
     "debug":true,
     "logmode":0,
+    "loglevel":4,
     "DefaultGlobalClass":"Personnel",
     "DefaultClass":"D Class",
     "invsize": 5,
@@ -18,7 +19,7 @@
             {"id":"dclass","path":"models/player/custom_player/eternity/d_class.mdl","bginf":[0,7,4,1,0,0,1,0,1,0,0]},
             {"id":"scientist","path":"models/player/custom_player/eternity/scientists.mdl","bginf":[1,6,4,0,0,0,0,0,0,0,0]},
             {"id":"mog","path":"models/player/custom_player/eternity/mog.mdl","bginf":[0,4,3,5,2,15,3,3,0,1,1]},
-            {"id":"chaos","path":"models/player/custom_player/eternity/chaos.mdl","bginf":[3,4,4,4,2,0,0,0,3,0,0]}
+            {"id":"chaos","path":"models/player/custom_player/eternity/chaos.mdl","bginf":[3,4,3,4,2,0,0,0,3,0,0]}
         ]
     },
     "nuke": {
@@ -54,13 +55,18 @@
         "SCP-996":{"vec":[-5406,2626,4],"ang":[-2,-1,0]}
     },
     "[SCP] 914": {
-        "usemathcounter":true,
+        "usemathcounter":false,
         "countername": "scp_914_logic_counter",
         "switchbutton": 443873,
         "runbutton": 516151,
         "runtime": 8,
         "searchzone":[[3630, -2072, 20],[3762, -1947, 90]],
-        "distance":[0, 425, 0]
+        "distance":[0, 425, 0],
+        "sound": {
+            "playerkill": [
+                "*/scp/914_player_rough.mp3"
+            ]
+        }
     },
     "[SCP] 049": {
         "revive":{
@@ -73,7 +79,11 @@
         "radius":2000,
         "blinktime":5,
         "sound": {
-            "neckbroke":"*/scp/173/neckbroke.mp3",
+            "neckbroke":[
+                "*/scp/173/neck1.mp3",
+                "*/scp/173/neck2.mp3",
+                "*/scp/173/neck3.mp3"
+            ],
             "death": [
                 "*/scp/173/death1.mp3",
                 "*/scp/173/death2.mp3",

@@ -88,7 +88,7 @@
             "Scientist": {
                 "percent":20,
                 "overlay":"scientist",
-                "items":[{"70":"card_scientist","30":"card_major_scientist"},"268_cap"],
+                "items":[{"70":"card_scientist","30":"card_major_scientist"},"963_amulet","963_amulet_bright"],
                 "model":{
                     "id":"scientist",
                     "bodygroups":{
@@ -141,7 +141,7 @@
             "Security": {
                 "percent":10,
                 "overlay":"guard",
-                "items":["card_guard", "005_picklock", "427_amulet"],
+                "items":["card_guard"],
                 "weapons":["weapon_mp5sd","weapon_usp_silencer"],
                 "model":{
                     "id":"mog",
@@ -170,6 +170,7 @@
     "MOG": {
         "percent":0,
         "priority":false,
+        "reinforce":true,
         "classes": {
             "Commander": {
                 "percent":10,
@@ -295,6 +296,7 @@
     "Chaos": {
         "percent":10,
         "priority":false,
+        "reinforce":true,
         "classes": {
             "Delta": {
                 "percent":10,
@@ -454,7 +456,9 @@
                 "speed":130,
                 "doors":[279,280],
                 "comment":"096",
-                "overlay":"scp-096"
+                "overlay":"scp-096",
+                "model":"models/player/custom_player/eternity/scp096.mdl",
+                "handsmodel":"models/weapons/arms_scp096long.mdl"
             },
             "106": {
                 "pos":{"vec":[-11110,520,-365]},
