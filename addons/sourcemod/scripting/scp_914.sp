@@ -54,17 +54,18 @@ public Plugin myinfo = {
 
 public void SCP_OnLoad() {
     LoadTranslations("scpcore.phrases");
-}
 
-public void SCP_OnUnload() {
-    //gamemode.timer.PluginClear();
-}
-
-public void OnMapStart() {
     char mapName[128];
     GetCurrentMap(mapName, sizeof(mapName));
 
     gconfig = ReadConfig(mapName, "914");
+    
+    if (gconfig)
+        gamemode.log.Debug("Recipes loaded");
+}
+
+public void SCP_OnUnload() {
+    //gamemode.timer.PluginClear();
 }
 
 public void SCP_OnRoundStart() {
@@ -77,10 +78,14 @@ public void SCP_OnRoundStart() {
             if (StrEqual(findedCounterName, configCounterName))
                 Counter = entId;
         }
+
+        gamemode.log.Debug("Using math counter");
     }
     else
     {
         Counter = 0;
+
+        gamemode.log.Debug("Using simple counter");
     }
 
     gamemode.timer.PluginClear();
@@ -113,8 +118,7 @@ public void Transform(Client ply) {
     
     ArrayList ents = Ents.FindInBox(gamemode.plconfig.GetArray("searchzone").GetVector(0), gamemode.plconfig.GetArray("searchzone").GetVector(1), filter, sizeof(filter));
 
-    if (gamemode.config.debug)
-        PrintToChatAll("Ents count: %i", ents.Length);
+    char entlist[3072];
 
     for(int i=0; i < ents.Length; i++)
     {
@@ -124,9 +128,8 @@ public void Transform(Client ply) {
 
         char entclass[32];
         ent.GetClass(entclass, sizeof(entclass));
-        
-        if (gamemode.config.debug)
-            PrintToChat(ply.id, "class: %s, id: %i", entclass, ent.id);
+
+        Format(entlist, sizeof(entlist), "%s\nClass: %s (id: %i)", entlist, entclass, ent.id);
 
         StringMapSnapshot srecipes = recipes.Snapshot();
 
@@ -178,12 +181,16 @@ public void Transform(Client ply) {
                     gamemode.mngr.Fade(entply.id, 800, 3000, new Colour(0,0,0,255));
 
                     if (StrEqual(curmode, "rough") || StrEqual(curmode, "coarse")) {
+                        char sound[128];
+                        JSON_ARRAY soundarr = gamemode.plconfig.GetObject("sound").GetArray("playerkill");
+                        soundarr.GetString(GetRandomInt(0, soundarr.Length - 1), sound, sizeof(sound));
+
                         if (!AmbientPlay) {
-                            gamemode.mngr.PlayAmbient("*/scp/914_player_rough.mp3", entply);
+                            gamemode.mngr.PlayAmbient(sound, entply);
                             AmbientPlay = true;
                         }
                         
-                        entply.PlaySound("*/scp/914_player_rough.mp3");
+                        entply.PlaySound(sound);
                     }
 
                     if (recipe.GetInt(1) >= GetRandomInt(1, 100)) {
@@ -242,6 +249,8 @@ public void Transform(Client ply) {
             }
         }
     }
+
+    gamemode.log.Debug("Transforming iteration started by player %i (Mode: %s).\nFinded %i entities:%s", ply.id, curmode, ents.Length, entlist);
 
     delete ents;
 }
