@@ -52,6 +52,10 @@ methodmap GTeam < JSON_OBJECT {
         public get() { return this.GetBool("priority"); }
     }
 
+    property bool reinforce {
+        public get() { return this.GetBool("reinforce"); }
+    }
+
     property bool randompick {
         public get() { return this.GetBool("randompick"); }
     }
