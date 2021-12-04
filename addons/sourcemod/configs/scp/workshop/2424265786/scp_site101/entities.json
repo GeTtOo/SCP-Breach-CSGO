@@ -76,12 +76,22 @@
         "access":[1,2,3,4,5,6,7,8,9,10]
     },
     "500_panacea": {
-        "model":"models/eternity/props/keycard.mdl",
+        "model":"models/eternity/props/scp_500.mdl",
         "mass":0.5
+    },
+    "963_amulet_bright": {
+        "model":"models/eternity/props/scp/scp_963_2.mdl",
+        "mass":2.5,
+        "spawnflags":4352
+    },
+    "963_amulet": {
+        "model":"models/eternity/props/scp/scp_427_2.mdl",
+        "mass":2.5,
+        "spawnflags":4352
     },
     "427_amulet": {
         "model":"models/eternity/props/scp/scp_427.mdl",
-        "mass":3.5
+        "mass":2.5
     },
     "268_cap": {
         "model":"models/eternity/props/scp/scp_267.mdl",
@@ -94,7 +104,7 @@
     },
     "iron_ingot": {
         "model":"models/eternity/props/ingot.mdl",
-        "mass":10.0
+        "mass":5.0
     },
     "plastic": {
         "model":"models/eternity/props/plastic.mdl",
