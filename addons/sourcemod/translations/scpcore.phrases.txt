@@ -247,9 +247,9 @@
     }
     "Log_PlayerDisconnected"
     {
-        "#format"   "{1:s},{2:s}"
-        "en"        "Player {1} <{2}> disconnected"
-        "ru"        "Player {1} <{2}> покинул сервер"
+        "#format"   "{1:s}"
+        "en"        "Player <{1}> disconnected"
+        "ru"        "Player <{1}> покинул сервер"
     }
     "Log_Admin_ShowClass"
     {

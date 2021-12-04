@@ -248,10 +248,9 @@ public void OnClientDisconnect_Post(int id)
 {
     Client ply = Clients.Get(id);
 
-    char clientname[32], clientauth[32];
-    ply.GetName(clientname, sizeof(clientname));
+    char clientauth[32];
     ply.GetAuth2(clientauth, sizeof(clientauth));
-    gamemode.log.Info("%t", "Log_PlayerDisconnected", clientname, clientauth); 
+    gamemode.log.Info("%t", "Log_PlayerDisconnected", clientauth); 
 
     gamemode.mngr.GameCheck();
 
