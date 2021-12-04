@@ -34,11 +34,13 @@
 
 methodmap Logger < Base
 {
-    public Logger(char[] fwname, int mode)
+    public Logger(char[] fwname, int mode, int loglevel, bool debugmode)
     {
         Logger logger = view_as<Logger>(new Base());
         logger.SetHandle("fw", CreateGlobalForward(fwname, ET_Event, Param_String, Param_String, Param_String));
         logger.SetInt("mode", mode);
+        logger.SetInt("loglevel", loglevel);
+        logger.SetBool("debug", debugmode);
         return logger;
     }
 
@@ -48,6 +50,14 @@ methodmap Logger < Base
 
     property int mode {
         public get() { return this.GetInt("mode"); }
+    }
+
+    property int loglevel {
+        public get() { return this.GetInt("loglevel"); }
+    }
+
+    property bool debug {
+        public get() { return this.GetBool("debug"); }
     }
 
     public void SendMessageToConsole(const char[] timestring, const char[] type, const char[] formatMessage)
@@ -71,65 +81,45 @@ methodmap Logger < Base
 
     public void SendMessage(int logType, const char[] text)
     {
-        char type[32];
+        if (this.loglevel >= logType)
+        {
+            char type[32];
         
-        switch(logType)
-        {
-            case 0:     { type = "Info";    }
-            case 1:     { type = "Admin";    }
-            case 2:     { type = "Warning"; }
-            case 3:    { type = "ERROR";   }
-            default:    { type = "Unknown";   }
+            switch(logType)
+            {
+                case 0:     { type = "ERROR";   }
+                case 1:     { type = "Warning"; }
+                case 2:     { type = "Info";    }
+                case 3:     { type = "Admin";   }
+                case 4:     { type = "Debug";   }
+                default:    { type = "Unknown"; }
+            }
+
+            char timestring[10];
+            FormatTime(timestring, 10, "%H:%M:%S");
+
+            switch(this.mode)
+            {
+                case 1:
+                {
+                    this.SendMessageToConsole(timestring, type, text);
+                }
+                case 2:
+                {
+                    this.SendMessageToFile(type, text);
+                }
+                case 3:
+                {
+                    this.SendMessageToForward(timestring, type, text);
+                }
+                default:
+                {
+                    this.SendMessageToConsole(timestring, type, text);
+                    this.SendMessageToFile(type, text);
+                    this.SendMessageToForward(timestring, type, text);
+                }
+            }
         }
-
-        char timestring[10];
-        FormatTime(timestring, 10, "%H:%M:%S");
-
-        switch(this.mode)
-        {
-            case 1:
-            {
-                this.SendMessageToConsole(timestring, type, text);
-            }
-            case 2:
-            {
-                this.SendMessageToFile(type, text);
-            }
-            case 3:
-            {
-                this.SendMessageToForward(timestring, type, text);
-            }
-            default:
-            {
-                this.SendMessageToConsole(timestring, type, text);
-                this.SendMessageToFile(type, text);
-                this.SendMessageToForward(timestring, type, text);
-            }
-        }
-    }
-
-    public void Info(const char[] format, any ...)
-    {
-        int len = strlen(format) + 255;
-        char[] text = new char[len];
-        VFormat(text, len, format, 3);
-        this.SendMessage(0, text);
-    }
-
-    public void Admin(const char[] format, any ...)
-    {
-        int len = strlen(format) + 255;
-        char[] text = new char[len];
-        VFormat(text, len, format, 3);
-        this.SendMessage(1, text);
-    }
-
-    public void Warning(const char[] format, any ...)
-    {
-        int len = strlen(format) + 255;
-        char[] text = new char[len];
-        VFormat(text, len, format, 3);
-        this.SendMessage(2, text);
     }
 
     public void Error(const char[] format, any ...)
@@ -137,6 +127,44 @@ methodmap Logger < Base
         int len = strlen(format) + 255;
         char[] text = new char[len];
         VFormat(text, len, format, 3);
+        this.SendMessage(0, text);
+    }
+
+    public void Warning(const char[] format, any ...)
+    {
+        int len = strlen(format) + 255;
+        char[] text = new char[len];
+        VFormat(text, len, format, 3);
+        this.SendMessage(1, text);
+    }
+
+    public void Info(const char[] format, any ...)
+    {
+        int len = strlen(format) + 255;
+        char[] text = new char[len];
+        VFormat(text, len, format, 3);
+        this.SendMessage(2, text);
+    }
+
+    public void Admin(const char[] format, any ...)
+    {
+        int len = strlen(format) + 255;
+        char[] text = new char[len];
+        VFormat(text, len, format, 3);
         this.SendMessage(3, text);
+    }
+
+    public void Debug(const char[] format, any ...)
+    {
+        if (this.debug)
+        {
+            int len = strlen(format) + 4096;
+            char[] text = new char[len];
+            VFormat(text, len, format, 3);
+            char pname[64];
+            GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
+            Format(text, len, "%s %s", pname, text);
+            this.SendMessage(4, text);
+        }
     }
 }
