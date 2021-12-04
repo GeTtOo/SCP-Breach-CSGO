@@ -76,7 +76,7 @@
         "access":[1,2,3,4,5,6,7,8,9,10]
     },
     "500_panacea": {
-        "model":"models/eternity/props/scp_500.mdl",
+        "model":"models/eternity/props/scp/scp_500.mdl",
         "mass":0.5
     },
     "963_amulet_bright": {
