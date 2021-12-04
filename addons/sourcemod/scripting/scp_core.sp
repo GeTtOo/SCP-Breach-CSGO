@@ -156,13 +156,9 @@ public void OnMapStart()
     
     gamemode.SetValue("Manager", new Manager());
     gamemode.SetValue("Nuke", new NuclearWarhead());
-    gamemode.SetValue("Logger", new Logger("SCP_OnLog", gamemode.config.logmode));
+    gamemode.SetValue("Logger", new Logger("SCP_OnLog", gamemode.config.logmode, gamemode.config.loglevel, gamemode.config.debug));
     
     gamemode.mngr.CollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
-    gamemode.config.SetInt("st", FindSendPropInfo("CBaseEntity", "m_flSimulationTime"));
-    gamemode.config.SetInt("pbst", FindSendPropInfo("CCSPlayer", "m_flProgressBarStartTime"));
-    gamemode.config.SetInt("pbd", FindSendPropInfo("CCSPlayer", "m_iProgressBarDuration"));
-    gamemode.config.SetInt("buaip", FindSendPropInfo("CCSPlayer", "m_iBlockingUseActionInProgress"));
 
     if (gamemode.config.debug)
     {
@@ -227,10 +223,7 @@ public void OnClientPostAdminCheck(int id)
         AdminMenu.Add(ply);
     }
 
-    if (gamemode.config.debug)
-    {
-        gamemode.log.Info("Client %L joined", ply.id);
-    }
+    gamemode.log.Info("%t", "Log_PlayerConnected", ply.id);
 
     SDKHook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
     SDKHook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
@@ -253,8 +246,7 @@ public void OnClientDisconnect_Post(int id)
 {
     Client ply = Clients.Get(id);
 
-    if (gamemode.config.debug)
-        gamemode.log.Info("Client disconnected: %L", ply.id);
+    gamemode.log.Info("%t", "Log_PlayerDisconnected", ply.id); 
 
     gamemode.mngr.GameCheck();
 
@@ -290,8 +282,8 @@ public Action OnPlayerSpawn(int client)
     {
         Client ply = Clients.Get(client);
 
-        if (IsClientExist(ply.id) && GetClientTeam(ply.id) > 1) {
-            gamemode.timer.Simple(1, "PlayerSpawn", ply);
+        if (IsClientExist(client) && GetClientTeam(client) > 1) {
+            gamemode.timer.Simple(100, "PlayerSpawn", ply);
             if (ply.FirstSpawn)
                 ply.FirstSpawn = false;
         }
@@ -352,10 +344,7 @@ public void PlayerSpawn(Client ply)
         Call_PushCellRef(ply);
         Call_Finish();
         
-        if (gamemode.config.debug)
-        {
-            gamemode.log.Info("Player %L spawned | Team/Class: (%s - %s)", ply.id, team, class);
-        }
+        gamemode.log.Debug("Player %L spawned | Team/Class: (%s - %s)", ply.id, team, class);
     }
 }
 
@@ -385,8 +374,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
             teamCount = Clients.InGame() * team.percent / 100;
             teamCount = (teamCount != 0 || !team.priority) ? teamCount : 1;
 
-            if (gamemode.config.debug)
-                gamemode.log.Info("[Team] %s trying setup on %i players", teamname, teamCount);
+            gamemode.log.Debug("[Team] %s trying setup on %i players", teamname, teamCount);
 
             ArrayList classes = team.GetClassList();
 
@@ -411,8 +399,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
                     player.Team(teamname);
                     player.class = class;
 
-                    if (gamemode.config.debug)
-                        gamemode.log.Info("[Class] %s random setup on player: %L", classname, player.id);
+                    gamemode.log.Debug("[Class] %s random setup on player: %L", classname, player.id);
 
                     extra++;
                 }
@@ -444,8 +431,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
                     player.Team(teamname);
                     player.class = class;
 
-                    if (gamemode.config.debug)
-                        gamemode.log.Info("[Class] %s setup on player: %L", classname, player.id);
+                    gamemode.log.Debug("[Class] %s setup on player: %L", classname, player.id);
 
                     extra++;
                 }
@@ -467,8 +453,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
             player.Team(team);
             player.class = gamemode.team(team).class(class);
 
-            if (gamemode.config.debug)
-                gamemode.log.Info("[Extra] Team: %s, Class: %s setup on player: %L", team, class, player.id);
+            gamemode.log.Debug("[Extra] Team: %s, Class: %s setup on player: %L", team, class, player.id);
         }
 
         delete teams;
@@ -1402,11 +1387,22 @@ public void PSARS()
 public void CombatReinforcement()
 {
     if (Clients.Alive() < RoundToNearest(float(Clients.InGame()) / 100.0 * float(gamemode.config.reinforce.GetInt("ratiodeadplayers")))) {
-        int rnd = GetRandomInt(0,1);
-        if (rnd == 0)
-            gamemode.mngr.CombatReinforcement("MOG");
-        else
-            gamemode.mngr.CombatReinforcement("Chaos");
+        ArrayList teams = gamemode.GetTeamList();
+        ArrayList reinforcedteams = new ArrayList();
+
+        for (int i = 0; i < teams.Length; i++)
+        {
+            char teamname[32];
+            teams.GetString(i, teamname, sizeof(teamname));
+
+            if (gamemode.team(teamname).reinforce)
+                reinforcedteams.PushString(teamname);
+        }
+
+        char teamname[32];
+        reinforcedteams.GetString(GetRandomInt(0, reinforcedteams.Length - 1), teamname, sizeof(teamname));
+
+        gamemode.mngr.CombatReinforcement(teamname);
     }
 }
 
@@ -1842,8 +1838,13 @@ public any NativeEntities_Remove(Handle Plugin, int numArgs) {
     ArrayList ents = Ents.list;
     int idx = ents.FindValue(GetNativeCell(2), 0);
     Entity ent = ents.Get(idx, 1);
-    ent.RemoveHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
-    ent.RemoveHook(SDKHook_TouchPost, CB_EntTouch);
+    if (ent.meta)
+    {
+        if (ent.meta.onuse)
+            ent.RemoveHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
+        if (ent.meta.ontouch)
+            ent.RemoveHook(SDKHook_TouchPost, CB_EntTouch);
+    }
     ent.Remove();
     Ents.list.Erase(idx);
 }
