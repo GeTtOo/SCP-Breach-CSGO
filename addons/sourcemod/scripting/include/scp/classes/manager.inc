@@ -207,15 +207,18 @@ methodmap Manager < Base {
             PrintToChatAll(" \x07[SCP] \x01%t", "Team Win", winteam);
 
             char overlay[128];
-            Format(overlay, sizeof(overlay), "r_screenoverlay models/eternity/overlays/win_%s", winteam);
+            Format(overlay, sizeof(overlay), "win_%s", winteam);
             
             Client ply;
-            for(int i = 0; i < Clients.Length; i++)
+            ArrayList players = Clients.GetAll();
+            
+            for(int i = 0; i < players.Length - 1; i++)
             {
-                ply = Clients.Get(i);
+                ply = players.Get(i);
                 ply.ShowOverlay(overlay);
-                ply.TimerSimple(gamemode.config.tsto * 1000, "PlyHideOverlay", ply);
             }
+
+            delete players;
         }
 
         CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TargetBombed, false);
