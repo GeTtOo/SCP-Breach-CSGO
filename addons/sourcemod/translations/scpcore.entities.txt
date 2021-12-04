@@ -75,6 +75,16 @@
         "en"        "SCP-500 Panacea"
         "ru"        "SCP-500 Панацея"
     }
+    "963_amulet_bright"
+    {
+        "en"        "Amulet Dr.Bright"
+        "ru"        "Амулет Др. Брайта"
+    }
+    "963_amulet"
+    {
+        "en"        "SCP-963 Immortality"
+        "ru"        "SCP-963 Бессмертие"
+    }
     "005_picklock"
     {
         "en"        "SCP-005 Picklock"
