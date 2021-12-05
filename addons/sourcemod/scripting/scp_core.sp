@@ -223,9 +223,7 @@ public void OnClientPostAdminCheck(int id)
         AdminMenu.Add(ply);
     }
 
-    char clientauth[32];
-    ply.GetAuth2(clientauth, sizeof(clientauth));
-    gamemode.log.Info("%t", "Log_PlayerConnected", clientauth);
+    gamemode.log.Info("%t", "Log_PlayerConnected", ply.id);
 
     SDKHook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
     SDKHook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
@@ -248,9 +246,7 @@ public void OnClientDisconnect_Post(int id)
 {
     Client ply = Clients.Get(id);
 
-    char clientauth[32];
-    ply.GetAuth2(clientauth, sizeof(clientauth));
-    gamemode.log.Info("%t", "Log_PlayerDisconnected", clientauth); 
+    gamemode.log.Info("%t", "Log_PlayerDisconnected", ply.id);
 
     gamemode.mngr.GameCheck();
 
