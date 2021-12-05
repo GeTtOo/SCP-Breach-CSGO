@@ -241,13 +241,13 @@
     }
     "Log_PlayerConnected"
     {
-        "#format"   "{1:i}"
+        "#format"   "{1:s}"
         "en"        "Player <{1}> joined"
         "ru"        "Игрок <{1}> подключился к серверу"
     }
     "Log_PlayerDisconnected"
     {
-        "#format"   "{1:i}"
+        "#format"   "{1:s}"
         "en"        "Player <{1}> disconnected"
         "ru"        "Player <{1}> покинул сервер"
     }
