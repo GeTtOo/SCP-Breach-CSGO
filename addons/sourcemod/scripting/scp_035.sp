@@ -46,7 +46,7 @@ public Plugin myinfo = {
 };
 
 public void SCP_RegisterMetaData() {
-    gamemode.meta.RegEntEvent(ON_PICKUP, "035_mask", "Logic", true);
+    gamemode.meta.RegEntEvent(ON_PICKUP, "035_mask", "Logic");
 }
 
 public void SCP_OnPlayerJoin(Client &ply)
@@ -85,7 +85,7 @@ public Action HandlerHitSCP(Client ply)
         ply.Kill();
 }
 
-public void Logic(Client &ply)
+public void Logic(Client &ply, Entity &ent)
 {
     Vector sp = ply.GetPos();
     Angle sa = ply.GetAng();
@@ -96,8 +96,31 @@ public void Logic(Client &ply)
     ply.class = gamemode.team("SCP").class("035");
     
     ply.Spawn();
-
     ply.SetPos(sp, sa);
+
+    ArrayList data = new ArrayList();
+    data.Push(ply);
+    data.Push(ent);
+    
+    ply.TimerSimple(1000, "ExecDelay", data);
     
     gamemode.timer.Create("Timer_SCP-035_Hit", 2500, 0, "HandlerHitSCP", ply);
+}
+
+public void ExecDelay(ArrayList data)
+{
+    Client ply = data.Get(0);
+    Entity ent = data.Get(1);
+
+    delete data;
+
+    Ents.IndexUpdate(ent.Create("prop_dynamic_override").Spawn());
+    
+    SetVariantString("!activator");
+    ent.Input("SetParent", ply, ent);
+
+    SetVariantString("facemask");
+    ent.Input("SetParentAttachment", ent, ent);
+
+    ent.SetPos(_, new Angle(0.0, 0.0, 90.0));
 }
