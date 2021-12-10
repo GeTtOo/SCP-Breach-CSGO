@@ -64,6 +64,7 @@ methodmap Inventory < Base {
     }
 
     property ArrayList items {
+        public set(ArrayList val) { this.SetArrayList("inventory", val); }
         public get() { return this.GetArrayList("inventory"); }
     }
 
