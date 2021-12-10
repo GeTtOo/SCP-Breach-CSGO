@@ -218,17 +218,19 @@ methodmap Entity < Base {
 
     public Angle GetAng() { float ang[3]; GetEntPropVector(this.id, Prop_Send, "m_angRotation", ang); return new Angle(ang[0], ang[1], ang[2]); }
     
-    public Entity SetPos(Vector vec, Angle ang = null) {
+    public Entity SetPos(Vector vec = null, Angle ang = null) {
         float vectorArr[3], angleArr[3];
-        vec.GetArr(vectorArr);
+        if (vec != null)
+            vec.GetArr(vectorArr);
         if (ang != null)
             ang.GetArr(angleArr);
         
         if (this.spawned)
-            TeleportEntity(this.id, vectorArr, (ang == null) ? NULL_VECTOR : angleArr, NULL_VECTOR);
+            TeleportEntity(this.id, (vec == null) ? NULL_VECTOR : vectorArr, (ang == null) ? NULL_VECTOR : angleArr, NULL_VECTOR);
         else
         {
-            DispatchKeyValueVector(this.id, "origin", vectorArr);
+            if (vec != null)
+                DispatchKeyValueVector(this.id, "origin", vectorArr);
             if (ang != null)
                 DispatchKeyValueVector(this.id, "angles", angleArr);
         }
