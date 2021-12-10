@@ -64,6 +64,7 @@ methodmap Base < StringMap {
     public bool SetFloat(char[] index, float val) { return this.SetValue(index, val); }
     public bool SetBool(char[] index, bool val) { return this.SetValue(index, val); }
     public bool SetVector(char[] index, Base val) { return this.SetValue(index, val); }
+    public bool SetAngle(char[] index, Base val) { return this.SetValue(index, val); }
     public bool SetList(char[] index, List val) { return this.SetValue(index, val); }
     public bool CreateList(char[] index) { return this.SetValue(index, new List()); }
     public bool SetArrayList(char[] index, ArrayList val) { return this.SetValue(index, val); }
@@ -75,6 +76,7 @@ methodmap Base < StringMap {
     public float GetFloat(char[] index, float defval = 0.0) { float val; return this.GetValue(index, val) ? val : defval; }
     public bool GetBool(char[] index, bool defval = false) { bool val; return this.GetValue(index, val) ? val : defval; }
     public Base GetVector(char[] index, Base defval = null) { Base val; return this.GetValue(index, val) ? val : defval; }
+    public Base GetAngle(char[] index, Base defval = null) { Base val; return this.GetValue(index, val) ? val : defval; }
     public List GetList(char[] index) { List list; return this.GetValue(index, list) ? list : null; }
     public ArrayList GetArrayList(char[] index) { ArrayList list; return this.GetValue(index, list) ? list : null; }
 
