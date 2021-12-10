@@ -36,10 +36,10 @@ enum TypeAdminAction
     RESPAWN_PLAYER,
     TELEPORT,
     REINFORCE,
+    GIVE_PLAYER_ITEM,
+    IGNORE_DOOR_ACCESS,
     //MOVE_TO_SPEC,
     MOVE_TO_ADMIN_ZONE,
-    IGNORE_DOOR_ACCESS,
-    GIVE_PLAYER_ITEM,
     ROUND_RESTART,
     DESTROY_SITE
 }
@@ -216,14 +216,14 @@ public void DisplayAdminMenu(int client)
         hMenu.AddItem("item3", buffer, ITEMDRAW_DEFAULT);
         FormatEx(buffer, sizeof(buffer), "%T", "Reinforce", client);
         hMenu.AddItem("item4", buffer, ITEMDRAW_DEFAULT);
+        FormatEx(buffer, sizeof(buffer), "%T", "Give item", client);
+        hMenu.AddItem("item7", buffer, ITEMDRAW_DEFAULT);
+        FormatEx(buffer, sizeof(buffer), "%T", "Door access", client);
+        hMenu.AddItem("item6", buffer, ITEMDRAW_DEFAULT);
         /*FormatEx(buffer, sizeof(buffer), "%T", "Move to spec", client);
         hMenu.AddItem("item4", buffer, ITEMDRAW_DEFAULT);*/
         FormatEx(buffer, sizeof(buffer), "%T", "Talk", client);
         hMenu.AddItem("item5", buffer, ITEMDRAW_DEFAULT);
-        FormatEx(buffer, sizeof(buffer), "%T", "Door access", client);
-        hMenu.AddItem("item6", buffer, ITEMDRAW_DEFAULT);
-        FormatEx(buffer, sizeof(buffer), "%T", "Give item", client);
-        hMenu.AddItem("item7", buffer, ITEMDRAW_DEFAULT);
         FormatEx(buffer, sizeof(buffer), "%T", "Restart", client);
         hMenu.AddItem("item8", buffer, ITEMDRAW_DEFAULT);
         FormatEx(buffer, sizeof(buffer), "%T", "Explode", client);
