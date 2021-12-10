@@ -38,6 +38,10 @@ methodmap ProgressBar < Base {
         ProgressBar self = view_as<ProgressBar>(new Base());
         self.SetValue("ply", ply);
         self.SetBool("stop", true);
+        self.SetInt("st", FindSendPropInfo("CBaseEntity", "m_flSimulationTime"));
+        self.SetInt("pbst", FindSendPropInfo("CCSPlayer", "m_flProgressBarStartTime"));
+        self.SetInt("pbd", FindSendPropInfo("CCSPlayer", "m_iProgressBarDuration"));
+        self.SetInt("buaip", FindSendPropInfo("CCSPlayer", "m_iBlockingUseActionInProgress"));
         return self;
     }
 
@@ -67,10 +71,10 @@ methodmap ProgressBar < Base {
         float ft = float(it);
         float gm = GetGameTime();
 
-        SetEntDataFloat(this.clientID, gamemode.config.GetInt("st"), gm + ft);
-        SetEntData(this.clientID, gamemode.config.GetInt("pbd"), it, 4, true);
-        SetEntDataFloat(this.clientID, gamemode.config.GetInt("pbst"), gm - (it - ft), true);
-        SetEntData(this.clientID, gamemode.config.GetInt("buaip"), 0, 4, true);
+        SetEntDataFloat(this.clientID, this.GetInt("st"), gm + ft);
+        SetEntData(this.clientID, this.GetInt("pbd"), it, 4, true);
+        SetEntDataFloat(this.clientID, this.GetInt("pbst"), gm - (it - ft), true);
+        SetEntData(this.clientID, this.GetInt("buaip"), 0, 4, true);
 
         char timername[32];
         
@@ -87,8 +91,8 @@ methodmap ProgressBar < Base {
             char timername[32];
             this.timername(timername, sizeof(timername));
 
-            SetEntDataFloat(this.clientID, gamemode.config.GetInt("pbst"), 0.0, true);
-            SetEntData(this.clientID, gamemode.config.GetInt("pbd"), 0, 1, true);
+            SetEntDataFloat(this.clientID, this.GetInt("pbst"), 0.0, true);
+            SetEntData(this.clientID, this.GetInt("pbd"), 0, 1, true);
             
             gamemode.timer.Remove(timername);
             
