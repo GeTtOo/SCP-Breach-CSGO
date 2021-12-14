@@ -113,5 +113,14 @@
     "flashlight": {
         "model":"models/props/coop_autumn/autumn_flashlight/autumn_flashlight.mdl",
         "mass":2.0
+    },
+    "visor_nv": {
+        "model":"models/eternity/props/visor_nv.mdl",
+        "mass":2.0
+    },
+    "radio": {
+        "model":"models/eternity/props/radio.mdl",
+        "mass":2.0,
+        "remote":true
     }
 }
