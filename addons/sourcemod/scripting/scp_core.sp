@@ -223,9 +223,9 @@ public void OnClientPostAdminCheck(int id)
         AdminMenu.Add(ply);
     }
 
-    char clientauth[32];
-    ply.GetAuth2(clientauth, sizeof(clientauth));
-    gamemode.log.Info("%t", "Log_PlayerConnected", clientauth);
+    char clientname[32];
+    ply.GetName(clientname, sizeof(clientname));
+    gamemode.log.Info("%t", "Log_PlayerConnected", clientname);
 
     SDKHook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
     SDKHook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
@@ -244,15 +244,16 @@ public void OnClientPostAdminCheck(int id)
     }
 }
 
-public void OnClientDisconnect_Post(int id)
+public void OnClientDisconnect(int id)
 {
     Client ply = Clients.Get(id);
 
-    char clientauth[32];
-    ply.GetAuth2(clientauth, sizeof(clientauth));
-    gamemode.log.Info("%t", "Log_PlayerDisconnected", clientauth); 
+    char clientname[32];
+    ply.GetName(clientname, sizeof(clientname));
+    gamemode.log.Info("%t", "Log_PlayerDisconnected", clientname);
 
-    gamemode.mngr.GameCheck();
+    if(!gamemode.mngr.IsWarmup)
+        gamemode.mngr.GameCheck();
 
     char timername[32];
     FormatEx(timername, sizeof(timername), "entid-%i", ply.id);
@@ -263,6 +264,11 @@ public void OnClientDisconnect_Post(int id)
     SDKUnhook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
     SDKUnhook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
     SDKUnhook(ply.id, SDKHook_OnTakeDamageAlivePost, OnTakeDamageAlivePost);
+}
+
+public void OnClientDisconnect_Post(int id)
+{
+    Client ply = Clients.Get(id);
 
     Base pos = ply.GetBase("spawnpos");
     if (pos != null)
@@ -273,9 +279,11 @@ public void OnClientDisconnect_Post(int id)
     Call_PushCellRef(ply);
     Call_Finish();
 
-    Entity ragdoll = ply.ragdoll;
-    if (ragdoll)
-        ragdoll.Remove();
+    if (ply.ragdoll)
+    {
+        ply.ragdoll.Remove();
+        ply.ragdoll = null;
+    }
 
     Clients.Remove(id);
 }
@@ -300,7 +308,7 @@ public Action OnPlayerSpawn(int client)
 
 public void PlayerSpawn(Client ply)
 {
-    if(IsClientExist(ply.id) && ply != null && ply.class != null)
+    if(ply != null && ply.class != null && IsClientExist(ply.id))
     {
         if (ply.ragdoll)
         {
@@ -709,6 +717,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
     {
         Client vic = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
         Client atk = Clients.Get(GetClientOfUserId(GetEventInt(event, "attacker")));
+
+        if (vic == null) return Plugin_Handled;
         
         vic.ragdoll = vic.CreateRagdoll();
 
@@ -832,7 +842,7 @@ public Action OnWeaponTake(int client, int iWeapon)
         }
     }
 
-    if(ply.IsSCP)
+    if(ply != null && ply.class != null && ply.IsSCP)
     {
         return Plugin_Handled;
     }
@@ -1084,6 +1094,7 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int idx)
         
         InvItmMenu.SetTitle(bstr);
         InvItmMenu.AddItem(itemid, "use");
+        InvItmMenu.AddItem(itemid, "info");
         InvItmMenu.AddItem(itemid, "drop");
 
         InvItmMenu.Display(ply.id, 30);
@@ -1096,18 +1107,31 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
     {
         case MenuAction_DrawItem:
         {
+            Client ply = Clients.Get(client);
+            
             switch (idx)
             {
                 case 0:
                 {
-                    Client ply = Clients.Get(client);
-
                     char itemid[3];
                     hMenu.GetItem(idx, itemid, sizeof(itemid));
 
                     InvItem item = ply.inv.Get(StringToInt(itemid));
                     
                     return (item.meta.onuse && !item.disabled) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED;
+                }
+                case 1:
+                {
+                    char itemid[3];
+                    hMenu.GetItem(idx, itemid, sizeof(itemid));
+
+                    InvItem item = ply.inv.Get(StringToInt(itemid));
+
+                    char class[64];
+                    item.GetClass(class, sizeof(class));
+                    Format(class, sizeof(class), "%s_info", class);
+                    
+                    return (TranslationPhraseExists(class)) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED;
                 }
             }
         }
@@ -1125,17 +1149,25 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                 case 0:
                 {
                     char bstr[64], fullstr[128];
-                    FormatEx(bstr, sizeof(bstr), "%T", "Use", ply.id);
+                    FormatEx(bstr, sizeof(bstr), "%T", "Inventory Use", ply.id);
                     float timeremain = item.cdr - GetGameTime();
                     if (timeremain <= 0.0) item.cdr = 0.0;
                     if (item.cdr <= 0.0) return RedrawMenuItem(bstr);
-                    FormatEx(fullstr, sizeof(fullstr), "%s (%i:%i)", bstr, RoundToNearest(timeremain) / 60, RoundFloat(timeremain) % 60);
+                    int min = RoundToNearest(timeremain) / 60;
+                    int sec = RoundFloat(timeremain) % 60;
+                    FormatEx(fullstr, sizeof(fullstr), (min < 10 ) ? ((sec < 10 ) ? "%s (0%i:0%i)" : "%s (0%i:%i)") : ((sec < 10 ) ? "%s (%i:0%i)" : "%s (%i:%i)"), bstr, min, sec);
                     return RedrawMenuItem(fullstr);
                 }
                 case 1:
                 {
                     char bstr[64];
-                    FormatEx(bstr, sizeof(bstr), "%T", "Drop", ply.id);
+                    FormatEx(bstr, sizeof(bstr), "%T", "Inventory Info", ply.id);
+                    return RedrawMenuItem(bstr);
+                }
+                case 2:
+                {
+                    char bstr[64];
+                    FormatEx(bstr, sizeof(bstr), "%T", "Inventory Drop", ply.id);
                     return RedrawMenuItem(bstr);
                 }
             }
@@ -1152,7 +1184,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                 case 0:
                 {
                     InvItem item = ply.inv.Get(StringToInt(itemid));
-                    
+
                     char funcname[32];
                     item.meta.onuse.name(funcname, sizeof(funcname));
 
@@ -1162,6 +1194,31 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                     Call_Finish();
                 }
                 case 1:
+                {
+                    InvItem item = ply.inv.Get(StringToInt(itemid));
+
+                    char class[64], classname[64];
+                    item.GetClass(class, sizeof(class));
+                    FormatEx(classname, sizeof(classname), "%T", class, ply.id);
+                    Format(class, sizeof(class), "%s_info", class);
+
+                    PrintToChat(ply.id, "------------------------------%s------------------------------", classname);
+
+                    char text[8192];
+                    char exptext[20][1024];
+                    FormatEx(text, sizeof(text), "%T", class, ply.id);
+                    ExplodeString(text, "<br>", exptext, 20, 1024);
+
+                    int i=0;
+                    while (strlen(exptext[i]) != 0)
+                    {
+                        PrintToChat(ply.id, exptext[i]);
+                        i++;
+                    }
+                        
+                    PrintToChat(ply.id, "------------------------------------------------------------");
+                }
+                case 2:
                 {
                     InvItem item = ply.inv.Drop(StringToInt(itemid));
 
@@ -1372,13 +1429,11 @@ public void PSARS()
     {
         Client ply = players.Get(i);
 
-        if (ply.FirstSpawn && IsClientInGame(ply.id) && GetClientTeam(ply.id) > 1)
+        if (ply.FirstSpawn && GetClientTeam(ply.id) > 1)
         {
             char team[32], class[32];
             gamemode.config.DefaultGlobalClass(team, sizeof(team));
             gamemode.config.DefaultClass(class, sizeof(class));
-            if (ply.IsAlive())
-                ply.SilenceKill();
             ply.Team(team);
             ply.class = gamemode.team(team).class(class);
             ply.Spawn();
@@ -1739,17 +1794,15 @@ public any NativeClients_Add(Handle Plugin, int numArgs) {
 }
 
 public any NativeClients_Remove(Handle Plugin, int numArgs) {
-    int id = GetNativeCell(2);
     ArrayList ents = Ents.list;
-    int idx = ents.FindValue(id, 0);
+    int idx = ents.FindValue(GetNativeCell(2), 0);
     view_as<Client>(ents.Get(idx, 1)).Dispose();
     ents.Erase(idx);
 }
 
 public any NativeClients_Get(Handle Plugin, int numArgs) {
-    int id = GetNativeCell(2);
     ArrayList ents = Ents.list;
-    int idx = ents.FindValue(id, 0);
+    int idx = ents.FindValue(GetNativeCell(2), 0);
     if (idx == -1) return view_as<Client>(null);
     return ents.Get(idx, 1);
 }
@@ -1761,7 +1814,7 @@ public any NativeClients_GetAll(Handle Plugin, int numArgs) {
     for (int i=0; i < ents.Length; i++)
     {
         int id = ents.Get(i, 0);
-        if (id <= MaxClients && id > 0)
+        if (id <= MaxClients && id > 0 && IsClientInGame(id))
         {
             Client ply = ents.Get(i, 1);
             if (ply != null)
@@ -1867,6 +1920,7 @@ public any NativeEntities_IndexUpdate(Handle Plugin, int numArgs) {
 }
 
 public any NativeEntities_Clear(Handle Plugin, int numArgs) {
+
     ArrayList ents = Ents.list;
 
     for(int i=0; i < ents.Length; i++)
@@ -1880,7 +1934,18 @@ public any NativeEntities_Clear(Handle Plugin, int numArgs) {
         }
     }
     
-    ents.Resize(Clients.InGame());
+    ArrayList players = Clients.GetAll();
+    ents.Clear();
+    
+    for (int i=0; i < players.Length; i++)
+    {
+        Client ply = players.Get(i);
+
+        any data[2];
+        data[0] = ply.id;
+        data[1] = ply;
+        ents.PushArray(data);
+    }
 }
 
 public any NativeEntities_Get(Handle Plugin, int numArgs) {

@@ -157,12 +157,17 @@
         "en"        "Your inventory is empty"
         "ru"        "Ваш инвентарь пуст"
     }
-    "Use"
+    "Inventory Use"
     {
         "en"        "Use"
         "ru"        "Использовать"
     }
-    "Drop"
+    "Inventory Info"
+    {
+        "en"        "Info"
+        "ru"        "Информация"
+    }
+    "Inventory Drop"
     {
         "en"        "Drop"
         "ru"        "Выбросить"
@@ -247,9 +252,9 @@
     }
     "Log_PlayerDisconnected"
     {
-        "#format"   "{1:s}"
+        "#format"   "{1:i}"
         "en"        "Player <{1}> disconnected"
-        "ru"        "Player <{1}> покинул сервер"
+        "ru"        "Игрок <{1}> покинул сервер"
     }
     "Log_Admin_ShowClass"
     {
