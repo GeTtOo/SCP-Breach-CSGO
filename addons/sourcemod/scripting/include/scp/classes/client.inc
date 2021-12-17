@@ -116,6 +116,8 @@ methodmap Client < Entity {
 
     public bool IsAlive() { return IsPlayerAlive(this.id); }
 
+    public bool IsAdmin() { return (GetUserAdmin(this.id) != INVALID_ADMIN_ID) ? true : false; }
+
     public bool InGame() { return IsClientInGame(this.id); }
 
     public Vector EyePos() { float vecarr[3]; GetClientEyePosition(this.id, vecarr); return new Vector(vecarr[0], vecarr[1], vecarr[2]); }
@@ -127,14 +129,14 @@ methodmap Client < Entity {
     public void Team(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("team", buffer) : this.GetString("team", buffer, max_size); }
 
     public void PrintNotify(const char[] format, any ...) {
-        int len = strlen(format) + 4096;
+        int len = strlen(format) + 8192;
         char[] formattedText = new char[len];
         VFormat(formattedText, len, format, 3);
         PrintHintText(this.id, "%s", formattedText);
     }
 
     public void PrintWarning(const char[] format, any ...) {
-        int len = strlen(format) + 4096;
+        int len = strlen(format) + 8192;
         char[] formattedText = new char[len];
         VFormat(formattedText, len, format, 3);
         PrintCenterText(this.id, "%s", formattedText);
@@ -148,6 +150,11 @@ methodmap Client < Entity {
 
     public void HideOverlay() {
         ClientCommand(this.id, "r_screenoverlay none");
+    }
+
+    public void SetListen(Client ply, bool islisten)
+    {
+        SetListenOverride(this.id, ply.id, islisten ? Listen_Yes : Listen_No);
     }
 
     public void PlaySound(char[] path, int channel = 1, int level = 100, int entity = 0) {
@@ -399,10 +406,11 @@ methodmap Client < Entity {
             }
         }
 
-        if (this.class.HasKey("hands")) {
+        if (this.class.HasKey("handsmodel")) {
             char handsModel[128];
             this.class.Model(handsModel, sizeof(handsModel));
-            this.SetHandsModel(handsModel);
+
+            //this.SetHandsModel(handsModel);
         }
 
         char teamName[32], className[32];
