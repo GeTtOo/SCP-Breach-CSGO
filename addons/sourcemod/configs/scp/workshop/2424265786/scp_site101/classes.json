@@ -432,7 +432,7 @@
                 "overlay":"scp-049",
                 "model":"models/player/custom_player/eternity/scp_049.mdl",
                 "weapons":["weapon_fists"],
-                "doors":[320,321],
+                "doors":[330,329],
                 "pos":{"vec":[-8455,975,2],"ang":[0,125,0]},
                 "comment":"The Doctor ʕ•ᴥ•ʔ"
             },
@@ -454,7 +454,7 @@
                 "percent":20,
                 "health":25000,
                 "speed":130,
-                "doors":[279,280],
+                "doors":[289,288],
                 "comment":"096",
                 "overlay":"scp-096",
                 "model":"models/player/custom_player/eternity/scp096.mdl",
@@ -467,6 +467,7 @@
                 "speed":220,
                 "fists":true,
                 "overlay":"scp-106",
+                "autospawn":false,
                 "comment":"Ded"
             },
             "173": {
@@ -476,7 +477,7 @@
                 "speed":250,
                 "multipler":4.2,
                 "fists":false,
-                "doors":[323,324],
+                "doors":[333,332],
                 "overlay":"scp-173",
                 "model":"models/player/custom_player/eternity/173.mdl",
                 "comment":"173"
@@ -488,7 +489,7 @@
                 "armor":2000,
                 "speed":250,
                 "multipler":1.2,
-                "doors":[608],
+                "doors":[617],
                 "weapons":["weapon_fists"],
                 "overlay":"scp-457",
                 "comment":"Fire man"
@@ -503,7 +504,8 @@
                 "doors":[661,662],
                 "weapons":["weapon_fists"],
                 "overlay":"scp-996",
-                "comment":"Fire man"
+                "autospawn":false,
+                "comment":"ツ"
             }
         }
     }
