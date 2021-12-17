@@ -49,32 +49,38 @@ public void SCP_RegisterMetaData() {
     gamemode.meta.RegEntEvent(ON_PICKUP, "035_mask", "Logic");
 }
 
-public void SCP_OnPlayerJoin(Client &ply)
-{
-    SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
-}
-
 public void SCP_OnPlayerClear(Client &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("035"))
     {
         gamemode.timer.Remove("Timer_SCP-035_Hit");
+        Entity ent = view_as<Entity>(ply.GetHandle("035_ent"));
+        if (ent)
+            Ents.Remove(ent.id);
     }
 }
 
-public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
+public Action TransmitHandler(int entity, int client)
 {
-    Client atk = Clients.Get(attacker);
+    Client ply = Clients.Get(client);
 
-    if (atk == null || atk.class == null) return Plugin_Continue;
+    Handle hndl = ply.GetHandle("035_ent");
 
-    if(atk.class.Is("035"))
+    if (hndl && view_as<Entity>(hndl).id == entity)
+        return Plugin_Handled;
+
+    return Plugin_Continue;
+}
+
+public Action SCP_OnTakeDamage(Client &vic, Client &atk, float &damage, int &damagetype)
+{
+	if(atk.class.Is("035"))
     {
         damage += 180;
         return Plugin_Changed;
     }
 
-    return Plugin_Continue;
+	return Plugin_Continue;
 }
 
 public Action HandlerHitSCP(Client ply)
@@ -116,11 +122,14 @@ public void ExecDelay(ArrayList data)
 
     Ents.IndexUpdate(ent.Create("prop_dynamic_override").Spawn());
     
+    ply.SetHandle("035_ent", ent);
+    ent.SetHook(SDKHook_SetTransmit, TransmitHandler);
+    
     SetVariantString("!activator");
     ent.Input("SetParent", ply, ent);
 
     SetVariantString("facemask");
     ent.Input("SetParentAttachment", ent, ent);
 
-    ent.SetPos(_, new Angle(0.0, 0.0, 90.0));
+    ent.SetPos(_, new Angle(0.0, 180.0, 90.0));
 }
