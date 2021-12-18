@@ -163,7 +163,7 @@ methodmap Logger < Base
             VFormat(text, len, format, 3);
             char pname[64];
             GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
-            Format(text, len, "%s %s", pname, text);
+            Format(text, len, "%s | %s", pname, text);
             this.SendMessage(4, text);
         }
     }

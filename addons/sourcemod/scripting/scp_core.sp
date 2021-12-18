@@ -121,8 +121,6 @@ public void OnPluginStart()
     LoadTranslations("scpcore.regions");
     LoadTranslations("scpcore.entities");
 
-    RegServerCmd("scp", CmdSCP);  // ¯\_(ツ)_/¯
-
     RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_CUSTOM1);
     
     HookEvent("round_start", OnRoundStart);
@@ -160,14 +158,17 @@ public void OnMapStart()
     
     gamemode.mngr.CollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
 
+    AddCommandListener(Command_Base, "gm");
+    AddCommandListener(Command_Ents, "ents");
+
     if (gamemode.config.debug)
     {
-        AddCommandListener(Command_Kill, "kill");
-        AddCommandListener(Command_Ents, "ents");
+        AddCommandListener(Command_Debug, "debug");
         AddCommandListener(Command_GetMyPos, "getmypos");
         AddCommandListener(Command_GetEntsInBox, "getentsinbox");
-        AddCommandListener(Command_Debug, "debug");
     }
+
+    AddCommandListener(Command_Kill, "kill");
 
     LoadMetaData(mapName);
     
@@ -1081,11 +1082,14 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int idx)
     {
         Client ply = Clients.Get(client);
         InvItem item = ply.inv.Get(idx);
+        
+        ply.PlaySound("*/scp/menu/select.mp3", SNDCHAN_VOICE);
 
         char class[32];
         item.GetClass(class, sizeof(class));
 
         Menu InvItmMenu = new Menu(InventoryItemHandler, MenuAction_DrawItem | MenuAction_DisplayItem | MenuAction_Select | MenuAction_End);
+        InvItmMenu.OptionFlags = MENUFLAG_NO_SOUND;
 
         char bstr[128], itemid[3];
 
@@ -1184,6 +1188,12 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                 case 0:
                 {
                     InvItem item = ply.inv.Get(StringToInt(itemid));
+                    
+                    char path[128];
+                    if (item.meta.GetString("usesound", path, sizeof(path)))
+                        ply.PlaySound(path);
+                    else
+                        ply.PlaySound("*/scp/menu/select.mp3", SNDCHAN_VOICE);
 
                     char funcname[32];
                     item.meta.onuse.name(funcname, sizeof(funcname));
@@ -1196,6 +1206,8 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                 case 1:
                 {
                     InvItem item = ply.inv.Get(StringToInt(itemid));
+                    
+                    ply.PlaySound("*/scp/menu/select.mp3", SNDCHAN_VOICE);
 
                     char class[64], classname[64];
                     item.GetClass(class, sizeof(class));
@@ -1221,6 +1233,12 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                 case 2:
                 {
                     InvItem item = ply.inv.Drop(StringToInt(itemid));
+
+                    char path[128];
+                    if (item.meta.GetString("dropsound", path, sizeof(path)))
+                        ply.PlaySound(path);
+                    else
+                        ply.PlaySound("*/scp/menu/select.mp3", SNDCHAN_VOICE);
 
                     if (item.meta.ondrop)
                     {
@@ -1498,34 +1516,6 @@ stock bool IsClientInSpec(int client)
 
 //-----------------------------Server-----------------------------//
 
-public Action CmdSCP(int args)
-{
-
-    char arg1[32], arg2[32];
-
-    GetCmdArg(1, arg1, sizeof(arg1));
-    GetCmdArg(2, arg2, sizeof(arg2));
-
-    if (StrEqual(arg1, "status", false))
-    {
-        gamemode.mngr.PrintTeamStatus();
-    }
-    if (StrEqual(arg1, "timers", false))
-    {
-        ArrayList timers = gamemode.timer.GetArrayList("timers");
-
-        PrintToServer("------------Timers------------");
-
-        for (int i=0; i < timers.Length; i++)
-        {
-            char timername[64];
-            Tmr timer = timers.Get(i);
-            timer.name(timername, sizeof(timername));
-            PrintToServer("Name: %s", timername);
-        }
-    }
-}
-
 //-----------------------------Client-----------------------------//
 
 public Action Command_AdminMenu(int client, int args)
@@ -1546,9 +1536,75 @@ public Action Command_Kill(int client, const char[] command, int argc)
     return Plugin_Stop;
 }
 
+public Action Command_Base(int client, const char[] command, int argc)
+{
+    Client ply = Clients.Get(client);
+    
+    if (!ply.IsAdmin()) return Plugin_Stop;
+
+    char arg1[32], arg2[32];
+
+    GetCmdArg(1, arg1, sizeof(arg1));
+    GetCmdArg(2, arg2, sizeof(arg2));
+
+    if (StrEqual(arg1, "status", false))
+    {
+        ArrayList GlobalTeams = new ArrayList(32);
+        int tpc[64];
+
+        for (int i=1; i <= Clients.Length; i++) {
+            Client player = Clients.Get(i);
+
+            char plyTeamName[32];
+            player.Team(plyTeamName, sizeof(plyTeamName));
+
+            int idt = GlobalTeams.FindString(plyTeamName);
+
+            if (idt == -1) {
+                idt = GlobalTeams.PushString(plyTeamName);
+                tpc[idt] = 1;
+            }
+            else
+            {
+                tpc[idt]++;
+            }
+        }
+
+        PrintToConsole(ply.id, "------------------------------");
+
+        for (int i = 0; i < GlobalTeams.Length; i++) {
+            char buf[32];
+            GlobalTeams.GetString(i, buf, sizeof(buf));
+            PrintToConsole(ply.id, "Team: %s. (Count: %i)", buf, tpc[i]);
+        }
+
+        PrintToConsole(ply.id, "------------------------------");
+
+        delete GlobalTeams;
+    }
+    if (StrEqual(arg1, "timers", false))
+    {
+        ArrayList timers = gamemode.timer.GetArrayList("timers");
+
+        PrintToConsole(ply.id, "---------------Timers---------------");
+
+        for (int i=0; i < timers.Length; i++)
+        {
+            char timername[64];
+            Tmr timer = timers.Get(i);
+            timer.name(timername, sizeof(timername));
+            PrintToConsole(ply.id, "Name: %s | delay: %f | repeations: %i", timername, timer.delay, timer.repeations);
+        }
+    }
+
+    return Plugin_Stop;
+}
+
 public Action Command_Ents(int client, const char[] command, int argc)
 {
     Client ply = Clients.Get(client);
+
+    if (!ply.IsAdmin()) return Plugin_Stop;
 
     char arg[32], buf[256];
 
@@ -1689,6 +1745,7 @@ public Action Command_Debug(int client, const char[] command, int argc)
 public void InventoryDisplay(Client ply)
 {
     Menu InvMenu = new Menu(InventoryHandler);
+    InvMenu.OptionFlags = MENUFLAG_NO_SOUND;
 
     char bstr[128];
 
@@ -1726,6 +1783,8 @@ public void SCP_OnInput(Client &ply, int buttons)
         {
             ply.SetBool("ActionMenuAvailable", false);
             ply.TimerSimple(1000, "ActionMenuUnlock", ply);
+
+            ply.PlaySound("*/scp/menu/select.mp3", SNDCHAN_VOICE);
 
             if (!ply.IsSCP)
                 InventoryDisplay(ply);

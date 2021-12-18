@@ -217,7 +217,7 @@ methodmap Meta < Base {
 
     public EntityMeta GetEntity(char[] entclass) { return this.GetList("entities").Get(entclass); }
 
-    public void RegEntEvent(InventoryEvents eid, char[] entclass, char[] funcname, bool invblock = false) {
+    public void RegEntEvent(InventoryEvents eid, char[] entclass, char[] funcname, char[] sound = "", bool invblock = false) {
         EntityMeta entdata = this.GetEntity(entclass);
         
         switch (eid) {
@@ -239,12 +239,16 @@ methodmap Meta < Base {
 
                 entdata.onuse.hndl = GetMyHandle();
                 entdata.onuse.name(funcname);
+
+                if (strlen(sound) > 0) entdata.SetString("usesound", sound);
             }
             case ON_DROP: {
                 entdata.ondrop = new OnDropMeta();
 
                 entdata.ondrop.hndl = GetMyHandle();
                 entdata.ondrop.name(funcname);
+
+                if (strlen(sound) > 0) entdata.SetString("usesound", sound);
             }
         }
     }

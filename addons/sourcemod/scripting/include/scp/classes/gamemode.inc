@@ -142,7 +142,11 @@ methodmap GameMode < Base {
             char pname[64];
             GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
             if (!StrEqual(pname, "[SCP] GameMode"))
-                return this.config.GetObject(pname);
+            {
+                JSON_OBJECT plconfig = this.config.GetObject(pname);
+                if (plconfig == null) plconfig = view_as<JSON_OBJECT>(CreateTrie());
+                return plconfig;
+            }
             return view_as<JSON_OBJECT>(null);
         }
     }
