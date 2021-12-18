@@ -269,15 +269,18 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
             }
             case DESTROY_SITE:
             {
-                gamemode.nuke.ready = true;
-                gamemode.nuke.active = true;
-                gamemode.nuke.Activate();
-                
-                char adminname[32], adminauth[32];
-                AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));
-                AdminMenu.Get(client).admin.GetAuth2(adminauth, sizeof(adminauth));
-                
-                gamemode.log.Admin("%t", "Log_Admin_NukeActivation", adminname, adminauth);
+                if (!gamemode.nuke.IsNuked && !gamemode.nuke.active)
+                {
+                    gamemode.nuke.ready = true;
+                    gamemode.nuke.active = true;
+                    gamemode.nuke.Activate();
+                    
+                    char adminname[32], adminauth[32];
+                    AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));
+                    AdminMenu.Get(client).admin.GetAuth2(adminauth, sizeof(adminauth));
+                    
+                    gamemode.log.Admin("%t", "Log_Admin_NukeActivation", adminname, adminauth);
+                }
             }
             default:
             {
