@@ -120,4 +120,14 @@
         "en"        "Flashlight"
         "ru"        "Фонарик"
     }
+    "visor_nv"
+    {
+        "en"        "Nightvision googles"
+        "ru"        "Очки ночного видинья"
+    }
+    "radio"
+    {
+        "en"        "Radio"
+        "ru"        "Рация"
+    }
 }

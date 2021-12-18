@@ -68,6 +68,21 @@ methodmap Inventory < Base {
         public get() { return this.GetArrayList("inventory"); }
     }
 
+    public bool Have(char[] entclass) {
+        ArrayList list = this.GetArrayList("inventory");
+
+        for (int i=0; i < list.Length; i++) {
+            char itemname[32];
+            Entity item = list.Get(i);
+            item.GetClass(itemname, sizeof(itemname));
+
+            if (StrEqual(itemname, entclass))
+                return true;
+        }
+
+        return false;
+    }
+
     public bool Check(char[] val, int check) {
         ArrayList list = this.GetArrayList("inventory");
 

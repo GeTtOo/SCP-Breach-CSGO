@@ -37,39 +37,34 @@
 
 public Plugin myinfo = {
     name = "[SCP] Flashlight",
-    author = "GeTtOo",
-    description = "Flashlight for CS:GO modification - SCP Foundation",
+    author = "Andrey::Dono",
+    description = "Nightvision googles for CS:GO modification - SCP Foundation",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void SCP_OnLoad() {
-    PrecacheSound("items/flashlight1.wav");
-}
-
 public void SCP_RegisterMetaData() {
-    gamemode.meta.RegEntEvent(ON_USE, "flashlight", "OnUse", "items/flashlight1.wav");
-    gamemode.meta.RegEntEvent(ON_DROP, "flashlight", "OnDrop");
+    gamemode.meta.RegEntEvent(ON_USE, "visor_nv", "OnUse");
+    gamemode.meta.RegEntEvent(ON_DROP, "visor_nv", "OnDrop");
 }
 
 public void OnUse(Client &ply, InvItem &item) {
-    if(item.GetBool("enable"))
-        item.SetBool("enable", false);
+    if(item.GetBool("status"))
+        item.SetBool("status", false);
     else
-        item.SetBool("enable", true);
+        item.SetBool("status", true);
 
-    ToogleFlashLight(ply);
+    ToogleStatus(ply);
 }
 
 public void OnDrop(Client &ply, InvItem &item) {
-    if(item.GetBool("enable"))
+    if(item.GetBool("status"))
     {
-        item.SetBool("enable", false);
-        ToogleFlashLight(ply);
+        item.SetBool("status", false);
+        ToogleStatus(ply);
     }
 }
 
-public void ToogleFlashLight(Client &ply) {
-    ply.SetProp("m_fEffects", ply.GetProp("m_fEffects") ^ 4);
-    //EmitSoundToClient(ply.id, "items/flashlight1.wav"); 
+public void ToogleStatus(Client &ply) {
+    ply.SetProp("m_bNightVisionOn", (ply.GetProp("m_bNightVisionOn") == 0) ? 1 : 0);
 }
