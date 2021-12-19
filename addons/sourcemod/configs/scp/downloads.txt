@@ -46,6 +46,10 @@ models/eternity/props/visor_nv.mdl
 models/eternity/props/visor_nv.dx90.vtx
 models/eternity/props/visor_nv.vvd
 models/eternity/props/visor_nv.phy
+models/eternity/props/radio.mdl
+models/eternity/props/radio.dx90.vtx
+models/eternity/props/radio.vvd
+models/eternity/props/radio.phy
 models/player/custom_player/eternity/173.dx90.vtx
 models/player/custom_player/eternity/173.mdl
 models/player/custom_player/eternity/173.phy
