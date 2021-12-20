@@ -96,6 +96,9 @@ public void Logic(Client &ply, Entity &ent)
     Vector sp = ply.GetPos();
     Angle sa = ply.GetAng();
 
+    char model[256];
+    ply.GetModel(model, sizeof(model));
+
     ply.Kill();
 
     ply.Team("SCP");
@@ -107,6 +110,7 @@ public void Logic(Client &ply, Entity &ent)
     ArrayList data = new ArrayList();
     data.Push(ply);
     data.Push(ent);
+    data.PushString(model);
     
     ply.TimerSimple(1000, "ExecDelay", data);
     
@@ -115,14 +119,18 @@ public void Logic(Client &ply, Entity &ent)
 
 public void ExecDelay(ArrayList data)
 {
+    char model[256];
+    
     Client ply = data.Get(0);
     Entity ent = data.Get(1);
+    data.GetString(2, model, sizeof(model));
 
     delete data;
 
     Ents.IndexUpdate(ent.Create("prop_dynamic_override").Spawn());
     
     ply.SetHandle("035_ent", ent);
+    ply.SetModel(model);
     ent.SetHook(SDKHook_SetTransmit, TransmitHandler);
     
     SetVariantString("!activator");
