@@ -59,11 +59,6 @@
         "access":3,
         "scp":false
     },
-    "286460": {
-        "location":"SCP-457",
-        "access":2,
-        "scp":false
-    },
     "299838": {
         "location":"Heave gate 1",
         "access":7,
@@ -95,14 +90,14 @@
         "scp":false
     },
     "945730": {
-        "location":"Heave gate 1",
+        "location":"Intercom 1",
         "access":7,
-        "scp":true
+        "scp":false
     },
     "945737": {
-        "location":"Heave gate 2",
+        "location":"Intercom 2",
         "access":7,
-        "scp":true
+        "scp":false
     },
     "312244": {
         "location":"SCP-079",
