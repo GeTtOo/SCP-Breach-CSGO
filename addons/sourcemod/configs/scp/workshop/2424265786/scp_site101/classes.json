@@ -14,7 +14,8 @@
                         "base":0,
                         "head":[0,1,2,3,4,5,6],
                         "eyes":[0,1,2,3,4]
-                    }
+                    },
+                    "skin":0
                 },
                 "pos":[
                     {"vec":[-2951,-6729,0],"ang":[0,0,0]},
@@ -309,7 +310,7 @@
                 "armor":500,
                 "helmet":true,
                 "overlay":"lieutenant_medic",
-                "items":["card_scientist"],
+                "items":["card_mog_lieutenant"],
                 "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 5], "weapon_breachcharge"],
                 "model":{
                     "id":"mog",
@@ -462,24 +463,21 @@
                 "overlay":"scp-035"
             },
             "049": {
-                "priority":true,
+                "pos":{"vec":[-8455,975,2],"ang":[0,125,0]},
+                "percent":20,
                 "health":7800,
                 "overlay":"scp-049",
                 "model":"models/player/custom_player/eternity/scp_049.mdl",
-                "weapons":["weapon_fists"],
                 "doors":[330,329],
-                "pos":{"vec":[-8455,975,2],"ang":[0,125,0]},
                 "comment":"The Doctor ʕ•ᴥ•ʔ"
             },
             "049_2": {
                 "autospawn":false,
                 "health":7800,
-                "weapons":["weapon_fists"],
                 "comment":"049-2"
             },
             "079": {
                 "autospawn":false,
-                "percent":0,
                 "comment":"AI computer",
                 "fists":false,
                 "overlay":"scp-079"
@@ -496,13 +494,12 @@
                 "handsmodel":"models/weapons/arms_scp096long.mdl"
             },
             "106": {
+                "autospawn":false,
                 "pos":{"vec":[-11110,520,-365]},
-                "percent":20,
                 "health":55000,
                 "speed":220,
                 "fists":true,
                 "overlay":"scp-106",
-                "autospawn":false,
                 "comment":"Ded"
             },
             "173": {
@@ -520,26 +517,23 @@
             "457": {
                 "pos":{"vec":[-5200,-3030,2]},
                 "percent":10,
-                "health":4000,
+                "health":14000,
                 "armor":2000,
-                "speed":250,
-                "multipler":1.2,
+                "speed":240,
+                "multipler":0.9,
                 "doors":[617],
-                "weapons":["weapon_fists"],
                 "overlay":"scp-457",
                 "comment":"Fire man"
             },
             "996": {
+                "autospawn":false,
                 "pos":{"vec":[-5200,-3030,2]},
-                "percent":10,
                 "health":4000,
                 "armor":2000,
                 "speed":250,
                 "multipler":1.2,
                 "doors":[661,662],
-                "weapons":["weapon_fists"],
                 "overlay":"scp-996",
-                "autospawn":false,
                 "comment":"ツ"
             }
         }
