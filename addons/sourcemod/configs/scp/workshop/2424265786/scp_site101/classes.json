@@ -7,7 +7,6 @@
                 "percent":60,
                 "priority":true,
                 "health":100,
-                "overlay":"dclass",
                 "model":{
                     "id":"dclass",
                     "bodygroups":{
@@ -17,6 +16,7 @@
                     },
                     "skin":0
                 },
+                "overlay":"dclass",
                 "pos":[
                     {"vec":[-2951,-6729,0],"ang":[0,0,0]},
                     {"vec":[-2910,-6680,0],"ang":[0,0,0]},
@@ -88,7 +88,6 @@
             },
             "Scientist": {
                 "percent":20,
-                "overlay":"scientist",
                 "items":[{"70":"card_scientist","30":"card_major_scientist"},"963_amulet","963_amulet_bright"],
                 "model":{
                     "id":"scientist",
@@ -99,6 +98,7 @@
                     },
                     "skin":0
                 },
+                "overlay":"scientist",
                 "pos":[
                     {"vec":[-2751,-2967,0]},
                     {"vec":[-7776,-2569,0]},
@@ -115,7 +115,6 @@
             },
             "Medic": {
                 "percent":10,
-                "overlay":"medic",
                 "items":["card_major_scientist"],
                 "weapons":[["weapon_healthshot", 2]],
                 "model":{
@@ -127,6 +126,7 @@
                     },
                     "skin":0
                 },
+                "overlay":"medic",
                 "pos":[
                     {"vec":[-6602,-7230,0],"ang":[0,90,0]},
                     {"vec":[-6992,-7271,0],"ang":[0,90,0]},
@@ -141,7 +141,6 @@
             },
             "Security": {
                 "percent":10,
-                "overlay":"guard",
                 "items":["card_guard"],
                 "weapons":["weapon_mp5sd","weapon_usp_silencer"],
                 "model":{
@@ -155,6 +154,7 @@
                     },
                     "skin":6
                 },
+                "overlay":"guard",
                 "pos":[
                     {"vec":[-10369,-2740,-1008],"ang":[3,90,0]},
                     {"vec":[-11804,-2769,-1008],"ang":[2,90,0]},
@@ -183,7 +183,7 @@
                 "speed":260,
                 "multipler":1.0,
                 "overlay":"commander",
-                "items":["card_mog_commander"],
+                "items":["card_mog_commander", "radio"],
                 "weapons":["weapon_m4a1_silencer", "weapon_deagle", "weapon_healthshot"],
                 "model":{
                     "id":"mog",
@@ -206,8 +206,7 @@
                 "health":100,
                 "armor":200,
                 "helmet":true,
-                "overlay":"lieutenant",
-                "items":["card_mog_lieutenant"],
+                "items":["card_mog_lieutenant", "radio"],
                 "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer"],
                 "model":{
                     "id":"mog",
@@ -224,6 +223,7 @@
                     },
                     "skin":0
                 },
+                "overlay":"lieutenant",
                 "pos":[
                     {"vec":[-10505,-6066,1736],"ang":[4,-131,0]},
                     {"vec":[-10557,-6127,1736],"ang":[4,-131,0]},
@@ -235,8 +235,7 @@
                 "health":100,
                 "armor":150,
                 "helmet":true,
-                "overlay":"cadet",
-                "items":["card_senior_guard"],
+                "items":["card_senior_guard", "radio"],
                 "weapons":["weapon_mp7", "weapon_p250"],
                 "model":{
                     "id":"mog",
@@ -251,6 +250,7 @@
                     },
                     "skin":0
                 },
+                "overlay":"cadet",
                 "pos": [
                     {"vec":[-10888,-5685,1699]},
                     {"vec":[-10888,-5763,1699]},
@@ -290,8 +290,11 @@
             },
             "Sapper": {
                 "autospawn":false,
-                "items":["card_senior_guard"],
-                "weapons":["weapon_m4a1", "weapon_hkp2000", "weapon_hegrenade", "weapon_breachcharge"],
+                "health":250,
+                "armor":500,
+                "helmet":true,
+                "items":["card_mog_lieutenant", "radio"],
+                "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 5], "weapon_hegrenade", "weapon_breachcharge"],
                 "model":{
                     "id":"mog",
                     "bodygroups":{
@@ -305,6 +308,7 @@
                     },
                     "skin":0
                 },
+                "overlay":"lieutenant",
                 "pos":{"vec":[-10800,-5950,1715]}
             },
             "Lieutenant-Medic": {
@@ -312,8 +316,7 @@
                 "health":250,
                 "armor":500,
                 "helmet":true,
-                "overlay":"lieutenant_medic",
-                "items":["card_mog_lieutenant"],
+                "items":["card_mog_lieutenant", "radio"],
                 "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 5], "weapon_breachcharge"],
                 "model":{
                     "id":"mog",
@@ -328,6 +331,7 @@
                     },
                     "skin":4
                 },
+                "overlay":"lieutenant_medic",
                 "pos":{"vec":[-10800,-5950,1715]}
             }
         }
@@ -342,7 +346,6 @@
                 "health":180,
                 "armor":200,
                 "speed":234,
-                "overlay":"chaos",
                 "items":["card_chaos"],
                 "weapons":["weapon_ak47", "weapon_revolver"],
                 "model":{
@@ -356,6 +359,7 @@
                         "legs":[2,3]
                     }
                 },
+                "overlay":"chaos",
                 "pos":[
                     {"vec":[-7200,-5950,1712],"ang":[0,180,0]},
                     {"vec":[-7250,-5950,1712],"ang":[0,180,0]},
@@ -368,7 +372,6 @@
                 "health":180,
                 "armor":200,
                 "speed":234,
-                "overlay":"chaos",
                 "items":["card_chaos","device_nightvision"],
                 "weapons":["weapon_m249", "weapon_revolver", "weapon_shield"],
                 "model":{
@@ -383,6 +386,7 @@
                     },
                     "skin":0
                 },
+                "overlay":"chaos",
                 "pos":[
                     {"vec":[-7400,-5950,1712],"ang":[0,180,0]},
                     {"vec":[-7200,-5900,1712],"ang":[0,180,0]},
@@ -395,7 +399,6 @@
                 "health":180,
                 "armor":200,
                 "speed":234,
-                "overlay":"chaos",
                 "items":["card_chaos"],
                 "weapons":["weapon_m249", "weapon_revolver", "weapon_shield"],
                 "model":{
@@ -410,6 +413,7 @@
                     },
                     "skin":0
                 },
+                "overlay":"chaos",
                 "pos":[
                     {"vec":[-7350,-5900,1712],"ang":[0,180,0]},
                     {"vec":[-7400,-5900,1712],"ang":[0,180,0]},
@@ -422,7 +426,6 @@
                 "health":180,
                 "armor":200,
                 "speed":234,
-                "overlay":"chaos",
                 "items":["card_chaos"],
                 "weapons":["weapon_m249", "weapon_revolver", "weapon_shield"],
                 "model":{
@@ -437,6 +440,7 @@
                     },
                     "skin":0
                 },
+                "overlay":"chaos",
                 "pos":[
                     {"vec":[-7400,-5950,1712],"ang":[0,180,0]},
                     {"vec":[-7200,-5900,1712],"ang":[0,180,0]},
@@ -462,15 +466,15 @@
                 "autospawn":false,
                 "health":12000,
                 "weapons":[["weapon_axe", 3]],
-                "comment":"035",
-                "overlay":"scp-035"
+                "overlay":"scp-035",
+                "comment":"035"
             },
             "049": {
-                "pos":{"vec":[-8455,975,2],"ang":[0,125,0]},
                 "percent":20,
                 "health":7800,
-                "overlay":"scp-049",
                 "model":"models/player/custom_player/eternity/scp_049.mdl",
+                "overlay":"scp-049",
+                "pos":{"vec":[-8455,975,2],"ang":[0,125,0]},
                 "doors":[330,329],
                 "comment":"The Doctor ʕ•ᴥ•ʔ"
             },
@@ -486,57 +490,58 @@
                 "overlay":"scp-079"
             },
             "096": {
-                "pos":{"vec":[-13250, -2550, 0]},
                 "percent":20,
                 "health":25000,
                 "speed":130,
-                "doors":[289,288],
-                "comment":"096",
-                "overlay":"scp-096",
                 "model":"models/player/custom_player/eternity/scp096.mdl",
-                "handsmodel":"models/weapons/arms_scp096long.mdl"
+                "handsmodel":"models/weapons/arms_scp096long.mdl",
+                "overlay":"scp-096",
+                "pos":{"vec":[-13250, -2550, 0]},
+                "doors":[289,288],
+                "comment":"096"
             },
             "106": {
                 "autospawn":false,
-                "pos":{"vec":[-11110,520,-365]},
                 "health":55000,
                 "speed":220,
                 "fists":true,
                 "overlay":"scp-106",
+                "pos":{"vec":[-11110,520,-365]},
                 "comment":"Ded"
             },
             "173": {
-                "pos":{"vec":[-1800,-900,0],"ang":[0,270,0]},
                 "percent":20,
                 "health":15000,
                 "speed":250,
                 "multipler":4.2,
-                "fists":false,
-                "doors":[333,332],
-                "overlay":"scp-173",
                 "model":"models/player/custom_player/eternity/173.mdl",
+                "fists":false,
+                "overlay":"scp-173",
+                "pos":{"vec":[-1800,-900,0],"ang":[0,270,0]},
+                "doors":[333,332],
                 "comment":"173"
             },
             "457": {
-                "pos":{"vec":[-5200,-3030,2]},
                 "percent":10,
                 "health":14000,
                 "armor":2000,
                 "speed":240,
                 "multipler":0.9,
-                "doors":[617],
+                "model":"models/player/custom_player/eternity/scp_457.mdl",
+                "handsmodel":"models/weapons/arms_scp457.mdl",
                 "overlay":"scp-457",
+                "pos":{"vec":[-5200,-3030,2]},
+                "doors":[617],
                 "comment":"Fire man"
             },
             "996": {
                 "autospawn":false,
-                "pos":{"vec":[-5200,-3030,2]},
                 "health":4000,
                 "armor":2000,
                 "speed":250,
                 "multipler":1.2,
-                "doors":[661,662],
                 "overlay":"scp-996",
+                "doors":[661,662],
                 "comment":"ツ"
             }
         }
