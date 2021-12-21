@@ -29,7 +29,6 @@
  **/
 
 #include <sourcemod>
-#include <sdkhooks>
 #include <scpcore>
 
 #pragma semicolon 1
@@ -42,29 +41,6 @@ public Plugin myinfo = {
 	version = "1.0",
 	url = "https://github.com/GeTtOo/csgo_scp"
 };
-
-public void SCP_OnPlayerSpawn(Client &ply)
-{
-    if(ply.class.Is("457"))
-    {
-        ply.SetRenderMode(RENDER_NONE);
-        CreateParticle(ply);
-        gamemode.timer.Create("Timer_SCP-457_ParticleUpdate", 5000, 0, "HandlerParticleUpdate", ply);
-    }
-}
-
-public Action HandlerHitSCP(Client ply)
-{
-    if(ply.class.Is("457") && ply.IsAlive())
-    {
-        Entity effect = view_as<Entity>(ply.GetBase("457_effect"));
-        
-        if (effect)
-            effect.Remove();
-        
-        CreateParticle(ply);
-    }
-}
 
 public Action SCP_OnTakeDamage(Client &vic, Client &atk, float &damage, int &damagetype)
 {
@@ -85,38 +61,9 @@ public void SCP_OnPlayerClear(Client &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("457") && ply.InGame())
     {
-        ply.SetRenderMode(RENDER_NORMAL);
-
         Entity ragdoll = ply.ragdoll;
         
         if (ragdoll)
             ragdoll.Remove();
-
-        Entity effect = view_as<Entity>(ply.GetBase("457_effect"));
-        
-        if (effect)
-            effect.Remove();
-    }
-}
-
-void CreateParticle(Client ply)
-{
-    Entity effect = (new Entity()).Create("info_particle_system");
-
-    if(IsValidEdict(effect.id))
-    {   
-        effect.SetPos(ply.GetPos())
-        .SetKV("start_active", "1")
-        .SetKV("effect_name", "env_fire_large")
-        .Spawn();
-
-        SetVariantString("!activator");
-        effect
-        .Input("SetParent", ply, effect)
-        .SetPropEnt("m_hOwnerEntity", ply, Prop_Data)
-        .Activate()
-        .Input("Start");
-
-        ply.SetBase("457_effect", effect);
     }
 }
