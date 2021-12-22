@@ -112,7 +112,7 @@ methodmap Player < Entity {
 
     public bool GetName(char[] buffer, int max_size = 0) { return GetClientName(this.id, buffer, max_size); }
 
-    public bool GetAuth2(char[] buffer, int max_size = 0) { return GetClientAuthId(this.id, AuthId_Steam2, buffer, max_size, true); }
+    public bool GetAuth(char[] buffer, int max_size = 0, AuthIdType type = AuthId_Steam2) { return GetClientAuthId(this.id, type, buffer, max_size, true); }
 
     public bool IsAlive() { return IsPlayerAlive(this.id); }
 

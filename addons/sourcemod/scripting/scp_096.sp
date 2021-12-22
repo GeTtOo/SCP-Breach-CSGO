@@ -87,7 +87,7 @@ public void SCP_OnPlayerClear(Player &ply)
 
 public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
 {
-	Player atk = player.Get(attacker);
+	Player atk = player.GetByID(attacker);
 	if (atk == null || atk.class == null) return Plugin_Continue;
 
 	if(atk.class.Is("096"))
@@ -104,7 +104,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 }
 
 public void CheckSurface(int client, int entity) {
-    Player ply = player.Get(client);
+    Player ply = player.GetByID(client);
 
     if (ply.GetBool("096_IsRage")) {
         int pid = GetEntPropEnt(entity, Prop_Data, "m_hMoveParent");

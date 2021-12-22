@@ -60,12 +60,29 @@ methodmap ClientSingleton < Base {
         return players;
     }
 
-    public Player Get(int id)
+    public Player GetByID(int id)
     {
         ArrayList entities = this.list;
         int idx = entities.FindValue(id, 0);
         if (idx == -1) return view_as<Player>(null);
         return entities.Get(idx, 1);
+    }
+
+    public Player GetBySteamID(char[] authcheck, AuthIdType type = AuthId_Steam2)
+    {
+        ArrayList players = this.GetAll();
+        
+        for (int i=0; i < players.Length; i++)
+        {
+            char authstr[64];
+            Player ply = players.Get(i);
+            ply.GetAuth(authstr, sizeof(authstr), type);
+
+            if (StrEqual(authstr, authcheck))
+                return ply;
+        }
+
+        return view_as<Player>(null);
     }
 
     public Player GetRandom()

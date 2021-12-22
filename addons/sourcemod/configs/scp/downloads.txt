@@ -42,6 +42,7 @@ models/eternity/props/plastic.mdl
 models/eternity/props/plastic.dx90.vtx
 models/eternity/props/plastic.vvd
 models/eternity/props/plastic.phy
+models/props/coop_autumn/autumn_flashlight/autumn_flashlight.mdl
 models/eternity/props/visor_nv.mdl
 models/eternity/props/visor_nv.dx90.vtx
 models/eternity/props/visor_nv.vvd

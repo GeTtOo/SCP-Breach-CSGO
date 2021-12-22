@@ -62,7 +62,7 @@ public void SCP_OnPlayerClear(Player &ply)
 
 public Action TransmitHandler(int entity, int client)
 {
-    Player ply = player.Get(client);
+    Player ply = player.GetByID(client);
 
     Handle hndl = ply.GetHandle("035_ent");
 
@@ -99,6 +99,12 @@ public void Logic(Player &ply, Entity &ent)
     char model[256];
     ply.GetModel(model, sizeof(model));
 
+    ArrayList data = new ArrayList(256);
+    data.Push(ply);
+    data.Push(ent);
+    data.Push(ply.GetSkin());
+    data.PushString(model);
+
     ply.Kill();
 
     ply.Team("SCP");
@@ -106,11 +112,6 @@ public void Logic(Player &ply, Entity &ent)
     
     ply.Spawn();
     ply.SetPos(sp, sa);
-
-    ArrayList data = new ArrayList();
-    data.Push(ply);
-    data.Push(ent);
-    data.PushString(model);
     
     ply.TimerSimple(1000, "ExecDelay", data);
     
@@ -123,7 +124,8 @@ public void ExecDelay(ArrayList data)
     
     Player ply = data.Get(0);
     Entity ent = data.Get(1);
-    data.GetString(2, model, sizeof(model));
+    int skinid = data.Get(2);
+    data.GetString(3, model, sizeof(model));
 
     delete data;
 
@@ -131,6 +133,7 @@ public void ExecDelay(ArrayList data)
     
     ply.SetHandle("035_ent", ent);
     ply.SetModel(model);
+    ply.SetSkin(skinid + 1);
     ent.SetHook(SDKHook_SetTransmit, TransmitHandler);
     
     SetVariantString("!activator");

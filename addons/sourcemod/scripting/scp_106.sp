@@ -62,7 +62,7 @@ public void Scp_OnRoundEnd()
 {
     for (int i=0; i < player.Length; i++)
     {
-        Player ply = player.Get(i);
+        Player ply = player.GetByID(i);
         
         if (ply != null && ply.class != null && ply.class.Is("106"))
             SDKUnhook(ply.id, SDKHook_StartTouch, CheckSurface);
@@ -94,7 +94,7 @@ public void CheckSurface(int client, int entity) {
             int entidq = GetEntPropEnt(model.id, Prop_Data, "m_hMoveChild");
             Entity idpad = (entidq != -1) ? new Entity(entidq) : null;
 
-            Player ply = player.Get(client);
+            Player ply = player.GetByID(client);
 
             char t[32];
             FormatEx(t, sizeof(t), "Test_1234_%i", ply.id);

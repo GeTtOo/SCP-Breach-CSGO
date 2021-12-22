@@ -153,7 +153,7 @@ public void OnMapStart()
     gamemode.mngr.CollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
 
     AddCommandListener(Command_Base, "gm");
-    AddCommandListener(Command_Ents, "entities");
+    AddCommandListener(Command_Ents, "ents");
 
     if (gamemode.config.debug)
     {
@@ -236,7 +236,7 @@ public void OnClientPostAdminCheck(int id)
 
 public void OnClientDisconnect(int id)
 {
-    Player ply = player.Get(id);
+    Player ply = player.GetByID(id);
 
     char clientname[32];
     ply.GetName(clientname, sizeof(clientname));
@@ -258,7 +258,7 @@ public void OnClientDisconnect(int id)
 
 public void OnClientDisconnect_Post(int id)
 {
-    Player ply = player.Get(id);
+    Player ply = player.GetByID(id);
 
     Base pos = ply.GetBase("spawnpos");
     if (pos != null)
@@ -282,7 +282,7 @@ public Action OnPlayerSpawn(int client)
 {
     if (!gamemode.mngr.IsWarmup)
     {
-        Player ply = player.Get(client);
+        Player ply = player.GetByID(client);
 
         if (IsClientExist(client) && GetClientTeam(client) > 1) {
             gamemode.timer.Simple(100, "PlayerSpawn", ply);
@@ -534,7 +534,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
 {
     if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsClientInSpec(activator))
     {
-        Player ply = player.Get(activator);
+        Player ply = player.GetByID(activator);
         int doorId = GetEntProp(caller, Prop_Data, "m_iHammerID");
 
         if (gamemode.config.debug)
@@ -654,12 +654,12 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 {   
     if(IsClientExist(victim))
     {
-        Player atk, vic = player.Get(victim);
+        Player atk, vic = player.GetByID(victim);
         Action result;
 
         if(IsClientExist(attacker))
         {
-            atk = player.Get(attacker);
+            atk = player.GetByID(attacker);
             if (vic != null && vic.class != null)
             {
                 if(vic.IsSCP && atk.IsSCP)
@@ -702,7 +702,7 @@ public void OnTakeDamageAlivePost(int victim, int attacker, int inflictor, float
 {   
     if(IsClientExist(victim))
     {
-        Player vic = player.Get(victim);
+        Player vic = player.GetByID(victim);
 
         if (vic.health <= 0)
             vic.DropWeapons();
@@ -713,8 +713,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 {
     if(!gamemode.mngr.IsWarmup)
     {
-        Player vic = player.Get(GetClientOfUserId(GetEventInt(event, "userid")));
-        Player atk = player.Get(GetClientOfUserId(GetEventInt(event, "attacker")));
+        Player vic = player.GetByID(GetClientOfUserId(GetEventInt(event, "userid")));
+        Player atk = player.GetByID(GetClientOfUserId(GetEventInt(event, "attacker")));
 
         if (vic == null) return Plugin_Handled;
         
@@ -781,13 +781,13 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
         char vicname[32], vicauth[32];
         vic.GetName(vicname, sizeof(vicname));
-        vic.GetAuth2(vicauth, sizeof(vicauth));
+        vic.GetAuth(vicauth, sizeof(vicauth));
         
         if(atk) {
             char atkname[32], atkauth[32];
 
             atk.GetName(atkname, sizeof(atkname));
-            atk.GetAuth2(atkauth, sizeof(atkauth));
+            atk.GetAuth(atkauth, sizeof(atkauth));
 
             gamemode.log.Info("%t", "Log_Core_PlayerDead", vicname, vicauth, atkname, atkauth);
         }
@@ -801,7 +801,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
 public Action OnWeaponTake(int client, int iWeapon)
 {
-    Player ply = player.Get(client);
+    Player ply = player.GetByID(client);
 
     char classname[64];
     GetEntityClassname(iWeapon, classname, sizeof(classname));
@@ -1019,7 +1019,7 @@ public void LoadModels()
 
 public void OnPlayerRunCmdPost(int client, int buttons)
 {
-    Player ply = player.Get(client);
+    Player ply = player.GetByID(client);
     
     if (ply != null && ply.class != null)
     {
@@ -1032,7 +1032,7 @@ public void OnPlayerRunCmdPost(int client, int buttons)
 
 public SDKHookCB CB_EntUse(int entity, int client)
 {
-    Player ply = player.Get(client);
+    Player ply = player.GetByID(client);
     Entity ent = ents.Get(entity);
 
     if (ply.IsSCP) return;
@@ -1092,7 +1092,7 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int idx)
     }
     else if (action == MenuAction_Select) 
     {
-        Player ply = player.Get(client);
+        Player ply = player.GetByID(client);
         InvItem item = ply.inv.Get(idx);
         
         ply.PlaySound("*/scp/menu/select.mp3", SNDCHAN_VOICE);
@@ -1124,7 +1124,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
     {
         case MenuAction_DrawItem:
         {
-            Player ply = player.Get(client);
+            Player ply = player.GetByID(client);
             
             switch (idx)
             {
@@ -1154,7 +1154,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
         }
         case MenuAction_DisplayItem:
         {
-            Player ply = player.Get(client);
+            Player ply = player.GetByID(client);
 
             char itemid[3];
             hMenu.GetItem(idx, itemid, sizeof(itemid));
@@ -1191,7 +1191,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
         }
         case MenuAction_Select:
         {
-            Player ply = player.Get(client);
+            Player ply = player.GetByID(client);
             
             char itemid[3];
             hMenu.GetItem(idx, itemid, sizeof(itemid));
@@ -1577,7 +1577,7 @@ public Action Command_AdminMenu(int client, int args)
 
 public Action Command_Kill(int client, const char[] command, int argc)
 {
-    Player ply = player.Get(client);
+    Player ply = player.GetByID(client);
     
     if (ply.IsAlive())
         ply.Kill();
@@ -1587,7 +1587,7 @@ public Action Command_Kill(int client, const char[] command, int argc)
 
 public Action Command_Base(int client, const char[] command, int argc)
 {
-    Player ply = player.Get(client);
+    Player ply = player.GetByID(client);
     
     if (!ply.IsAdmin()) return Plugin_Stop;
 
@@ -1602,7 +1602,7 @@ public Action Command_Base(int client, const char[] command, int argc)
         int tpc[64];
 
         for (int i=1; i <= player.Length; i++) {
-            Player plycmd = player.Get(i);
+            Player plycmd = player.GetByID(i);
 
             char plyTeamName[32];
             plycmd.Team(plyTeamName, sizeof(plyTeamName));
@@ -1651,7 +1651,7 @@ public Action Command_Base(int client, const char[] command, int argc)
 
 public Action Command_Ents(int client, const char[] command, int argc)
 {
-    Player ply = player.Get(client);
+    Player ply = player.GetByID(client);
 
     if (!ply.IsAdmin()) return Plugin_Stop;
 
@@ -1671,9 +1671,9 @@ public Action Command_Ents(int client, const char[] command, int argc)
             ent.GetClass(name, sizeof(name));
 
             if (ent.id != 5000)
-                PrintToConsole(ply.id, "%s id: %i (iter:%i)", name, ent.id, i);
+                PrintToConsole(ply.id, "%s id: %i", name, ent.id);
             else
-                PrintToConsole(ply.id, "%s (picked) (iter:%i)", name, i);
+                PrintToConsole(ply.id, "%s (picked)", name);
         }
 
         PrintToConsole(ply.id, "------------------------");
@@ -1688,7 +1688,7 @@ public Action Command_Ents(int client, const char[] command, int argc)
 
 public Action Command_GetMyPos(int client, const char[] command, int argc)
 {
-    Player ply = player.Get(client);
+    Player ply = player.GetByID(client);
     Vector plyPos = ply.GetPos();
     Angle plyAng = ply.GetAng();
 
@@ -1702,7 +1702,7 @@ public Action Command_GetMyPos(int client, const char[] command, int argc)
 
 public Action Command_GetEntsInBox(int client, const char[] command, int argc)
 {
-    Player ply = player.Get(client);
+    Player ply = player.GetByID(client);
 
     char filter[4][32] = { "prop_physics", "weapon_", "func_door", "prop_dynamic" };
 
@@ -1731,7 +1731,7 @@ public Action Command_GetEntsInBox(int client, const char[] command, int argc)
 
 public Action Command_Debug(int client, const char[] command, int argc)
 {
-    Player ply = player.Get(client);
+    Player ply = player.GetByID(client);
 
     char arg1[32], arg2[32], arg3[32], arg4[32];
 

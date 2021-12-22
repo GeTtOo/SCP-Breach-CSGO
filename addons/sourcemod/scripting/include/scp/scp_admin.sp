@@ -111,7 +111,7 @@ methodmap AdminAction < Base
 
         char adminname[32], adminauth[32];
         this.admin.GetName(adminname, sizeof(adminname));
-        this.admin.GetAuth2(adminauth, sizeof(adminauth));
+        this.admin.GetAuth(adminauth, sizeof(adminauth));
         gamemode.log.Admin("%t", "Log_Admin_ShowClass", adminname, adminauth);
     }
 
@@ -119,7 +119,7 @@ methodmap AdminAction < Base
     {
         char adminname[32], adminauth[32];
         this.admin.GetName(adminname, sizeof(adminname));
-        this.admin.GetAuth2(adminauth, sizeof(adminauth));
+        this.admin.GetAuth(adminauth, sizeof(adminauth));
         
         if(!this.admin.fullaccess)
         {
@@ -152,9 +152,9 @@ methodmap AdminAction < Base
 
             char adminname[32], adminauth[32], targetname[32], targetauth[32];
             this.admin.GetName(adminname, sizeof(adminname));
-            this.admin.GetAuth2(adminauth, sizeof(adminauth));
+            this.admin.GetAuth(adminauth, sizeof(adminauth));
             this.target.GetName(targetname, sizeof(targetname));
-            this.target.GetAuth2(targetauth, sizeof(targetauth));
+            this.target.GetAuth(targetauth, sizeof(targetauth));
 
             gamemode.log.Admin("%t", "Log_Admin_PlayerTeleport", adminname, adminauth, targetname, targetauth);
         }
@@ -181,7 +181,7 @@ methodmap AdminMenuSingleton < Base
 
     public AdminAction Get(int client)
     {
-        Player ply = player.Get(client);
+        Player ply = player.GetByID(client);
         ArrayList list = this.GetArrayList("admins");
         
         for(int i = 0; i < list.Length; i++)
@@ -263,7 +263,7 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
 
                 char adminname[32], adminauth[32];
                 AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));
-                AdminMenu.Get(client).admin.GetAuth2(adminauth, sizeof(adminauth));
+                AdminMenu.Get(client).admin.GetAuth(adminauth, sizeof(adminauth));
                 
                 gamemode.log.Admin("%t", "Log_Admin_RoundRestart", adminname, adminauth);
             }
@@ -277,7 +277,7 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
                     
                     char adminname[32], adminauth[32];
                     AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));
-                    AdminMenu.Get(client).admin.GetAuth2(adminauth, sizeof(adminauth));
+                    AdminMenu.Get(client).admin.GetAuth(adminauth, sizeof(adminauth));
                     
                     gamemode.log.Admin("%t", "Log_Admin_NukeActivation", adminname, adminauth);
                 }
@@ -328,7 +328,7 @@ public int MenuHandler_ScpAdminMenuTarget(Menu hMenu, MenuAction action, int cli
 		}
         else
 		{
-            AdminMenu.Get(client).target = player.Get(target);
+            AdminMenu.Get(client).target = player.GetByID(target);
             
             switch(AdminMenu.Get(client).action)
             {
@@ -454,9 +454,9 @@ public int MenuHandler_GetClass(Menu hMenu, MenuAction action, int client, int i
 
             char adminname[32], adminauth[32], targetname[32], targetauth[32];
             AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));
-            AdminMenu.Get(client).admin.GetAuth2(adminauth, sizeof(adminauth));
+            AdminMenu.Get(client).admin.GetAuth(adminauth, sizeof(adminauth));
             AdminMenu.Get(client).target.GetName(targetname, sizeof(targetname));
-            AdminMenu.Get(client).target.GetAuth2(targetauth, sizeof(targetauth));
+            AdminMenu.Get(client).target.GetAuth(targetauth, sizeof(targetauth));
 
             gamemode.log.Admin("%t", "Log_Admin_Respawn", adminname, adminauth, targetname, targetauth);
         }
@@ -510,9 +510,9 @@ public int MenuHandler_GetTeleportPoint(Menu hMenu, MenuAction action, int clien
 
             char adminname[32], adminauth[32], targetname[32], targetauth[32];
             AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));
-            AdminMenu.Get(client).admin.GetAuth2(adminauth, sizeof(adminauth));
+            AdminMenu.Get(client).admin.GetAuth(adminauth, sizeof(adminauth));
             AdminMenu.Get(client).target.GetName(targetname, sizeof(targetname));
-            AdminMenu.Get(client).target.GetAuth2(targetauth, sizeof(targetauth));
+            AdminMenu.Get(client).target.GetAuth(targetauth, sizeof(targetauth));
 
             gamemode.log.Admin("%t", "Log_Admin_PlayerTeleportObject", adminname, adminauth, targetname, targetauth, tpname);
         }
@@ -557,7 +557,7 @@ public int MenuHandler_Reinforce(Menu hMenu, MenuAction action, int client, int 
 
             char adminname[32], adminauth[32];
             AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));
-            AdminMenu.Get(client).admin.GetAuth2(adminauth, sizeof(adminauth));
+            AdminMenu.Get(client).admin.GetAuth(adminauth, sizeof(adminauth));
 
             gamemode.log.Admin("%t", "Log_Admin_Reinforce", adminname, adminauth);
         }
@@ -603,9 +603,9 @@ public int MenuHandler_GiveMenu(Menu hMenu, MenuAction action, int client, int i
 
             char adminname[32], adminauth[32], targetname[32], targetauth[32];
             AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));
-            AdminMenu.Get(client).admin.GetAuth2(adminauth, sizeof(adminauth));
+            AdminMenu.Get(client).admin.GetAuth(adminauth, sizeof(adminauth));
             AdminMenu.Get(client).target.GetName(targetname, sizeof(targetname));
-            AdminMenu.Get(client).target.GetAuth2(targetauth, sizeof(targetauth));
+            AdminMenu.Get(client).target.GetAuth(targetauth, sizeof(targetauth));
 
             gamemode.log.Admin("%t", "Log_Admin_GiveItem", adminname, adminauth, targetname, targetauth, itemclass);
         }

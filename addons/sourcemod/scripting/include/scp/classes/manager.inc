@@ -77,7 +77,7 @@ methodmap Manager < Base {
 
     public void StopSoundAll(char[] path, int channel) {
         for (int i=0; i < MAXPLAYERS; i++) {
-            Player ply = player.Get(i);
+            Player ply = player.GetByID(i);
 
             if (ply != null)
                 StopSound(ply.id, channel, path);
@@ -128,7 +128,7 @@ methodmap Manager < Base {
         int tpc[64];
 
         for (int i=1; i <= player.Length; i++) {
-            Player ply = player.Get(i);
+            Player ply = player.GetByID(i);
 
             char plyTeamName[32];
             ply.Team(plyTeamName, sizeof(plyTeamName));
