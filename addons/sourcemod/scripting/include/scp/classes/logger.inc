@@ -115,7 +115,7 @@ methodmap Logger < Base
                 default:
                 {
                     this.SendMessageToConsole(timestring, type, text);
-                    this.SendMessageToFile(type, text);
+                    //this.SendMessageToFile(type, text);
                     this.SendMessageToForward(timestring, type, text);
                 }
             }

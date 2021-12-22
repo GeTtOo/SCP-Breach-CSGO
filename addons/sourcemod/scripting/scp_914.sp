@@ -91,7 +91,7 @@ public void SCP_OnRoundStart() {
     gamemode.timer.PluginClear();
 }
 
-public void SCP_OnButtonPressed(Client &ply, int doorId) {
+public void SCP_OnButtonPressed(Player &ply, int doorId) {
     if (doorId == gamemode.plconfig.GetInt("runbutton"))
         gamemode.timer.Simple(gamemode.plconfig.GetInt("runtime") * 1000, "Transform", ply);
     
@@ -110,19 +110,19 @@ public void SCP_OnButtonPressed(Client &ply, int doorId) {
             }
 }
 
-public void Transform(Client ply) {
+public void Transform(Player ply) {
     JSON_OBJECT recipes = gconfig.GetObject("recipes").GetObject(curmode);
     bool AmbientPlay = false;
 
     char filter[3][32] = {"prop_physics", "weapon_", "player"};
     
-    ArrayList ents = Ents.FindInBox(gamemode.plconfig.GetArray("searchzone").GetVector(0), gamemode.plconfig.GetArray("searchzone").GetVector(1), filter, sizeof(filter));
+    ArrayList entities = ents.FindInBox(gamemode.plconfig.GetArray("searchzone").GetVector(0), gamemode.plconfig.GetArray("searchzone").GetVector(1), filter, sizeof(filter));
 
     char entlist[3072];
 
-    for(int i=0; i < ents.Length; i++)
+    for(int i=0; i < entities.Length; i++)
     {
-        Entity ent = ents.Get(i);
+        Entity ent = entities.Get(i);
 
         bool upgraded = false;
 
@@ -169,6 +169,8 @@ public void Transform(Client ply) {
                             break;
                         }
                     }
+
+                    delete soentdata;
                 }
 
                 char oentclass[32];
@@ -176,7 +178,7 @@ public void Transform(Client ply) {
                 
                 if (ent.IsClass("player"))
                 {
-                    Client entply = view_as<Client>(ent);
+                    Player entply = view_as<Player>(ent);
                     
                     gamemode.mngr.Fade(entply.id, 800, 3000, new Colour(0,0,0,255));
 
@@ -186,7 +188,7 @@ public void Transform(Client ply) {
                         soundarr.GetString(GetRandomInt(0, soundarr.Length - 1), sound, sizeof(sound));
 
                         if (!AmbientPlay) {
-                            gamemode.mngr.PlayAmbient(sound, entply);
+                            gamemode.mngr.PlayAmbientOnPlayer(sound, entply);
                             AmbientPlay = true;
                         }
                         
@@ -214,11 +216,11 @@ public void Transform(Client ply) {
                     {
                         if (recipe.GetInt(2) >= GetRandomInt(1, 100))
                         {
-                            Ents.Create(oentclass)
+                            ents.Create(oentclass)
                             .SetPos(oitempos, ent.GetAng())
                             .Spawn();
 
-                            Ents.Remove(ent.id);
+                            ents.Remove(ent.id);
                         }
                         else
                         {
@@ -227,13 +229,15 @@ public void Transform(Client ply) {
                     }
                     else
                     {
-                        Ents.Remove(ent.id);
+                        ents.Remove(ent.id);
                     }
                 }
                 
                 upgraded = true;
             }
         }
+
+        delete srecipes;
 
         if (!upgraded) {
             Vector oitempos = ent.GetPos() - gamemode.plconfig.GetVector("distance");
@@ -244,18 +248,18 @@ public void Transform(Client ply) {
             }
             else
             {
-                Ents.Create(entclass).SetPos(oitempos, ent.GetAng()).Spawn();
-                Ents.Remove(ent.id);
+                ents.Create(entclass).SetPos(oitempos, ent.GetAng()).Spawn();
+                ents.Remove(ent.id);
             }
         }
     }
 
-    gamemode.log.Debug("Transforming iteration started by player %i (Mode: %s).\nFinded %i entities:%s", ply.id, curmode, ents.Length, entlist);
+    gamemode.log.Debug("Transforming iteration started by player %i (Mode: %s).\nFinded %i entities:%s", ply.id, curmode, entities.Length, entlist);
 
-    delete ents;
+    delete entities;
 }
 
-public void Regeneration(Client ply) {
+public void Regeneration(Player ply) {
     PrintToChat(ply.id, " \x07[SCP] \x01 Вы ощущаете необычайный прилив сил");
 
     char  timername[128];
@@ -264,7 +268,7 @@ public void Regeneration(Client ply) {
     gamemode.timer.Create(timername, 1000, 60, "Buff_Regeneration", ply);
 }
 
-public void Buff_Regeneration(Client ply) {
+public void Buff_Regeneration(Player ply) {
     if (ply.health < ply.class.health)
         if (ply.health + (ply.class.health * 5 /100) > ply.class.health)
             ply.health = ply.class.health;
@@ -272,13 +276,13 @@ public void Buff_Regeneration(Client ply) {
             ply.health += ply.class.health * 5 /100;
 }
 
-public void Speed(Client ply) {
+public void Speed(Player ply) {
     PrintToChat(ply.id, " \x07[SCP] \x01 Вы впадаете в ярость");
     
     ply.multipler *= 2.0;
 }
 
-public void Injure(Client ply) {
+public void Injure(Player ply) {
     PrintToChat(ply.id, " \x07[SCP] \x01 Ваше тело начинает кровоточить из за множества мелких ран");
 
     char  timername[128];
@@ -287,11 +291,11 @@ public void Injure(Client ply) {
     gamemode.timer.Create(timername, 2000, 30, "Debuff_Injure", ply);
 }
 
-public void Debuff_Injure(Client ply) {
+public void Debuff_Injure(Player ply) {
     ply.health -= (ply.class.health * 3 / 100);
 }
 
-public void Butchering(Client ply) {
+public void Butchering(Player ply) {
     PrintToChat(ply.id, " \x07[SCP] Ваше тело было разделано на компоненты.");
     ply.Kill();
 }

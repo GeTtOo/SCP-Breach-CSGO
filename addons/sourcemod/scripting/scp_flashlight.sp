@@ -52,7 +52,7 @@ public void SCP_RegisterMetaData() {
     gamemode.meta.RegEntEvent(ON_DROP, "flashlight", "OnDrop");
 }
 
-public void OnUse(Client &ply, InvItem &item) {
+public void OnUse(Player &ply, InvItem &item) {
     if(item.GetBool("enable"))
         item.SetBool("enable", false);
     else
@@ -61,7 +61,7 @@ public void OnUse(Client &ply, InvItem &item) {
     ToogleFlashLight(ply);
 }
 
-public void OnDrop(Client &ply, InvItem &item) {
+public void OnDrop(Player &ply, InvItem &item) {
     if(item.GetBool("enable"))
     {
         item.SetBool("enable", false);
@@ -69,7 +69,7 @@ public void OnDrop(Client &ply, InvItem &item) {
     }
 }
 
-public void ToogleFlashLight(Client &ply) {
+public void ToogleFlashLight(Player &ply) {
     ply.SetProp("m_fEffects", ply.GetProp("m_fEffects") ^ 4);
     //EmitSoundToClient(ply.id, "items/flashlight1.wav"); 
 }

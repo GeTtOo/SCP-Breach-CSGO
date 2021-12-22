@@ -59,14 +59,14 @@ public Plugin myinfo = {
 	url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void SCP_OnInput(Client &ply, int buttons)
+public void SCP_OnInput(Player &ply, int buttons)
 {
 	if (buttons & IN_USE && ply.class.Is("049") && !ply.GetBool("049_reviving"))
 	{
 		if (buttons & IN_USE)
 		{
 			char filter[1][32] = {"prop_ragdoll"};
-			ArrayList ragdolls = Ents.FindInPVS(ply, _, _, filter);
+			ArrayList ragdolls = ents.FindInPVS(ply, _, _, filter);
 			
 			if (ragdolls.Length > 0)
 			{
@@ -85,7 +85,7 @@ public void SCP_OnInput(Client &ply, int buttons)
 	}
 }
 
-public void Revive(Client ply) 
+public void Revive(Player ply)
 {
 	ply.progress.Stop();
 	ply.SetBool("049_reviving", false);
@@ -93,7 +93,7 @@ public void Revive(Client ply)
 	if (gamemode.plconfig.GetObject("revive").GetBool("inpvs", true))
 	{
 		char filter[1][32] = {"prop_ragdoll"};
-		ArrayList ragdolls = Ents.FindInPVS(ply, _, _, filter);
+		ArrayList ragdolls = ents.FindInPVS(ply, _, _, filter);
 
 		if (ragdolls.Length > 0)
 		{
@@ -101,16 +101,16 @@ public void Revive(Client ply)
 			{
 				Entity vicrag = ragdolls.Get(i);
 
-				ArrayList players = Clients.GetAll();
+				ArrayList players = player.GetAll();
 
-				Client vic;
+				Player vic;
 				for(int k=0; k < players.Length; k++)
 				{
 					vic = players.Get(k);
 
 					if (vic != ply && !vic.IsAlive() && vic.ragdoll)
 					{
-						if (vic.ragdoll.id == vicrag.id)
+						if (vic.ragdoll == vicrag)
 						{
 							ArrayList bglist = vic.bglist;
 							char modelname[256];
@@ -125,7 +125,7 @@ public void Revive(Client ply)
 
 							vic.bglist = bglist;
 							//vic.SetBodyGroup("body", 0);
-							vic.SetSkin(1);
+							vic.SetSkin(vic.GetSkin() + 1);
 							
 							vic.SetPos(vic.ragdoll.GetPos(), ply.GetAng() - new Angle(0.0, 180.0, 0.0));
 						}
@@ -142,9 +142,9 @@ public void Revive(Client ply)
 	}
 	else
 	{
-		ArrayList players = Clients.GetAll();
+		ArrayList players = player.GetAll();
 
-		Client vic;
+		Player vic;
 		for(int i=0; i < players.Length; i++)
 		{
 			vic = players.Get(i);
@@ -167,11 +167,11 @@ public void Revive(Client ply)
 	}
 }
 
-public void ReviveUnlock(Client ply) {
+public void ReviveUnlock(Player ply) {
 	ply.SetBool("049_lock", false);
 }
 
-public Action SCP_OnTakeDamage(Client &vic, Client &atk, float &damage, int &damagetype)
+public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype)
 {
 	if(atk.class.Is("049"))
 	{
@@ -193,7 +193,7 @@ public Action SCP_OnTakeDamage(Client &vic, Client &atk, float &damage, int &dam
 	return Plugin_Continue;
 }
 
-public void SCP_OnCallActionMenu(Client &ply)
+public void SCP_OnCallActionMenu(Player &ply)
 {
     if (ply.class.Is("049") && !g_MusicPlay)
 	{

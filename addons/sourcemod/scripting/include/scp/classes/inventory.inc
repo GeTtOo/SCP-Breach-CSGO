@@ -110,7 +110,7 @@ methodmap Inventory < Base {
         return false;
     }
 
-    public bool Add(char[] entclass) {
+    public bool Give(char[] entclass) {
         ArrayList inv = this.GetArrayList("inventory");
 
         if (inv.Length <= gamemode.config.invsize) {
@@ -127,9 +127,7 @@ methodmap Inventory < Base {
                 data[0] = ent.id;
                 data[1] = ent;
                 
-                Base ents;
-                gamemode.GetValue("ents", ents);
-                ents.GetArrayList("entities").PushArray(data);
+                gamemode.GetBase("entities").GetArrayList("entities").PushArray(data);
                 inv.Push(ent);
 
                 return true;
@@ -138,6 +136,10 @@ methodmap Inventory < Base {
             {
                 gamemode.log.Warning("Can't give item: %s to the player id: %i. (Not registered in entities list)", entclass, this.ply.GetInt("id"));
             }
+        }
+        else
+        {
+            gamemode.log.Info("Can't give item: %s to the player id: %i. (Not enough space in inventory)", entclass, this.ply.GetInt("id"));
         }
         
         return false;
@@ -161,6 +163,7 @@ methodmap Inventory < Base {
         for (int i=0; i < inv.Length; i++) {
             Entity item = inv.Get(i);
             item.GetClass(entclass, sizeof(entclass));
+            delete item;
 
             if (StrEqual(entclass, entname)) {
                 inv.Erase(i);
@@ -189,11 +192,11 @@ methodmap Inventory < Base {
     }
 
     public void FullClear() {
-        ArrayList ents = view_as<Base>(gamemode).GetBase("ents").GetArrayList("entities");
+        ArrayList entities = view_as<Base>(gamemode).GetBase("entities").GetArrayList("entities");
 
         while (this.items.Length != 0) {
             InvItem item = this.Drop();
-            ents.Erase(ents.FindValue(item, 1));
+            entities.Erase(entities.FindValue(item, 1));
             item.Dispose();
         }
     }

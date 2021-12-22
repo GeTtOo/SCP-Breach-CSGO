@@ -242,7 +242,7 @@ public void NukeExplode() {
 
     for(int i=0; i < MAXPLAYERS; i++)
     {
-        Client ply = Clients.Get(i);
+        Player ply = player.Get(i);
 
         if(ply != null && ply.IsAlive())
         {

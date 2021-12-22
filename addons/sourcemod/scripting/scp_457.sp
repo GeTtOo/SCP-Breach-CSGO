@@ -29,6 +29,7 @@
  **/
 
 #include <sourcemod>
+#include <sdkhooks>
 #include <scpcore>
 
 #pragma semicolon 1
@@ -42,7 +43,7 @@ public Plugin myinfo = {
 	url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public Action SCP_OnTakeDamage(Client &vic, Client &atk, float &damage, int &damagetype)
+public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype)
 {
     if(atk.class.Is("457") && atk.id != vic.id)
     {
@@ -57,7 +58,7 @@ public Action SCP_OnTakeDamage(Client &vic, Client &atk, float &damage, int &dam
     return Plugin_Continue;
 }
 
-public void SCP_OnPlayerClear(Client &ply)
+public void SCP_OnPlayerClear(Player &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("457") && ply.InGame())
     {

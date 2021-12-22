@@ -49,20 +49,20 @@ public void SCP_RegisterMetaData() {
     gamemode.meta.RegEntEvent(ON_PICKUP, "035_mask", "Logic");
 }
 
-public void SCP_OnPlayerClear(Client &ply)
+public void SCP_OnPlayerClear(Player &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("035"))
     {
         gamemode.timer.Remove("Timer_SCP-035_Hit");
         Entity ent = view_as<Entity>(ply.GetHandle("035_ent"));
         if (ent)
-            Ents.Remove(ent.id);
+            ents.Remove(ent.id);
     }
 }
 
 public Action TransmitHandler(int entity, int client)
 {
-    Client ply = Clients.Get(client);
+    Player ply = player.Get(client);
 
     Handle hndl = ply.GetHandle("035_ent");
 
@@ -72,7 +72,7 @@ public Action TransmitHandler(int entity, int client)
     return Plugin_Continue;
 }
 
-public Action SCP_OnTakeDamage(Client &vic, Client &atk, float &damage, int &damagetype)
+public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype)
 {
 	if(atk.class.Is("035"))
     {
@@ -83,7 +83,7 @@ public Action SCP_OnTakeDamage(Client &vic, Client &atk, float &damage, int &dam
 	return Plugin_Continue;
 }
 
-public Action HandlerHitSCP(Client ply)
+public Action HandlerHitSCP(Player ply)
 {
     if(ply.health > 10)
         ply.health -= 10;
@@ -91,7 +91,7 @@ public Action HandlerHitSCP(Client ply)
         ply.Kill();
 }
 
-public void Logic(Client &ply, Entity &ent)
+public void Logic(Player &ply, Entity &ent)
 {
     Vector sp = ply.GetPos();
     Angle sa = ply.GetAng();
@@ -121,13 +121,13 @@ public void ExecDelay(ArrayList data)
 {
     char model[256];
     
-    Client ply = data.Get(0);
+    Player ply = data.Get(0);
     Entity ent = data.Get(1);
     data.GetString(2, model, sizeof(model));
 
     delete data;
 
-    Ents.IndexUpdate(ent.Create("prop_dynamic_override").Spawn());
+    ents.IndexUpdate(ent.Create("prop_dynamic_override").Spawn());
     
     ply.SetHandle("035_ent", ent);
     ply.SetModel(model);

@@ -48,23 +48,26 @@ public void SCP_RegisterMetaData() {
     gamemode.meta.RegEntEvent(ON_DROP, "268_cap", "OnDrop");
 }
 
-public void OnUse(Client &ply, InvItem &item) {
+public void OnUse(Player &ply, InvItem &item) {
     if (!item.disabled) {
         SetEntityRenderMode(ply.id, RENDER_NONE);
         ply.progress.Start(15000, "InvisibleEffect");
+        ply.PrintNotify("Вы ощущаете себя менее заметным");
         item.CooldownStart(item.meta.cd * 1000, "ItemUnlocked", item);
         item.disabled = true;
     }
 }
 
-public void OnDrop(Client &ply, InvItem &item) {
+public void OnDrop(Player &ply, InvItem &item) {
     SetEntityRenderMode(ply.id, RENDER_NORMAL);
 }
 
 public void ItemUnlocked(InvItem item) {
     item.disabled = false;
+    
 }
 
-public void InvisibleEffect(Client ply) {
+public void InvisibleEffect(Player ply) {
     SetEntityRenderMode(ply.id, RENDER_NORMAL);
+    ply.progress.Stop();
 }

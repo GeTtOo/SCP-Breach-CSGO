@@ -83,6 +83,6 @@ methodmap Base < StringMap {
     public bool RemoveValue(char[] index) { return this.Remove(index); }
 
     property int Length {
-        public get() { StringMapSnapshot snap = this.Snapshot(); int len = snap.Length; delete snap; return len; }
+        public get() { return GetTrieSize(this); }
     }
 }

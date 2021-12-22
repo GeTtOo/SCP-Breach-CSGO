@@ -48,7 +48,7 @@ public void SCP_RegisterMetaData() {
     gamemode.meta.RegEntEvent(ON_DROP, "visor_nv", "OnDrop");
 }
 
-public void OnUse(Client &ply, InvItem &item) {
+public void OnUse(Player &ply, InvItem &item) {
     if(item.GetBool("status"))
         item.SetBool("status", false);
     else
@@ -57,7 +57,7 @@ public void OnUse(Client &ply, InvItem &item) {
     ToogleStatus(ply);
 }
 
-public void OnDrop(Client &ply, InvItem &item) {
+public void OnDrop(Player &ply, InvItem &item) {
     if(item.GetBool("status"))
     {
         item.SetBool("status", false);
@@ -65,6 +65,6 @@ public void OnDrop(Client &ply, InvItem &item) {
     }
 }
 
-public void ToogleStatus(Client &ply) {
+public void ToogleStatus(Player &ply) {
     ply.SetProp("m_bNightVisionOn", (ply.GetProp("m_bNightVisionOn") == 0) ? 1 : 0);
 }

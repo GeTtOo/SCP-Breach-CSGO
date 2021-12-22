@@ -148,14 +148,6 @@ methodmap Timers < Base {
         for (int i=0; i < list.Length; i++) {
             Tmr timer = list.Get(i);
             if (GetGameTime() >= timer.nextinvoke) {
-                if (timer.repeations == 1)
-                    list.Erase(i);
-                else if (timer.repeations > 1) {
-                    timer.nextinvoke += timer.delay;
-                    timer.repeations--;
-                }
-                else if (timer.repeations == 0)
-                    timer.nextinvoke += timer.delay;
 
                 char funcname[64];
                 timer.func(funcname, sizeof(funcname));
@@ -164,6 +156,18 @@ methodmap Timers < Base {
                 if (timer.args)
                     Call_PushCell(timer.args);
                 Call_Finish();
+
+                if (timer.repeations == 1)
+                {
+                    list.Erase(i);
+                    delete timer;
+                }
+                else if (timer.repeations > 1) {
+                    timer.nextinvoke += timer.delay;
+                    timer.repeations--;
+                }
+                else if (timer.repeations == 0)
+                    timer.nextinvoke += timer.delay;
             }
         }
     }

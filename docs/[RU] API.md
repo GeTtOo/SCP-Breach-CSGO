@@ -29,15 +29,15 @@
 | `void SCP_RegisterMetaData()` | Событие, в котором регистрируется мета события для сущностей.  |
 | `void SCP_OnLoad()` | Вызывается, когда мод загружен. Аналог `OnPluginStart` в котором инициализирован весь функционал мода.  |
 | `void SCP_OnUnload()` | Вызывается, когда мод загружен. Аналог `OnPluginStart` в котором инициализирован весь функционал мода.  |
-| `void SCP_OnPlayerJoin(Client &ply)` | Вызывается, когда игрок зашёл на сервер и полностью загружен.  |
-| `void SCP_OnPlayerLeave(Client &ply)` | Вызывается, когда игрок покинул сервер.  |
-| `void SCP_OnPlayerSpawn(Client &ply)` | Вызывается при появление игрока.  |
-| `void SCP_OnPlayerReset(Client &ply)` | Вызывается при перезапуске раунда.  |
-| `void SCP_OnPlayerClear(Client &ply)` | Вызывается, когда игрок перестает существовать (отключается, умирает, при рестарте раунда).  |
-| `Action SCP_OnTakeDamage(Client &vic, Client &atk, float &damage, int &damagetype)` | Вызывается, когда игрок получил урон.  |
-| `void SCP_OnPlayerDeath(Client &vic, Client &atk)` | Вызывается при смерти игрока.  |
-| `void SCP_OnButtonPressed(Client &ply, int doorId)` | Вызывается при нажатие игроком кнопки.  |
+| `void SCP_OnPlayerJoin(Player &ply)` | Вызывается, когда игрок зашёл на сервер и полностью загружен.  |
+| `void SCP_OnPlayerLeave(Player &ply)` | Вызывается, когда игрок покинул сервер.  |
+| `void SCP_OnPlayerSpawn(Player &ply)` | Вызывается при появление игрока.  |
+| `void SCP_OnPlayerReset(Player &ply)` | Вызывается при перезапуске раунда.  |
+| `void SCP_OnPlayerClear(Player &ply)` | Вызывается, когда игрок перестает существовать (отключается, умирает, при рестарте раунда).  |
+| `Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype)` | Вызывается, когда игрок получил урон.  |
+| `void SCP_OnPlayerDeath(Player &vic, Player &atk)` | Вызывается при смерти игрока.  |
+| `void SCP_OnButtonPressed(Player &ply, int doorId)` | Вызывается при нажатие игроком кнопки.  |
 | `void SCP_OnRoundStart()` | Вызывается при старте раунда, после распределения игроков.  |
 | `void SCP_OnRoundEnd()` | Вызывается в конце раунда.  |
-| `void SCP_OnInput(Client &ply, int buttons)` | Аналог OnPlayerRunCmd.  |
-| `void SCP_OnCallActionMenu(Client &ply)` | Вызывается при открытии меню (клавиша TAB).  |
+| `void SCP_OnInput(Player &ply, int buttons)` | Аналог OnPlayerRunCmd.  |
+| `void SCP_OnCallActionMenu(Player &ply)` | Вызывается при открытии меню (клавиша TAB).  |

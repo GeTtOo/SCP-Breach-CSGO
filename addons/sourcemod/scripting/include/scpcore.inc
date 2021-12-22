@@ -54,8 +54,8 @@ GameMode gamemode;
 
 #include "scp\classes\worldtext"
 
-ClientSingleton Clients;
-EntitySingleton Ents;
+ClientSingleton player;
+EntitySingleton ents;
 WorldTextSingleton WT;
 
 #include "scp\classes\manager"
@@ -67,26 +67,26 @@ forward void SCP_OnLoad();
 
 forward void SCP_OnUnload();
 
-forward void SCP_OnPlayerJoin(Client &ply);
+forward void SCP_OnPlayerJoin(Player &ply);
 
-forward void SCP_OnPlayerLeave(Client &ply);
+forward void SCP_OnPlayerLeave(Player &ply);
 
-forward void SCP_OnPlayerSpawn(Client &ply);
+forward void SCP_OnPlayerSpawn(Player &ply);
 
-forward void SCP_OnPlayerReset(Client &ply);
+forward void SCP_OnPlayerReset(Player &ply);
 
-forward void SCP_OnPlayerClear(Client &ply);
+forward void SCP_OnPlayerClear(Player &ply);
 
-forward Action SCP_OnTakeDamage(Client &vic, Client &atk, float &damage, int &damagetype);
+forward Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype);
 
-forward void SCP_OnPlayerDeath(Client &vic, Client &atk);
+forward void SCP_OnPlayerDeath(Player &vic, Player &atk);
 
-forward void SCP_OnButtonPressed(Client &ply, int doorId);
+forward void SCP_OnButtonPressed(Player &ply, int doorId);
 
 forward void SCP_OnRoundStart();
 
 forward void SCP_OnRoundEnd();
 
-forward void SCP_OnInput(Client &ply, int buttons);
+forward void SCP_OnInput(Player &ply, int buttons);
 
-forward void SCP_OnCallActionMenu(Client &ply);
+forward void SCP_OnCallActionMenu(Player &ply);

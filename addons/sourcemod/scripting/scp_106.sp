@@ -43,15 +43,15 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void SCP_OnPlayerJoin(Client &ply) {
+public void SCP_OnPlayerJoin(Player &ply) {
 
 }
 
-public void SCP_OnPlayerClear(Client &ply) {
+public void SCP_OnPlayerClear(Player &ply) {
     SDKUnhook(ply.id, SDKHook_StartTouch, CheckSurface);
 }
 
-public void SCP_OnPlayerSpawn(Client &ply) {
+public void SCP_OnPlayerSpawn(Player &ply) {
     if (ply != null && ply.class != null && ply.class.Is("106"))
     {
         SDKHook(ply.id, SDKHook_StartTouch, CheckSurface);
@@ -60,16 +60,16 @@ public void SCP_OnPlayerSpawn(Client &ply) {
 
 public void Scp_OnRoundEnd()
 {
-    for (int i=0; i < Clients.Length; i++)
+    for (int i=0; i < player.Length; i++)
     {
-        Client ply = Clients.Get(i);
+        Player ply = player.Get(i);
         
         if (ply != null && ply.class != null && ply.class.Is("106"))
             SDKUnhook(ply.id, SDKHook_StartTouch, CheckSurface);
     }
 }
 
-public void SCP_OnButtonPressed(Client &ply, int doorId) {
+public void SCP_OnButtonPressed(Player &ply, int doorId) {
     
 }
 
@@ -94,7 +94,7 @@ public void CheckSurface(int client, int entity) {
             int entidq = GetEntPropEnt(model.id, Prop_Data, "m_hMoveChild");
             Entity idpad = (entidq != -1) ? new Entity(entidq) : null;
 
-            Client ply = Clients.Get(client);
+            Player ply = player.Get(client);
 
             char t[32];
             FormatEx(t, sizeof(t), "Test_1234_%i", ply.id);

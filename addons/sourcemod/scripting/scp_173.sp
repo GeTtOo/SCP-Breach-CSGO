@@ -43,7 +43,7 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void SCP_OnPlayerSpawn(Client &ply) 
+public void SCP_OnPlayerSpawn(Player &ply) 
 {
     if (ply.class != null && ply.class.Is("173")) {
         char  timername[64];
@@ -53,7 +53,7 @@ public void SCP_OnPlayerSpawn(Client &ply)
     }
 }
 
-public void SCP_OnPlayerClear(Client &ply)
+public void SCP_OnPlayerClear(Player &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("173")) {
         char  timername[64];
@@ -65,17 +65,17 @@ public void SCP_OnPlayerClear(Client &ply)
     }
 }
 
-public void SCP_OnPlayerDeath(Client &ply)
+public void SCP_OnPlayerDeath(Player &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("173")) {
         char sound[128];
         JSON_ARRAY ds = gamemode.plconfig.GetObject("sound").GetArray("death");
         ds.GetString(GetRandomInt(0, ds.Length - 1), sound, sizeof(sound));
-        gamemode.mngr.PlayAmbient(sound, ply);
+        gamemode.mngr.PlayAmbientOnPlayer(sound, ply);
     }
 }
 
-public void CheckVisualContact(Client ply) 
+public void CheckVisualContact(Player ply) 
 {
     if (ply != null && ply.class != null && ply.IsAlive() && ply.class.Is("173")) 
     {
@@ -85,17 +85,17 @@ public void CheckVisualContact(Client ply)
         ply.EyePos().GetArrD(scpPosArr);
 
         char filter[1][32] = {"player"};
-        ArrayList players = Ents.FindInBox(ply.GetPos() - new Vector(2000.0, 2000.0, 400.0), ply.GetPos() + new Vector(2000.0, 2000.0, 400.0), filter, sizeof(filter));
+        ArrayList players = ents.FindInBox(ply.GetPos() - new Vector(2000.0, 2000.0, 400.0), ply.GetPos() + new Vector(2000.0, 2000.0, 400.0), filter, sizeof(filter));
 
         for (int i=0; i < players.Length; i++) {
-            Client checkply = players.Get(i);
+            Player checkply = players.Get(i);
             
             if (ply == checkply || checkply.IsSCP || !checkply.IsAlive()) continue;
 
             float checkPlyPosArr[3];
             checkply.EyePos().GetArrD(checkPlyPosArr);
 
-            ArrayList checklist = Ents.FindInPVS(checkply, 2000);
+            ArrayList checklist = ents.FindInPVS(checkply, 2000);
 
             if (checklist.FindValue(ply) != -1)
             {
@@ -138,21 +138,21 @@ public bool RayFilter(int ent, int mask, any plyidx)
     return true;
 }
 
-public void SCP_OnInput(Client &atk, int buttons)
+public void SCP_OnInput(Player &atk, int buttons)
 {
     if (atk.class.Is("173") && !atk.GetBool("173_isvis") && buttons & IN_ATTACK)  // 2^0 +attack
     {
-        ArrayList entArr = Ents.FindInPVS(atk, 130);
+        ArrayList entArr = ents.FindInPVS(atk, 130);
 
         for(int i=0; i < entArr.Length; i++) {
-            Client vic = entArr.Get(i);
+            Player vic = entArr.Get(i);
             
-            if (atk.id != vic.id)
+            if (atk.id != vic.id && !vic.IsSCP && vic.IsAlive())
             {
                 char sound[128];
                 JSON_ARRAY nbs = gamemode.plconfig.GetObject("sound").GetArray("neckbroke");
                 nbs.GetString(GetRandomInt(0, nbs.Length - 1), sound, sizeof(sound));
-                gamemode.mngr.PlayAmbient(sound, vic);
+                gamemode.mngr.PlayAmbientOnPlayer(sound, vic);
                 
                 vic.Kill();
                 

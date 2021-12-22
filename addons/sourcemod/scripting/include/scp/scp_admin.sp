@@ -46,23 +46,23 @@ enum TypeAdminAction
 
 methodmap AdminAction < Base
 {
-    public AdminAction(Client ply)
+    public AdminAction(Player ply)
     {
         AdminAction menu = view_as<AdminAction>(new Base());
         menu.SetValue("admin", ply);
         return menu;
     }
 
-    property Client admin 
+    property Player admin 
     {
-        public set(Client ply)  { this.SetValue("admin", ply); }
-        public get()            { Client ply; return this.GetValue("admin", ply) ? ply : null; }
+        public set(Player ply)  { this.SetValue("admin", ply); }
+        public get()            { Player ply; return this.GetValue("admin", ply) ? ply : null; }
     }
 
-    property Client target 
+    property Player target 
     {
-        public set(Client ply)  { this.SetValue("target", ply); }
-        public get()            { Client ply; return this.GetValue("target", ply) ? ply : null; }
+        public set(Player ply)  { this.SetValue("target", ply); }
+        public get()            { Player ply; return this.GetValue("target", ply) ? ply : null; }
     }
 
     property int action 
@@ -73,8 +73,8 @@ methodmap AdminAction < Base
 
     public void ShowPlayerClass()
     {
-        ArrayList clients = Clients.GetAll();
-        Client ply;
+        ArrayList clients = player.GetAll();
+        Player ply;
 
         for(int i = 0; i < clients.Length; i++)
         {
@@ -174,14 +174,14 @@ methodmap AdminMenuSingleton < Base
         return menu;
     }
 
-    public void Add(Client ply)
+    public void Add(Player ply)
     {
         this.GetArrayList("admins").Push(new AdminAction(ply));
     }
 
     public AdminAction Get(int client)
     {
-        Client ply = Clients.Get(client);
+        Player ply = player.Get(client);
         ArrayList list = this.GetArrayList("admins");
         
         for(int i = 0; i < list.Length; i++)
@@ -328,7 +328,7 @@ public int MenuHandler_ScpAdminMenuTarget(Menu hMenu, MenuAction action, int cli
 		}
         else
 		{
-            AdminMenu.Get(client).target = Clients.Get(target);
+            AdminMenu.Get(client).target = player.Get(target);
             
             switch(AdminMenu.Get(client).action)
             {
@@ -599,7 +599,7 @@ public int MenuHandler_GiveMenu(Menu hMenu, MenuAction action, int client, int i
             char itemclass[32];
             hMenu.GetItem(item, itemclass, sizeof(itemclass));
 
-            AdminMenu.Get(client).target.inv.Add(itemclass);
+            AdminMenu.Get(client).target.inv.Give(itemclass);
 
             char adminname[32], adminauth[32], targetname[32], targetauth[32];
             AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));

@@ -101,24 +101,19 @@ methodmap Vector < Base {
 
     public float DotProduct(Vector vec2) {
         float vecarr1[3], vecarr2[3];
-        this.GetArr(vecarr1);
-        vec2.GetArr(vecarr2);
+        this.GetArrD(vecarr1);
+        vec2.GetArrD(vecarr2);
 
         float dotproduct = GetVectorDotProduct(vecarr1, vecarr2);
-
-        delete this;
-        delete vec2;
 
         return dotproduct;
     }
 
     public float Length() {
         float vecarr1[3];
-        this.GetArr(vecarr1);
+        this.GetArrD(vecarr1);
         
         float length = GetVectorLength(vecarr1);
-        
-        delete this;
 
         return length;
     }

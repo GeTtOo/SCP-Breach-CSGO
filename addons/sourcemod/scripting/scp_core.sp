@@ -79,21 +79,15 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("GameMode.timer.get", NativeGameMode_Timers);
     CreateNative("GameMode.log.get", NativeGameMode_Logger);
 
+    CreateNative("ClientSingleton.list.get", NativeEntities_GetList);
     CreateNative("ClientSingleton.Add", NativeClients_Add);
     CreateNative("ClientSingleton.Remove", NativeClients_Remove);
-    CreateNative("ClientSingleton.Get", NativeClients_Get);
-    CreateNative("ClientSingleton.GetAll", NativeClients_GetAll);
-    CreateNative("ClientSingleton.GetRandom", NativeClients_GetRandom);
-    CreateNative("ClientSingleton.InGame", NativeClients_InGame);
-    CreateNative("ClientSingleton.Alive", NativeClients_Alive);
 
+    CreateNative("EntitySingleton.list.get", NativeEntities_GetList);
     CreateNative("EntitySingleton.Create", NativeEntities_Create);
     CreateNative("EntitySingleton.Remove", NativeEntities_Remove);
     CreateNative("EntitySingleton.IndexUpdate", NativeEntities_IndexUpdate);
     CreateNative("EntitySingleton.Clear", NativeEntities_Clear);
-    CreateNative("EntitySingleton.Get", NativeEntities_Get);
-    CreateNative("EntitySingleton.TryGet", NativeEntities_TryGet);
-    CreateNative("EntitySingleton.GetAll", NativeEntities_GetAll);
     
     OnLoadGM = CreateGlobalForward("SCP_OnLoad", ET_Event);
     OnUnloadGM = CreateGlobalForward("SCP_OnUnload", ET_Event);
@@ -139,8 +133,8 @@ bool fixCache = false;
 
 public void OnMapStart()
 {
-    Ents = new EntitySingleton();
-    Clients = new ClientSingleton();
+    ents = new EntitySingleton();
+    player = new ClientSingleton();
     WT = new WorldTextSingleton();
     AdminMenu = new AdminMenuSingleton();
 
@@ -149,8 +143,8 @@ public void OnMapStart()
     GetCurrentMap(mapName, sizeof(mapName));
     gamemode = new GameMode(mapName);
 
-    gamemode.SetValue("clients", Clients);
-    gamemode.SetValue("ents", Ents);
+    gamemode.SetValue("clients", player);
+    gamemode.SetValue("entities", ents);
     
     gamemode.SetValue("Manager", new Manager());
     gamemode.SetValue("Nuke", new NuclearWarhead());
@@ -159,7 +153,7 @@ public void OnMapStart()
     gamemode.mngr.CollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
 
     AddCommandListener(Command_Base, "gm");
-    AddCommandListener(Command_Ents, "ents");
+    AddCommandListener(Command_Ents, "entities");
 
     if (gamemode.config.debug)
     {
@@ -198,8 +192,8 @@ public void OnMapEnd()
     Call_StartForward(OnUnloadGM);
     Call_Finish();
     
-    delete Ents;
-    delete Clients;
+    delete ents;
+    delete player;
     delete WT;
     delete AdminMenu;
     delete gamemode;
@@ -210,14 +204,9 @@ public void OnGameFrame()
     gamemode.timer.Update();
 }
 
-public void OnClientConnected(int id)
-{
-    Clients.Add(id);
-}
-
 public void OnClientPostAdminCheck(int id)
 {
-    Client ply = Clients.Get(id);
+    Player ply = player.Add(id);
 
     if(GetAdminFlag(GetUserAdmin(id), Admin_Custom1))
     {
@@ -247,7 +236,7 @@ public void OnClientPostAdminCheck(int id)
 
 public void OnClientDisconnect(int id)
 {
-    Client ply = Clients.Get(id);
+    Player ply = player.Get(id);
 
     char clientname[32];
     ply.GetName(clientname, sizeof(clientname));
@@ -269,7 +258,7 @@ public void OnClientDisconnect(int id)
 
 public void OnClientDisconnect_Post(int id)
 {
-    Client ply = Clients.Get(id);
+    Player ply = player.Get(id);
 
     Base pos = ply.GetBase("spawnpos");
     if (pos != null)
@@ -286,14 +275,14 @@ public void OnClientDisconnect_Post(int id)
         ply.ragdoll = null;
     }
 
-    Clients.Remove(id);
+    player.Remove(id);
 }
 
 public Action OnPlayerSpawn(int client)
 {
     if (!gamemode.mngr.IsWarmup)
     {
-        Client ply = Clients.Get(client);
+        Player ply = player.Get(client);
 
         if (IsClientExist(client) && GetClientTeam(client) > 1) {
             gamemode.timer.Simple(100, "PlayerSpawn", ply);
@@ -307,17 +296,19 @@ public Action OnPlayerSpawn(int client)
     return Plugin_Continue;
 }
 
-public void PlayerSpawn(Client ply)
+public void PlayerSpawn(Player ply)
 {
     if(ply != null && ply.class != null && IsClientExist(ply.id))
     {
-        if (ply.ragdoll)
+        if (ply.ragdoll) //Fix check if valid
         {
-            ply.ragdoll.Remove();
+            ents.Remove(ply.ragdoll.id);
             ply.ragdoll = null;
         }
 
         ply.Spawn();
+
+        gamemode.mngr.SetCollisionGroup(ply.id, 2);
 
         ply.RestrictWeapons();
 
@@ -370,7 +361,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 {
     if(!gamemode.mngr.IsWarmup)
     {
-        ArrayList players = Clients.GetAll();
+        ArrayList players = player.GetAll();
         players.Sort(Sort_Random, Sort_Integer);
         
         int teamCount, classCount, extra = 0;
@@ -384,7 +375,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
             
             GTeam team = gamemode.team(teamname);
 
-            teamCount = Clients.InGame() * team.percent / 100;
+            teamCount = player.InGame() * team.percent / 100;
             teamCount = (teamCount != 0 || !team.priority) ? teamCount : 1;
 
             gamemode.log.Debug("[Team] %s trying setup on %i players", teamname, teamCount);
@@ -395,7 +386,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
             {
                 for (int scc = 1; scc <= teamCount; scc++)
                 {
-                    if (extra > Clients.InGame()) break;
+                    if (extra > player.InGame()) break;
                     int id = players.Length - 1;
                     if (id < 0) break;
                     
@@ -407,12 +398,12 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 
                     Class class = team.class(classname);
 
-                    Client player = players.Get(id);
+                    Player ply = players.Get(id);
                     players.Erase(id);
-                    player.Team(teamname);
-                    player.class = class;
+                    ply.Team(teamname);
+                    ply.class = class;
 
-                    gamemode.log.Debug("[Class] %s random setup on player: %L", classname, player.id);
+                    gamemode.log.Debug("[Class] %s random setup on player: %L", classname, ply.id);
 
                     extra++;
                 }
@@ -436,15 +427,15 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 
                 for (int scc = 1; scc <= classCount; scc++)
                 {
-                    if (extra > Clients.InGame()) break;
+                    if (extra > player.InGame()) break;
                     int id = players.Length - 1;
                     if (id < 0) break;
-                    Client player = players.Get(id);
+                    Player ply = players.Get(id);
                     players.Erase(id);
-                    player.Team(teamname);
-                    player.class = class;
+                    ply.Team(teamname);
+                    ply.class = class;
 
-                    gamemode.log.Debug("[Class] %s setup on player: %L", classname, player.id);
+                    gamemode.log.Debug("[Class] %s setup on player: %L", classname, ply.id);
 
                     extra++;
                 }
@@ -453,20 +444,20 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
             delete classes;
         }
 
-        for (int i = 1; i <= Clients.InGame() - extra; i++)
+        for (int i = 1; i <= player.InGame() - extra; i++)
         {
             int id = players.Length - 1;
             if (id < 0) break;
-            Client player = players.Get(id);
+            Player ply = players.Get(id);
             players.Erase(id);
             char team[32], class[32];
             gamemode.config.DefaultGlobalClass(team, sizeof(team));
             gamemode.config.DefaultClass(class, sizeof(class));
 
-            player.Team(team);
-            player.class = gamemode.team(team).class(class);
+            ply.Team(team);
+            ply.class = gamemode.team(team).class(class);
 
-            gamemode.log.Debug("[Extra] Team: %s, Class: %s setup on player: %L", team, class, player.id);
+            gamemode.log.Debug("[Extra] Team: %s, Class: %s setup on player: %L", team, class, ply.id);
         }
 
         delete teams;
@@ -478,7 +469,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 
         gamemode.nuke.SpawnDisplay();
         
-        gamemode.timer.Create("SCP_Combat_Reinforcement", gamemode.config.reinforce.GetInt("time") * 1000, 0, "CombatReinforcement");
+        gamemode.timer.Create("CombatReinforcement", gamemode.config.reinforce.GetInt("time") * 1000, 0, "CombatReinforcement");
 
         //gamemode.timer.Create("Entities_Limit_Checker", gamemode.config.GetInt("elc", 30) * 1000, 0, "EntitiesLimitChecker");
 
@@ -493,11 +484,11 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
 {
     if (!gamemode.mngr.IsWarmup)
     {
-        ArrayList players = Clients.GetAll();
+        ArrayList players = player.GetAll();
 
         for (int i=0; i < players.Length; i++)
         {
-            Client ply = players.Get(i);
+            Player ply = players.Get(i);
 
             char timername[32];
             FormatEx(timername, sizeof(timername), "entid-%i", ply.id);
@@ -524,7 +515,9 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
             }
         }
 
-        Ents.Clear();
+        delete players;
+
+        ents.Clear();
         WT.Clear();
         gamemode.mngr.RoundComplete = false;
         gamemode.nuke.Reset();
@@ -541,7 +534,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
 {
     if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsClientInSpec(activator))
     {
-        Client ply = Clients.Get(activator);
+        Player ply = player.Get(activator);
         int doorId = GetEntProp(caller, Prop_Data, "m_iHammerID");
 
         if (gamemode.config.debug)
@@ -582,6 +575,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                         if (idpad.HasProp("m_nSkin"))
                         {
                             idpad.SetProp("m_nSkin", (ply.lang == 22) ? 1 : 4); // 22 = ru lang code
+                            gamemode.mngr.PlayAmbient("*/scp/other/access_granted.mp3", idpad);
                             gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
                         }
                     }
@@ -594,6 +588,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                         if (idpad.HasProp("m_nSkin"))
                         {
                             idpad.SetProp("m_nSkin", (ply.lang == 22) ? 2 : 5);
+                            gamemode.mngr.PlayAmbient("*/scp/other/access_denied.mp3", idpad);
                             gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
                         }
 
@@ -610,6 +605,8 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                 }
             }
         }
+
+        delete doorsSnapshot;
 
         if (ply.class.escape != null && doorId == ply.class.escape.trigger)
         {
@@ -657,12 +654,12 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 {   
     if(IsClientExist(victim))
     {
-        Client atk, vic = Clients.Get(victim);
+        Player atk, vic = player.Get(victim);
         Action result;
 
         if(IsClientExist(attacker))
         {
-            atk = Clients.Get(attacker);
+            atk = player.Get(attacker);
             if (vic != null && vic.class != null)
             {
                 if(vic.IsSCP && atk.IsSCP)
@@ -705,7 +702,7 @@ public void OnTakeDamageAlivePost(int victim, int attacker, int inflictor, float
 {   
     if(IsClientExist(victim))
     {
-        Client vic = Clients.Get(victim);
+        Player vic = player.Get(victim);
 
         if (vic.health <= 0)
             vic.DropWeapons();
@@ -716,16 +713,20 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 {
     if(!gamemode.mngr.IsWarmup)
     {
-        Client vic = Clients.Get(GetClientOfUserId(GetEventInt(event, "userid")));
-        Client atk = Clients.Get(GetClientOfUserId(GetEventInt(event, "attacker")));
+        Player vic = player.Get(GetClientOfUserId(GetEventInt(event, "userid")));
+        Player atk = player.Get(GetClientOfUserId(GetEventInt(event, "attacker")));
 
         if (vic == null) return Plugin_Handled;
         
         vic.ragdoll = vic.CreateRagdoll();
+        
+        any data[2];
+        data[0] = vic.ragdoll.id;
+        data[1] = vic.ragdoll;
 
-        ArrayList inv = vic.inv.items;
+        ents.list.PushArray(data);
 
-        while (inv.Length != 0)
+        while (vic.inv.items.Length != 0)
         {   
             InvItem item = vic.inv.Drop();
 
@@ -747,7 +748,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
             .SetPos(vic.GetPos() + new Vector(GetRandomFloat(-30.0,30.0), GetRandomFloat(-30.0,30.0), 0.0), vic.GetAng())
             .Spawn();
 
-            if (Ents.IndexUpdate(item))
+            if (ents.IndexUpdate(item))
                 continue;
         }
 
@@ -800,10 +801,17 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
 public Action OnWeaponTake(int client, int iWeapon)
 {
-    Client ply = Clients.Get(client);
+    Player ply = player.Get(client);
 
     char classname[64];
     GetEntityClassname(iWeapon, classname, sizeof(classname));
+    
+    ArrayList data = new ArrayList(64);
+    data.Push(ply);
+    data.Push(iWeapon);
+    data.PushString(classname);
+    
+    ply.TimerSimple(1000, "WeaponIdUpdate", data);
 
     bool weaponAllow = false;
 
@@ -923,8 +931,8 @@ public void LoadMetaData(char[] mapName)
 
 public void LoadEntities(char[] mapName)
 {
-    JSON_OBJECT ents = ReadConfig(mapName, "entities");
-    StringMapSnapshot sents = ents.Snapshot();
+    JSON_OBJECT entities = ReadConfig(mapName, "entities");
+    StringMapSnapshot sents = entities.Snapshot();
 
     int keylen;
     for (int i = 0; i < sents.Length; i++)
@@ -934,7 +942,7 @@ public void LoadEntities(char[] mapName)
         sents.GetKey(i, entclass, keylen);
         if (json_is_meta_key(entclass)) continue;
 
-        JSON_OBJECT ent = ents.GetObject(entclass);
+        JSON_OBJECT ent = entities.GetObject(entclass);
         StringMapSnapshot sent = ent.Snapshot();
         
         EntityMeta entdata = new EntityMeta();
@@ -968,8 +976,12 @@ public void LoadEntities(char[] mapName)
             }
         }
         
+        delete sent;
+        
         gamemode.meta.RegisterEntity(entclass, entdata);
     }
+
+    delete sents;
 }
 
 public void LoadModels()
@@ -1007,7 +1019,7 @@ public void LoadModels()
 
 public void OnPlayerRunCmdPost(int client, int buttons)
 {
-    Client ply = Clients.Get(client);
+    Player ply = player.Get(client);
     
     if (ply != null && ply.class != null)
     {
@@ -1020,8 +1032,8 @@ public void OnPlayerRunCmdPost(int client, int buttons)
 
 public SDKHookCB CB_EntUse(int entity, int client)
 {
-    Client ply = Clients.Get(client);
-    Entity ent = Ents.Get(entity);
+    Player ply = player.Get(client);
+    Entity ent = ents.Get(entity);
 
     if (ply.IsSCP) return;
 
@@ -1042,7 +1054,7 @@ public SDKHookCB CB_EntUse(int entity, int client)
             if (ply.inv.Pickup(ent))
             {
                 ent.WorldRemove();
-                Ents.IndexUpdate(ent);
+                ents.IndexUpdate(ent);
             }
             else
             {
@@ -1051,14 +1063,14 @@ public SDKHookCB CB_EntUse(int entity, int client)
         else
         {
             ent.WorldRemove();
-            Ents.IndexUpdate(ent);
+            ents.IndexUpdate(ent);
         }
     }
 }
 
 public void CB_EntTouch(int firstentity, int secondentity)
 {
-    Entity ent1 = Ents.Get(firstentity), ent2 = Ents.Get(secondentity);
+    Entity ent1 = ents.Get(firstentity), ent2 = ents.Get(secondentity);
 
     if (ent1.meta.ontouch && ent2)
     {
@@ -1080,7 +1092,7 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int idx)
     }
     else if (action == MenuAction_Select) 
     {
-        Client ply = Clients.Get(client);
+        Player ply = player.Get(client);
         InvItem item = ply.inv.Get(idx);
         
         ply.PlaySound("*/scp/menu/select.mp3", SNDCHAN_VOICE);
@@ -1101,6 +1113,7 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int idx)
         InvItmMenu.AddItem(itemid, "info");
         InvItmMenu.AddItem(itemid, "drop");
 
+        InvItmMenu.ExitButton = true;
         InvItmMenu.Display(ply.id, 30);
     }
 }
@@ -1111,7 +1124,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
     {
         case MenuAction_DrawItem:
         {
-            Client ply = Clients.Get(client);
+            Player ply = player.Get(client);
             
             switch (idx)
             {
@@ -1141,7 +1154,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
         }
         case MenuAction_DisplayItem:
         {
-            Client ply = Clients.Get(client);
+            Player ply = player.Get(client);
 
             char itemid[3];
             hMenu.GetItem(idx, itemid, sizeof(itemid));
@@ -1178,7 +1191,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
         }
         case MenuAction_Select:
         {
-            Client ply = Clients.Get(client);
+            Player ply = player.Get(client);
             
             char itemid[3];
             hMenu.GetItem(idx, itemid, sizeof(itemid));
@@ -1262,7 +1275,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                     .Spawn()
                     .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
 
-                    Ents.IndexUpdate(item);
+                    ents.IndexUpdate(item);
                 }
             }
         }
@@ -1281,12 +1294,45 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
 //
 //////////////////////////////////////////////////////////////////////////////
 
+public void WeaponIdUpdate(ArrayList data)
+{
+    Player ply = data.Get(0);
+    int weaponid = data.Get(1);
+    char weaponclass[64];
+    data.GetString(2, weaponclass, sizeof(weaponclass));
+    delete data;
+
+    int arrsize = GetEntPropArraySize(ply.id, Prop_Send, "m_hMyWeapons");
+    int item;
+
+    for(int index = 0; index < arrsize; index++)
+    { 
+        item = GetEntPropEnt(ply.id, Prop_Send, "m_hMyWeapons", index);
+
+        if(item != -1)
+        {
+            char classname[64];
+            GetEntityClassname(item, classname, sizeof(classname));
+            
+            if (StrEqual(classname, weaponclass))
+            {
+                Entity ent = ents.Get(weaponid);
+                if (ent)
+                {
+                    ent.id = item;
+                    ents.IndexUpdate(ent);
+                }
+            }
+        }
+    }
+}
+
 public void EntitiesLimitChecker()
 {
     gamemode.mngr.CheckLimitEntities();
 }
 
-public void PlyHideOverlay(Client ply)
+public void PlyHideOverlay(Player ply)
 {
     ply.HideOverlay();
 }
@@ -1313,10 +1359,10 @@ public void ResetIdPad(int entid)
     SetEntProp(entid, Prop_Send, "m_nSkin", (gamemode.mngr.serverlang == 22) ? 0 : 3);
 }
 
-public void SetPlyDoorAccess(Client &ply, Entity &item)
+public void SetPlyDoorAccess(Player &ply, Entity &item)
 {
     char filter[1][32] = {"func_button"};
-    ArrayList list = Ents.FindInPVS(ply, 55, 90, filter);
+    ArrayList list = ents.FindInPVS(ply, 55, 90, filter);
 
     if (list.Length != 0)
     {
@@ -1358,7 +1404,7 @@ public void SetupMapRegions()
         
         Format(name, sizeof(name), "%T", name, LANG_SERVER);
 
-        Entity ent = Ents.Create("info_map_region", false).SetPos(pos);
+        Entity ent = ents.Create("info_map_region", false).SetPos(pos);
         DispatchKeyValue(ent.id,"radius",radius);
         DispatchKeyValue(ent.id,"token",name);
         ent.Spawn();
@@ -1406,7 +1452,7 @@ public void SpawnItemsOnMap()
                         Vector pos = data.GetVector("vec");
                         Angle ang = data.GetAngle("ang");
 
-                        Ents.Create(item)
+                        ents.Create(item)
                         .SetPos(pos, ang)
                         .Spawn();
                         
@@ -1425,7 +1471,7 @@ public void SpawnItemsOnMap()
             Angle ang = data.GetAngle("ang");
 
             if (GetRandomInt(1, 100) <= data.GetInt("chance"))
-                Ents.Create(item)
+                ents.Create(item)
                 .SetPos(pos, ang)
                 .Spawn();
         }
@@ -1441,11 +1487,11 @@ public void CheckNewPlayers(int seconds)
 
 public void PSARS()
 {
-    ArrayList players = Clients.GetAll();
+    ArrayList players = player.GetAll();
 
     for (int i=0; i < players.Length; i++)
     {
-        Client ply = players.Get(i);
+        Player ply = players.Get(i);
 
         if (ply.FirstSpawn && GetClientTeam(ply.id) > 1)
         {
@@ -1463,7 +1509,7 @@ public void PSARS()
 
 public void CombatReinforcement()
 {
-    if (Clients.Alive() < RoundToNearest(float(Clients.InGame()) / 100.0 * float(gamemode.config.reinforce.GetInt("ratiodeadplayers")))) {
+    if (player.Alive() < RoundToNearest(float(player.InGame()) / 100.0 * float(gamemode.config.reinforce.GetInt("ratiodeadplayers")))) {
         ArrayList teams = gamemode.GetTeamList();
         ArrayList reinforcedteams = new ArrayList();
 
@@ -1480,6 +1526,9 @@ public void CombatReinforcement()
         reinforcedteams.GetString(GetRandomInt(0, reinforcedteams.Length - 1), teamname, sizeof(teamname));
 
         gamemode.mngr.CombatReinforcement(teamname);
+
+        delete teams;
+        delete reinforcedteams;
     }
 }
 
@@ -1516,7 +1565,7 @@ stock bool IsClientInSpec(int client)
 
 //-----------------------------Server-----------------------------//
 
-//-----------------------------Client-----------------------------//
+//-----------------------------Player-----------------------------//
 
 public Action Command_AdminMenu(int client, int args)
 {
@@ -1528,7 +1577,7 @@ public Action Command_AdminMenu(int client, int args)
 
 public Action Command_Kill(int client, const char[] command, int argc)
 {
-    Client ply = Clients.Get(client);
+    Player ply = player.Get(client);
     
     if (ply.IsAlive())
         ply.Kill();
@@ -1538,7 +1587,7 @@ public Action Command_Kill(int client, const char[] command, int argc)
 
 public Action Command_Base(int client, const char[] command, int argc)
 {
-    Client ply = Clients.Get(client);
+    Player ply = player.Get(client);
     
     if (!ply.IsAdmin()) return Plugin_Stop;
 
@@ -1552,11 +1601,11 @@ public Action Command_Base(int client, const char[] command, int argc)
         ArrayList GlobalTeams = new ArrayList(32);
         int tpc[64];
 
-        for (int i=1; i <= Clients.Length; i++) {
-            Client player = Clients.Get(i);
+        for (int i=1; i <= player.Length; i++) {
+            Player plycmd = player.Get(i);
 
             char plyTeamName[32];
-            player.Team(plyTeamName, sizeof(plyTeamName));
+            plycmd.Team(plyTeamName, sizeof(plyTeamName));
 
             int idt = GlobalTeams.FindString(plyTeamName);
 
@@ -1593,7 +1642,7 @@ public Action Command_Base(int client, const char[] command, int argc)
             char timername[64];
             Tmr timer = timers.Get(i);
             timer.name(timername, sizeof(timername));
-            PrintToConsole(ply.id, "Name: %s | delay: %f | repeations: %i", timername, timer.delay, timer.repeations);
+            PrintToConsole(ply.id, "Name: %s | delay: %.3f | repeations: %i", timername, timer.delay, timer.repeations);
         }
     }
 
@@ -1602,47 +1651,36 @@ public Action Command_Base(int client, const char[] command, int argc)
 
 public Action Command_Ents(int client, const char[] command, int argc)
 {
-    Client ply = Clients.Get(client);
+    Player ply = player.Get(client);
 
     if (!ply.IsAdmin()) return Plugin_Stop;
 
-    char arg[32], buf[256];
+    char arg[32];
 
     GetCmdArg(1, arg, sizeof(arg));
 
-    int counter = 0;
-
     if (StrEqual(arg, "getall", false))
     {
-        ArrayList ents = Ents.GetAll();
+        ArrayList entities = ents.GetAll();
 
-        for (int i=0; i < ents.Length; i++) 
+        for (int i=0; i < entities.Length; i++) 
         {
-            Entity ent = ents.Get(i);
+            Entity ent = entities.Get(i);
             char name[32];
 
             ent.GetClass(name, sizeof(name));
 
-            if (counter != 5)
-            {
-                counter++;
-
-                if (ent.id != 5000)
-                    Format(buf, sizeof(buf), (counter != 5) ? "%s%s id: %i\n" : "%s%s id: %i", buf, name, ent.id);
-                else
-                    Format(buf, sizeof(buf), (counter != 5) ? "%s%s (picked)\n" : "%s%s (picked)", buf, name);
-            }
+            if (ent.id != 5000)
+                PrintToConsole(ply.id, "%s id: %i (iter:%i)", name, ent.id, i);
             else
-            {
-                PrintToConsole(ply.id, buf);
-                Format(buf, sizeof(buf), "");
-                counter = 0;
-            }
+                PrintToConsole(ply.id, "%s (picked) (iter:%i)", name, i);
         }
 
         PrintToConsole(ply.id, "------------------------");
 
-        PrintToConsole(ply.id, "Count: %i", ents.Length);
+        PrintToConsole(ply.id, "Count: %i", entities.Length);
+
+        delete entities;
     }
     
     return Plugin_Stop;
@@ -1650,7 +1688,7 @@ public Action Command_Ents(int client, const char[] command, int argc)
 
 public Action Command_GetMyPos(int client, const char[] command, int argc)
 {
-    Client ply = Clients.Get(client);
+    Player ply = player.Get(client);
     Vector plyPos = ply.GetPos();
     Angle plyAng = ply.GetAng();
 
@@ -1664,11 +1702,11 @@ public Action Command_GetMyPos(int client, const char[] command, int argc)
 
 public Action Command_GetEntsInBox(int client, const char[] command, int argc)
 {
-    Client ply = Clients.Get(client);
+    Player ply = player.Get(client);
 
     char filter[4][32] = { "prop_physics", "weapon_", "func_door", "prop_dynamic" };
 
-    ArrayList entArr = Ents.FindInBox(ply.GetPos() - new Vector(200.0, 200.0, 200.0), ply.GetPos() + new Vector(200.0, 200.0, 200.0), filter, sizeof(filter));
+    ArrayList entArr = ents.FindInBox(ply.GetPos() - new Vector(200.0, 200.0, 200.0), ply.GetPos() + new Vector(200.0, 200.0, 200.0), filter, sizeof(filter));
 
     for(int i=0; i < entArr.Length; i++) 
     {
@@ -1693,7 +1731,7 @@ public Action Command_GetEntsInBox(int client, const char[] command, int argc)
 
 public Action Command_Debug(int client, const char[] command, int argc)
 {
-    Client ply = Clients.Get(client);
+    Player ply = player.Get(client);
 
     char arg1[32], arg2[32], arg3[32], arg4[32];
 
@@ -1742,7 +1780,7 @@ public Action Command_Debug(int client, const char[] command, int argc)
 //
 //////////////////////////////////////////////////////////////////////////////
 
-public void InventoryDisplay(Client ply)
+public void InventoryDisplay(Player ply)
 {
     Menu InvMenu = new Menu(InventoryHandler);
     InvMenu.OptionFlags = MENUFLAG_NO_SOUND;
@@ -1752,7 +1790,7 @@ public void InventoryDisplay(Client ply)
     FormatEx(bstr, sizeof(bstr), "%T", "Inventory", ply.id);
     InvMenu.SetTitle(bstr);
     
-    ArrayList inv = ply.inv.GetArrayList("inventory");
+    ArrayList inv = ply.inv.items;
 
     if (inv.Length)
     {
@@ -1772,10 +1810,11 @@ public void InventoryDisplay(Client ply)
         ply.PrintNotify("%t", "Inventory empty");
     }
 
+    InvMenu.ExitButton = true;
     InvMenu.Display(ply.id, 30);
 }
 
-public void SCP_OnInput(Client &ply, int buttons)
+public void SCP_OnInput(Player &ply, int buttons)
 {
     if (buttons & IN_SCORE)
     {
@@ -1798,7 +1837,7 @@ public void SCP_OnInput(Client &ply, int buttons)
     }
 }
 
-public void ActionMenuUnlock(Client ply)
+public void ActionMenuUnlock(Player ply)
 {
     ply.SetBool("ActionMenuAvailable", true);
 }
@@ -1844,75 +1883,23 @@ public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
     return view_as<Teams>(view_as<JSON_OBJECT>(gamemode).GetObject("Teams")).get(name);
 }
 
+public any NativeEntities_GetList(Handle Plugin, int numArgs) { return ents.GetArrayList("entities"); }
+
 public any NativeClients_Add(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
+    Player ply = new Player(id);
     any data[2];
     data[0] = id;
-    data[1] = new Client(id);
-    Ents.list.PushArray(data);
+    data[1] = ply;
+    ents.list.PushArray(data);
+    return ply;
 }
 
 public any NativeClients_Remove(Handle Plugin, int numArgs) {
-    ArrayList ents = Ents.list;
-    int idx = ents.FindValue(GetNativeCell(2), 0);
-    view_as<Client>(ents.Get(idx, 1)).Dispose();
-    ents.Erase(idx);
-}
-
-public any NativeClients_Get(Handle Plugin, int numArgs) {
-    ArrayList ents = Ents.list;
-    int idx = ents.FindValue(GetNativeCell(2), 0);
-    if (idx == -1) return view_as<Client>(null);
-    return ents.Get(idx, 1);
-}
-
-public any NativeClients_GetAll(Handle Plugin, int numArgs) {
-    ArrayList ents = Ents.list;
-
-    ArrayList players = new ArrayList();
-    for (int i=0; i < ents.Length; i++)
-    {
-        int id = ents.Get(i, 0);
-        if (id <= MaxClients && id > 0 && IsClientInGame(id))
-        {
-            Client ply = ents.Get(i, 1);
-            if (ply != null)
-                players.Push(ply);
-        }
-    }
-    return players;
-}
-
-public any NativeClients_GetRandom(Handle Plugin, int numArgs) {
-    ArrayList sortedPlayers = new ArrayList();
-    ArrayList players = Clients.GetAll();
-    for (int i=0; i < players.Length; i++) {
-        Client player = players.Get(i);
-        if (player.IsAlive())
-            sortedPlayers.Push(players.Get(i));
-    }
-
-    return sortedPlayers.Get(GetRandomInt(0, sortedPlayers.Length - 1));
-}
-
-public any NativeClients_InGame(Handle Plugin, int numArgs) {
-    int client = 1;
-    while (IsClientInGame(client) && GetClientTeam(client) >= 2)
-        client++;
-    client--;
-    return client;
-}
-
-public any NativeClients_Alive(Handle Plugin, int numArgs) {
-    int client = 1;
-    int clientAlive = 1;
-    while (IsClientInGame(client) && GetClientTeam(client) >= 2) {
-        if (IsPlayerAlive(client))
-            clientAlive++;
-        client++;
-    }
-    clientAlive--;
-    return clientAlive;
+    ArrayList entities = ents.list;
+    int idx = entities.FindValue(GetNativeCell(2), 0);
+    view_as<Player>(entities.Get(idx, 1)).Dispose();
+    entities.Erase(idx);
 }
 
 public any NativeEntities_Create(Handle Plugin, int numArgs) {
@@ -1944,16 +1931,16 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
         data[0] = entity.id;
         data[1] = entity;
 
-        Ents.list.PushArray(data);
+        ents.list.PushArray(data);
     }
 
     return entity;
 }
 
 public any NativeEntities_Remove(Handle Plugin, int numArgs) {
-    ArrayList ents = Ents.list;
-    int idx = ents.FindValue(GetNativeCell(2), 0);
-    Entity ent = ents.Get(idx, 1);
+    ArrayList entities = ents.list;
+    int idx = entities.FindValue(GetNativeCell(2), 0);
+    Entity ent = entities.Get(idx, 1);
     if (ent.meta)
     {
         if (ent.meta.onuse)
@@ -1962,16 +1949,16 @@ public any NativeEntities_Remove(Handle Plugin, int numArgs) {
             ent.RemoveHook(SDKHook_TouchPost, CB_EntTouch);
     }
     ent.Remove();
-    Ents.list.Erase(idx);
+    ents.list.Erase(idx);
 }
 
 public any NativeEntities_IndexUpdate(Handle Plugin, int numArgs) {
     Entity ent = GetNativeCell(2);
-    ArrayList ents = Ents.list;
-    int idx = ents.FindValue(ent, 1);
+    ArrayList entities = ents.list;
+    int idx = entities.FindValue(ent, 1);
     if (idx != -1)
     {
-        ents.Set(idx, ent.id, 0);
+        entities.Set(idx, ent.id, 0);
         return true;
     }
     else
@@ -1980,58 +1967,31 @@ public any NativeEntities_IndexUpdate(Handle Plugin, int numArgs) {
 
 public any NativeEntities_Clear(Handle Plugin, int numArgs) {
 
-    ArrayList ents = Ents.list;
+    ArrayList entities = ents.list;
 
-    for(int i=0; i < ents.Length; i++)
+    for(int i=0; i < entities.Length; i++)
     {
-        int id = ents.Get(i, 0);
+        int id = entities.Get(i, 0);
 
         if (id > MaxClients)
         {
-            Entity ent = ents.Get(i, 1);
+            Entity ent = entities.Get(i, 1);
             ent.Dispose();
         }
     }
     
-    ArrayList players = Clients.GetAll();
-    ents.Clear();
+    ArrayList players = player.GetAll();
+    entities.Clear();
     
     for (int i=0; i < players.Length; i++)
     {
-        Client ply = players.Get(i);
+        Player ply = players.Get(i);
 
         any data[2];
         data[0] = ply.id;
         data[1] = ply;
-        ents.PushArray(data);
+        entities.PushArray(data);
     }
-}
 
-public any NativeEntities_Get(Handle Plugin, int numArgs) {
-    int id = GetNativeCell(2);
-    ArrayList ents = Ents.list;
-    int idx = ents.FindValue(id, 0);
-    if (idx == -1) return view_as<Entity>(null);
-    return ents.Get(idx, 1);
-}
-
-public any NativeEntities_GetAll(Handle Plugin, int numArgs) {
-    ArrayList entities = Ents.list;
-    ArrayList ents = new ArrayList();
-    for (int i=0; i < entities.Length; i++)
-    {
-        Entity ent = entities.Get(i, 1);
-        if (ent != null)
-            ents.Push(ent);
-    }
-    return ents;
-}
-
-public any NativeEntities_TryGet(Handle Plugin, int numArgs) {
-    int id = GetNativeCell(2);
-    ArrayList ents = Ents.list;
-    int idx = ents.FindValue(id, 0);
-    if (idx == -1) return false;
-    SetNativeCellRef(3, ents.Get(idx, 1));
-    return true;
+    delete players;
 }

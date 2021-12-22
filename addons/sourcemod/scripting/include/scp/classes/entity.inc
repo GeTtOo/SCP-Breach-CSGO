@@ -68,7 +68,7 @@ methodmap Entity < Base {
     }
 
     property ArrayList bglist {
-        public set(ArrayList list) { this.SetArrayList("bglist", list); }
+        public set(ArrayList list) { ArrayList oldlist = this.GetArrayList("bglist"); if (oldlist) delete oldlist; this.SetArrayList("bglist", list); }
         public get() { return this.GetArrayList("bglist"); }
     }
 
@@ -155,6 +155,8 @@ methodmap Entity < Base {
     }
 
     public void SetSkin(int skin) { this.SetProp("m_nSkin", skin); }
+
+    public int GetSkin() { this.GetProp("m_nSkin"); }
 
     public void SetRenderMode(RenderMode mode) { SetEntityRenderMode(this.id, mode); }
 

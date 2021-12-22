@@ -33,20 +33,81 @@ methodmap ClientSingleton < Base {
     public ClientSingleton() {
         return view_as<ClientSingleton>(new Base());
     }
+    
+    property ArrayList list {
+        public native get();
+    }
 
-    public native void Add(int id);
+    public native Player Add(int id);
 
     public native void Remove(int id);
 
-    public native ArrayList GetAll();
+    public ArrayList GetAll()
+    {
+        ArrayList entities = this.list;
 
-    public native Client Get(int id);
+        ArrayList players = new ArrayList();
+        for (int i=0; i < entities.Length; i++)
+        {
+            int id = entities.Get(i, 0);
+            if (id <= MaxClients && id > 0 && IsClientInGame(id))
+            {
+                Player ply = entities.Get(i, 1);
+                if (ply != null)
+                    players.Push(ply);
+            }
+        }
+        return players;
+    }
 
-    public native Client GetRandom();
+    public Player Get(int id)
+    {
+        ArrayList entities = this.list;
+        int idx = entities.FindValue(id, 0);
+        if (idx == -1) return view_as<Player>(null);
+        return entities.Get(idx, 1);
+    }
 
-    public native int InGame();
+    public Player GetRandom()
+    {
+        ArrayList sortedPlayers = new ArrayList();
+        ArrayList players = this.GetAll();
+        for (int i=0; i < players.Length; i++) {
+            Player ply = players.Get(i);
+            if (ply.IsAlive())
+                sortedPlayers.Push(ply);
+        }
 
-    public native int Alive();
+        delete players;
+
+        return sortedPlayers.Get(GetRandomInt(0, sortedPlayers.Length - 1));
+    }
+
+    public int InGame()
+    {
+        ArrayList players = this.GetAll();
+        int len = players.Length;
+        delete players;
+        return len;
+    }
+
+    public int Alive()
+    {
+        ArrayList alivePlayers = new ArrayList();
+        ArrayList players = this.GetAll();
+        for (int i=0; i < players.Length; i++) {
+            Player ply = players.Get(i);
+            if (ply.IsAlive())
+                alivePlayers.Push(ply);
+        }
+
+        int len = alivePlayers.Length;
+
+        delete players;
+        delete alivePlayers;
+
+        return len;
+    }
 
     property int Length {
         public get() { return this.InGame(); }
@@ -62,14 +123,37 @@ methodmap EntitySingleton < Base {
     }
 
     property ArrayList list {
-        public get() { return this.GetArrayList("entities"); }
+        public native get();
     }
 
-    public native ArrayList GetAll();
+    public ArrayList GetAll()
+    {
+        ArrayList entities = new ArrayList();
+        for (int i=0; i < this.list.Length; i++)
+        {
+            Entity ent = this.list.Get(i, 1);
+            if (ent != null)
+                entities.Push(ent);
+        }
+        return entities;
+    }
     
-    public native Entity Get(int id);
+    public Entity Get(int id)
+    {
+        ArrayList entities = this.list;
+        int idx = entities.FindValue(id, 0);
+        if (idx == -1) return view_as<Entity>(null);
+        return entities.Get(idx, 1);
+    }
     
-    public native Entity TryGet(int id, Entity &ent);
+    public bool TryGet(int id, Entity &ent)
+    {
+        ArrayList entities = this.list;
+        int idx = entities.FindValue(id, 0);
+        if (idx == -1) return false;
+        ent = entities.Get(idx, 1);
+        return true;
+    }
 
     public native Entity Create(char[] EntName, bool register = true);
 
@@ -170,7 +254,7 @@ methodmap EntitySingleton < Base {
         return entArr;
     }
 
-    public ArrayList FindInPVS(Client ply, int distance = 100, int fov = 90, char filter[1][32] = {"player"}) {
+    public ArrayList FindInPVS(Player ply, int distance = 100, int fov = 90, char filter[1][32] = {"player"}) {
         return this.FindInCone(ply.EyePos(), ply.GetAng().Forward(ply.EyePos(), float(distance)), fov, filter, sizeof(filter));
     }
 }

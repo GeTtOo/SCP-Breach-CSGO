@@ -47,7 +47,7 @@ public void SCP_RegisterMetaData() {
     gamemode.meta.RegEntEvent(ON_USE, "500_panacea", "OnUse");
 }
 
-public void OnUse(Client &ply) {
+public void OnUse(Player &ply) {
     ply.health = ply.class.health;
     ply.inv.Remove("500_panacea");
 }

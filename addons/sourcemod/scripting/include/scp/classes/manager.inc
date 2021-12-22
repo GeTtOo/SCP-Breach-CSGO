@@ -63,8 +63,8 @@ methodmap Manager < Base {
     }
 
     public void CheckLimitEntities() {
-        if (Ents.list.Length > 300)
-            Ents.SpawnedClear();
+        if (ents.list.Length > 300)
+            ents.SpawnedClear();
     }
 
     public void SetCollisionGroup(int entity, int group) {
@@ -77,14 +77,22 @@ methodmap Manager < Base {
 
     public void StopSoundAll(char[] path, int channel) {
         for (int i=0; i < MAXPLAYERS; i++) {
-            Client ply = Clients.Get(i);
+            Player ply = player.Get(i);
 
             if (ply != null)
                 StopSound(ply.id, channel, path);
         }
     }
 
-    public void PlayAmbient(char[] path, Client ply) {
+    public void PlayAmbient(char[] path, Entity ent) {
+        float vecarr[3];
+        Vector vec = ent.GetPos();
+        vec.GetArr(vecarr);
+        delete vec;
+        EmitAmbientSound(path, vecarr, ent.id);
+    }
+
+    public void PlayAmbientOnPlayer(char[] path, Player ply) {
         float vecarr[3];
         Vector vec = ply.EyePos();
         vec.GetArr(vecarr);
@@ -119,8 +127,8 @@ methodmap Manager < Base {
         ArrayList GlobalTeams = new ArrayList(32);
         int tpc[64];
 
-        for (int i=1; i <= Clients.Length; i++) {
-            Client ply = Clients.Get(i);
+        for (int i=1; i <= player.Length; i++) {
+            Player ply = player.Get(i);
 
             char plyTeamName[32];
             ply.Team(plyTeamName, sizeof(plyTeamName));
@@ -174,8 +182,8 @@ methodmap Manager < Base {
             char overlay[128];
             Format(overlay, sizeof(overlay), "win_%s", winteam);
             
-            Client ply;
-            ArrayList players = Clients.GetAll();
+            Player ply;
+            ArrayList players = player.GetAll();
             
             for(int i = 0; i < players.Length; i++)
             {
@@ -192,13 +200,13 @@ methodmap Manager < Base {
     public void GameCheck() {
         if (!this.RoundLock)
         {
-            if(Clients.Alive() != 0 && Clients.InGame() != 0)
+            if(player.Alive() != 0 && player.InGame() != 0)
             {
                 char winTeam[32];
                 if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
                     this.EndGame(winTeam);
             }
-            /*else if (Clients.InGame() == 0)
+            /*else if (player.InGame() == 0)
             {
                 ServerCommand("mp_restartgame 1");
                 ServerCommand("mp_warmup_start");
@@ -207,11 +215,11 @@ methodmap Manager < Base {
     }
 
     public void CombatReinforcement(char[] teamName) {
-        ArrayList players = Clients.GetAll();
+        ArrayList players = player.GetAll();
         ArrayList deadPlayers = new ArrayList();
 
         for (int i=0; i < players.Length; i++) {
-            Client ply = players.Get(i);
+            Player ply = players.Get(i);
 
             if (!ply.IsAlive())
                 deadPlayers.Push(ply);
@@ -238,14 +246,14 @@ methodmap Manager < Base {
 
                 Class class = team.class(classname);
 
-                Client player = deadPlayers.Get(id);
+                Player ply = deadPlayers.Get(id);
                 deadPlayers.Erase(id);
-                player.Team(teamName);
-                player.class = class;
-                player.Spawn();
+                ply.Team(teamName);
+                ply.class = class;
+                ply.Spawn();
 
                 if (gamemode.config.debug)
-                    gamemode.log.Info("[Class] %s random setup on player: %i", classname, player.id);
+                    gamemode.log.Info("[Class] %s random setup on player: %i", classname, ply.id);
             }
         }
         else
@@ -267,14 +275,14 @@ methodmap Manager < Base {
                 {
                     int id = deadPlayers.Length - 1;
                     if (id < 0) break;
-                    Client player = deadPlayers.Get(id);
+                    Player ply = deadPlayers.Get(id);
                     deadPlayers.Erase(id);
-                    player.Team(teamName);
-                    player.class = class;
-                    player.Spawn();
+                    ply.Team(teamName);
+                    ply.class = class;
+                    ply.Spawn();
 
                     if (gamemode.config.debug)
-                        gamemode.log.Info("[Class] %s setup on player: %i", classname, player.id);
+                        gamemode.log.Info("[Class] %s setup on player: %i", classname, ply.id);
                 }
             }
         }

@@ -41,10 +41,10 @@
 #include "scp/classes/inventory"
 #include "scp/classes/progress"
 
-methodmap Client < Entity {
+methodmap Player < Entity {
 
-    public Client(int id) {
-        Client client = view_as<Client>(new Entity(id));
+    public Player(int id) {
+        Player client = view_as<Player>(new Entity(id));
         client.SetBool("spawned", false);
         client.SetValue("inventory", new Inventory(client));
         client.SetValue("progress", new ProgressBar(client));
@@ -152,7 +152,7 @@ methodmap Client < Entity {
         ClientCommand(this.id, "r_screenoverlay none");
     }
 
-    public void SetListen(Client ply, bool islisten)
+    public void SetListen(Player ply, bool islisten)
     {
         SetListenOverride(this.id, ply.id, islisten ? Listen_Yes : Listen_No);
     }
@@ -186,19 +186,19 @@ methodmap Client < Entity {
     }
 
     public void RestrictWeapons() {
-        ArrayList ents = view_as<Base>(gamemode).GetBase("ents").GetArrayList("entities");
+        ArrayList entities = view_as<Base>(gamemode).GetBase("entities").GetArrayList("entities");
         int m_hMyWeapons_size = GetEntPropArraySize(this.id, Prop_Send, "m_hMyWeapons");
         int item;
 
         for(int index = 0; index < m_hMyWeapons_size; index++)
-        { 
+        {
             item = GetEntPropEnt(this.id, Prop_Send, "m_hMyWeapons", index);
 
             if(item != -1)
             {
-                int idx = ents.FindValue(item, 0);
+                int idx = entities.FindValue(item, 0);
                 if (idx != -1)
-                    ents.Erase(idx);
+                    entities.Erase(idx);
                 RemovePlayerItem(this.id, item);
                 AcceptEntityInput(item, "Kill");
             }
@@ -265,6 +265,9 @@ methodmap Client < Entity {
     public void Kick(char[] reason) { KickClient(this.id, reason); }
 
     public void SetupBaseStats(Class class) {
+        this.armor = 0;
+        this.SetProp("m_bHasHelmet", 0);
+        
         this.health = class.health;
         if (class.armor != 0)
             this.armor = class.armor;
@@ -294,7 +297,7 @@ methodmap Client < Entity {
                 {
                     char entclass[32];
                     items.GetString(i, entclass, sizeof(entclass));
-                    this.inv.Add(entclass);
+                    this.inv.Give(entclass);
                 }
                 else
                 {
@@ -313,10 +316,12 @@ methodmap Client < Entity {
                         if (count >= random) {
                             char entclass[32];
                             itemsobj.GetString(chance, entclass, sizeof(entclass));
-                            this.inv.Add(entclass);
+                            this.inv.Give(entclass);
                             break;
                         }
                     }
+
+                    delete sitems;
                 }
             }
         }
@@ -333,9 +338,9 @@ methodmap Client < Entity {
                     data[0] = ent.id;
                     data[1] = ent;
                     
-                    Base ents;
-                    gamemode.GetValue("ents", ents);
-                    ents.GetArrayList("entities").PushArray(data);
+                    Base entities;
+                    gamemode.GetValue("entities", entities);
+                    entities.GetArrayList("entities").PushArray(data);
                 }
                 else
                 {
@@ -352,9 +357,9 @@ methodmap Client < Entity {
                         data[0] = ent.id;
                         data[1] = ent;
                         
-                        Base ents;
-                        gamemode.GetValue("ents", ents);
-                        ents.GetArrayList("entities").PushArray(data);
+                        Base entities;
+                        gamemode.GetValue("entities", entities);
+                        entities.GetArrayList("entities").PushArray(data);
                     }
                 }
             }
@@ -399,6 +404,8 @@ methodmap Client < Entity {
                             else
                                 this.SetBodyGroup(name, pgi.GetArray(name).GetInt(GetRandomInt(0, pgi.GetArray(name).Length - 1)));
                         }
+
+                        delete spgi;
                     }
 
                 if (modeldata.HasKey("skin"))

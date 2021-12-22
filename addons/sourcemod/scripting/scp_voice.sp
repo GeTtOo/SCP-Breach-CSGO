@@ -51,9 +51,9 @@ public void SCP_OnRoundStart() {
 
 public void ResetListening()
 {
-    ArrayList players = Clients.GetAll();
-    Client firstply;
-    Client secondply;
+    ArrayList players = player.GetAll();
+    Player firstply;
+    Player secondply;
 
     for (int i=0; i < players.Length; i++)
     {
@@ -73,9 +73,9 @@ public void ResetListening()
 
 public void VoiceLogicHandler()
 {
-    ArrayList players = Clients.GetAll();
-    Client firstply;
-    Client secondply;
+    ArrayList players = player.GetAll();
+    Player firstply;
+    Player secondply;
 
     for (int i=0; i < players.Length; i++)
     {
@@ -96,11 +96,12 @@ public void VoiceLogicHandler()
         float distance = float(gamemode.plconfig.GetInt("distance", 500));
 
         char filter[1][32] = {"player"};
-        ArrayList ents = Ents.FindInBox(firstply.GetPos() - new Vector(distance, distance, distance), firstply.GetPos() + new Vector(distance, distance, distance), filter, sizeof(filter));
+        //заедает на позиции в векторах
+        ArrayList entities = ents.FindInBox(firstply.GetPos() - new Vector(distance, distance, distance), firstply.GetPos() + new Vector(distance, distance, distance), filter, sizeof(filter));
 
-        for (int k=0; k < ents.Length; k++)
+        for (int k=0; k < entities.Length; k++)
         {
-            secondply = ents.Get(k);
+            secondply = entities.Get(k);
 
             if (firstply != secondply)
             {
@@ -108,7 +109,7 @@ public void VoiceLogicHandler()
             }
         }
 
-        delete ents;
+        delete entities;
     }
 
     delete players;

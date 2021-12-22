@@ -58,7 +58,7 @@ methodmap Controller < Base {
     }
 
     public void Set(Entity camera) {
-        Client ply;
+        Player ply;
         this.GetValue("player", ply);
 
         float CameraAngle[3];
@@ -77,7 +77,7 @@ methodmap Controller < Base {
         this.Set(this.current);
     }
 
-    public Controller(Client ply) {
+    public Controller(Player ply) {
         Controller self = view_as<Controller>(new Base());
         self.SetValue("player", ply);
         self.SetValue("current", CamList.Get(0));
@@ -102,7 +102,7 @@ public void SCP_OnRoundStart() {
     }
 }
 
-public void SCP_OnPlayerSpawn(Client &ply) {
+public void SCP_OnPlayerSpawn(Player &ply) {
     if (ply.class.Is("079")) {
         SetEntityMoveType(ply.id, MOVETYPE_NONE);
         SetEntityRenderMode(ply.id, RENDER_NONE);
@@ -117,7 +117,7 @@ public void SCP_OnPlayerSpawn(Client &ply) {
     }
 }
 
-public void TimeUpdate(Client ply) {
+public void TimeUpdate(Player ply) {
     char date[32];
 
     FormatTime(date, sizeof(date), "%H:%M:%S");
@@ -129,7 +129,7 @@ public void TimeUpdate(Client ply) {
     ShowHudText(ply.id, 53, date);
 }
 
-public void SCP_OnPlayerReset(Client &ply) {
+public void SCP_OnPlayerReset(Player &ply) {
     Controller Camera;
     ply.GetValue("camcontrol", Camera);
     delete Camera;
@@ -141,7 +141,7 @@ public void SCP_OnPlayerReset(Client &ply) {
     ClientCommand(ply.id, "r_screenoverlay off");
 }
 
-public void SCP_OnPlayerDeath(Client &ply) {
+public void SCP_OnPlayerDeath(Player &ply) {
     Controller Camera;
     ply.GetValue("camcontrol", Camera);
     delete Camera;
@@ -153,7 +153,7 @@ public void SCP_OnPlayerDeath(Client &ply) {
     ClientCommand(ply.id, "r_screenoverlay off");
 }
 
-public void SCP_OnInput(Client &ply, int buttons)
+public void SCP_OnInput(Player &ply, int buttons)
 {
     if (ply.class.Is("079") && IsPlayerAlive(ply.id))
     {
@@ -177,18 +177,18 @@ public void SCP_OnInput(Client &ply, int buttons)
     }
 }
 
-public void CameraUnlock(Client ply) {
+public void CameraUnlock(Player ply) {
     Controller Camera;
     ply.GetValue("camcontrol", Camera);
     Camera.locked = false;
 }
 
-public void SCP_OnCallActionMenu(Client &ply) {
+public void SCP_OnCallActionMenu(Player &ply) {
     if (ply.class.Is("079"))
         ActionsMenu(ply);
 }
 
-public void ActionsMenu(Client ply) {
+public void ActionsMenu(Player ply) {
     Menu hndl = new Menu(ActionsMenuHandler);
 
     hndl.SetTitle("SCP-079 Actions");
