@@ -278,8 +278,10 @@ methodmap Entity < Base {
     }
 
     public void Dispose() {
-        delete this.bglist;
-        delete this;
+        if (this.bglist)
+            delete this.bglist;
+        if (this)
+            delete this;
     }
 
     public void WorldRemove() {
