@@ -113,7 +113,24 @@ public void CheckSurface(int client, int entity) {
             GetEntityClassname(pid, classname, sizeof(classname));
             
             if (StrEqual(classname, "func_door"))
-                RemoveEntity(pid);
+            {
+                char doorModel[256], configModel[256];
+                
+                Entity idpad = new Entity(entity);
+                JSON_ARRAY doors = gamemode.plconfig.GetArray("doortodestruction");
+                idpad.GetModel(doorModel, sizeof(doorModel));
+                delete idpad;
+                
+                for(int i = 0; i < doors.Length; i++)
+                {
+                    doors.GetString(i, configModel, sizeof(configModel));
+                    
+                    if(StrContains(doorModel, configModel) != -1)
+                        RemoveEntity(pid);
+                }
+                delete doors;
+            }
+
             //ply.PlayAmbient("")
         }
     }

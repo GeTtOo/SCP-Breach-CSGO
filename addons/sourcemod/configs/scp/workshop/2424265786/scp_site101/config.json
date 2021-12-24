@@ -76,6 +76,13 @@
             "inpvs":true
         }
     },
+    "[SCP] 096": {
+        "doortodestruction":[
+            "office_door",
+            "lite_door",
+            "heavy_door"
+        ]
+    },
     "[SCP] 173": {
         "radius":2000,
         "blinktime":5,
