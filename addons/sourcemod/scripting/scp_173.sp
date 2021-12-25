@@ -47,9 +47,12 @@ public void SCP_OnPlayerSpawn(Player &ply)
 {
     if (ply.class != null && ply.class.Is("173")) {
         char  timername[64];
-        Format(timername, sizeof(timername), "SCP-173-%i", ply.id);
-
+        
+        Format(timername, sizeof(timername), "SCP-173-VisChecker-%i", ply.id);
         gamemode.timer.Create(timername, 250, 0, "CheckVisualContact", ply);
+
+        Format(timername, sizeof(timername), "SCP-173-Holo-%i", ply.id);
+        gamemode.timer.Create(timername, 100, 0, "RenderHologram", ply);
     }
 }
 
@@ -57,11 +60,24 @@ public void SCP_OnPlayerClear(Player &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("173")) {
         char  timername[64];
-        Format(timername, sizeof(timername), "SCP-173-%i", ply.id);
 
+        Format(timername, sizeof(timername), "SCP-173-VisChecker-%i", ply.id);
         gamemode.timer.Remove(timername);
 
+        Format(timername, sizeof(timername), "SCP-173-Holo-%i", ply.id);
+        gamemode.timer.Remove(timername);
+
+        Entity ent = view_as<Entity>(ply.GetHandle("173_holo"));
+        if (ent)
+        {
+            ents.Remove(ent);
+            delete ent;
+        }
+
         ply.RemoveValue("173_isvis");
+        ply.RemoveValue("173_abtmr");
+        ply.RemoveValue("173_abready");
+        ply.RemoveValue("173_holo");
     }
 }
 
@@ -103,6 +119,9 @@ public void CheckVisualContact(Player ply)
                 if (!TR_DidHit(ray))
                 {
                     visible = true;
+
+                    if (!ply.GetHandle("173_abtmr") && !ply.GetBool("173_abready"))
+                        gamemode.mngr.Fade(checkply.id, 25, 250, new Colour(0,0,0,255));
                 }
 
                 delete ray;
@@ -119,6 +138,10 @@ public void CheckVisualContact(Player ply)
             {
                 ply.SetMoveType(MOVETYPE_NONE);
                 ply.SetBool("173_isvis", true);
+
+                if (!ply.GetHandle("173_abtmr") && !ply.GetBool("173_abready"))
+                    ply.SetHandle("173_abtmr", ply.TimerSimple(5000, "AbilityCooldown", ply));
+
             }
         }
         else
@@ -138,31 +161,142 @@ public bool RayFilter(int ent, int mask, any plyidx)
     return true;
 }
 
-public void SCP_OnInput(Player &atk, int buttons)
+public void KillInPVS(Player ply, int radius)
 {
-    if (atk.class.Is("173") && !atk.GetBool("173_isvis") && buttons & IN_ATTACK)  // 2^0 +attack
-    {
-        ArrayList entArr = ents.FindInPVS(atk, 130);
+    ArrayList entArr = ents.FindInPVS(ply, radius);
 
-        for(int i=0; i < entArr.Length; i++) {
-            Player vic = entArr.Get(i);
+    for(int i=0; i < entArr.Length; i++) {
+        Player vic = entArr.Get(i);
+        
+        if (ply.id != vic.id && !vic.IsSCP && vic.IsAlive())
+        {
+            char sound[128];
+            JSON_ARRAY nbs = gamemode.plconfig.GetObject("sound").GetArray("neckbroke");
+            nbs.GetString(GetRandomInt(0, nbs.Length - 1), sound, sizeof(sound));
+            gamemode.mngr.PlayAmbientOnPlayer(sound, vic);
             
-            if (atk.id != vic.id && !vic.IsSCP && vic.IsAlive())
-            {
-                char sound[128];
-                JSON_ARRAY nbs = gamemode.plconfig.GetObject("sound").GetArray("neckbroke");
-                nbs.GetString(GetRandomInt(0, nbs.Length - 1), sound, sizeof(sound));
-                gamemode.mngr.PlayAmbientOnPlayer(sound, vic);
-                
-                vic.Kill();
-                
-                break;
-            }
-
-            entArr.Erase(i);
-            delete vic;
+            vic.Kill();
+            
+            break;
         }
 
-        delete entArr;
+        entArr.Erase(i);
+        delete vic;
     }
+
+    delete entArr;
+}
+
+public void SCP_OnInput(Player &ply, int buttons)
+{
+    if (ply.class.Is("173") && !ply.GetBool("173_isvis") && buttons & IN_ATTACK)  // 2^0 +attack
+    {
+        KillInPVS(ply, 130);
+    }
+}
+
+public void AbilityCooldown(Player ply)
+{
+    ply.RemoveValue("173_abtmr");
+    ply.SetBool("173_abready", true);
+}
+
+public void SCP_OnCallActionMenu(Player &ply)
+{
+    if (ply.GetBool("173_abready")) //ply.GetBool("173_abready")
+    {
+        Entity ent = view_as<Entity>(ply.GetHandle("173_holo"));
+
+        ply.SetPos(ent.GetPos());
+        
+        KillInPVS(ply, 175);
+
+        delete ent;
+
+        ply.SetBool("173_isvis", false);
+        ply.SetBool("173_abready", false);
+
+        ply.SetMoveType(MOVETYPE_WALK);
+    }
+}
+
+public void RenderHologram(Player ply)
+{   
+    if (ply.GetBool("173_isvis"))
+    {
+        if (!ply.GetHandle("173_holo"))
+        {
+            char model[256];
+            ply.GetModel(model, sizeof(model));
+
+            ply.SetHandle("173_holo", ents.Create("prop_dynamic")
+            .SetModel(model)
+            .Spawn()
+            .SetHook(SDKHook_SetTransmit, TransmitHandler)
+            .SetRenderMode(RENDER_TRANSCOLOR)
+            .SetRenderColor(new Colour(255,255,255,75)));
+        }
+        else
+        {
+            Entity ent = view_as<Entity>(ply.GetHandle("173_holo"));
+            Vector pos = ply.EyePos();
+            Angle ang = ply.GetAng();
+            
+            float posarr[3], angarr[3], endposarr[3];
+            pos.GetArrD(posarr);
+            ang.GetArrD(angarr);
+
+            Handle trace = TR_TraceRayFilterEx(posarr, angarr, MASK_SHOT, RayType_Infinite, TRFilter);
+
+            if (TR_DidHit(trace))
+            {
+                TR_GetEndPosition(endposarr, trace);
+                //float dist = (GetVectorDistance(posarr, endposarr) - 35.0);
+
+                //endposarr[0] = (posarr[0] + (dist * Sine(DegToRad(angarr[1]))));
+                //endposarr[1] = (posarr[1] + (dist * Cosine(DegToRad(angarr[1]))));
+                //endposarr[2] += 90.0;
+                //endposarr[2] += 16;
+            }
+
+            delete trace;
+
+            ent.SetPos(new Vector(endposarr[0], endposarr[1], endposarr[2]), new Angle(0.0, angarr[1], 0.0)); // posarr[2] - 64.0
+
+            ent.SetRenderMode(RENDER_TRANSCOLOR);
+
+            delete ent;
+        }
+    }
+    else
+    {
+        Entity ent = view_as<Entity>(ply.GetHandle("173_holo"));
+        if (ent)
+        {
+            ent.SetRenderMode(RENDER_NONE);
+            delete ent;
+        }
+    }
+}
+
+public bool TRFilter(int ent, int mask)
+{
+    return ent > MaxClients || !ent;
+}
+
+public Action TransmitHandler(int entity, int client)
+{
+    Player ply = player.GetByID(client);
+
+    Handle hndl = ply.GetHandle("173_holo");
+
+    delete ply;
+
+    if (!hndl)
+    {
+        delete hndl;
+        return Plugin_Handled;
+    }
+
+    return Plugin_Continue;
 }
