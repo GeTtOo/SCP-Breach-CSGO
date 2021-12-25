@@ -438,4 +438,8 @@ methodmap Player < Entity {
         this.inv.FullClear();
         this.Setup();
     }
+
+    public void Dispose() {
+        delete this;
+    }
 }

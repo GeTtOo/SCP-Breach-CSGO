@@ -135,11 +135,11 @@ methodmap Timers < Base {
                     list.Erase(i);
     }
     
-    public void Simple(int delay, char[] funcname, any args = false) {
+    public Tmr Simple(int delay, char[] funcname, any args = false) {
         char timername[64], pname[64];
         GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
         FormatEx(timername, sizeof(timername), "%s_%i_%i", pname, GetTime(), GetRandomInt(1, 1000));
-        this.Create(timername, delay, 1, funcname, args);
+        return this.Create(timername, delay, 1, funcname, args);
     }
 
     public void Update() {

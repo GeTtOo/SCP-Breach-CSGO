@@ -220,7 +220,7 @@ public void Transform(Player ply) {
                             .SetPos(oitempos, ent.GetAng())
                             .Spawn();
 
-                            ents.Remove(ent.id);
+                            ents.Remove(ent);
                         }
                         else
                         {
@@ -229,7 +229,7 @@ public void Transform(Player ply) {
                     }
                     else
                     {
-                        ents.Remove(ent.id);
+                        ents.Remove(ent);
                     }
                 }
                 
@@ -249,7 +249,7 @@ public void Transform(Player ply) {
             else
             {
                 ents.Create(entclass).SetPos(oitempos, ent.GetAng()).Spawn();
-                ents.Remove(ent.id);
+                ents.Remove(ent);
             }
         }
     }

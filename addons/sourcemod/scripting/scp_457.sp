@@ -62,9 +62,10 @@ public void SCP_OnPlayerClear(Player &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("457") && ply.InGame())
     {
-        Entity ragdoll = ply.ragdoll;
-        
-        if (ragdoll)
-            ragdoll.Remove();
+        if (ply.ragdoll)
+        {
+            ents.Remove(ply.ragdoll);
+            ply.ragdoll = null;
+        }
     }
 }

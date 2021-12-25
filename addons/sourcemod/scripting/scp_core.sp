@@ -86,6 +86,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("EntitySingleton.list.get", NativeEntities_GetList);
     CreateNative("EntitySingleton.Create", NativeEntities_Create);
     CreateNative("EntitySingleton.Remove", NativeEntities_Remove);
+    CreateNative("EntitySingleton.RemoveByID", NativeEntities_RemoveByID);
     CreateNative("EntitySingleton.IndexUpdate", NativeEntities_IndexUpdate);
     CreateNative("EntitySingleton.Clear", NativeEntities_Clear);
 
@@ -238,6 +239,10 @@ public void OnClientDisconnect(int id)
 {
     Player ply = player.GetByID(id);
 
+    char timername[32];
+    FormatEx(timername, sizeof(timername), "ent-%i", ply.id);
+    gamemode.timer.RemoveIsContains(timername);
+
     char clientname[32];
     ply.GetName(clientname, sizeof(clientname));
     gamemode.log.Info("%t", "Log_PlayerDisconnected", clientname);
@@ -245,20 +250,11 @@ public void OnClientDisconnect(int id)
     if(!gamemode.mngr.IsWarmup)
         gamemode.mngr.GameCheck();
 
-    char timername[32];
-    FormatEx(timername, sizeof(timername), "entid-%i", ply.id);
-    gamemode.timer.RemoveIsContains(timername);
-
     SDKUnhook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
     SDKUnhook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
     SDKUnhook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
     SDKUnhook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
     SDKUnhook(ply.id, SDKHook_OnTakeDamageAlivePost, OnTakeDamageAlivePost);
-}
-
-public void OnClientDisconnect_Post(int id)
-{
-    Player ply = player.GetByID(id);
 
     Base pos = ply.GetBase("spawnpos");
     if (pos != null)
@@ -271,7 +267,7 @@ public void OnClientDisconnect_Post(int id)
 
     if (ply.ragdoll)
     {
-        ply.ragdoll.Remove();
+        ents.Remove(ply.ragdoll);
         ply.ragdoll = null;
     }
 
@@ -302,7 +298,7 @@ public void PlayerSpawn(Player ply)
     {
         if (ply.ragdoll) //Fix check if valid
         {
-            ents.Remove(ply.ragdoll.id);
+            ents.Remove(ply.ragdoll);
             ply.ragdoll = null;
         }
 
@@ -491,7 +487,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
             Player ply = players.Get(i);
 
             char timername[32];
-            FormatEx(timername, sizeof(timername), "entid-%i", ply.id);
+            FormatEx(timername, sizeof(timername), "ent-%i", ply.id);
             gamemode.timer.RemoveIsContains(timername);
 
             Call_StartForward(OnClientClearForward);
@@ -510,7 +506,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
             
             if (ply.ragdoll)
             {
-                ply.ragdoll.Dispose();
+                ents.Remove(ply.ragdoll);
                 ply.ragdoll = null;
             }
         }
@@ -758,7 +754,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         vic.spawned = false;
 
         char timername[32];
-        FormatEx(timername, sizeof(timername), "entid-%i", vic.id);
+        FormatEx(timername, sizeof(timername), "ent-%i", vic.id);
         gamemode.timer.RemoveIsContains(timername);
 
         Call_StartForward(OnClientClearForward);
@@ -1938,6 +1934,21 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
 }
 
 public any NativeEntities_Remove(Handle Plugin, int numArgs) {
+    ArrayList entities = ents.list;
+    int idx = entities.FindValue(GetNativeCell(2), 1);
+    Entity ent = entities.Get(idx, 1);
+    if (ent.meta)
+    {
+        if (ent.meta.onuse)
+            ent.RemoveHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
+        if (ent.meta.ontouch)
+            ent.RemoveHook(SDKHook_TouchPost, CB_EntTouch);
+    }
+    ent.Remove();
+    ents.list.Erase(idx);
+}
+
+public any NativeEntities_RemoveByID(Handle Plugin, int numArgs) {
     ArrayList entities = ents.list;
     int idx = entities.FindValue(GetNativeCell(2), 0);
     Entity ent = entities.Get(idx, 1);

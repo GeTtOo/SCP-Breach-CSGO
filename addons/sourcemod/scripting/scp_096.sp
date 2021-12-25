@@ -138,7 +138,7 @@ public void CheckSurface(int client, int entity) {
 
 public void CheckVisualContact(Player ply) 
 {
-    if (ply != null && ply.class != null && ply.IsAlive() && ply.class.Is("096"))
+    if (ply && ply.class && ply.class.Is("096") && ply.IsAlive())
     {
         bool visible = false;
 

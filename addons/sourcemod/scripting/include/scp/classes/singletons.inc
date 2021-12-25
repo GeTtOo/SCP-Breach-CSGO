@@ -174,7 +174,9 @@ methodmap EntitySingleton < Base {
 
     public native Entity Create(char[] EntName, bool register = true);
 
-    public native void Remove(int id);
+    public native void Remove(Entity ent);
+
+    public native void RemoveByID(int id);
 
     public native bool IndexUpdate(Entity ent);
 

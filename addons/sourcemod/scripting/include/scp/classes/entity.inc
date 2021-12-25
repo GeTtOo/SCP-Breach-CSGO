@@ -122,9 +122,9 @@ methodmap Entity < Base {
         return this;
     }
 
-    public void SetModel(char[] modelName) { SetEntityModel(this.id, modelName); }
+    public Entity SetModel(char[] modelName) { SetEntityModel(this.id, modelName); return this; }
 
-    public void GetModel(char[] modelName, int max_size) { this.GetPropString("m_ModelName", modelName, max_size, Prop_Data); }
+    public Entity GetModel(char[] modelName, int max_size) { this.GetPropString("m_ModelName", modelName, max_size, Prop_Data); return this; }
 
     public void SetModelById(char[] modelid) {
         this.mdlmeta = gamemode.meta.GetModel(modelid);
@@ -158,12 +158,14 @@ methodmap Entity < Base {
 
     public int GetSkin() { return this.GetProp("m_nSkin"); }
 
-    public void SetRenderMode(RenderMode mode) { SetEntityRenderMode(this.id, mode); }
+    public Entity SetRenderMode(RenderMode mode) { SetEntityRenderMode(this.id, mode); return this; }
 
-    public void TimerSimple(int delay, char[] funcname, any args = false) {
+    public Entity SetRenderColor(Colour clr) { SetEntityRenderColor(this.id, clr.r, clr.g, clr.b, clr.a); delete clr; return this; }
+
+    public Tmr TimerSimple(int delay, char[] funcname, any args = false) {
         char timername[64];
-        FormatEx(timername, sizeof(timername), "ent_%i-time_%i-seed_%i", this.id, GetTime(), GetRandomInt(1, 1000));
-        gamemode.timer.Create(timername, delay, 1, funcname, args);
+        FormatEx(timername, sizeof(timername), "ent-%i|time-%i|seed-%i", this.id, GetTime(), GetRandomInt(1, 1000));
+        return gamemode.timer.Create(timername, delay, 1, funcname, args);
     }
 
     public void SetMoveType(MoveType type) { SetEntityMoveType(this.id, type); }
@@ -278,10 +280,8 @@ methodmap Entity < Base {
     }
 
     public void Dispose() {
-        if (this.bglist)
-            delete this.bglist;
-        if (this)
-            delete this;
+        delete this.bglist;
+        delete this;
     }
 
     public void WorldRemove() {
