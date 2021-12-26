@@ -28,6 +28,12 @@
  *
  **/
 
+enum AngleVectorType {
+    Forward = 0,
+    Right,
+    Up
+}
+
 methodmap Angle < Vector {
     
     public Angle(float x, float y, float z) {
@@ -38,6 +44,22 @@ methodmap Angle < Vector {
         ang.SetValue("z", z);
         
         return ang;
+    }
+
+    public Vector GetVectors(AngleVectorType type) {
+        float angarr[3], vecarr[3];
+        this.GetArr(angarr);
+
+        if (type == Forward)
+            GetAngleVectors(angarr, vecarr, NULL_VECTOR, NULL_VECTOR);
+        else if (type == Right)
+            GetAngleVectors(angarr, NULL_VECTOR, vecarr, NULL_VECTOR);
+        else if (type == Up)
+            GetAngleVectors(angarr, NULL_VECTOR, NULL_VECTOR, vecarr);
+
+        delete this;
+
+        return new Vector(vecarr[0], vecarr[1], vecarr[2]);
     }
 
     public Vector Forward(Vector startpos, float scale) {

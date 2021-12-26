@@ -171,12 +171,11 @@ methodmap Player < Entity {
     public int Give(char[] item) { return GivePlayerItem(this.id, item); }
 
     public void DropWeapons() {
-        int m_hMyWeapons_size = GetEntPropArraySize(this.id, Prop_Send, "m_hMyWeapons");
-        int item;
+        int item, weparrsize = GetEntPropArraySize(this.id, Prop_Send, "m_hMyWeapons");
 
-        for(int index = 0; index < m_hMyWeapons_size; index++)
+        for(int weparridx = 0; weparridx < weparrsize; weparridx++)
         { 
-            item = GetEntPropEnt(this.id, Prop_Send, "m_hMyWeapons", index);
+            item = GetEntPropEnt(this.id, Prop_Send, "m_hMyWeapons", weparridx);
 
             if(item != -1)
             {
@@ -187,12 +186,11 @@ methodmap Player < Entity {
 
     public void RestrictWeapons() {
         ArrayList entities = view_as<Base>(gamemode).GetBase("entities").GetArrayList("entities");
-        int m_hMyWeapons_size = GetEntPropArraySize(this.id, Prop_Send, "m_hMyWeapons");
-        int item;
+        int item, weparrsize = GetEntPropArraySize(this.id, Prop_Send, "m_hMyWeapons");
 
-        for(int index = 0; index < m_hMyWeapons_size; index++)
+        for(int weparridx = 0; weparridx < weparrsize; weparridx++)
         {
-            item = GetEntPropEnt(this.id, Prop_Send, "m_hMyWeapons", index);
+            item = GetEntPropEnt(this.id, Prop_Send, "m_hMyWeapons", weparridx);
 
             if(item != -1)
             {

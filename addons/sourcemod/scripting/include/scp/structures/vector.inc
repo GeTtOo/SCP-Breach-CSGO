@@ -148,6 +148,16 @@ methodmap Vector < Base {
 
         return this;
     }
+
+    public Vector Subtract(Vector vec) {
+        float vecarr1[3], vecarr2[3];
+        this.GetArr(vecarr1);
+        vec.GetArrD(vecarr2);
+        SubtractVectors(vecarr1, vecarr2, vecarr1);
+        this.SetArr(vecarr1);
+
+        return this;
+    }
 }
 
 stock Vector operator+(Vector first, Vector second) {

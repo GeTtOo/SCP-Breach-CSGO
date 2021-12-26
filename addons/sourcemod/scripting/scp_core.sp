@@ -256,14 +256,14 @@ public void OnClientDisconnect(int id)
     SDKUnhook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
     SDKUnhook(ply.id, SDKHook_OnTakeDamageAlivePost, OnTakeDamageAlivePost);
 
+    Call_StartForward(OnClientLeaveForward);
+    Call_StartForward(OnClientClearForward);
+    Call_PushCellRef(ply);
+    Call_Finish();
+
     Base pos = ply.GetBase("spawnpos");
     if (pos != null)
         pos.SetBool("lock", false);
-
-    Call_StartForward(OnClientClearForward);
-    Call_StartForward(OnClientLeaveForward);
-    Call_PushCellRef(ply);
-    Call_Finish();
 
     if (ply.ragdoll)
     {
@@ -490,8 +490,8 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
             FormatEx(timername, sizeof(timername), "ent-%i", ply.id);
             gamemode.timer.RemoveIsContains(timername);
 
-            Call_StartForward(OnClientClearForward);
             Call_StartForward(OnClientResetForward);
+            Call_StartForward(OnClientClearForward);
             Call_PushCellRef(ply);
             Call_Finish();
 
@@ -756,14 +756,14 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         char timername[32];
         FormatEx(timername, sizeof(timername), "ent-%i", vic.id);
         gamemode.timer.RemoveIsContains(timername);
-
-        Call_StartForward(OnClientClearForward);
-        Call_PushCellRef(vic);
-        Call_Finish();
         
         Call_StartForward(OnPlayerDeathForward);
         Call_PushCellRef(vic);
         Call_PushCellRef(atk);
+        Call_Finish();
+
+        Call_StartForward(OnClientClearForward);
+        Call_PushCellRef(vic);
         Call_Finish();
 
         vic.Team("Dead");

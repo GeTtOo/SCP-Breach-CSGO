@@ -504,7 +504,6 @@
                 "autospawn":false,
                 "health":55000,
                 "speed":220,
-                "fists":true,
                 "overlay":"scp-106",
                 "pos":{"vec":[-11110,520,-365]},
                 "comment":"Ded"

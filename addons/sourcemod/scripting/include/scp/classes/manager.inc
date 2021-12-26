@@ -287,6 +287,8 @@ methodmap Manager < Base {
             }
         }
 
+        delete players;
+        delete deadPlayers;
         delete classes;
     }
 }

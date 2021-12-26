@@ -108,6 +108,8 @@ methodmap AdminAction < Base
                 }
             }
         }
+        
+        delete clients;
 
         char adminname[32], adminauth[32];
         this.admin.GetName(adminname, sizeof(adminname));
@@ -191,6 +193,8 @@ methodmap AdminMenuSingleton < Base
                 return view_as<AdminAction>(list.Get(i));
             }
         }
+
+        delete list;
 
         return view_as<AdminAction>(null);
     }
@@ -390,6 +394,8 @@ public void RenderTeamMenu(int client)
         hMenu.AddItem(teamname, teamname, ITEMDRAW_DEFAULT);
     }
 
+    delete teams;
+
     hMenu.Display(client, 30);
 }
 
@@ -410,6 +416,8 @@ public void RenderClassMenu(int client, char[] teamName)
 
         hMenu.AddItem(teamName, classname, ITEMDRAW_DEFAULT);
     }
+
+    delete classes;
 
     hMenu.Display(client, 30);
 }
@@ -537,6 +545,8 @@ public void RenderReinforceMenu(int client)
         hMenu.AddItem(teamname, teamname, ITEMDRAW_DEFAULT);
     }
 
+    delete teams;
+
     hMenu.Display(client, 30);
 }
 
@@ -582,6 +592,8 @@ public void RenderGiveMenu(int client)
 
         hMenu.AddItem(entclass, entname, ITEMDRAW_DEFAULT);
     }
+    
+    delete entlist;
 
     hMenu.Display(client, 30);
 }
