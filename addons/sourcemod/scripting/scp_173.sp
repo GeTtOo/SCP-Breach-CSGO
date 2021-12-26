@@ -49,10 +49,20 @@ public void SCP_OnPlayerSpawn(Player &ply)
         char  timername[64];
         
         Format(timername, sizeof(timername), "SCP-173-VisChecker-%i", ply.id);
-        gamemode.timer.Create(timername, 250, 0, "CheckVisualContact", ply);
+        gamemode.timer.Create(timername, 100, 0, "CheckVisualContact", ply);
 
         Format(timername, sizeof(timername), "SCP-173-Holo-%i", ply.id);
-        gamemode.timer.Create(timername, 100, 0, "RenderHologram", ply);
+        gamemode.timer.Create(timername, 20, 0, "RenderHologram", ply);
+
+        char model[256];
+        ply.GetModel(model, sizeof(model));
+
+        ply.SetHandle("173_holo", ents.Create("prop_dynamic")
+        .SetModel(model)
+        .Spawn()
+        .SetHook(SDKHook_SetTransmit, TransmitHandler)
+        .SetRenderMode(RENDER_NONE)
+        .SetRenderColor(new Colour(255,255,255,75)));
     }
 }
 
@@ -60,6 +70,9 @@ public void SCP_OnPlayerClear(Player &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("173")) {
         char  timername[64];
+        Entity ent = view_as<Entity>(ply.GetHandle("173_holo"));
+        
+        if (ent) ents.Remove(ent);
 
         Format(timername, sizeof(timername), "SCP-173-VisChecker-%i", ply.id);
         gamemode.timer.Remove(timername);
@@ -67,17 +80,11 @@ public void SCP_OnPlayerClear(Player &ply)
         Format(timername, sizeof(timername), "SCP-173-Holo-%i", ply.id);
         gamemode.timer.Remove(timername);
 
-        Entity ent = view_as<Entity>(ply.GetHandle("173_holo"));
-        if (ent)
-        {
-            ents.Remove(ent);
-            delete ent;
-        }
-
         ply.RemoveValue("173_isvis");
         ply.RemoveValue("173_abtmr");
         ply.RemoveValue("173_abready");
         ply.RemoveValue("173_holo");
+        ply.RemoveValue("173_renderholo");
     }
 }
 
@@ -221,67 +228,92 @@ public void SCP_OnCallActionMenu(Player &ply)
 }
 
 public void RenderHologram(Player ply)
-{   
+{
+    Entity ent = view_as<Entity>(ply.GetHandle("173_holo"));
+
     if (ply.GetBool("173_isvis"))
     {
-        if (!ply.GetHandle("173_holo"))
+        if (ply.GetHandle("173_holo"))
         {
-            char model[256];
-            ply.GetModel(model, sizeof(model));
-
-            ply.SetHandle("173_holo", ents.Create("prop_dynamic")
-            .SetModel(model)
-            .Spawn()
-            .SetHook(SDKHook_SetTransmit, TransmitHandler)
-            .SetRenderMode(RENDER_TRANSCOLOR)
-            .SetRenderColor(new Colour(255,255,255,75)));
-        }
-        else
-        {
-            Entity ent = view_as<Entity>(ply.GetHandle("173_holo"));
             Vector pos = ply.EyePos();
             Angle ang = ply.GetAng();
             
-            float posarr[3], angarr[3], endposarr[3];
+            float posarr[3], angarr[3], endposarr[3], backvecarr[3];
             pos.GetArrD(posarr);
-            ang.GetArrD(angarr);
+            ang.GetArr(angarr);
 
             Handle trace = TR_TraceRayFilterEx(posarr, angarr, MASK_SHOT, RayType_Infinite, TRFilter);
+            
+            Vector back = ang.GetVectors(Forward).Normalize().Scale(10.0);
+            back.GetArrD(backvecarr);
+
+            bool correct;
+            int loop = 100;
 
             if (TR_DidHit(trace))
             {
                 TR_GetEndPosition(endposarr, trace);
-                //float dist = (GetVectorDistance(posarr, endposarr) - 35.0);
+                
+                while (IsStuck(endposarr, ply.id) && !correct)
+                {
+                    SubtractVectors(endposarr, backvecarr, endposarr);
 
-                //endposarr[0] = (posarr[0] + (dist * Sine(DegToRad(angarr[1]))));
-                //endposarr[1] = (posarr[1] + (dist * Cosine(DegToRad(angarr[1]))));
-                //endposarr[2] += 90.0;
-                //endposarr[2] += 16;
+                    if (GetVectorDistance(endposarr, posarr) < 10 || loop-- < 1)
+                    {
+                        correct = true;
+                        endposarr = posarr;
+                    }
+                }
             }
 
             delete trace;
 
-            ent.SetPos(new Vector(endposarr[0], endposarr[1], endposarr[2]), new Angle(0.0, angarr[1], 0.0)); // posarr[2] - 64.0
-
-            ent.SetRenderMode(RENDER_TRANSCOLOR);
-
-            delete ent;
+            if (GetVectorDistance(posarr, endposarr) <= 400.0)
+            {
+                ent.SetPos(new Vector(endposarr[0], endposarr[1], endposarr[2]), new Angle(0.0, angarr[1], 0.0)); // posarr[2] - 64.0
+                if (!ply.GetBool("173_renderholo"))
+                {
+                    ply.SetBool("173_renderholo", true);
+                    ent.SetRenderMode(RENDER_TRANSCOLOR);
+                }
+            }
         }
     }
     else
     {
-        Entity ent = view_as<Entity>(ply.GetHandle("173_holo"));
-        if (ent)
+        if (ent && ply.GetBool("173_renderholo"))
         {
+            ply.SetBool("173_renderholo", false);
             ent.SetRenderMode(RENDER_NONE);
-            delete ent;
         }
     }
+
+    delete ent;
 }
 
 public bool TRFilter(int ent, int mask)
 {
-    return ent > MaxClients || !ent;
+    if (0 < ent <= MaxClients)
+        return false;
+    return true;
+}
+
+public bool IsStuck(float pos[3], int client)
+{
+    float mins[3], maxs[3];
+    
+    GetClientMins(client, mins);
+    GetClientMaxs(client, maxs);
+
+    for (int i=0; i < 3; ++i)
+    {
+        mins[i] -= 3;
+        maxs[i] += 3;
+    }
+    
+    TR_TraceHullFilter(pos, pos, mins, maxs, MASK_SOLID, TRFilter, client);
+    
+    return TR_DidHit();
 }
 
 public Action TransmitHandler(int entity, int client)
