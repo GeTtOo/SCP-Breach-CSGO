@@ -363,8 +363,11 @@ methodmap Player < Entity {
             }
         
         if (this.class.doors != null)
-            for (int i=0; i < this.class.doors.Length; i++)
-                AcceptEntityInput(this.class.doors.GetInt(i), "Open");
+            if (this.class.GetInt("doorsdelay") == 0)
+                for (int i=0; i < this.class.doors.Length; i++)
+                    AcceptEntityInput(this.class.doors.GetInt(i), "Open");
+            else
+                this.TimerSimple(this.class.GetInt("doorsdelay") * 1000, "OpenCameraDoors", this.class.doors);
 
         if (this.class.HasKey("model")) {
             if (view_as<int>(this.class.GetKeyType("model")) == 0)

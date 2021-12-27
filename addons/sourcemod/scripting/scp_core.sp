@@ -469,7 +469,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
 
         //gamemode.timer.Create("Entities_Limit_Checker", gamemode.config.GetInt("elc", 30) * 1000, 0, "EntitiesLimitChecker");
 
-        CheckNewPlayers(gamemode.config.psars);
+        gamemode.timer.Create("PlayerSpawnAfterRoundStart", 1000, gamemode.config.psars, "PSARS");
 
         Call_StartForward(OnRoundStartForward);
         Call_Finish();
@@ -1290,6 +1290,23 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
 //
 //////////////////////////////////////////////////////////////////////////////
 
+public void InitKeyCards()
+{
+    gamemode.meta.RegEntEvent(ON_USE, "card_o5", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_facility_manager", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_containment_engineer", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_mog_commander", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_mog_lieutenant", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_guard", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_senior_guard", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_zone_manager", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_major_scientist", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_scientist", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_janitor", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "card_chaos", "SetPlyDoorAccess");
+    gamemode.meta.RegEntEvent(ON_USE, "005_picklock", "SetPlyDoorAccess");
+}
+
 public void WeaponIdUpdate(ArrayList data)
 {
     Player ply = data.Get(0);
@@ -1328,26 +1345,15 @@ public void EntitiesLimitChecker()
     gamemode.mngr.CheckLimitEntities();
 }
 
+public void OpenCameraDoors(JSON_ARRAY doors)
+{
+    for (int i=0; i < doors.Length; i++)
+        AcceptEntityInput(doors.GetInt(i), "Open");
+}
+
 public void PlyHideOverlay(Player ply)
 {
     ply.HideOverlay();
-}
-
-public void InitKeyCards()
-{
-    gamemode.meta.RegEntEvent(ON_USE, "card_o5", "SetPlyDoorAccess");
-    gamemode.meta.RegEntEvent(ON_USE, "card_facility_manager", "SetPlyDoorAccess");
-    gamemode.meta.RegEntEvent(ON_USE, "card_containment_engineer", "SetPlyDoorAccess");
-    gamemode.meta.RegEntEvent(ON_USE, "card_mog_commander", "SetPlyDoorAccess");
-    gamemode.meta.RegEntEvent(ON_USE, "card_mog_lieutenant", "SetPlyDoorAccess");
-    gamemode.meta.RegEntEvent(ON_USE, "card_guard", "SetPlyDoorAccess");
-    gamemode.meta.RegEntEvent(ON_USE, "card_senior_guard", "SetPlyDoorAccess");
-    gamemode.meta.RegEntEvent(ON_USE, "card_zone_manager", "SetPlyDoorAccess");
-    gamemode.meta.RegEntEvent(ON_USE, "card_major_scientist", "SetPlyDoorAccess");
-    gamemode.meta.RegEntEvent(ON_USE, "card_scientist", "SetPlyDoorAccess");
-    gamemode.meta.RegEntEvent(ON_USE, "card_janitor", "SetPlyDoorAccess");
-    gamemode.meta.RegEntEvent(ON_USE, "card_chaos", "SetPlyDoorAccess");
-    gamemode.meta.RegEntEvent(ON_USE, "005_picklock", "SetPlyDoorAccess");
 }
 
 public void ResetIdPad(int entid)
@@ -1474,11 +1480,6 @@ public void SpawnItemsOnMap()
     }
 
     delete snapshot;
-}
-
-public void CheckNewPlayers(int seconds)
-{
-    gamemode.timer.Create("PSARS", 1000, seconds, "PSARS");
 }
 
 public void PSARS()
