@@ -147,7 +147,7 @@
                     "id":"mog",
                     "bodygroups":{
                         "head":1,
-                        "eyes":[0,3],
+                        "eyes":[0,1],
                         "body":1,
                         "belt":2,
                         "pr":1
@@ -189,7 +189,7 @@
                     "id":"mog",
                     "bodygroups":{
                         "base":0,
-                        "eyes":1,
+                        "eyes":[0,1],
                         "helmet":2,
                         "body":3,
                         "belt":[2,3],
@@ -213,7 +213,7 @@
                     "bodygroups":{
                         "base":0,
                         "head":4,
-                        "eyes":[1,2,3],
+                        "eyes":[1,2],
                         "helmet":[3,4,5],
                         "mask":[0,1],
                         "body":[2,3],

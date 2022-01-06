@@ -712,6 +712,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         Player vic = player.GetByID(GetClientOfUserId(GetEventInt(event, "userid")));
         Player atk = player.GetByID(GetClientOfUserId(GetEventInt(event, "attacker")));
 
+        gamemode.mngr.GameCheck();
+
         if (vic == null) return Plugin_Handled;
         
         vic.ragdoll = vic.CreateRagdoll();
@@ -772,8 +774,6 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         Base pos = vic.GetBase("spawnpos");
         if (pos != null)
             pos.SetBool("lock", false);
-
-        gamemode.mngr.GameCheck();
 
         char vicname[32], vicauth[32];
         vic.GetName(vicname, sizeof(vicname));
@@ -1574,12 +1574,7 @@ public Action Command_AdminMenu(int client, int args)
 
 public Action Command_Kill(int client, const char[] command, int argc)
 {
-    Player ply = player.GetByID(client);
-    
-    if (ply.IsAlive())
-        ply.Kill();
-
-    return Plugin_Stop;
+    return Plugin_Handled;
 }
 
 public Action Command_Base(int client, const char[] command, int argc)
