@@ -102,7 +102,12 @@
         "en"        "Exlpode the complex"
         "ru"        "Взорвать комплекс"
     }
-    "Rount restart"
+    "Round restart"
+    {
+        "en"        "Round was restarted"
+        "ru"        "Раунд перезапущен"
+    }
+    "Round restart by admin"
     {
         "en"        "Round was restarted by the administrator"
         "ru"        "Раунд перезапущен администратором"
@@ -241,8 +246,13 @@
     }
     "SCP-173-Notify"
     {
-        "en"        "Tab - Ability 173 "
-        "ru"        "Tab - Способность 173"
+        "en"        "Tab - Ability 173 jump"
+        "ru"        "Tab - Способность 173 прыжок"
+    }
+    "SCP-049-Notify"
+    {
+        "en"        "Tab - Say something\nE - Revive"
+        "ru"        "Tab - Сказать что-нибудь\nE - Провести операцию"
     }
     "Log_PlayerConnected"
     {

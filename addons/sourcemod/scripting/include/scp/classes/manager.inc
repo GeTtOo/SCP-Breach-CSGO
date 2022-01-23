@@ -175,6 +175,10 @@ methodmap Manager < Base {
             PrintToChatAll(" \x07[SCP] \x01%t", "Site destroy");
         else if(StrEqual(winteam, "nobody"))
             PrintToChatAll(" \x07[SCP] \x01%t", "Site destroy");
+        else if(StrEqual(winteam, "restart"))
+            PrintToChatAll(" \x07[SCP] \x01%t", "Round restart");
+        else if(StrEqual(winteam, "restartbyadmin"))
+            PrintToChatAll(" \x07[SCP] \x01%t", "Round restart by admin");
         else
         {
             PrintToChatAll(" \x07[SCP] \x01%t", "Team Win", winteam);
@@ -206,11 +210,14 @@ methodmap Manager < Base {
                 if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
                     this.EndGame(winTeam);
             }
-            /*else if (player.InGame() == 0)
+            else if (player.InGame() == 0)
             {
-                ServerCommand("mp_restartgame 1");
-                ServerCommand("mp_warmup_start");
-            }*/
+                this.EndGame("nobody");
+            }
+            else if (player.InGame() > 1 && player.Alive() == 0)
+            {
+                this.EndGame("nobody");
+            }
         }
     }
 

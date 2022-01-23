@@ -261,9 +261,7 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
             }
             case ROUND_RESTART:
             {
-                gamemode.mngr.RoundComplete = true;
-                CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TargetBombed, false);
-                PrintToChatAll(" \x07[SCP] \x01%t", "Rount restart");
+                gamemode.mngr.EndGame("restartbyadmin");
 
                 char adminname[32], adminauth[32];
                 AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));

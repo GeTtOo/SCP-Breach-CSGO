@@ -174,7 +174,7 @@ public void OnMapStart()
     Call_Finish();
 
     PrecacheSound(NUKE_EXPLOSION_SOUND);
-    LoadFileToDownload();
+    LoadAndPrecacheFileTable();
     
     Call_StartForward(OnLoadGM);
     Call_Finish();
@@ -233,6 +233,9 @@ public void OnClientPostAdminCheck(int id)
         SendConVarValue(ply.id, FindConVar("game_type"), "6");
         ply.SetPropFloat("m_fForceTeam", 0.0);
     }
+
+    if (!gamemode.mngr.IsWarmup && player.Alive() <= 1 && player.InGame() == 2)
+        gamemode.mngr.EndGame("restart");
 }
 
 public void OnClientDisconnect(int id)
@@ -712,8 +715,6 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         Player vic = player.GetByID(GetClientOfUserId(GetEventInt(event, "userid")));
         Player atk = player.GetByID(GetClientOfUserId(GetEventInt(event, "attacker")));
 
-        gamemode.mngr.GameCheck();
-
         if (vic == null) return Plugin_Handled;
         
         vic.ragdoll = vic.CreateRagdoll();
@@ -746,8 +747,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
             .SetPos(vic.GetPos() + new Vector(GetRandomFloat(-30.0,30.0), GetRandomFloat(-30.0,30.0), 0.0), vic.GetAng())
             .Spawn();
 
-            if (ents.IndexUpdate(item))
-                continue;
+            ents.IndexUpdate(item);
         }
 
         if (vic.progress.active)
@@ -774,6 +774,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         Base pos = vic.GetBase("spawnpos");
         if (pos != null)
             pos.SetBool("lock", false);
+
+        gamemode.mngr.GameCheck();
 
         char vicname[32], vicauth[32];
         vic.GetName(vicname, sizeof(vicname));
@@ -860,7 +862,7 @@ public Action OnWeaponTake(int client, int iWeapon)
     return Plugin_Continue;
 }
 
-public Action CS_OnTerminateRound(float& delay, CSRoundEndReason& reason)
+public Action CS_OnTerminateRound(float &delay, CSRoundEndReason &reason)
 {
     if(gamemode.mngr.IsWarmup)
 	{
@@ -882,7 +884,7 @@ public Action CS_OnTerminateRound(float& delay, CSRoundEndReason& reason)
 //
 //////////////////////////////////////////////////////////////////////////////
 
-public void LoadFileToDownload()
+public void LoadAndPrecacheFileTable()
 {
     Handle hFile = OpenFile("addons/sourcemod/configs/scp/downloads.txt", "r");
     
@@ -911,7 +913,7 @@ public void LoadFileToDownload()
             }
         }
 
-        CloseHandle(hFile);
+        delete hFile;
     }
     else
     {
@@ -1749,6 +1751,8 @@ public Action Command_Debug(int client, const char[] command, int argc)
         ply.SetProp("m_bNightVisionOn", (ply.GetProp("m_bNightVisionOn") == 0) ? 1 : 0);
     if (StrEqual(arg1, "round", false))
     {
+        if (StrEqual(arg2, "end", false))
+            gamemode.mngr.EndGame("restart");
         if (StrEqual(arg2, "lock", false))
             gamemode.mngr.RoundLock = true;
         if (StrEqual(arg2, "unlock", false))
