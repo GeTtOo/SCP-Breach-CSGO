@@ -177,12 +177,24 @@ public void KillInPVS(Player ply, int radius)
         
         if (ply.id != vic.id && !vic.IsSCP && vic.IsAlive())
         {
-            char sound[128];
-            JSON_ARRAY nbs = gamemode.plconfig.GetObject("sound").GetArray("neckbroke");
-            nbs.GetString(GetRandomInt(0, nbs.Length - 1), sound, sizeof(sound));
-            gamemode.mngr.PlayAmbientOnPlayer(sound, vic);
+            float scpPosArr[3];
+            ply.EyePos().GetArrD(scpPosArr);
+
+            float vicPlyPosArr[3];
+            vic.EyePos().GetArrD(vicPlyPosArr);
             
-            vic.Kill();
+            Handle ray = TR_TraceRayFilterEx(vicPlyPosArr, scpPosArr, MASK_VISIBLE, RayType_EndPoint, RayFilter);
+            if (!TR_DidHit(ray))
+            {
+                char sound[128];
+                JSON_ARRAY nbs = gamemode.plconfig.GetObject("sound").GetArray("neckbroke");
+                nbs.GetString(GetRandomInt(0, nbs.Length - 1), sound, sizeof(sound));
+                gamemode.mngr.PlayAmbientOnPlayer(sound, vic);
+
+                vic.Kill();
+            }
+
+            delete ray;
             
             break;
         }
