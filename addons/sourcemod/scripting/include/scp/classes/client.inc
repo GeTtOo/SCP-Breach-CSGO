@@ -205,7 +205,7 @@ methodmap Player < Entity {
 
     public bool Check(char[] val, int check) {
         ArrayList checklist = this.GetArrayList(val);
-        if (checklist != null) {
+        if (checklist) {
             for (int k=0; k < checklist.Length; k++)
                 if (checklist.Get(k) == check)
                     return true;
@@ -224,7 +224,7 @@ methodmap Player < Entity {
         
         ragdoll = this.GetPropEnt("m_hRagdoll");
 
-        if (ragdoll != null && ragdoll.id != -1)
+        if (ragdoll && ragdoll.id != -1)
             ragdoll.Input("Kill");
 
         ragdoll.Dispose();
@@ -279,14 +279,14 @@ methodmap Player < Entity {
         this.SetupBaseStats(this.class);
 
         JSON_OBJECT pos = this.class.GetVecAng();
-        if (pos != null)
+        if (pos)
         {
             this.SetPos(pos.GetVector("vec"), pos.GetAngle("ang"));
             pos.SetInt("lock", true);
             this.SetBase("spawnpos", view_as<Base>(pos));
         }
 
-        if (this.class.items != null)
+        if (this.class.items)
         {
             JSON_ARRAY items = this.class.items;
 
@@ -324,7 +324,7 @@ methodmap Player < Entity {
             }
         }
 
-        if (this.class.weapons != null)
+        if (this.class.weapons)
             for (int i=0; i < this.class.weapons.Length; i++) {
                 if (view_as<int>(this.class.weapons.GetKeyType(i)) != 4) {
                     char weapon[32];
@@ -362,7 +362,7 @@ methodmap Player < Entity {
                 }
             }
         
-        if (this.class.doors != null)
+        if (this.class.doors)
             if (this.class.GetInt("doorsdelay") == 0)
                 for (int i=0; i < this.class.doors.Length; i++)
                     AcceptEntityInput(this.class.doors.GetInt(i), "Open");

@@ -133,10 +133,8 @@ methodmap Entity < Base {
         this.mdlmeta.Path(path, sizeof(path));
         SetEntityModel(this.id, path);
 
-        int len = this.mdlmeta.bg.Length;
-
         ArrayList list = new ArrayList();
-        for (int i=0; i < len; i++)
+        for (int i=0; i < this.mdlmeta.bg.Length; i++)
             list.Push(0);
         this.bglist = list;
     }
@@ -180,7 +178,7 @@ methodmap Entity < Base {
             return this;
         }
 
-        if (this.meta == null && this.id == 5000)
+        if (!this.meta && this.id == 5000)
             gamemode.log.Warning("Can't find a %s entity metadata.", entclass);
 
         if (this.meta)
@@ -224,24 +222,21 @@ methodmap Entity < Base {
     
     public Entity SetPos(Vector vec = null, Angle ang = null) {
         float vectorArr[3], angleArr[3];
-        if (vec != null)
-            vec.GetArr(vectorArr);
-        if (ang != null)
-            ang.GetArr(angleArr);
+
+        if (vec) vec.GetArr(vectorArr);
+        if (ang) ang.GetArr(angleArr);
         
         if (this.spawned)
-            TeleportEntity(this.id, (vec == null) ? NULL_VECTOR : vectorArr, (ang == null) ? NULL_VECTOR : angleArr, NULL_VECTOR);
+            TeleportEntity(this.id, (!vec) ? NULL_VECTOR : vectorArr, (!ang) ? NULL_VECTOR : angleArr, NULL_VECTOR);
         else
         {
-            if (vec != null)
-                DispatchKeyValueVector(this.id, "origin", vectorArr);
-            if (ang != null)
-                DispatchKeyValueVector(this.id, "angles", angleArr);
+            if (vec) DispatchKeyValueVector(this.id, "origin", vectorArr);
+            if (ang) DispatchKeyValueVector(this.id, "angles", angleArr);
         }
 
-        delete vec;
-        if (ang != null)
-            delete ang;
+        if (vec) delete vec;
+        if (ang) delete ang;
+
         return this;
     }
 
