@@ -209,8 +209,6 @@ public void Transform(Player ply) {
                     {
                         entply.SetPos(oitempos);
                     }
-                    
-                    delete entply;
                 }
                 else
                 {
@@ -254,8 +252,6 @@ public void Transform(Player ply) {
                 ents.Remove(ent);
             }
         }
-
-        delete ent;
     }
 
     gamemode.log.Debug("Transforming iteration started by player %i (Mode: %s).\nFinded %i entities:%s", ply.id, curmode, entities.Length, entlist);
