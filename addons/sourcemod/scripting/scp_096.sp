@@ -126,12 +126,20 @@ public void CheckSurface(int client, int entity) {
                     doors.GetString(i, configModel, sizeof(configModel));
                     
                     if(StrContains(doorModel, configModel) != -1)
+                    {
+                        char sound[128];
+                        JSON_ARRAY nbs = gamemode.plconfig.GetObject("sound").GetArray("doorbroke");
+                        nbs.GetString(GetRandomInt(0, nbs.Length - 1), sound, sizeof(sound));
+
+                        float vecarr[3];
+                        GetEntPropVector(pid, Prop_Send, "m_vecOrigin", vecarr);
+                        EmitAmbientSound(sound, vecarr, pid);
+
                         RemoveEntity(pid);
+                    }
                 }
                 delete doors;
             }
-
-            //ply.PlayAmbient("")
         }
     }
 }

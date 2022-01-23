@@ -81,7 +81,14 @@
             "office_door",
             "lite_door",
             "heavy_door"
-        ]
+        ],
+        "sound": {
+            "doorbroke":[
+                "*/scp/096/doorbroke1.mp3",
+                "*/scp/096/doorbroke2.mp3",
+                "*/scp/096/doorbroke3.mp3"
+            ]
+        }
     },
     "[SCP] 173": {
         "radius":2000,
