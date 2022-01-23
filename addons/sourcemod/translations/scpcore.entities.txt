@@ -120,6 +120,11 @@
         "en"        "Flashlight"
         "ru"        "Фонарик"
     }
+    "flashlight_info"
+    {
+        "en"        "Flashlight"
+        "ru"        "Ничем не примечательный фонарик<br>Серия Армия России - 'RA-802 Офицерский'"
+    }
     "visor_nv"
     {
         "en"        "Nightvision googles"
