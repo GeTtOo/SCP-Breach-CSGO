@@ -1,46 +1,59 @@
 {
     "035_mask":[
-        {"chance":80,"vec":[-7682,464,118],"ang":[0,0,0],"comment":"text"}
+        {"chance":80,"vec":[-7682,464,118],"ang":[0,0,0],"comment":"035 cell"}
     ],
     "weapon_hkp2000":[
-        {"vec":[-11001,-2873,-968],"ang":[0,0,0],"comment":"Харда: Оружейка охраны."}
+
     ],
     "weapon_usp_silencer":[
+        {"chance":10,"vec":[-293,-994,30],"ang":[0,90,0],"comment":"Lite zone: Toilet"}
     ],
     "weapon_fiveseven":[
-        {"chance":100,"vec":[-11374,-2826,-978],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."}
+
     ],
     "weapon_glock":[
-        {"chance":40,"vec":[-2309,-2830,40],"ang":[0,-90,0],"comment":"Лайт: В офисах."},
-        {"chance":100,"vec":[-5862,-1563,37],"ang":[0,180,0],"comment":"Лайт: Оружейка в легкой зоне."},
-        {"chance":100,"vec":[-8363,1173,29],"ang":[0,97,0],"comment":"Харда: 049."},
-        {"chance":80,"vec":[-11307,788,-367],"ang":[0,-77,0],"comment":"Харда: 106."}
+        {"chance":35,"vec":[-2117,-6577,259],"ang":[0,-90,0],"comment":"Lite Zone: D-Class Cell"},
+        {"chance":15,"vec":[-2349,-2866,40],"ang":[0,-65,0],"comment":"Lite zone: Office "} 
     ],
     "weapon_tec9":[
     ],
     "weapon_elite":[
-        {"chance":100,"vec":[-9387,2386,36],"ang":[0,-85,0],"comment":"Харда: Оружейка."},
-        {"chance":60,"vec":[-7892,-5579,202],"ang":[0,91,0],"comment":"Харда: Боеголовка."}
+
     ],
     "weapon_p250":[
-        {"chance":45,"vec":[-1845,-2327,22],"ang":[0,85,0],"comment":"Лайт: комната отдыха"}
+        {"chance":50,"vec":[-5833,-1633,40],"ang":[0,-90,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-5848,-1633,40],"ang":[0,-90,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-5744,-6182,79],"ang":[0,-90,0],"comment":"Intercom"},
+        {"chance":50,"vec":[-9429,2460,40],"ang":[0,180,0],"comment":"Heavy Zone: Armory"},
+        {"chance":50,"vec":[-9429,2435,40],"ang":[0,180,0],"comment":"Heavy Zone: Armory"},
+        {"chance":40,"vec":[-10318,-39,0],"ang":[0,-180,0],"comment":"Heavy Zone: SCP-106"},
+        {"chance":35,"vec":[-7790,-6044,1762],"ang":[0,-160,0],"comment":"Upstairs Chaos zone"},
+        {"chance":35,"vec":[-9301,-6022,1712],"ang":[0,180,0],"comment":"Gate A"},
+        {"chance":90,"vec":[-10747,-3024,-978],"ang":[0,90,0],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-10761,-3024,-978],"ang":[0,90,0],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-10777,-3024,-978],"ang":[0,90,0],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-10794,-3024,-978],"ang":[0,90,0],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-10807,-3024,-978],"ang":[0,90,0],"comment":"Security Spawn"} 
+
     ],
     "weapon_cz75a":[
-        {"chance":100,"vec":[-9461,2386,36],"ang":[0,-95,0],"comment":"Харда: Оружейка."}
+        {"chance":75,"vec":[-5372,2763,36],"ang":[0,-90,0],"comment":"Heavy Zone: SCP-996"} 
+
     ],
     "weapon_deagle":[
-        {"chance":47,"vec":[-2116,-6566,259],"ang":[60,90,0],"comment":"Лайт: В комнате управления у дэшек."}
+        {"chance":60,"vec":[-8088,631,184],"ang":[0,-90,0],"comment":"Heavy zone: SCP-035"},
+        {"chance":60,"vec":[-8368,1170,29],"ang":[0,-90,0],"comment":"Heavy Zone: SCP-049"}  
     ],
-    "weapon_revolver":[
-        {"chance":100,"vec":[-11414,-2825,-978],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."}
+    "weapon_revolver":[ 
+        {"chance":20,"vec":[-12462,-2416,36],"ang":[0,-98,0],"comment":"Heavy Zone: SCP-996"}
     ],
     "weapon_mag7":[
-        {"chance":15,"vec":[452,-3648,1],"ang":[0,-138,0],"comment":"Лайт: В строящемся кубе."}
+
     ],
     "weapon_sawedoff":[
     ],
     "weapon_nova":[
-        {"chance":100,"vec":[-9608,2359,35],"ang":[0,90,0],"comment":"Харда: Оружейка."}
+
     ],
     "weapon_xm1014":[
     ],
@@ -49,30 +62,45 @@
     "weapon_mac10":[
     ],
     "weapon_mp7":[
-        {"chance":100,"vec":[-5765,-1759,22],"ang":[0,-176,0],"comment":"Лайт: Оружейка в легкой зоне."}
+
     ],
-    "weapon_mp5sd":[
+    "weapon_mp5sd":[ 
+        {"chance":50,"vec":[-5752,-1617,40],"ang":[0,-90,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-5773,-1617,40],"ang":[0,-90,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-5786,-1617,40],"ang":[0,-90,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-5805,-1617,40],"ang":[0,-90,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-5870,-1539,40],"ang":[0,-90,0],"comment":"Lite zone: Armory (joke)"} 
     ],
     "weapon_ump45":[
     ],
-    "weapon_p90":[
+    "weapon_p90":[ 
+        {"chance":50,"vec":[-9375,2387,40],"ang":[0,-90,0],"comment":"Heavy Zone: Armory"},
+        {"chance":50,"vec":[-9400,2387,40],"ang":[0,-90,0],"comment":"Heavy Zone: Armory"},
+        {"chance":50,"vec":[-9432,2387,40],"ang":[0,-90,0],"comment":"Heavy Zone: Armory"},
+        {"chance":50,"vec":[-9451,2387,40],"ang":[0,-90,0],"comment":"Heavy Zone: Armory"},
+        {"chance":50,"vec":[-9477,2387,40],"ang":[0,-90,0],"comment":"Heavy Zone: Armory"}
     ],
     "weapon_bizon":[
-        {"chance":100,"vec":[-9608,2426,35],"ang":[0,90,0],"comment":"Харда: Оружейка."}
+
     ],
     "weapon_famas":[
     ],
     "weapon_m4a1_silencer":[
     ],
-    "weapon_m4a1":[
-        {"chance":100,"vec":[-10784,-3024,-978],"ang":[0,0,0],"comment":"Харда: Оружейка охраны."}
+    "weapon_m4a1":[ 
+        {"chance":15,"vec":[-7740,-5149,0],"ang":[0,-135,0],"comment":"Nuke Reactor zone"},
+        {"chance":90,"vec":[-10802,-2829,-978],"ang":[0,-180,0],"comment":"Security Spawn"}
     ],
     "weapon_aug":[
     ],
     "weapon_galilar":[
     ],
     "weapon_ak47":[
-        {"chance":100,"vec":[-11382,-3018,-978],"ang":[0,-180,0],"comment":"Харда: Оружейка охраны."}
+        {"chance":3,"vec":[-10691,-269,-367],"ang":[0,108,0],"comment":"Heavy Zone: SCP-106"},
+        {"chance":90,"vec":[-11418,-2816,-978],"ang":[0,-90,0],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-11394,-2816,-978],"ang":[0,-90,0],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-11363,-2816,-978],"ang":[0,-90,0],"comment":"Security Spawn"}  
+
     ],
     "weapon_sg556":[
     ],
@@ -82,184 +110,257 @@
     ],
     "weapon_ssg08":[
     ],
-    "weapon_awp":[
-        {"chance":100,"vec":[-10786,-2830,-978],"ang":[0,0,0],"comment":"Харда: Оружейка охраны."}
+    "weapon_awp":[ 
+        {"chance":90,"vec":[-11396,-3016,-978],"ang":[0,0,0],"comment":"Security Spawn"}  
     ],
     "weapon_m249":[
     ],
     "weapon_negev":[
     ],
     "weapon_flashbang":[
-        {"chance":77,"vec":[-762,-5545,-32],"ang":[0,91,0],"comment":"Лайт: За клеткой компа."},
-        {"chance":43,"vec":[2982,-2732,0],"ang":[0,2,0],"comment":"Лайт: 914."},
-        {"chance":25,"vec":[2982,-2732,5],"ang":[0,2,0],"comment":"Лайт: 914."},
-        {"chance":54,"vec":[2612,-1358,24],"ang":[0,-179,0],"comment":"Лайт: В раздевалке."},
-        {"chance":100,"vec":[-5854,-1766,46],"ang":[0,83,0],"comment":"Лайт: Оружейка в легкой зоне."},
-        {"chance":100,"vec":[-5827,-1768,46],"ang":[0,83,0],"comment":"Лайт: Оружейка в легкой зоне."},
-        {"chance":76,"vec":[-6813,-1675,1],"ang":[0,93,0],"comment":"Харда: Темный куб."},
-        {"chance":100,"vec":[-9563,2491,4],"ang":[0,89,0],"comment":"Харда: Оружейка."},
-        {"chance":100,"vec":[-9548,2511,4],"ang":[0,6,0],"comment":"Харда: Оружейка."},
-        {"chance":100,"vec":[-9573,2516,4],"ang":[0,30,0],"comment":"Харда: Оружейка."},
-        {"chance":100,"vec":[-10900,-3121,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."},
-        {"chance":100,"vec":[-10954,-3121,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."}
+        {"chance":25,"vec":[2614,-1409,24],"ang":[0,-90,0],"comment":"Lite zone: Locker room"},
+        {"chance":25,"vec":[2444,-1229,24],"ang":[0,180,0],"comment":"Lite zone: Locker room"},
+        {"chance":50,"vec":[3016,-2738,0],"ang":[0,0,0],"comment":"Lite zone: SCP-914"},
+        {"chance":25,"vec":[1359,-1978,0],"ang":[0,-90,0],"comment":"Lite zone: Server room"},
+        {"chance":50,"vec":[-5755,-1758,22],"ang":[0,95,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-5832,-1760,22],"ang":[0,95,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-9548,2227,22],"ang":[0,90,0],"comment":"Heavy Zone: Armory"},
+        {"chance":50,"vec":[-9566,2229,22],"ang":[0,90,0],"comment":"Heavy Zone: Armory"},
+        {"chance":90,"vec":[-10945,-3109,-1004],"ang":[0,-90,0],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-10961,-3109,-1004],"ang":[0,-90,0],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-10981,-3109,-1004],"ang":[0,-90,0],"comment":"Security Spawn"} 
     ],
-    "weapon_hegrenade":[
-        {"chance":42,"vec":[995,-1955,0],"ang":[0,176,0],"comment":"Лайт: Серверная."},
-        {"chance":100,"vec":[-10870,-3121,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."},
-        {"chance":100,"vec":[-10937,-3121,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."}
+    "weapon_hegrenade":[ 
+        {"chance":25,"vec":[921,-2500,0],"ang":[0,0,0],"comment":"Lite zone: Server room"},
+        {"chance":90,"vec":[-10874,-3109,-1004],"ang":[0,-90,0],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-10881,-3109,-1004],"ang":[0,-90,0],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-10889,-3109,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}
     ],
     "weapon_incgrenade":[
-        {"chance":65,"vec":[-5850,-7456,42],"ang":[0,-1,0],"comment":"Лайт: В мед блоке."},
-        {"chance":100,"vec":[-9490,2226,22],"ang":[0,94,0],"comment":"Харда: Оружейка."},
-        {"chance":100,"vec":[-9511,2219,42],"ang":[0,94,0],"comment":"Харда: Оружейка."},
-        {"chance":100,"vec":[-10911,-3121,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."},
-        {"chance":100,"vec":[-10967,-3121,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."}
+        {"chance":50,"vec":[-5755,-1758,22],"ang":[0,95,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-5767,-1759,22],"ang":[0,99,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-6119,-6244,0],"ang":[0,-45,0],"comment":"Intercom"},
+        {"chance":50,"vec":[-9491,2226,22],"ang":[0,90,0],"comment":"Heavy Zone: Armory"},
+        {"chance":50,"vec":[-9501,2225,22],"ang":[0,90,0],"comment":"Heavy Zone: Armory"}  
     ],
-    "weapon_decoy":[
-        {"chance":100,"vec":[-6147,-1663,46],"ang":[0,0,0],"comment":"Лайт: Оружейка в легкой зоне."}
+    "weapon_decoy":[ 
+        {"chance":25,"vec":[1251,-1952,0],"ang":[0,-90,0],"comment":"Lite zone: Server room"},
+        {"chance":25,"vec":[1261,-2495,0],"ang":[0,-90,0],"comment":"Lite zone: Server room"},
+        {"chance":25,"vec":[1005,-2510,0],"ang":[0,180,0],"comment":"Lite zone: Server room"},
+        {"chance":70,"vec":[-1423,-2520,47],"ang":[0,0,0],"comment":"Lite zone: Rest room"},
+        {"chance":70,"vec":[-1861,-2520,79],"ang":[0,0,0],"comment":"Lite zone: Rest room"}
     ],
     "weapon_smokegrenade":[
-        {"chance":42,"vec":[631,-3436,43],"ang":[0,-92,0],"comment":"Лайт: В строящемся кубе."},
-        {"chance":65,"vec":[965,-2455,108],"ang":[0,180,0],"comment":"Лайт: Серверная."},
-        {"chance":100,"vec":[-6147,-1689,46],"ang":[0,0,0],"comment":"Лайт: Оружейка в легкой зоне."},
-        {"chance":12,"vec":[-5397,2757,36],"ang":[0,-93,0],"comment":"Харда: SCP-996."},
-        {"chance":100,"vec":[-9548,2220,42],"ang":[0,82,0],"comment":"Харда: Оружейка."},
-        {"chance":100,"vec":[-9569,2223,42],"ang":[0,81,0],"comment":"Харда: Оружейка."},
-        {"chance":81,"vec":[-8496,-5366,0],"ang":[0,37,0],"comment":"Харда: Боеголовка."},
-        {"chance":100,"vec":[-10884,-3121,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."},
-        {"chance":100,"vec":[-10943,-3121,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."}
+        {"chance":25,"vec":[1041,-1952,0],"ang":[0,-180,0],"comment":"Lite zone: Server room"},
+        {"chance":50,"vec":[-5839,-1759,22],"ang":[0,95,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-5847,-1758,22],"ang":[0,95,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-9507,2225,22],"ang":[0,90,0],"comment":"Heavy Zone: Armory"},
+        {"chance":50,"vec":[-9513,2224,22],"ang":[0,90,0],"comment":"Heavy Zone: Armory"},
+        {"chance":90,"vec":[-10898,-3109,-1004],"ang":[0,90,0],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-10911,-3109,-1004],"ang":[0,90,0],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-10917,-3109,-1004],"ang":[0,90,0],"comment":"Security Spawn"}
+
     ],
     "weapon_healthshot":[
-        {"chance":69,"vec":[-6668,-7378,32],"ang":[0,-49,0],"comment":"Лайт: В мед блоке."},
-        {"chance":52,"vec":[-6650,-7363,32],"ang":[0,-50,0],"comment":"Лайт: В мед блоке."},
-        {"chance":31,"vec":[-1033,-4700,80],"ang":[0,-93,0],"comment":"Лайт: В шкафу у компа."},
-        {"chance":13,"vec":[3005,-2695,232],"ang":[0,90,0],"comment":"Лайт: 914."},
-        {"chance":75,"vec":[-1609,-2520,64],"ang":[0,93,0],"comment":"Лайт: Комната отдыха."},
-        {"chance":32,"vec":[-1642,-2520,64],"ang":[0,91,0],"comment":"Лайт: Комната отдыха."},
-        {"chance":10,"vec":[-2034,-2053,0],"ang":[0,0,0],"comment":"Лайт: Комната отдыха."},
-        {"chance":100,"vec":[-5956,-1435,46],"ang":[0,-90,0],"comment":"Лайт: Оружейка в легкой зоне."},
-        {"chance":100,"vec":[-5972,-1435,46],"ang":[0,-90,0],"comment":"Лайт: Оружейка в легкой зоне."},
-        {"chance":100,"vec":[-5988,-1435,46],"ang":[0,-90,0],"comment":"Лайт: Оружейка в легкой зоне."},
-        {"chance":42,"vec":[-8181,142,271],"ang":[0,0,0],"comment":"Харда: 035, управление."},
-        {"chance":76,"vec":[-8181,190,271],"ang":[0,0,0],"comment":"Харда: 035, управление."},
-        {"chance":100,"vec":[-9208,2270,35],"ang":[0,180,0],"comment":"Харда: Оружейка."},
-        {"chance":100,"vec":[-9208,2337,35],"ang":[0,180,0],"comment":"Харда: Оружейка."},
-        {"chance":100,"vec":[-9209,2402,35],"ang":[0,180,0],"comment":"Харда: Оружейка."},
-        {"chance":100,"vec":[-9209,2467,35],"ang":[0,180,0],"comment":"Харда: Оружейка."},
-        {"chance":100,"vec":[-9208,2532,35],"ang":[0,180,0],"comment":"Харда: Оружейка."},
-        {"chance":49,"vec":[-10321,185,29],"ang":[0,-1,0],"comment":"Харда: 106."},
-        {"chance":50,"vec":[-10205,-2858,-967],"ang":[0,-1,0],"comment":"Харда: Кухня охраны."},
-        {"chance":100,"vec":[-11185,-3120,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."},
-        {"chance":100,"vec":[-11204,-3120,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."},
-        {"chance":100,"vec":[-11216,-3120,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."},
-        {"chance":100,"vec":[-11227,-3120,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."},
-        {"chance":100,"vec":[-11247,-3120,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."},
-        {"chance":100,"vec":[-11264,-3120,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."},
-        {"chance":100,"vec":[-11276,-3120,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."},
-        {"chance":100,"vec":[-11293,-3120,-998],"ang":[0,90,0],"comment":"Харда: Оружейка охраны."},
-        {"chance":13,"vec":[-8673,-6566,1882],"ang":[0,0,0],"comment":"Выход: Б."}
+        {"chance":40,"vec":[-1943,-2516,79],"ang":[0,0,0],"comment":"Lite zone: Rest room "},
+        {"chance":40,"vec":[-1512,-2520,47],"ang":[0,0,0],"comment":"Lite zone: Rest room "},
+        {"chance":50,"vec":[-6142,-1687,22],"ang":[0,0,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-6142,-1670,22],"ang":[0,0,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-5839,-6510,64],"ang":[0,90,0],"comment":"Intercom"},
+        {"chance":70,"vec":[-5773,-7171,42],"ang":[0,90,0],"comment":"Medblock"},
+        {"chance":70,"vec":[-5834,-7461,0],"ang":[0,100,0],"comment":"Medblock"},
+        {"chance":45,"vec":[-6633,-7313,36],"ang":[0,70,0],"comment":"Medblock"},
+        {"chance":45,"vec":[-6757,-7293,0],"ang":[0,65,0],"comment":"Medblock"},
+        {"chance":45,"vec":[-6471,-7293,0],"ang":[0,175,0],"comment":"Medblock"},
+        {"chance":45,"vec":[-7038,-7468,30],"ang":[0,-30,0],"comment":"Medblock"},
+        {"chance":45,"vec":[-7054,-7465,30],"ang":[0,45,0],"comment":"Medblock"},
+        {"chance":45,"vec":[-6911,-7464,32],"ang":[0,-50,0],"comment":"Medblock"},
+        {"chance":30,"vec":[-8046,-6373,200],"ang":[0,35,0],"comment":"Nuclear Control room"},
+        {"chance":30,"vec":[-7686,-6401,200],"ang":[0,45,0],"comment":"Nuclear Control room"},
+        {"chance":30,"vec":[-7586,-6235,200],"ang":[0,110,0],"comment":"Nuclear Control room"},
+        {"chance":75,"vec":[-8495,-5413,0],"ang":[0,95,0],"comment":"Nuke Reactor zone"},
+        {"chance":67,"vec":[-6744,-2031,0],"ang":[0,-23,0],"comment":"Heavy Zone: Cube"},
+        {"chance":50,"vec":[-9549,2524,4],"ang":[0,5,0],"comment":"Heavy Zone: Armory"}, 
+        {"chance":50,"vec":[-9543,2525,4],"ang":[0,5,0],"comment":"Heavy Zone: Armory"},
+        {"chance":90,"vec":[-11179,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
+        {"chance":90,"vec":[-11192,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
+        {"chance":90,"vec":[-11207,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
+        {"chance":90,"vec":[-11223,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
+        {"chance":90,"vec":[-11234,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
+        {"chance":90,"vec":[-11247,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
+        {"chance":90,"vec":[-11259,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
+        {"chance":90,"vec":[-11275,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
+        {"chance":90,"vec":[-11289,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
+        {"chance":90,"vec":[-11299,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"} 
     ],
     "500_panacea":[
-        {"chance":75,"vec":[-5396,2770,36],"ang":[0,0,0],"comment":"Харда: SCP-996."}
+        {"chance":50,"vec":[-6807,-1675,1],"ang":[0,-40,0],"comment":"Heavy Zone: Cube"} 
     ],
     "427_amulet":[
-        {"chance":25,"vec":[-6795,-1726,1],"ang":[0,90,0],"comment":"Харда"}
+        {"chance":25,"vec":[-6795,-1726,1],"ang":[0,90,0],"comment":"Heavy Zone"}
     ],
-    "268_cap":[
-        {
-            "25":{"vec":[-2011,-2063,30],"ang":[0,90,0],"comment":"Лайт: комната отдыха."},
-            "75":{"vec":[-10556,29,37],"ang":[0,0,0],"comment":"Харда: SCP-106."}
-        }
+    "268_cap":[ 
+        {"chance":40,"vec":[-2726,-3348,32],"ang":[0,-90,0],"comment":"Office "}
     ],
     "005_picklock":[
+        {"chance":100,"vec":[-728,-5275,8],"ang":[0,-45,0],"comment":"Lite zone: SCP-079"},
         {
-            "29":{"vec":[-7332,-2427,36],"ang":[0,0,0]},
-            "31":{"vec":[-6304,-5466,36],"ang":[0,0,0]},
-            "40":{"vec":[-296,-1074,30],"ang":[0,0,0]}
+            "27":{"vec":[-1666,-488,224],"ang":[0,-145,0],"comment":"Lite zone: SCP-173"},
+            "26":{"vec":[-8012,376,184],"ang":[0,-90,0],"comment":"Heavy Zone: SCP-035"},
+            "24":{"vec":[-6697,-1796,1],"ang":[0,-40,0],"comment":"Heavy Zone: Cube"},
+            "23":{"vec":[-5182,2627,1],"ang":[0,-175,0],"comment":"Heavy Zone: SCP-996"} 
         }
     ],
     "weapon_axe":[
-        {"chance":32,"vec":[-4174,-5820,32],"ang":[0,97,84],"comment":"Лайт: На складе № D."}
+        {"chance":20,"vec":[487,-1065,30],"ang":[0,90,0],"comment":"Lite zone: Toilet"},
+        {"chance":45,"vec":[-2013,-2058,30],"ang":[0,90,0],"comment":"Lite zone: Rest room "},
+        {"chance":45,"vec":[-6487,-7443,0],"ang":[0,145,0],"comment":"Medblock"},
+        {"chance":45,"vec":[-6989,-7435,37],"ang":[0,175,0],"comment":"Medblock"}  
     ],
     "weapon_hammer":[
-        {"chance":75,"vec":[954,-3283,51],"ang":[0,-177,0],"comment":"Лайт: В строящемся кубе."},
-        {"chance":80,"vec":[3803,-2645,79],"ang":[0,90,0],"comment":"Лайт: 914."},
-        {"chance":45,"vec":[-4182,-5838,32],"ang":[0,70,-90],"comment":"Лайт: На складе № D."}
+        {"chance":70,"vec":[228,-3782,0],"ang":[0,55,0],"comment":"Lite zone: Cube under construction"},
+        {"chance":50,"vec":[3009,-1732,64],"ang":[0,-45,0] ,"comment":"Lite zone: SCP-914"}
     ],
     "weapon_spanner":[
-        {"chance":22,"vec":[-1949,-5865,0],"ang":[0,-90,0],"comment":"Лайт: Душевая у дэшек."},
-        {"chance":42,"vec":[911,-3332,28],"ang":[0,67,0],"comment":"Лайт: В строящемся кубе."},
-        {"chance":76,"vec":[237,-3644,0],"ang":[0,35,0],"comment":"Лайт: В строящемся кубе."}
+        {"chance":45,"vec":[-1871,-5961,0],"ang":[0,91,0],"comment":"Lite zone: Bathroom"},
+        {"chance":70,"vec":[941,-3301,51],"ang":[0,110,0],"comment":"Lite zone: Cube under construction"},
+        {"chance":70,"vec":[899,-3342,11],"ang":[0,-160,0],"comment":"Lite zone: Cube under construction"},
+        {"chance":50,"vec":[3801,-2700,79],"ang":[0,173,0],"comment":"Lite zone: SCP-914"} 
     ],
-    "weapon_breachcharge":[
-        {"chance":30,"vec":[-3514,-1166,57],"ang":[0,-179,0],"comment":"Лайт: На складе №173."}
+    "weapon_breachcharge":[ 
+        {"chance":50,"vec":[-5981,-1439,22],"ang":[0,-90,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-5966,-1440,22],"ang":[0,-90,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-9563,2493,4],"ang":[0,90,0],"comment":"Heavy Zone: Armory"},
+        {"chance":50,"vec":[-9570,2519,4],"ang":[0,31,0],"comment":"Heavy Zone: Armory"},
+        {"chance":90,"vec":[-10795,-3035,-978],"ang":[0,0,0],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-10749,-3034,-978],"ang":[0,0,0],"comment":"Security Spawn"} 
     ],
-    "weapon_shield":[
+    "weapon_shield":[ 
+        {"chance":100,"vec":[-5864,-1563,40],"ang":[0,90,0],"comment":"Lite zone: Armory (joke)"},
+        {"chance":50,"vec":[-8904,-4916,0],"ang":[0,-30,0],"comment":"Nuke Reactor zone"},
+        {"chance":50,"vec":[-9249,2544,0],"ang":[0,-145,0] ,"comment":"Heavy Zone: Armory"},
+        {"chance":30,"vec":[-11505,702,-367],"ang":[0,135,0],"comment":"Heavy Zone: SCP-106"},
+        {"chance":90,"vec":[-10756,-2831,-978],"ang":[0,-180,0],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-10779,-2831,-978],"ang":[0,-180,0],"comment":"Security Spawn"}  
     ],
     "weapon_bumpmine":[
+
     ],
     "plastic":[
-        {"chance":65,"vec":[-3669,-1455,56],"ang":[0,87,90],"comment":"Лайт: На складе №173."},
-        {"chance":20,"vec":[-3362,-1298,56],"ang":[0,180,90],"comment":"Лайт: На складе №173."},
-        {"chance":72,"vec":[-3362,-1297,56],"ang":[0,-179,90],"comment":"Лайт: На складе №173."},
-        {"chance":10,"vec":[-4135,-5978,56],"ang":[0,180,90],"comment":"Лайт: На складе № D."},
-        {"chance":90,"vec":[-4448,-5502,56],"ang":[0,180,90],"comment":"Лайт: На складе № D."}
-        
+        {"chance":62,"vec":[-3382,-1169,104],"ang":[0,143,0],"comment":"Lite zone: Storage #173"},
+        {"chance":62,"vec":[-3543,-1195,104],"ang":[0,-160,0],"comment":"Lite zone: Storage #173"},
+        {"chance":62,"vec":[-3756,-1194,0],"ang":[0,-90,0],"comment":"Lite zone: Storage #173"},
+        {"chance":40,"vec":[-4017,-5330,104],"ang":[0,-130,0],"comment":"Lite zone: Storage"},
+        {"chance":40,"vec":[-4089,-5332,104],"ang":[0,-150,0],"comment":"Lite zone: Storage"},
+        {"chance":40,"vec":[-4444,-5822,79],"ang":[0,-170,0],"comment":"Lite zone: Storage"},
+        {"chance":40,"vec":[-3956,-5952,0],"ang":[0,125,0],"comment":"Lite zone: Storage"},
+        {"chance":40,"vec":[-4069,-5605,0],"ang":[0,150,0],"comment":"Lite zone: Storage"}
     ],
     "iron_ingot":[
-        {"chance":85,"vec":[-769,-5346,30],"ang":[0,-6,0],"comment":"Лайт: За компом."},
-        {"chance":40,"vec":[-769,-5346,33],"ang":[0,-6,0],"comment":"Лайт: За компом."},
-        {"chance":70,"vec":[-3513,-1461,56],"ang":[0,-2,0],"comment":"Лайт: На складе №173."},
-        {"chance":30,"vec":[-3513,-1461,76],"ang":[0,2,0],"comment":"Лайт: На складе №173."},
-        {"chance":20,"vec":[-4294,-5671,56],"ang":[0,180,0],"comment":"Лайт: На складе № D."},
-        {"chance":60,"vec":[-4294,-5671,76],"ang":[0,180,0],"comment":"Лайт: На складе № D."}
+        {"chance":62,"vec":[-3386,-1238,104],"ang":[0,-176,0],"comment":"Lite zone: Storage #173"},
+        {"chance":62,"vec":[-3021,-1547,104],"ang":[0,80,0],"comment":"Lite zone: Storage #173"},
+        {"chance":62,"vec":[-3618,-1594,0],"ang":[0,70,0],"comment":"Lite zone: Storage #173"},
+        {"chance":40,"vec":[-4408,-5461,0],"ang":[0,0,0],"comment":"Lite zone: Storage"},
+        {"chance":40,"vec":[-4354,-5843,79],"ang":[0,-80,0],"comment":"Lite zone: Storage"},
+        {"chance":40,"vec":[-4182,-5833,79],"ang":[0,-145,0],"comment":"Lite zone: Storage"},
+        {"chance":40,"vec":[-4345,-6060,0],"ang":[0,170,0],"comment":"Lite zone: Storage"},
+        {"chance":40,"vec":[-3952,-5323,0],"ang":[0,-150,0],"comment":"Lite zone: Storage"}
     ],
     "card_janitor":[
-        {"chance":50,"vec":[-2154,-4428,10],"ang":[0,-179,0],"comment":"Лайт: Под лестницей у дешек."},
-        {"chance":30,"vec":[2300,-1176,24],"ang":[0,-34,0],"comment":"Лайт: В раздевалке."},
-        {"chance":100,"vec":[-1958,-1006,0],"ang":[0,175,0],"comment":"Лайт: 173 внутри"},
-        {"chance":35,"vec":[-1844,-5950,24],"ang":[70,179,0], "comment":"¯\\_(ツ)_/¯"},
-        {"chance":35,"vec":[-1903,-6469,270],"ang":[38,-89,0], "comment":"¯\\_(ツ)_/¯"},
-        {"chance":35,"vec":[-2678,-3042,55],"ang":[74,90,0], "comment":"¯\\_(ツ)_/¯"},
-        {"chance":35,"vec":[-1953,-2518,79],"ang":[61,2,0], "comment":"¯\\_(ツ)_/¯"},
-        {"chance":35,"vec":[-1866,-1929,79],"ang":[63,-178,0], "comment":"¯\\_(ツ)_/¯"},
-        {"chance":35,"vec":[-1535,-2329,18],"ang":[81,-90,0], "comment":"¯\\_(ツ)_/¯"},
-        {"chance":35,"vec":[-4021,-5838,79],"ang":[69,-90,0], "comment":"¯\\_(ツ)_/¯"},
-        {"chance":35,"vec":[-4444,-5836,79],"ang":[78,-90,0], "comment":"¯\\_(ツ)_/¯"},
-        {"chance":35,"vec":[-4270,-5835,79],"ang":[82,89,0], "comment":"¯\\_(ツ)_/¯"},
-        {"chance":35,"vec":[-1633,-650,274],"ang":[87,-1,0], "comment":"¯\\_(ツ)_/¯"},
-        {"chance":35,"vec":[-2243,-3342,47],"ang":[77,165,0], "comment":"¯\\_(ツ)_/¯"},
-        {"chance":35,"vec":[1152,-2510,0],"ang":[79,139,0], "comment":"¯\\_(ツ)_/¯"}
+        {"chance":27,"vec":[-2056,-5804,0],"ang":[0,-45,0],"comment":"Lite zone: Bathroom"},
+        {"chance":27,"vec":[-2101,-4429,0],"ang":[0,-90,0],"comment":"Lite zone: Under stairs"},
+        {"chance":12,"vec":[-2250,-6691,0],"ang":[0,90,0],"comment":"Lite zone: D-Class Cell"},
+        {"chance":20,"vec":[-901,-4425,0],"ang":[0,45,0],"comment":"Lite zone: SCP-079"},
+        {"chance":15,"vec":[485,-975,30],"ang":[0,90,0],"comment":"Lite zone: Toilet"},
+        {"chance":25,"vec":[2296,-1556,24],"ang":[0,-90,0],"comment":"Lite zone: Locker room"},
+        {"chance":25,"vec":[2522,-1227,24],"ang":[0,0,0],"comment":"Lite zone: Locker room"},
+        {"chance":30,"vec":[582,-2473,0],"ang":[0,125,0],"comment":"Lite zone: Server room"},
+        {"chance":100,"vec":[-2015,-775,0],"ang":[0,-10,0],"comment":"Lite zone: SCP-173"},
+        {"chance":75,"vec":[-2987,-1085,0],"ang":[0,-120,0],"comment":"Lite zone: Storage #173"},
+        {"chance":95,"vec":[-6002,-4156,0],"ang":[0,-90,0],"comment":"Lite zone: Vent room"},
+        {"chance":40,"vec":[-6048,-5351,0],"ang":[0,-111,0],"comment":"Lite zone: Office Gate"}   
     ],
     "card_scientist":[
-        {"chance":100,"vec":[-6916,-7454,32],"ang":[0,87,0],"comment":"Лайт: В мед блоке."},
-        {"chance":50,"vec":[578, -3444, 43],"ang":[0,87,0],"comment":"Лайт: В строящемся кубе."},
-        {"chance":20,"vec":[2713,-2394,287],"ang":[0,0,0],"comment":"Лайт: 914."},
-        {"chance":45,"vec":[-2732,-3137,2],"ang":[0,-89,0],"comment":"Лайт: В офисах."}
+        {"chance":35,"vec":[-2110,-6738,259],"ang":[0,90,0],"comment":"Lite zone: D-Class Cell"},
+        {"chance":25,"vec":[631,-3440,43],"ang":[0,-45,0],"comment":"Lite zone: Cube under construction"},
+        {"chance":25,"vec":[2692,-2374,272],"ang":[0,90,0],"comment":"Lite zone: Cube under construction"},
+        {"chance":30,"vec":[2691,-2367,272],"ang":[0,90,0],"comment":"Lite zone: SCP-914"},
+        {"chance":18,"vec":[-2219,-2864,40],"ang":[0,-15,0],"comment":"Lite zone: Office "},
+        {"chance":18,"vec":[-2344,-3485,55],"ang":[0,90,0],"comment":"Lite zone: Office "},
+        {"chance":18,"vec":[-2769,-3473,33],"ang":[0,90,0],"comment":"Lite zone: Office "},
+        {"chance":18,"vec":[-2728,-3126,32],"ang":[0,120,0],"comment":"Lite zone: Office "},
+        {"chance":18,"vec":[-2679,-2691,55],"ang":[0,90,0],"comment":"Lite zone: Office "},
+        {"chance":37,"vec":[-1638,-2003,30],"ang":[0,-90,0],"comment":"Lite zone: Rest room "},
+        {"chance":37,"vec":[-1250,-2507,27],"ang":[0,180,0],"comment":"Lite zone: Rest room "},
+        {"chance":37,"vec":[-2035,-2517,79],"ang":[0,180,0],"comment":"Lite zone: Rest room "},
+        {"chance":42,"vec":[-1887,-648,264],"ang":[0,-180,0],"comment":"Lite zone: SCP-173"},
+        {"chance":51,"vec":[-5479,-2907,0],"ang":[0,-18,0],"comment":"Lite zone: SCP-457"} 
     ],
     "card_major_scientist":[
-        {"chance":30,"vec":[-1235,-2515,27],"ang":[0,49,0],"comment":"Лайт: Комната отдыха."},
-        {"chance":99,"vec":[-8758,1242,36],"ang":[0,178,0],"comment":"Харда: 049."}
     ],
     "card_zone_manager":[
-        {"chance":35,"vec":[-2038,-656,264],"ang":[0,-91,0],"comment":"Лайт: 173 пульт."}
     ],
-    "card_guard":[
+    "card_guard":[ 
+        {"chance":70,"vec":[-6012,-6172,34],"ang":[0,0,0],"comment":"Intercom"},
+        {"chance":30,"vec":[-11984,-2888,-973],"ang":[0,126,0],"comment":"Security Spawn"},
+        {"chance":30,"vec":[-11720,-2657,-984],"ang":[0,94,0],"comment":"Security Spawn"},
+        {"chance":30,"vec":[-11720,-2657,-984],"ang":[0,94,0],"comment":"Security Spawn"},
+        {"chance":30,"vec":[-10503,-2165,-958],"ang":[0,-12,0],"comment":"Security Spawn"},
+        {"chance":30,"vec":[-10504,-2649,-975],"ang":[0,-68,0],"comment":"Security Spawn"},
+        {"chance":30,"vec":[-10257,-2894,-967],"ang":[0,177,0],"comment":"Security Spawn"} 
     ],
     "card_senior_guard":[
     ],
     "card_mog_lieutenant":[
-        {"chance":75,"vec":[-13026,-2369,0],"ang":[0,-93,0],"comment":"Харда: 096."}
+    ],
+    "card_chaos":[
+        {"chance":35,"vec":[-7877,-5836,1762],"ang":[0,-180,0],"comment":"Upstairs Chaos zone"}  
     ],
     "flashlight":[
-        {"chance":100,"vec":[-10746,-3027,-978],"ang":[60,-180,0],"comment":"Харда: Оружейка охраны."},
-        {"chance":100,"vec":[-10813,-2829,-978],"ang":[60,0,0],"comment":"Харда: Оружейка охраны."},
-        {"chance":75,"vec":[-2115,-6722,259],"ang":[60,90,0],"comment":"Лайт: В комнате управления у дэшек."},
-        {"chance":75,"vec":[-1887,-648,264],"ang":[70,-91,0],"comment":":Лайт: 173 стол справа от пульта."}
+        {"chance":30,"vec":[-2096,-5954,24],"ang":[0,0,0],"comment":"Lite zone: Bathroom"}, 
+        {"chance":40,"vec":[-2118,-6692,259],"ang":[0,0,0],"comment":"Lite zone: D-Class Cell."},
+        {"chance":40,"vec":[947,-3806,45],"ang":[0,-28,0],"comment":"Lite zone: Cube under construction"},
+        {"chance":35,"vec":[2298,-1166,24],"ang":[0,60,0],"comment":"Lite zone: Locker room"},
+        {"chance":35,"vec":[2498,-1490,24],"ang":[0,0,0],"comment":"Lite zone: Locker room"},
+        {"chance":60,"vec":[641,-1932,0],"ang":[0,-180,0],"comment":"Lite zone: Server room"},
+        {"chance":40,"vec":[2613,-2194,258],"ang":[0,-180,0],"comment":"Lite zone: SCP-914"},
+        {"chance":22,"vec":[-2723,-2906,32],"ang":[0,-70,0],"comment":"Lite zone: Office "},
+        {"chance":22,"vec":[-2339,-3275,55],"ang":[0,-90,0],"comment":"Lite zone: Office "},
+        {"chance":75,"vec":[-1951,-999,0],"ang":[0,-15,0],"comment":"Lite zone: SCP-173"},
+        {"chance":30,"vec":[-5897,-3611,0],"ang":[0,90,0],"comment":"Lite zone: Vent room"},
+        {"chance":30,"vec":[-6571,-1362,0],"ang":[0,-120,0],"comment":"Heavy Zone: Cube"},
+        {"chance":30,"vec":[-7007,-1924,0],"ang":[0,0,0],"comment":"Heavy Zone: Cube"},
+        {"chance":30,"vec":[-5394,2761,36],"ang":[0,-90,0],"comment":"Heavy Zone: SCP-996"},
+        {"chance":60,"vec":[-8766,1239,36],"ang":[0,-135,0],"comment":"Heavy Zone: SCP-049"},
+        {"chance":30,"vec":[-10875,444,-367],"ang":[0,-125,0],"comment":"Heavy Zone: SCP-106"},
+        {"chance":5,"vec":[-11498,-304,-367],"ang":[0,-63,0],"comment":"Heavy Zone: SCP-106"},
+        {"chance":30,"vec":[-10031,-5653,0],"ang":[0,95,0],"comment":"Heavy Zone: Garage"},
+        {"chance":35,"vec":[-9310,-5841,1712],"ang":[0,180,0],"comment":"Gate A"},
+        {"chance":30,"vec":[-10484,-2450,-975],"ang":[0,-59,0],"comment":"Security Spawn"},
+        {"chance":30,"vec":[-10403,-2894,-967],"ang":[0,148,0],"comment":"Security Spawn"},
+        {"chance":30,"vec":[-10208,-2599,-990],"ang":[0,97,0],"comment":"Security Spawn"}  
     ],
     "radio":[
-        {"chance":45,"vec":[-1913,-6185,251],"ang":[75,0,0],"comment":"Лайт: В комнате управления у дэшек."},
-        {"chance":100,"vec":[-5982,-6175,32],"ang":[79,172,0],"comment":"Офисы: Интерком."},
-        {"chance":75,"vec":[-1964,-609,264],"ang":[70,-90,0],"comment":":Лайт: 173 стол справа от пульта."}
+        {"chance":40,"vec":[-1905,-6183,263],"ang":[0,-90,0],"comment":"Lite zone: D-Class Cell."},
+        {"chance":60,"vec":[-635,-4859,29],"ang":[0,180,0],"comment":"Lite zone: SCP-079"},
+        {"chance":10,"vec":[-294,-1075,30],"ang":[0,90,0],"comment":"Lite zone: Toilet"}, 
+        {"chance":10,"vec":[2667,-2328,269],"ang":[0,90,0],"comment":"Lite zone: SCP-914"},
+        {"chance":60,"vec":[1322,-2501,104],"ang":[0,-180,0],"comment":"Lite zone: Server room"},
+        {"chance":42,"vec":[-2004,-645,264],"ang":[0,180,0],"comment":"Lite zone: SCP-173"},
+        {"chance":51,"vec":[-5469,-3216,0],"ang":[0,70,0],"comment":"Lite zone: SCP-457"},
+        {"chance":20,"vec":[-7590,-5983,239],"ang":[0,-135,0],"comment":"Nuclear Control room"},
+        {"chance":20,"vec":[-7904,-6140,238],"ang":[0,-125,0],"comment":"Nuclear Control room"},
+        {"chance":20,"vec":[-7949,-5847,236],"ang":[0,-175,0],"comment":"Nuclear Control room"},
+        {"chance":20,"vec":[-7565,-5747,0],"ang":[0,135,0],"comment":"Nuke Reactor zone"},
+        {"chance":20,"vec":[-8736,-5262,-4],"ang":[0,-65,0],"comment":"Nuke Reactor zone"},
+        {"chance":60,"vec":[-8020,298,213],"ang":[0,90,0],"comment":"Heavy Zone: SCP-035"},
+        {"chance":10,"vec":[-10543,-65,29],"ang":[0,90,0],"comment":"Heavy Zone: SCP-106"},
+        {"chance":20,"vec":[-12497,-2419,36],"ang":[0,-120,0],"comment":"Heavy Zone: SCP-996"},
+        {"chance":30,"vec":[-10985,-6621,48],"ang":[0,0,0],"comment":"Heavy Zone: Garage"},
+        {"chance":30,"vec":[-10275,-6618,48],"ang":[0,0,0],"comment":"Heavy Zone: Garage"},
+        {"chance":35,"vec":[-7681,-5888,1762],"ang":[0,90,0],"comment":"Upstairs Chaos zone"},
+        {"chance":30,"vec":[-11627,-2499,-973],"ang":[0,-180,0],"comment":"Security Spawn"},
+        {"chance":30,"vec":[-11979,-2672,-973],"ang":[0,-104,0],"comment":"Security Spawn"},
+        {"chance":30,"vec":[-11624,-2820,-973],"ang":[0,-71,0],"comment":"Security Spawn"} 
     ]
 }

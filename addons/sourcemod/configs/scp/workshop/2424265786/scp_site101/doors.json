@@ -60,32 +60,32 @@
         "scp":false
     },
     "299838": {
-        "location":"Heave gate 1",
+        "location":"Heavy gate 1",
         "access":7,
         "scp":true
     },
     "299847": {
-        "location":"Heave gate 2",
+        "location":"Heavy gate 2",
         "access":7,
         "scp":true
     },
     "299710": {
-        "location":"Heave gate 3",
+        "location":"Heavy gate 3",
         "access":7,
         "scp":true
     },
     "299713": {
-        "location":"Heave gate 4",
+        "location":"Heavy gate 4",
         "access":7,
         "scp":true
     },
     "562394": {
-        "location":"Light armory 1",
+        "location":"Lite armory 1",
         "access":4,
         "scp":false
     },
     "562388": {
-        "location":"Light armory 1",
+        "location":"Lite armory 1",
         "access":4,
         "scp":false
     },
