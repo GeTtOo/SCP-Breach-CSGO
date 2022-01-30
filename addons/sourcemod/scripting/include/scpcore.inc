@@ -50,13 +50,12 @@ GameMode gamemode;
 
 #include "scp\classes\entity"
 #include "scp\classes\client"
-#include "scp\classes\singletons"
-
 #include "scp\classes\worldtext"
+#include "scp\classes\singletons"
 
 ClientSingleton player;
 EntitySingleton ents;
-WorldTextSingleton WT;
+WorldTextSingleton worldtext;
 
 #include "scp\classes\manager"
 #include "scp\classes\nuke"

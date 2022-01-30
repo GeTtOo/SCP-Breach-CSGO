@@ -28,109 +28,6 @@
  *
  **/
 
-methodmap ClientSingleton < Base {
-
-    public ClientSingleton() {
-        return view_as<ClientSingleton>(new Base());
-    }
-    
-    property ArrayList list {
-        public native get();
-    }
-
-    public native Player Add(int id);
-
-    public native void Remove(int id);
-
-    public ArrayList GetAll()
-    {
-        ArrayList entities = this.list;
-
-        ArrayList players = new ArrayList();
-        for (int i=0; i < entities.Length; i++)
-        {
-            int id = entities.Get(i, 0);
-            if (id <= MaxClients && id > 0 && IsClientInGame(id))
-            {
-                Player ply = entities.Get(i, 1);
-                if (ply != null)
-                    players.Push(ply);
-            }
-        }
-        return players;
-    }
-
-    public Player GetByID(int id)
-    {
-        ArrayList entities = this.list;
-        int idx = entities.FindValue(id, 0);
-        if (idx == -1) return view_as<Player>(null);
-        return entities.Get(idx, 1);
-    }
-
-    public Player GetBySteamID(char[] authcheck, AuthIdType type = AuthId_Steam2)
-    {
-        ArrayList players = this.GetAll();
-        
-        for (int i=0; i < players.Length; i++)
-        {
-            char authstr[64];
-            Player ply = players.Get(i);
-            ply.GetAuth(authstr, sizeof(authstr), type);
-
-            if (StrEqual(authstr, authcheck))
-                return ply;
-        }
-
-        return view_as<Player>(null);
-    }
-
-    public Player GetRandom()
-    {
-        ArrayList sortedPlayers = new ArrayList();
-        ArrayList players = this.GetAll();
-        for (int i=0; i < players.Length; i++) {
-            Player ply = players.Get(i);
-            if (ply.IsAlive())
-                sortedPlayers.Push(ply);
-        }
-
-        delete players;
-
-        return sortedPlayers.Get(GetRandomInt(0, sortedPlayers.Length - 1));
-    }
-
-    public int InGame()
-    {
-        ArrayList players = this.GetAll();
-        int len = players.Length;
-        delete players;
-        return len;
-    }
-
-    public int Alive()
-    {
-        ArrayList alivePlayers = new ArrayList();
-        ArrayList players = this.GetAll();
-        for (int i=0; i < players.Length; i++) {
-            Player ply = players.Get(i);
-            if (ply.IsAlive())
-                alivePlayers.Push(ply);
-        }
-
-        int len = alivePlayers.Length;
-
-        delete players;
-        delete alivePlayers;
-
-        return len;
-    }
-
-    property int Length {
-        public get() { return this.InGame(); }
-    }
-}
-
 methodmap EntitySingleton < Base {
 
     public EntitySingleton() {
@@ -275,5 +172,145 @@ methodmap EntitySingleton < Base {
 
     public ArrayList FindInPVS(Player ply, int distance = 100, int fov = 90, char filter[1][32] = {"player"}) {
         return this.FindInCone(ply.EyePos(), ply.GetAng().Forward(ply.EyePos(), float(distance)), fov, filter, sizeof(filter));
+    }
+}
+
+methodmap ClientSingleton < Base {
+
+    public ClientSingleton() {
+        return view_as<ClientSingleton>(new Base());
+    }
+    
+    property ArrayList list {
+        public native get();
+    }
+
+    public native Player Add(int id);
+
+    public native void Remove(int id);
+
+    public ArrayList GetAll()
+    {
+        ArrayList entities = this.list;
+
+        ArrayList players = new ArrayList();
+        for (int i=0; i < entities.Length; i++)
+        {
+            int id = entities.Get(i, 0);
+            if (id <= MaxClients && id > 0 && IsClientInGame(id))
+            {
+                Player ply = entities.Get(i, 1);
+                if (ply != null)
+                    players.Push(ply);
+            }
+        }
+        return players;
+    }
+
+    public Player GetByID(int id)
+    {
+        ArrayList entities = this.list;
+        int idx = entities.FindValue(id, 0);
+        if (idx == -1) return view_as<Player>(null);
+        return entities.Get(idx, 1);
+    }
+
+    public Player GetBySteamID(char[] authcheck, AuthIdType type = AuthId_Steam2)
+    {
+        ArrayList players = this.GetAll();
+        
+        for (int i=0; i < players.Length; i++)
+        {
+            char authstr[64];
+            Player ply = players.Get(i);
+            ply.GetAuth(authstr, sizeof(authstr), type);
+
+            if (StrEqual(authstr, authcheck))
+                return ply;
+        }
+
+        return view_as<Player>(null);
+    }
+
+    public Player GetRandom()
+    {
+        ArrayList sortedPlayers = new ArrayList();
+        ArrayList players = this.GetAll();
+        for (int i=0; i < players.Length; i++) {
+            Player ply = players.Get(i);
+            if (ply.IsAlive())
+                sortedPlayers.Push(ply);
+        }
+
+        delete players;
+
+        return sortedPlayers.Get(GetRandomInt(0, sortedPlayers.Length - 1));
+    }
+
+    public int InGame()
+    {
+        ArrayList players = this.GetAll();
+        int len = players.Length;
+        delete players;
+        return len;
+    }
+
+    public int Alive()
+    {
+        ArrayList alivePlayers = new ArrayList();
+        ArrayList players = this.GetAll();
+        for (int i=0; i < players.Length; i++) {
+            Player ply = players.Get(i);
+            if (ply.IsAlive())
+                alivePlayers.Push(ply);
+        }
+
+        int len = alivePlayers.Length;
+
+        delete players;
+        delete alivePlayers;
+
+        return len;
+    }
+
+    property int Length {
+        public get() { return this.InGame(); }
+    }
+}
+
+methodmap WorldTextSingleton < Base {
+    
+    public WorldTextSingleton() {
+        return view_as<WorldTextSingleton>(new Base());
+    }
+
+    property ArrayList list {
+        public native get();
+    }
+
+    public native WorldText Create(Vector vec, Angle ang, TypeWorldText type = Text);
+
+    public native void Remove(WorldText ent);
+
+    public WorldText Get(int id) {
+        return this.list.Get(id);
+    }
+
+    public ArrayList GetAll(TypeWorldText type = Text) {
+        ArrayList list = this.list;
+        ArrayList sortedlist = new ArrayList();
+
+        for (int i=0; i < list.Length; i++) {
+            char class[32];
+            view_as<Entity>(list.Get(i, 1)).GetClass(class, sizeof(class));
+            if (!StrEqual(class, "point_worldtext")) continue;
+
+            WorldText wt = list.Get(i, 1);
+
+            if (wt != null && (wt.type == type || type == All))
+                sortedlist.Push(wt);
+        }
+
+        return sortedlist;
     }
 }

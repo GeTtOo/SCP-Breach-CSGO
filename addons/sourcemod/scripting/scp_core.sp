@@ -79,16 +79,20 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("GameMode.timer.get", NativeGameMode_Timers);
     CreateNative("GameMode.log.get", NativeGameMode_Logger);
 
-    CreateNative("ClientSingleton.list.get", NativeEntities_GetList);
-    CreateNative("ClientSingleton.Add", NativeClients_Add);
-    CreateNative("ClientSingleton.Remove", NativeClients_Remove);
-
     CreateNative("EntitySingleton.list.get", NativeEntities_GetList);
     CreateNative("EntitySingleton.Create", NativeEntities_Create);
     CreateNative("EntitySingleton.Remove", NativeEntities_Remove);
     CreateNative("EntitySingleton.RemoveByID", NativeEntities_RemoveByID);
     CreateNative("EntitySingleton.IndexUpdate", NativeEntities_IndexUpdate);
     CreateNative("EntitySingleton.Clear", NativeEntities_Clear);
+
+    CreateNative("ClientSingleton.list.get", NativeEntities_GetList);
+    CreateNative("ClientSingleton.Add", NativeClients_Add);
+    CreateNative("ClientSingleton.Remove", NativeClients_Remove);
+
+    CreateNative("WorldTextSingleton.list.get", NativeEntities_GetList);
+    CreateNative("WorldTextSingleton.Create", NativeWT_Create);
+    CreateNative("WorldTextSingleton.Remove", NativeWT_Remove);
 
     OnLoadGM = CreateGlobalForward("SCP_OnLoad", ET_Event);
     OnUnloadGM = CreateGlobalForward("SCP_OnUnload", ET_Event);
@@ -136,7 +140,7 @@ public void OnMapStart()
 {
     ents = new EntitySingleton();
     player = new ClientSingleton();
-    WT = new WorldTextSingleton();
+    worldtext = new WorldTextSingleton();
     AdminMenu = new AdminMenuSingleton();
 
     char mapName[128];
@@ -195,7 +199,7 @@ public void OnMapEnd()
     
     delete ents;
     delete player;
-    delete WT;
+    delete worldtext;
     delete AdminMenu;
     delete gamemode;
 }
@@ -234,7 +238,7 @@ public void OnClientPostAdminCheck(int id)
         ply.SetPropFloat("m_fForceTeam", 0.0);
     }
 
-    if (!gamemode.mngr.IsWarmup && player.Alive() <= 1 && player.InGame() == 2)
+    if (!gamemode.mngr.RoundLock && !gamemode.mngr.IsWarmup && player.Alive() <= 1 && player.InGame() == 2)
         gamemode.mngr.EndGame("restart");
 }
 
@@ -517,7 +521,6 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
         delete players;
 
         ents.Clear();
-        WT.Clear();
         gamemode.mngr.RoundComplete = false;
         gamemode.nuke.Reset();
         gamemode.timer.ClearAll();
@@ -1935,17 +1938,29 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
 
 public any NativeEntities_Remove(Handle Plugin, int numArgs) {
     ArrayList entities = ents.list;
-    int idx = entities.FindValue(GetNativeCell(2), 1);
-    Entity ent = entities.Get(idx, 1);
-    if (ent.meta)
+    Entity entin = GetNativeCell(2);
+    int idx = entities.FindValue(entin, 1);
+    if (idx != -1)
     {
-        if (ent.meta.onuse)
-            ent.RemoveHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
-        if (ent.meta.ontouch)
-            ent.RemoveHook(SDKHook_TouchPost, CB_EntTouch);
+        Entity ent = entities.Get(idx, 1);
+        if (ent.meta)
+        {
+            if (ent.meta.onuse)
+                ent.RemoveHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
+            if (ent.meta.ontouch)
+                ent.RemoveHook(SDKHook_TouchPost, CB_EntTouch);
+        }
+        ent.Remove();
+        ents.list.Erase(idx);
     }
-    ent.Remove();
-    ents.list.Erase(idx);
+    else
+    {
+        char classname[32];
+        entin.GetClass(classname, sizeof(classname));
+        gamemode.log.Error("Cant find entity in storage. id:%i, class:%s", entin.id, classname);
+        entin.Remove();
+    }
+    //delete entin;
 }
 
 public any NativeEntities_RemoveByID(Handle Plugin, int numArgs) {
@@ -2005,4 +2020,24 @@ public any NativeEntities_Clear(Handle Plugin, int numArgs) {
     }
 
     delete players;
+}
+
+public any NativeWT_Create(Handle Plugin, int numArgs) {
+    WorldText wt = view_as<WorldText>(ents.Create("point_worldtext"));
+
+    wt.type = GetNativeCell(4);
+    wt.SetPos(GetNativeCell(2), GetNativeCell(3));
+
+    return wt;
+}
+
+public any NativeWT_Remove(Handle Plugin, int numArgs) {
+    ArrayList entities = ents.list;
+    int idx = entities.FindValue(GetNativeCell(2), 1);
+    if (idx != -1)
+    {
+        Entity ent = entities.Get(idx, 0);
+        ent.Remove();
+        ents.list.Erase(idx);
+    }
 }

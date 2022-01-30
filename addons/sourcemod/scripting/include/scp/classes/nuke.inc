@@ -73,7 +73,7 @@ methodmap NuclearWarhead < Base {
     }
 
     public void Update(char[] text, int size = 0) {
-        ArrayList displays = WT.GetAll(NukeMonitor);
+        ArrayList displays = worldtext.GetAll(NukeMonitor);
 
         if (displays.Length > 0)
             for (int i=0; i < displays.Length; i++) {
@@ -171,7 +171,7 @@ methodmap NuclearWarhead < Base {
             Vector dp = (display.GetAng() - new Angle(10.0,90.0,0.0)).Up((display.GetAng() - new Angle(10.0,90.0,0.0)).Right((display.GetAng() - new Angle(10.0,90.0,0.0)).Forward(display.GetPos(), -8.0), -37.5), -17.0);
             Angle da = display.GetAng() - new Angle(10.0,90.0,0.0);
 
-            WT.Create(dp, da, NukeMonitor).SetSize(15).SetColor(new Colour(180,0,0));
+            worldtext.Create(dp, da, NukeMonitor).SetSize(15).SetColor(new Colour(190,0,20));
         }
     }
 
@@ -182,7 +182,7 @@ methodmap NuclearWarhead < Base {
         for (int i=0; i < spawnlist.Length; i++) {
             JSON_OBJECT data = view_as<JSON_OBJECT>(spawnlist.GetObject(i));
 
-            WT.Create(data.GetVector("pos"), data.GetAngle("ang"), NukeMonitor).SetSize(data.GetInt("size")).SetColor(data.GetColor("color")).SetText("Disabled");
+            worldtext.Create(data.GetVector("pos"), data.GetAngle("ang"), NukeMonitor).SetSize(data.GetInt("size")).SetColor(data.GetColor("color")).SetText("Disabled");
         }
         
         this.AddCounterToDisplay();

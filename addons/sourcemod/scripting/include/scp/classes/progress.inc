@@ -65,7 +65,7 @@ methodmap ProgressBar < Base {
 
     public void timername(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("timername", buffer) : this.GetString("timername", buffer, max_size); }
 
-    public void Start(int time, char[] funcName) {
+    public Tmr Start(int time, char[] funcName = "") {
         
         int it = time / 1000;
         float ft = float(it);
@@ -79,11 +79,14 @@ methodmap ProgressBar < Base {
         char timername[32];
         
         Format(timername, sizeof(timername), "progress_bar_ply_%i", this.clientID);
-        gamemode.timer.Create(timername, time, 1, funcName, this.ply);
+        if (!StrEqual(funcName, ""))
+            return gamemode.timer.Create(timername, time, 1, funcName, this.ply);
 
         this.timername(timername);
 
         this.active = true;
+        
+        return null;
     }
 
     public void Stop() {
