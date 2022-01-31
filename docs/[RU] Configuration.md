@@ -452,7 +452,7 @@ Bginf – Информация о количестве бодигрупп в м�
 {"radius":800,"pos":[3250,-2222,100],"ltag":"SCP-914"}
 ```
 
-## [spawn_map.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/spawn_map.json)
+## [spawnlist.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/spawn_map.json)
 
 В данном файле осуществляется настройка появления предметов на карте. Поддерживается рандомизация.    
 
