@@ -97,12 +97,12 @@ public void Logic(Player &ply, Entity &ent)
     Angle sa = ply.GetAng();
 
     char model[256];
-    ply.GetModel(model, sizeof(model));
+    ply.model.GetPath(model, sizeof(model));
 
     ArrayList data = new ArrayList(256);
     data.Push(ply);
     data.Push(ent);
-    data.Push(ply.GetSkin());
+    data.Push(ply.model.GetSkin());
     data.PushString(model);
 
     ply.Kill();
@@ -132,8 +132,8 @@ public void ExecDelay(ArrayList data)
     ents.IndexUpdate(ent.Create("prop_dynamic_override").Spawn());
     
     ply.SetHandle("035_ent", ent);
-    ply.SetModel(model);
-    ply.SetSkin(skinid + 1);
+    ply.model.SetPath(model);
+    ply.model.SetSkin(skinid + 1);
     ent.SetHook(SDKHook_SetTransmit, TransmitHandler);
     
     SetVariantString("!activator");

@@ -37,28 +37,21 @@
 
 #include <sdktools>
 
+#include "scp/classes/model"
+
 methodmap Entity < Base {
 
     public Entity(int id = 5000) {
         Entity entity = view_as<Entity>(new Base());
-        entity.SetValue("id", id);
-        entity.SetValue("spawned", true);
+        entity.SetInt("id", id);
+        entity.SetBool("spawned", true);
+        entity.SetHandle("model", new Mdl(id));
 
         return entity;
     }
 
-    property EntityMeta meta {
-        public set(EntityMeta value) { this.SetValue("entmeta", value); }
-        public get() { EntityMeta meta; return this.GetValue("entmeta", meta) ? meta : null; }
-    }
-
-    property ModelMeta mdlmeta {
-        public set(ModelMeta value) { this.SetValue("mdlmeta", value); }
-        public get() { ModelMeta meta; return this.GetValue("mdlmeta", meta) ? meta : null; }
-    }
-
     property int id {
-        public set(int id) { this.SetInt("id", id); }
+        public set(int id) { this.SetInt("id", id); this.GetBase("model").SetInt("entid", id); }
         public get() { return this.GetInt("id"); }
     }
 
@@ -67,9 +60,14 @@ methodmap Entity < Base {
         public get() { return this.GetBool("spawned"); }
     }
 
-    property ArrayList bglist {
-        public set(ArrayList list) { ArrayList oldlist = this.GetArrayList("bglist"); if (oldlist) delete oldlist; this.SetArrayList("bglist", list); }
-        public get() { return this.GetArrayList("bglist"); }
+    property Mdl model {
+        public set(Mdl value) { this.SetValue("model", value); }
+        public get() { Mdl value; return this.GetValue("model", value) ? value : null; }
+    }
+
+    property EntityMeta meta {
+        public set(EntityMeta value) { this.SetValue("entmeta", value); }
+        public get() { EntityMeta meta; return this.GetValue("entmeta", meta) ? meta : null; }
     }
 
     public Entity SetKV(char[] name, char[] value) {
@@ -121,44 +119,6 @@ methodmap Entity < Base {
         AcceptEntityInput(this.id, input, (activator) ? activator.id : -1, (caller) ? caller.id : -1);
         return this;
     }
-
-    public Entity SetModel(char[] modelName) { SetEntityModel(this.id, modelName); return this; }
-
-    public Entity GetModel(char[] modelName, int max_size) { this.GetPropString("m_ModelName", modelName, max_size, Prop_Data); return this; }
-
-    public void SetModelById(char[] modelid) {
-        this.mdlmeta = gamemode.meta.GetModel(modelid);
-
-        char path[256];
-        this.mdlmeta.Path(path, sizeof(path));
-        SetEntityModel(this.id, path);
-
-        ArrayList list = new ArrayList();
-        for (int i=0; i < this.mdlmeta.bg.Length; i++)
-            list.Push(0);
-        this.bglist = list;
-    }
-
-    public void SetBodyGroup(char[] name, int idx) {
-        char plymdl[128];
-        this.GetModel(plymdl, sizeof(plymdl));
-
-        this.bglist.Set(this.mdlmeta.GetBgId(name), this.mdlmeta.GetBgIdx(name, idx));
-
-        int bgmath = 0;
-        for (int i=0; i < this.bglist.Length; i++)
-            bgmath += this.bglist.Get(i);
-
-        this.SetProp("m_nBody", bgmath);
-    }
-
-    public void SetSkin(int skin) { this.SetProp("m_nSkin", skin); }
-
-    public int GetSkin() { return this.GetProp("m_nSkin"); }
-
-    public Entity SetRenderMode(RenderMode mode) { SetEntityRenderMode(this.id, mode); return this; }
-
-    public Entity SetRenderColor(Colour clr) { SetEntityRenderColor(this.id, clr.r, clr.g, clr.b, clr.a); delete clr; return this; }
 
     public Tmr TimerSimple(int delay, char[] funcname, any args = false) {
         char timername[64];
@@ -275,7 +235,7 @@ methodmap Entity < Base {
     }
 
     public void Dispose() {
-        delete this.bglist;
+        this.model.Dispose();
         delete this;
     }
 

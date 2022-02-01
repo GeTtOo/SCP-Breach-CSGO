@@ -481,6 +481,9 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         Call_StartForward(OnRoundStartForward);
         Call_Finish();
     }
+    else
+        if (gamemode.config.debug)
+            ServerCommand("mp_warmup_end");
 }
 
 public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
@@ -635,7 +638,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
             ply.Team(teamName);
             ply.class = gamemode.team(teamName).class(className);
             
-            for (int i=0; i < ply.inv.Length; i++)
+            for (int i=0; i < ply.inv.items.Length; i++)
             {
                 InvItem item = ply.inv.Get(i);
 

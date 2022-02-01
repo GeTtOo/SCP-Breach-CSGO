@@ -114,7 +114,7 @@ public void Revive(Player ply)
 					{
 						if (vic.ragdoll == vicrag)
 						{
-							ArrayList bglist = vic.bglist;
+							ArrayList bglist = vic.model.bglist;
 							char modelname[256];
 							
 							vic.ragdoll.meta.model(modelname, sizeof(modelname));
@@ -123,11 +123,11 @@ public void Revive(Player ply)
 							vic.class = gamemode.team("SCP").class("049_2");
 
 							vic.Spawn();
-							vic.SetModel(modelname);
+							vic.model.SetPath(modelname);
 
-							vic.bglist = bglist;
+							vic.model.bglist = bglist;
 							//vic.SetBodyGroup("body", 0);
-							vic.SetSkin(vic.GetSkin() + 1);
+							vic.model.SetSkin(vic.model.GetSkin() + 1);
 							
 							vic.SetPos(vic.ragdoll.GetPos(), ply.GetAng() - new Angle(0.0, 180.0, 0.0));
 						}

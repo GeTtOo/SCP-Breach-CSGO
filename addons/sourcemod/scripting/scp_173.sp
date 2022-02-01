@@ -55,14 +55,14 @@ public void SCP_OnPlayerSpawn(Player &ply)
         gamemode.timer.Create(timername, 20, 0, "RenderHologram", ply);
 
         char model[256];
-        ply.GetModel(model, sizeof(model));
+        ply.model.GetPath(model, sizeof(model));
 
-        ply.SetHandle("173_holo", ents.Create("prop_dynamic")
-        .SetModel(model)
-        .Spawn()
-        .SetHook(SDKHook_SetTransmit, TransmitHandler)
-        .SetRenderMode(RENDER_NONE)
-        .SetRenderColor(new Colour(255,255,255,75)));
+        Entity hologramm = ents.Create("prop_dynamic");
+        
+        hologramm.model.SetPath(model).SetRenderMode(RENDER_NONE).SetRenderColor(new Colour(255,255,255,75));
+        hologramm.Spawn().SetHook(SDKHook_SetTransmit, TransmitHandler);
+
+        ply.SetHandle("173_holo", hologramm);
     }
 }
 
@@ -290,7 +290,7 @@ public void RenderHologram(Player ply)
                 if (!ply.GetBool("173_renderholo"))
                 {
                     ply.SetBool("173_renderholo", true);
-                    ent.SetRenderMode(RENDER_TRANSCOLOR);
+                    ent.model.SetRenderMode(RENDER_TRANSCOLOR);
                 }
             }
         }
@@ -300,7 +300,7 @@ public void RenderHologram(Player ply)
         if (ent && ply.GetBool("173_renderholo"))
         {
             ply.SetBool("173_renderholo", false);
-            ent.SetRenderMode(RENDER_NONE);
+            ent.model.SetRenderMode(RENDER_NONE);
         }
     }
 

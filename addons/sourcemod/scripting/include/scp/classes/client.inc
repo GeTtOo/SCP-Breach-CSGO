@@ -232,7 +232,7 @@ methodmap Player < Entity {
         ragdoll = new Entity();
 
         char model[128];
-        this.GetModel(model, sizeof(model));
+        this.model.GetPath(model, sizeof(model));
 
         ragdoll.meta = new EntityMeta();
         ragdoll.meta.model(model);
@@ -374,7 +374,7 @@ methodmap Player < Entity {
             {
                 char modelName[256];
                 this.class.Model(modelName, sizeof(modelName));
-                this.SetModel(modelName);
+                this.model.SetPath(modelName);
             }
             else
             {
@@ -382,7 +382,7 @@ methodmap Player < Entity {
 
                 char mdlid[32];
                 modeldata.GetString("id", mdlid, sizeof(mdlid));
-                this.SetModelById(mdlid);
+                this.model.SetById(mdlid);
 
                 if (modeldata.HasKey("bodygroups"))
                     if (view_as<int>(modeldata.GetKeyType("bodygroups")) == 1) {
@@ -401,16 +401,16 @@ methodmap Player < Entity {
                             if (json_is_meta_key(name)) continue;
                             
                             if (view_as<int>(pgi.GetKeyType(name)) == 1)
-                                this.SetBodyGroup(name, pgi.GetInt(name));
+                                this.model.SetBodyGroup(name, pgi.GetInt(name));
                             else
-                                this.SetBodyGroup(name, pgi.GetArray(name).GetInt(GetRandomInt(0, pgi.GetArray(name).Length - 1)));
+                                this.model.SetBodyGroup(name, pgi.GetArray(name).GetInt(GetRandomInt(0, pgi.GetArray(name).Length - 1)));
                         }
 
                         delete spgi;
                     }
 
                 if (modeldata.HasKey("skin"))
-                    this.SetSkin(modeldata.GetInt("skin"));
+                    this.model.SetSkin(modeldata.GetInt("skin"));
             }
         }
 
