@@ -147,7 +147,10 @@ public void CheckVisualContact(Player ply)
                 ply.SetBool("173_isvis", true);
 
                 if (!ply.GetHandle("173_abtmr") && !ply.GetBool("173_abready"))
-                    ply.SetHandle("173_abtmr", ply.TimerSimple(5000, "AbilityCooldown", ply));
+                {
+                    ply.SetHandle("173_abtmr", ply.progress.Start(gamemode.plconfig.GetInt("abilitycd", 5) * 1000, "AbilityCooldown"));
+                    ply.PrintNotify("Ability cooldown");
+                }
 
             }
         }
@@ -218,6 +221,7 @@ public void AbilityCooldown(Player ply)
 {
     ply.RemoveValue("173_abtmr");
     ply.SetBool("173_abready", true);
+    ply.progress.Stop();
 }
 
 public void SCP_OnCallActionMenu(Player &ply)
