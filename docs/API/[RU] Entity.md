@@ -18,23 +18,23 @@
 ### Методы:  
 | Название       | Описание |
 | ------------- | ---------|
-| `Entity Create(char[] entclass)` | Содержит ссылки на функции при происхождении. |
-| `bool HasProp(char[] name, PropType type)` | Содержит ссылки на функции при происхождении. |
-| `Entity SetKV(char[] name, char[] value)` | Содержит ссылки на функции при происхождении. |
-| `Entity SetProp(char[] name, any value, PropType type, int element)` | Содержит ссылки на функции при происхождении. |
-| `Entity SetPropFloat(char[] name, any value, PropType type)` | Содержит ссылки на функции при происхождении. |
-| `Entity SetPropString(char[] name, char[] value, PropType type)` | Содержит ссылки на функции при происхождении. |
-| `Entity SetPropEnt(char[] name, Entity ent, PropType type)` | Содержит ссылки на функции при происхождении. |
-| `int GetProp(char[] name, PropType type, int element)` | Содержит ссылки на функции при происхождении. |
-| `float GetPropFloat(char[] name, PropType type)` | Содержит ссылки на функции при происхождении. |
-| `int GetPropString(char[] name, char[] value, int max_size, PropType type)` | Содержит ссылки на функции при происхождении. |
-| `Entity GetPropEnt(char[] name, PropType type, int element)` | Содержит ссылки на функции при происхождении. |
-| `Entity Input(char[] input, Entity activator, Entity caller)` | Содержит ссылки на функции при происхождении. |
-| `void SetModel(char[] modelName)` | Содержит ссылки на функции при происхождении. |
-| `void SetModelById(char[] modelid)` | Содержит ссылки на функции при происхождении. |
-| `void GetModel(char[] modelName, int max_size)` | Содержит ссылки на функции при происхождении. |
-| `void SetBodyGroup(char[] name, int idx)` | Содержит ссылки на функции при происхождении. |
-| `void SetSkin(int skin)` | Содержит ссылки на функции при происхождении. |
+| `Entity Create(char[] entclass)` | Создаёт объект сущности. |
+| `Entity SetKV(char[] name, char[] value)` | Устанавливает пару Key/Value (до создания в мире). |
+| `bool HasProp(char[] name, PropType type)` | Проверяет наличие свойства. |
+| `Entity SetProp(char[] name, any value, PropType type, int element)` | Устанавливает значение типа int. |
+| `Entity SetPropFloat(char[] name, any value, PropType type)` | Устанавливает значение типа float. |
+| `Entity SetPropString(char[] name, char[] value, PropType type)` | Устанавливает значение типа string. |
+| `Entity SetPropEnt(char[] name, Entity ent, PropType type)` | Устанавливает значение типа Entity. |
+| `int GetProp(char[] name, PropType type, int element)` | Получает значение типа int. |
+| `float GetPropFloat(char[] name, PropType type)` | Получает значение типа float. |
+| `int GetPropString(char[] name, char[] value, int max_size, PropType type)` | Получает значение типа string. |
+| `Entity GetPropEnt(char[] name, PropType type, int element)` | Получает значение типа Entity. |
+| `Entity Input(char[] input, Entity activator, Entity caller)` | Вызывает input у объекта. |
+| `void SetModel(char[] modelName)` | Устанавливает модель. |
+| `void SetModelById(char[] modelid)` | Устанавливает модель по внутреннему id (устанавливается в meta разделе конфигурационного файла гейммода). |
+| `void GetModel(char[] modelName, int max_size)` | Получает модель. |
+| `void SetBodyGroup(char[] name, int idx)` | Устанавливает bodygroup у текущей модели объекта. |
+| `void SetSkin(int skin)` | Устанавливает skin у текущей модели объекта. |
 | `void SetRenderMode(RenderMode mode)` | Содержит ссылки на функции при происхождении. |
 | `void SetMoveType(MoveType type)` | Содержит ссылки на функции при происхождении. |
 | `void TimerSimple(int delay, char[] funcname, any args)` | Содержит ссылки на функции при происхождении. |
