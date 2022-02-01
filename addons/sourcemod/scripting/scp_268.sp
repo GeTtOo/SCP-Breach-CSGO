@@ -60,6 +60,7 @@ public void OnUse(Player &ply, InvItem &item) {
 
 public void OnDrop(Player &ply, InvItem &item) {
     SetEntityRenderMode(ply.id, RENDER_NORMAL);
+    ply.progress.Stop();
 }
 
 public void ItemUnlocked(InvItem item) {
