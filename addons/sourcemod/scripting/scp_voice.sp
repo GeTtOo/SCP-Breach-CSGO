@@ -42,11 +42,187 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
+methodmap IntercomController < Base {
+
+    public IntercomController() {
+        IntercomController controller = view_as<IntercomController>(new Base());
+        controller.CreateArrayList("monitors");
+        return controller;
+    }
+
+    property ArrayList monitors {
+        public get() { return this.GetArrayList("monitors"); }
+    }
+
+    property TypeWorldText wtid {
+        public get() { return view_as<TypeWorldText>(gamemode.plconfig.GetInt("wtid", 8)); }
+    }
+
+    property bool IsBroadcast {
+        public set(bool value) { this.SetBool("bc", value); }
+        public get() { return this.GetBool("bc"); }
+    }
+
+    property Player curply {
+        public set(Player value) { this.SetBase("curply", value); }
+        public get() { return view_as<Player>(this.GetBase("curply")); }
+    }
+
+    property bool ready {
+        public set(bool value) { this.SetBool("ready", value); }
+        public get() { return this.GetBool("ready"); }
+    }
+
+    property float relcdtime {
+        public set(float value) { this.SetFloat("relcdtime", value); }
+        public get() { return this.GetFloat("relcdtime"); }
+    }
+
+    public void UpdateText(char[] text, int size = 0) {
+        ArrayList displays = worldtext.GetAll(this.wtid);
+
+        if (displays.Length > 0)
+            for (int i=0; i < displays.Length; i++) {
+                WorldText display = displays.Get(i);
+
+                display.SetText(text);
+                if (size != 0)
+                    display.SetSize(size);
+            }
+
+        delete displays;
+    }
+
+    public void Ready() {
+        this.ready = true;
+        this.UpdateText("Ready");
+    }
+
+    public void StrartTransmission(Player speaker) {
+        char sound[128];
+        gamemode.plconfig.GetObject("sound").GetString("start", sound, sizeof(sound));
+        gamemode.mngr.PlaySoundToAll(sound, 31);
+
+        gamemode.timer.Create("Intercom_transmission_active", gamemode.plconfig.GetInt("transmissiontime", 8) * 1000, 1, "TransmissionStop");
+
+        this.UpdateText("~Live");
+
+        this.curply = speaker;
+        this.IsBroadcast = true;
+        this.ready = false;
+    }
+
+    public void EndTransmission() {
+        int transmissiontime = gamemode.plconfig.GetInt("cooldown", 8);
+        gamemode.timer.Create("Intercom_cd_release", transmissiontime * 1000, 1, "VoiceRelease");
+        this.relcdtime = GetGameTime() + float(transmissiontime);
+
+        gamemode.timer.Create("Intercom_cd_countdown", 100, 0, "DisplayCounterUpdate");
+
+        char sound[128];
+        gamemode.plconfig.GetObject("sound").GetString("start", sound, sizeof(sound));
+        gamemode.mngr.StopSoundAll(sound, 31);
+
+        gamemode.plconfig.GetObject("sound").GetString("stop", sound, sizeof(sound));
+        gamemode.mngr.PlaySoundToAll(sound, 31);
+
+        this.curply = null;
+        this.IsBroadcast = false;
+    }
+
+    public void CooldownRelease() {
+        gamemode.timer.Remove("Intercom_cd_countdown");
+        this.Ready();
+    }
+
+    public void DisplayInit() {
+        int entId = 0;
+        while ((entId = FindEntityByClassname(entId, "prop_dynamic")) != -1) {
+            if (!IsValidEntity(entId)) continue;
+
+            char ModelName[256];
+            GetEntPropString(entId, Prop_Data, "m_ModelName", ModelName, sizeof(ModelName));
+
+            if (StrEqual(ModelName, "models/props/coop_autumn/surveillance_monitor/surveillance_monitor_32.mdl"))
+            {
+                this.monitors.Push(new Entity(entId));
+                gamemode.log.Debug("Intercom display registered. Entity id: %i", entId);
+            }
+        }
+
+        for (int i=0; i < this.monitors.Length; i++) {
+            Entity display = this.monitors.Get(i);
+            
+            Vector dp = (display.GetAng() - new Angle(0.0,180.0,0.0)).Up((display.GetAng() - new Angle(0.0,180.0,0.0)).Right((display.GetAng() - new Angle(0.0,180.0,0.0)).Forward(display.GetPos(), 0.0), -13.5), -5.0);
+            Angle da = display.GetAng() - new Angle(0.0,180.0,0.0);
+
+            worldtext.Create(dp, da, this.wtid).SetSize(8).SetColor(new Colour(126,190,42));
+        }
+        
+        gamemode.log.Debug("All displays successfully initialized");
+    }
+    
+    public void Reset() {
+        this.ready = false;
+        this.IsBroadcast = false;
+        this.relcdtime = 0.0;
+        this.monitors.Clear();
+    }
+
+    public void Dispose() {
+        gamemode.timer.Remove("Intercom_transmission_active");
+        gamemode.timer.Remove("Intercom_cd_release");
+        gamemode.timer.Remove("Intercom_cd_countdown");
+        delete this.monitors;
+        delete this;
+    }
+}
+
+IntercomController Intercom;
+
+public void SCP_OnLoad()
+{
+    Intercom = new IntercomController();
+}
+
+public void SCP_OnUnload()
+{
+    gamemode.timer.Remove("AdvancedVoice");
+    Intercom.Dispose();
+}
+
 public void SCP_OnRoundStart() {
     ResetListening();
 
     gamemode.timer.Create("AdvancedVoice", 250, 0, "VoiceLogicHandler");
-    gamemode.log.Debug("Channels updater started");
+    gamemode.log.Debug("Voice channels starting update");
+
+    Intercom.DisplayInit();
+    Intercom.Ready();
+}
+
+public void SCP_OnButtonPressed(Player &ply, int doorid) {
+    if (gamemode.plconfig.GetInt("buttonid") == doorid && Intercom.ready) Intercom.StrartTransmission(ply);
+}
+
+public void TransmissionStop()
+{
+    Intercom.EndTransmission();
+}
+
+public void VoiceRelease()
+{
+    Intercom.CooldownRelease();
+}
+
+public void DisplayCounterUpdate() {
+    char time[32], time2[10];
+    float cursec = Intercom.relcdtime - GetGameTime();
+    int min = RoundToNearest(cursec) / 60;
+    int sec = RoundFloat(cursec) % 60;
+    FloatToString(FloatFraction(cursec), time2, sizeof(time2));
+    Format(time, sizeof(time), (min < 10 ) ? ((sec < 10 ) ? "0%i:0%i" : "0%i:%i") : ((sec < 10 ) ? "%i:0%i" : "%i:%i"),  RoundToNearest(cursec) / 60, RoundFloat(cursec) % 60);
+    Intercom.UpdateText(time);
 }
 
 public void ResetListening()
@@ -74,38 +250,37 @@ public void ResetListening()
 public void VoiceLogicHandler()
 {
     ArrayList players = player.GetAll();
-    Player firstply;
-    Player secondply;
+    Player listener;
+    Player speaker;
 
     for (int i=0; i < players.Length; i++)
     {
-        firstply = players.Get(i);
+        listener = players.Get(i);
 
         for (int k=0; k < players.Length; k++)
         {
-            secondply = players.Get(k);
+            speaker = players.Get(k);
 
-            if ((firstply.IsSCP && secondply.IsSCP) || (firstply.inv.Have("radio") && secondply.inv.Have("radio"))) // SCP can hear other SCP players with no range limits
-                firstply.SetListen(secondply, true);
+            if ((Intercom.IsBroadcast && Intercom.curply == speaker) || (speaker.IsSCP && listener.IsSCP) || (speaker.inv.Have("radio") && listener.inv.Have("radio"))) // SCP can hear other SCP players with no range limits
+                listener.SetListen(speaker, true);
             else
-                firstply.SetListen(secondply, false);
+                listener.SetListen(speaker, false);
         }
 
-        if (!firstply.IsAlive()) continue;
+        if (!listener.IsAlive()) continue;
 
         float distance = float(gamemode.plconfig.GetInt("distance", 500));
 
         char filter[1][32] = {"player"};
-        //заедает на позиции в векторах
-        ArrayList entities = ents.FindInBox(firstply.GetPos() - new Vector(distance, distance, distance), firstply.GetPos() + new Vector(distance, distance, distance), filter, sizeof(filter));
+        ArrayList entities = ents.FindInBox(listener.GetPos() - new Vector(distance, distance, distance), listener.GetPos() + new Vector(distance, distance, distance), filter, sizeof(filter));
 
         for (int k=0; k < entities.Length; k++)
         {
-            secondply = entities.Get(k);
+            speaker = entities.Get(k);
 
-            if (firstply != secondply)
+            if (listener != speaker)
             {
-                firstply.SetListen(secondply, true);
+                listener.SetListen(speaker, true);
             }
         }
 

@@ -44,6 +44,7 @@
         "Heavy armory":{"vec":[-9423,2250,0],"ang":[0,90,0]},
         "Nuke room":{"vec":[-7821,-5978,200],"ang":[0,0,0]},
         "Nuke site":{"vec":[-7939,-5752,0],"ang":[0,135,0]},
+        "Intercom":{"vec":[-6119,-6511,0],"ang":[2,48,0]},
         "SCP-035":{"vec":[-7683,-147,18],"ang":[-3,89,0]},
         "SCP-049":{"vec":[-8531,1470,28],"ang":[0,-89,0]},
         "SCP-079":{"vec":[-776,-4708,22],"ang":[3,-91,0]},
@@ -54,6 +55,16 @@
         "SCP-914":{"vec":[3100,-2231,0],"ang":[0,0,0]},
         "SCP-996":{"vec":[-5406,2626,4],"ang":[-2,-1,0]},
         "SCP-106-Cell":{"vec":[-4306,683,2385],"ang":[22,176,0]}
+    },
+    "[SCP] Voice": {
+        "wtid":8,
+        "transmissiontime":10,
+        "cooldown":30,
+        "buttonid":946850,
+        "sound": {
+            "start":"*/scp/other/intercom_start.mp3",
+            "stop":"*/scp/other/intercom_stop.mp3"
+        }
     },
     "[SCP] 914": {
         "usemathcounter":false,

@@ -470,6 +470,8 @@ materials/models/eternity/props/scp-500/scp-500.vtf
 sound/scp/menu/select.mp3
 sound/scp/other/access_granted.mp3
 sound/scp/other/access_denied.mp3
+sound/scp/other/intercom_start.mp3
+sound/scp/other/intercom_stop.mp3
 sound/scp/049/049_2.wav
 sound/scp/049/049_3.wav
 sound/scp/049/049_4.wav
