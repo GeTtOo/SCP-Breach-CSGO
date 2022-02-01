@@ -1,6 +1,6 @@
 # Player
 
-Основное представление сущности игрока внутри гейммода.
+Представление сущности игрока внутри мода.
 
 ------------------
 
@@ -9,48 +9,47 @@
 ### Свойства:  
 | Название       | Описание |
 | ------------- | ---------|
-| `int lang` | Содержит ссылки на функции при происхождении, а так же внутренние параметры. |
-| `int health` | Содержит дополнительную информацию о модели (BodyGroups). |
-| `int armor` | Уникальный идентификатор сущности в игре. |
-| `float speed` | Содержит информацию о состоянии сущности в мире. |
-| `float multipler` | Содержит текущий список bodygroups. |
-| `bool IsSCP` | Содержит текущий список bodygroups. |
-| `bool fullaccess` | Содержит текущий список bodygroups. |
-| `bool FirstSpawn` | Содержит текущий список bodygroups. |
-| `Class class` | Содержит текущий список bodygroups. |
-| `Entity ragdoll` | Содержит текущий список bodygroups. |
-| `Inventory inv` | Содержит текущий список bodygroups. |
-| `ProgressBar progress` | Содержит текущий список bodygroups. |
+| `int lang` | Возвращает идентификатор языка клиента. |
+| `int health` | Свойство управляющее количеством жизней. |
+| `int armor` | Свойство управляющее количеством брони. |
+| `float speed` | Свойство управляющее скоростью передвижения. |
+| `float multipler` | Свойство-множитель скорости передвижения. |
+| `bool IsSCP` | Свойство указывающее является ли игрок SCP-объектом. |
+| `bool fullaccess` | Предоставляет клиенту возможность открывать любые двери на карте. |
+| `bool FirstSpawn` | Возвращает значение отвечающее за то первое ли это появление игрока на карте. |
+| `Class class` | Ссылка на игровой класс. |
+| `Entity ragdoll` | Ссылка на рагдолл. |
+| `Inventory inv` | Ссылка на инвентарь. |
+| `ProgressBar progress` | Ссылка на инструмент контроля progressbar. |
 
 ### Методы:  
 | Название       | Описание |
 | ------------- | ---------|
-| `bool GetName(char[] buffer, int max_size)` | Содержит ссылки на функции при происхождении. |
-| `bool GetAuth(char[] buffer, int max_size, AuthIdType type)` | Содержит ссылки на функции при происхождении. |
-| `bool IsAlive()` | Содержит ссылки на функции при происхождении. |
-| `bool IsAdmin()` | Содержит ссылки на функции при происхождении. |
-| `bool InGame()` | Содержит ссылки на функции при происхождении. |
-| `Vector EyePos()` | Содержит ссылки на функции при происхождении. |
-| `Angle GetAng()` | Содержит ссылки на функции при происхождении. |
-| `void SetHandsModel(char[] model)` | Содержит ссылки на функции при происхождении. |
-| `void Team(char[] buffer, int max_size )` | Содержит ссылки на функции при происхождении. |
-| `void PrintNotify(const char[] format, any ...)` | Содержит ссылки на функции при происхождении. |
-| `void PrintWarning(const char[] format, any ...)` | Содержит ссылки на функции при происхождении. |
-| `void ShowOverlay(char[] name)` | Содержит ссылки на функции при происхождении. |
-| `void HideOverlay()` | Содержит ссылки на функции при происхождении. |
-| `void SetListen(Player ply, bool islisten)` | Содержит ссылки на функции при происхождении. |
-| `void PlaySound(char[] path, int channel, int level, int entity)` | Содержит ссылки на функции при происхождении. |
-| `void StopSound(char[] path, int channel)` | Содержит ссылки на функции при происхождении. |
-| `int Give(char[] item)` | Содержит ссылки на функции при происхождении. |
-| `void DropWeapons()` | Содержит ссылки на функции при происхождении. |
-| `void RestrictWeapons()` | Содержит ссылки на функции при происхождении. |
-| `bool Check(char[] val, int check)` | Содержит ссылки на функции при происхождении. |
-| `Entity CreateRagdoll()` | Содержит ссылки на функции при происхождении. |
-| `void Kill()` | Содержит ссылки на функции при происхождении. |
-| `void SilenceKill()` | Содержит ссылки на функции при происхождении. |
-| `void Kick(char[] reason)` | Содержит ссылки на функции при происхождении. |
-| `void SetupBaseStats(Class class)` | Содержит ссылки на функции при происхождении. |
-| `void Setup()` | Содержит ссылки на функции при происхождении. |
-| `void Spawn()` | Содержит ссылки на функции при происхождении. |
-| `void UpdateClass()` | Содержит ссылки на функции при происхождении. |
-| `void Dispose()` | Содержит ссылки на функции при происхождении. |
+| `bool GetName(char[] buffer, int max_size)` | Возвращает имя игрока. |
+| `bool GetAuth(char[] buffer, int max_size, AuthIdType type)` | Возвращает SteamID (Флаги см. SM). |
+| `bool IsAlive()` | Возвращает статус игрока (Жив/Мёртв). |
+| `bool IsAdmin()` | Является ли игрок администратором. |
+| `bool InGame()` | В игре ли игрок. |
+| `Vector EyePos()` | Возвращает позицию глаз игрока. |
+| `Angle GetAng()` | Возвращает углы позиционирования игрока в мире. |
+| `void Team(char[] buffer, int max_size )` | Устанавливает/Возвращает команду игрока. |
+| `void PrintNotify(const char[] format, any ...)` | Вывести игроку сообщение на экран. |
+| `void PrintWarning(const char[] format, any ...)` | Вывести игроку сообщение-предупреждение на экран. |
+| `void ShowOverlay(char[] name)` | Показать оверлей. |
+| `void HideOverlay()` | Скрыть оверлей. |
+| `void SetListen(Player ply, bool islisten)` | Устанавливает возможность слышимости другого игрока. |
+| `void PlaySound(char[] path, int channel, int level, int entity)` | Воспроизвести звук. |
+| `void StopSound(char[] path, int channel)` | Остановить воспроизведение звука. |
+| `int Give(char[] item)` | Выдать оружие. |
+| `void DropWeapons()` | Выбросить всё оружие в мир. |
+| `void RestrictWeapons()` | Отобрать всё оружие. |
+| `bool Check(char[] val, int check)` | Проверить bool значение переменной в данном объекте. |
+| `Entity CreateRagdoll()` | Создаёт рагдолл. |
+| `void Kill()` | Убивает игрока. |
+| `void SilenceKill()` | Убивает игрока без эффектов. |
+| `void Kick(char[] reason)` | Выгоняет данного игрока с сервера. |
+| `void SetupBaseStats(Class class)` | Устанавливает базовые характеристики. |
+| `void Setup()` | Устанавливает все параметры из класса игрока. |
+| `void Spawn()` | Возрождает игрока. |
+| `void UpdateClass()` | Обновляет класс игроку. |
+| `void Dispose()` | Деструктор объекта. (Необходим для вычистки данного объекта из памяти сервера) |
