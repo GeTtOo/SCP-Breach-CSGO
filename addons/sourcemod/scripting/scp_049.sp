@@ -51,6 +51,8 @@ char sounds[10][32] = {
     { "*/scp/049/049_alert_3.wav" }
 };
 
+int soundstime[10] = {12,2,2,2,3,4,5,1,1,4};
+
 public Plugin myinfo = {
 	name = "[SCP] 049",
 	author = "Andrey::Dono, GeTtOo",
@@ -204,7 +206,7 @@ public void SCP_OnCallActionMenu(Player &ply)
 
 		int rnd = GetRandomInt(0, 9);
 		EmitAmbientSound(sounds[rnd], pos, ply.id);
-		gamemode.timer.Simple(15000, "AllowMusicPlay");
+		gamemode.timer.Simple(soundstime[rnd] * 1000, "AllowMusicPlay");
 	}
 }
 
