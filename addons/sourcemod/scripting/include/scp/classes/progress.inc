@@ -37,7 +37,6 @@ methodmap ProgressBar < Base {
     public ProgressBar(Base ply) {
         ProgressBar self = view_as<ProgressBar>(new Base());
         self.SetValue("ply", ply);
-        self.SetBool("stop", true);
         self.SetInt("st", FindSendPropInfo("CBaseEntity", "m_flSimulationTime"));
         self.SetInt("pbst", FindSendPropInfo("CCSPlayer", "m_flProgressBarStartTime"));
         self.SetInt("pbd", FindSendPropInfo("CCSPlayer", "m_iProgressBarDuration"));
@@ -58,11 +57,6 @@ methodmap ProgressBar < Base {
         public get() { return this.GetBool("active"); }
     }
 
-    property bool stop {
-        public set(bool val) { this.SetBool("stop", val); }
-        public get() { return this.GetBool("stop"); }
-    }
-
     public void timername(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("timername", buffer) : this.GetString("timername", buffer, max_size); }
 
     public Tmr Start(int time, char[] funcName = "") {
@@ -76,31 +70,28 @@ methodmap ProgressBar < Base {
         SetEntDataFloat(this.clientID, this.GetInt("pbst"), gm - (it - ft), true);
         SetEntData(this.clientID, this.GetInt("buaip"), 0, 4, true);
 
-        char timername[32];
+        char timername[64];
+        Format(timername, sizeof(timername), "ply-%i|progress-bar", this.clientID);
         
-        Format(timername, sizeof(timername), "progress_bar_ply_%i", this.clientID);
-        if (!StrEqual(funcName, ""))
-            return gamemode.timer.Create(timername, time, 1, funcName, this.ply);
-
         this.timername(timername);
 
         this.active = true;
+        
+        if (!StrEqual(funcName, ""))
+            return gamemode.timer.Create(timername, time, 1, funcName, this.ply);
         
         return null;
     }
 
     public void Stop() {
-        if (this.stop) {
-            char timername[32];
-            this.timername(timername, sizeof(timername));
+        char timername[64];
+        this.timername(timername, sizeof(timername));
 
-            SetEntDataFloat(this.clientID, this.GetInt("pbst"), 0.0, true);
-            SetEntData(this.clientID, this.GetInt("pbd"), 0, 1, true);
-            
-            gamemode.timer.Remove(timername);
-            
-            this.active = false;
-        }
-        if (!this.stop) this.stop = true;
+        SetEntDataFloat(this.clientID, this.GetInt("pbst"), 0.0, true);
+        SetEntData(this.clientID, this.GetInt("pbd"), 0, 1, true);
+        
+        gamemode.timer.Remove(timername);
+        
+        this.active = false;
     }
 }

@@ -635,6 +635,22 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
             ply.Team(teamName);
             ply.class = gamemode.team(teamName).class(className);
             
+            for (int i=0; i < ply.inv.Length; i++)
+            {
+                InvItem item = ply.inv.Get(i);
+
+                if (item.meta.ondrop)
+                {
+                    char funcname[32];
+                    item.meta.ondrop.name(funcname, sizeof(funcname));
+
+                    Call_StartFunction(item.meta.ondrop.hndl, GetFunctionByName(item.meta.ondrop.hndl, funcname));
+                    Call_PushCellRef(ply);
+                    Call_PushCellRef(item);
+                    Call_Finish();
+                }
+            }
+
             ply.UpdateClass();
 
             if (savepos)

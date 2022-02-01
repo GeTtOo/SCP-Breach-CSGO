@@ -72,13 +72,13 @@ methodmap Entity < Base {
         public get() { return this.GetArrayList("bglist"); }
     }
 
-    public bool HasProp(char[] name, any type = Prop_Send) {
-        return HasEntProp(this.id, type, name);
-    }
-
     public Entity SetKV(char[] name, char[] value) {
         DispatchKeyValue(this.id, name, value);
         return this;
+    }
+
+    public bool HasProp(char[] name, any type = Prop_Send) {
+        return HasEntProp(this.id, type, name);
     }
 
     public Entity SetProp(char[] name, any value, any type = Prop_Send, int element = 0) {

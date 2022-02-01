@@ -99,9 +99,11 @@ methodmap Timers < Base {
         
         for (int i=0; i < list.Length; i++) {
             char timername[64];
-            view_as<Tmr>(list.Get(i)).name(timername, sizeof(timername));
+            Tmr timer = list.Get(i);
+            timer.name(timername, sizeof(timername));
             if (StrEqual(timername, name)) {
                 list.Erase(i);
+                delete timer;
                 return true;
             }
         }
