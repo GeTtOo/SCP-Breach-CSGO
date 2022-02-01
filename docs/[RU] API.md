@@ -8,7 +8,7 @@
 - [Базовый класс и методы доступные везде]()  
 - [Как работать с сущностями Entity && Meta](/docs/API/%5BRU%5D%20Entity.md)
   - [Интерфейс модели](/docs/API/%5BRU%5D%20Model.md)
-- [Класс игрока и все что от него наследуется](/docs/API/%5BRU%5D%20Player.md)  
+- [Класс игрока и все что от него наследуется](/docs/API/%5BRU%5D%20Player.md)
   - [Работа с инвентарём]()
   - [Прогресс бар]()
   - [Ragdoll и почему Гейб не очень хороший человек]()
@@ -27,16 +27,16 @@
 
 | Событие       | Описание |
 | ------------- | ---------|
-| `void SCP_RegisterMetaData()` | Событие, в котором регистрируется мета события для сущностей.  |
+| `void SCP_RegisterMetaData()` | Событие, в котором регистрируется события для сущностей.  |
 | `void SCP_OnLoad()` | Вызывается, когда мод загружен. Аналог `OnPluginStart` в котором инициализирован весь функционал мода.  |
 | `void SCP_OnUnload()` | Вызывается, когда мод выгружается. Аналог `OnPluginStop` в котором выгружаются основные глобальные объекты. |
 | `void SCP_OnPlayerJoin(Player &ply)` | Вызывается, когда игрок зашёл на сервер и полностью загружен.  |
 | `void SCP_OnPlayerLeave(Player &ply)` | Вызывается, когда игрок покинул сервер.  |
-| `void SCP_OnPlayerSpawn(Player &ply)` | Вызывается при появление игрока.  |
+| `void SCP_OnPlayerSpawn(Player &ply)` | Вызывается при появлении игрока.  |
 | `void SCP_OnPlayerReset(Player &ply)` | Вызывается при перезапуске раунда.  |
 | `void SCP_OnPlayerClear(Player &ply)` | Вызывается, когда игрок перестает существовать (отключается, умирает, при рестарте раунда).  |
-| `Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype)` | Вызывается, когда игрок получил урон.  |
-| `void SCP_OnPlayerDeath(Player &vic, Player &atk)` | Вызывается при смерти игрока.  |
+| `Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype)` | Вызывается, при получении игроком урона.  |
+| `void SCP_OnPlayerDeath(Player &vic, Player &atk)` | Вызывается после смерти игрока.  |
 | `void SCP_OnButtonPressed(Player &ply, int doorId)` | Вызывается при нажатие игроком кнопки.  |
 | `void SCP_OnRoundStart()` | Вызывается при старте раунда, после распределения игроков.  |
 | `void SCP_OnRoundEnd()` | Вызывается в конце раунда.  |
