@@ -39,6 +39,6 @@ mp_force_assigm_teams 1
 Настройка файла локализации берется из Sourcemod. В случае отсутствия необходимого языка, будет использоваться английский. Это относится как к файлам перевода, так и к моделям и надписям на них.  
 
 ## Дополнительные плагины
-[Discord API Core](https://github.com/CrazyHackGUT/Discord) - для отправления логов в Discord (необязательно)
-[Fix-Pickup-Shield](https://github.com/theelsaud/Fix-Pickup-Shield) - для подбора щитов (рекомендуется)
-[Always Weapon Skins](https://forums.alliedmods.net/showthread.php?t=237114) - для сохранения скинов игроков (необязательно)
+[Discord API Core](https://github.com/CrazyHackGUT/Discord) - для отправления логов в Discord (необязательно)  
+[Fix-Pickup-Shield](https://github.com/theelsaud/Fix-Pickup-Shield) - для подбора щитов (рекомендуется)  
+[Always Weapon Skins](https://forums.alliedmods.net/showthread.php?t=237114) - для сохранения скинов игроков (необязательно)  
