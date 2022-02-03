@@ -1,3 +1,5 @@
+![Logo](/logo.png)
+
 # SCP Breach CS:GO
 
 SCP: Breach CSGO is a multiplayer modification based on the game SCP — Containment Breach from Undertow Games (2012).
