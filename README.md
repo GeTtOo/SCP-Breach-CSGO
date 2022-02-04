@@ -15,4 +15,4 @@ During these events, you will have to complete a task that will be assigned to y
 
 
 ## Contacts
-If you need support or have questions ask them on our [Discord server]()
+If you need support or have questions ask them on our [Discord server](https://discord.gg/axMPU8PUHZ)
