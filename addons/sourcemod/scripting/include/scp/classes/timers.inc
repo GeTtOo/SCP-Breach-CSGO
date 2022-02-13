@@ -173,4 +173,10 @@ methodmap Timers < Base {
             }
         }
     }
+
+    public void Dispose() {
+        this.ClearAll();
+        delete this.GetArrayList("timers");
+        this.RemoveValue("timers");
+    }
 }

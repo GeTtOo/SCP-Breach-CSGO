@@ -42,9 +42,9 @@ methodmap Config < JSON_OBJECT {
     public Config(char[] mapname) {
         Config self = view_as<Config>(ReadConfig(mapname, "config"));
 
-        self.SetObject("Doors", view_as<Doors>(ReadConfig(mapname, "doors")));
-        self.SetObject("SpawnMap", view_as<JSON_OBJECT>(ReadConfig(mapname, "spawnlist")));
-        self.SetObject("Regions", view_as<JSON_ARRAY>(ReadConfig(mapname, "regions")));
+        self.SetObject("doors", view_as<Doors>(ReadConfig(mapname, "doors")));
+        self.SetObject("spawnmap", view_as<JSON_OBJECT>(ReadConfig(mapname, "spawnlist")));
+        self.SetObject("regions", view_as<JSON_ARRAY>(ReadConfig(mapname, "regions")));
 
         return self;
     }
@@ -64,15 +64,18 @@ methodmap Config < JSON_OBJECT {
     }
 
     property Doors doors {
-        public get() { return view_as<Doors>(this.GetObject("Doors")); }
+        public set(Doors val) { this.SetValue("doors", val); }
+        public get() { return view_as<Doors>(this.GetObject("doors")); }
     }
 
     property JSON_OBJECT spawnmap {
-        public get() { return view_as<JSON_OBJECT>(this.GetObject("SpawnMap")); }
+        public set(JSON_OBJECT val) { this.SetValue("spawnmap", val); }
+        public get() { return view_as<JSON_OBJECT>(this.GetObject("spawnmap")); }
     }
 
     property JSON_ARRAY regions {
-        public get() { return view_as<JSON_ARRAY>(this.GetObject("Regions")); }
+        public set(JSON_ARRAY val) { this.SetValue("regions", val); }
+        public get() { return view_as<JSON_ARRAY>(this.GetObject("regions")); }
     }
     
     property JSON_ARRAY meta {
@@ -123,5 +126,12 @@ methodmap Config < JSON_OBJECT {
 
     property bool ff {
         public get() { return this.GetBool("ff"); }
+    }
+    
+    public void Dispose()
+    {
+        this.GetArray("meta").Clear();
+
+        this.Dispose();
     }
 }

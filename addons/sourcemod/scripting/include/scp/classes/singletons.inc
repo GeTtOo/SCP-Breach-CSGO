@@ -95,6 +95,19 @@ methodmap EntitySingleton < Base {
         }
     }
 
+    public void FullClear() {
+        ArrayList list = this.list;
+
+        for (int i=0; i < list.Length; i++)
+        {
+            Entity ent = list.Get(i, 1);
+
+            if (ent) ent.Dispose();
+        }
+
+        list.Clear();
+    }
+
     public ArrayList FindInBox(Vector vecMin, Vector vecMax, char[][] filter, int filter_size) {
         int entId = 0;
         ArrayList entArr = new ArrayList(128);
@@ -172,6 +185,12 @@ methodmap EntitySingleton < Base {
 
     public ArrayList FindInPVS(Player ply, int distance = 100, int fov = 90, char filter[1][32] = {"player"}) {
         return this.FindInCone(ply.EyePos(), ply.GetAng().Forward(ply.EyePos(), float(distance)), fov, filter, sizeof(filter));
+    }
+
+    public void Dispose() {
+        this.FullClear();
+        delete this.GetArrayList("entities");
+        this.RemoveValue("entities");
     }
 }
 

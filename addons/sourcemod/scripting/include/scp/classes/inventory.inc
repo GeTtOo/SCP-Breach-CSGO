@@ -44,9 +44,9 @@ methodmap InvItem < Entity {
         public get() { return this.GetFloat("cdr"); }
     }
 
-    public void CooldownStart(int time, char[] funcname, any arg) {
-        this.TimerSimple(time, funcname, arg);
+    public Tmr CooldownStart(int time, char[] funcname, any arg) {
         this.cdr = GetGameTime() + float(time / 1000);
+        return this.TimerSimple(time, funcname, arg);
     }
 }
 

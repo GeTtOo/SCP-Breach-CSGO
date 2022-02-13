@@ -57,6 +57,11 @@ methodmap JSON_ARRAY < JSON_Array {
     }
 
     public JSON_ARRAY GetArray(int index) { return view_as<JSON_ARRAY>(this.Super.GetObject(index)); }
+    
+    public void Dispose() {
+        this.Cleanup();
+        delete this;
+    }
 }
 
 methodmap JSON_OBJECT < JSON_Object {
@@ -87,4 +92,9 @@ methodmap JSON_OBJECT < JSON_Object {
 
     public JSON_OBJECT GetObject(char[] name) { return view_as<JSON_OBJECT>(this.Super.GetObject(name)); }
     public JSON_ARRAY GetArray(char[] name) { return view_as<JSON_ARRAY>(this.Super.GetObject(name)); }
+
+    public void Dispose() {
+        this.Cleanup();
+        delete this;
+    }
 }

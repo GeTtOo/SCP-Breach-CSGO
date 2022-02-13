@@ -147,7 +147,8 @@ methodmap GameMode < Base {
                 if (plconfig == null)
                 {
                     plconfig = view_as<JSON_OBJECT>(CreateTrie());
-                    this.config.SetObject(pname, plconfig);
+                    this.config.SetObject(pname, view_as<JSON_OBJECT>(CloneHandle(plconfig, this.GetHandle("ph"))));
+                    delete plconfig;
                 }
                 return plconfig;
             }

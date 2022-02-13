@@ -85,4 +85,19 @@ methodmap Base < StringMap {
     property int Length {
         public get() { return GetTrieSize(this); }
     }
+
+    public void Dispose() {
+        int keylen = 0;
+        StringMapSnapshot snap = this.Snapshot();
+
+        for (int i=0; i < snap.Length; i++) {
+            keylen = snap.KeyBufferSize(i);
+            char[] key = new char[keylen];
+            snap.GetKey(i, key, keylen);
+            delete this.GetBase(key);
+        }
+
+        delete snap;
+        delete this;
+    }
 }

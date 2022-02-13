@@ -156,6 +156,7 @@ public void OnMapStart()
     gamemode.SetValue("Logger", new Logger("SCP_OnLog", gamemode.config.logmode, gamemode.config.loglevel, gamemode.config.debug));
     
     gamemode.mngr.CollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
+    gamemode.SetHandle("ph", GetMyHandle());
 
     AddCommandListener(Command_Base, "gm");
     AddCommandListener(Command_Ents, "ents");
@@ -197,11 +198,11 @@ public void OnMapEnd()
     Call_StartForward(OnUnloadGM);
     Call_Finish();
     
-    delete ents;
-    delete player;
-    delete worldtext;
-    delete AdminMenu;
-    delete gamemode;
+    ents.Dispose();
+    player.Dispose();
+    worldtext.Dispose();
+    AdminMenu.Dispose();
+    gamemode.Dispose();
 }
 
 public void OnGameFrame()
@@ -1002,6 +1003,8 @@ public void LoadEntities(char[] mapName)
     }
 
     delete sents;
+
+    entities.Dispose();
 }
 
 public void LoadModels()
@@ -1029,6 +1032,8 @@ public void LoadModels()
 
         gamemode.meta.RegisterModel(id, modeldata);
     }
+
+    modelsdata.Dispose();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1430,11 +1435,10 @@ public void SetupMapRegions()
         
         Format(name, sizeof(name), "%T", name, LANG_SERVER);
 
-        Entity ent = ents.Create("info_map_region", false).SetPos(pos);
+        Entity ent = ents.Create("info_map_region").SetPos(pos);
         DispatchKeyValue(ent.id,"radius",radius);
         DispatchKeyValue(ent.id,"token",name);
         ent.Spawn();
-        delete ent;
     }
 }
 
@@ -1493,12 +1497,9 @@ public void SpawnItemsOnMap()
             if (count != 0)
                 break;
 
-            Vector pos = data.GetVector("vec");
-            Angle ang = data.GetAngle("ang");
-
             if (GetRandomInt(1, 100) <= data.GetInt("chance"))
                 ents.Create(item)
-                .SetPos(pos, ang)
+                .SetPos(data.GetVector("vec"), data.GetAngle("ang"))
                 .Spawn();
         }
     }
@@ -1759,13 +1760,9 @@ public Action Command_Debug(int client, const char[] command, int argc)
     if (StrEqual(arg1, "set", false))
     {
         if (StrEqual(arg2, "body", false))
-        {
             ply.SetProp("m_nBody", StringToInt(arg3));
-        }
         if (StrEqual(arg2, "skin", false))
-        {
             ply.SetProp("m_nSkin", StringToInt(arg3));
-        }
     }
     if (StrEqual(arg1, "flashlight", false))
         ply.SetProp("m_fEffects", ply.GetProp("m_fEffects") ^ 4);
