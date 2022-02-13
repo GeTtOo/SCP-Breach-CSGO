@@ -81,7 +81,7 @@ public void SCP_OnPlayerClear(Player &ply)
         Format(timername, sizeof(timername), "SCP-096-S-%i", ply.id);
         gamemode.timer.Remove(timername);
 
-        ply.StopSound("*/scp/scp-096_crying.mp3", 280);
+        ply.StopSound("*/scp/scp-096_crying.mp3", 48);
     }
 }
 
@@ -118,7 +118,7 @@ public void CheckSurface(int client, int entity) {
                 
                 Entity idpad = new Entity(entity);
                 JSON_ARRAY doors = gamemode.plconfig.GetArray("doortodestruction");
-                idpad.GetModel(doorModel, sizeof(doorModel));
+                idpad.model.GetPath(doorModel, sizeof(doorModel));
                 delete idpad;
                 
                 for(int i = 0; i < doors.Length; i++)
@@ -193,7 +193,7 @@ public void CheckVisualContact(Player ply)
                 Format(timername, sizeof(timername), "SCP-096-S-%i", ply.id);
                 gamemode.timer.Remove(timername);
 
-                ply.StopSound("*/scp/scp-096_crying.mp3", 280);
+                ply.StopSound("*/scp/scp-096_crying.mp3", 48);
                 
                 ply.TimerSimple(5500, "Rage", ply);
                 gamemode.mngr.PlayAmbientOnPlayer("*/scp/scp-096_rage_start.mp3", ply);
@@ -241,7 +241,7 @@ public void StartCrying(Player ply) {
 }
 
 public void Crying(Player ply) {
-    ply.PlaySound("*/scp/scp-096_crying.mp3", 280);
+    ply.PlaySound("*/scp/scp-096_crying.mp3", 48);
 }
 
 public void CooldownReset(Player ply) {
