@@ -60,11 +60,12 @@ public void SCP_OnLoad() {
 
     gconfig = ReadConfig(mapName, "914");
     
-    if (gconfig)
-        gamemode.log.Debug("Recipes loaded");
+    if (gconfig) gamemode.log.Debug("Recipes loaded");
 }
 
 public void SCP_OnUnload() {
+    gconfig.Dispose();
+    gamemode.log.Debug("[Memory status] SCP-914 Recipes unload.");
     //gamemode.timer.PluginClear();
 }
 
