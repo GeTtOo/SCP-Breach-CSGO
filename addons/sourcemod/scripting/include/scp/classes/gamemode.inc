@@ -183,6 +183,27 @@ methodmap GameMode < Base {
     }
 
     public native GTeam team(char[] name);
+
+    public void Dispose()
+    {
+        Teams teams;
+        this.GetValue("Teams", teams);
+        teams.Cleanup();
+        delete teams;
+        teams = null;
+        this.RemoveValue("Teams");
+        
+        view_as<Config>(this.GetHandle("Config")).Dispose();
+        this.RemoveValue("Config");
+
+        view_as<Meta>(this.GetHandle("Meta")).Dispose();
+        this.RemoveValue("Meta");
+
+        view_as<Timers>(this.GetHandle("Timers")).Dispose();
+        this.RemoveValue("Timers");
+
+        delete this;
+    }
 }
 
 public JSON_OBJECT ReadConfig(char[] mapname, char[] filename) {
