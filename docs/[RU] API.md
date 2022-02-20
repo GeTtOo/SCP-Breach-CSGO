@@ -5,25 +5,24 @@
 
 ## Оглавление:  
 - [Структуры]()  
-- [Базовый класс и методы доступные везде]()  
-- [Как работать с сущностями Entity && Meta](/docs/API/%5BRU%5D%20Entity.md)
-  - [Интерфейс модели](/docs/API/%5BRU%5D%20Model.md)
-- [Класс игрока и все что от него наследуется](/docs/API/%5BRU%5D%20Player.md)
-  - [Работа с инвентарём]()
-  - [Прогресс бар]()
-  - [Ragdoll и почему Гейб не очень хороший человек]()
-  - [Подклассы игрока]()
+  - [Базовый класс и методы доступные везде]()
+  - [Как работать с сущностями Entity && Meta](/docs/API/RU/Entity.md)
+    - [Интерфейс модели](/docs/API/RU/Entity/Model.md)
+- [Класс игрока и все что от него наследуется](/docs/API/RU/Player.md)
+  - [Работа с инвентарём](/docs/API/RU/Player/Inventory.md)
+  - [Прогресс бар](/docs/API/RU/Player/Progress.md)
+  - [Класс игрока](/docs/API/RU/Player/Class.md)
 - [Класс хранилище gamemode]()
 - [Таймеры]()
 - [Singleton]()
 - [Менеджер]()
 - [World Text]()
 - [Logger]()
-- [События ядра](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BRU%5D%20API.md#%D0%BE%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D1%8F-%D1%84%D1%83%D0%BD%D0%BA%D1%86%D0%B8%D0%B9-%D0%B8-%D1%81%D0%BE%D0%B1%D1%8B%D1%82%D0%B8%D0%B9-%D1%8F%D0%B4%D1%80%D0%B0)  
+- [События ядра](/docs/%5BRU%5D%20API.md#%D0%BE%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D1%8F-%D1%84%D1%83%D0%BD%D0%BA%D1%86%D0%B8%D0%B9-%D0%B8-%D1%81%D0%BE%D0%B1%D1%8B%D1%82%D0%B8%D0%B9-%D1%8F%D0%B4%D1%80%D0%B0)
 
 ------------------
 
-## Событий ядра  
+## Событий ядра
 
 | Событие       | Описание |
 | ------------- | ---------|
