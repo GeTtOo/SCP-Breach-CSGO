@@ -40,7 +40,7 @@ mp_force_assigm_teams 1
 
 ## Дополнительные плагины
 [Discord API Core](https://github.com/CrazyHackGUT/Discord) - для отправления логов в Discord (необязательно)  
-[Fix-Pickup-Shield](https://github.com/theelsaud/Fix-Pickup-Shield) - для подбора щитов (рекомендуется)  
+[Fix-Pickup-Shield](https://github.com/theelsaud/Fix-Pickup-Shield) - для подбирания щитов (рекомендуется)  
 [Always Weapon Skins](https://forums.alliedmods.net/showthread.php?t=237114) - для сохранения скинов игроков (необязательно)  
 
 
