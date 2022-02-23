@@ -9,7 +9,7 @@ A game based on the SCP Foundation's creepypasta series. The primary objective o
 During these events, you will have to complete a task that will be assigned to your class.
 
 ## Contents
-1. [Installation]()
+1. [Installation](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Installation.md)
 2. [Configuration]()
 3. [API]()
 
