@@ -30,7 +30,7 @@ By default, it is divided into 4 groups (**Personnel**, **MOG**, **Chaos**, **SC
 | randompick    | true или false    | Случайный выбор класса|
 | reinforce     | true или false    | Возможно ли прибытие подкрепления для данной команды|
 
-The block starts with the command name, it must be unique.
+Block starts with the command name, it must be unique.
 
 **Example of a block**  
 ```json
@@ -40,15 +40,15 @@ The block starts with the command name, it must be unique.
         "randompick":true,
 	"reinforce":false,
         "classes": {
-		Структура подробно описывается ниже
+		Structure is described in detail below
 	}
 }
 ```
 
-### Classes – в этой секции описываются классы команды  
-Не все параметры обязательны к настройке. Если параметр не указан ему будет присвоено стандартное значение (к примеру health будет равна 100) или он будет проигнорирован (в случае с дверьми, которые необходимы, в основном классу SCP).
+### Classes – this section describes the classes of the command  
+Not all parameters are required to be configured. If the parameter isn't specified, it will be assigned a standard value (for example, health will be equal to 100) or it will be ignored (in the case of doors that are needed, mainly by the SCP class).
 
-| Параметр      | Значение      | Подробно  |
+| Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
 | percent   | Число от 0 до 100            | Процентное соотношение данного класса в команде при появлении [^1]|
 | priority  | true или false               | Устанавливает класс приоритетным [^2]|
