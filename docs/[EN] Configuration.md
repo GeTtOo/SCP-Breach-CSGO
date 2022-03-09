@@ -63,53 +63,53 @@ Not all parameters are required to be configured. If the parameter isn't specifi
 | doors     | \["Door 1", "Door 2"\]     | Door ID that will be opened when it appears. |
 | comment   | "Text"                      | Section for notes |
 
-### Позиция игрока при появлении  
-Настройка позиции игрока может состоять как из одной строчки, так и из большого массива. Во втором случае игроки будут распределены по точкам в случайном порядке.   
+### Player's position when appearing  
+Setting up a player's position can consist of either a single line or a large array. In the second case, the players will be randomly assigned to the spots.  
 
-| Параметр      | Значение      | Подробно  |
+| Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
-| pos |               | Начало блока |
-| vec | \[1, 1, 1\]   | Точка появления игроков на карте |
-| ang | \[0, 180, 0\] | Угол поворота игрока при появлении |
+| pos |               | The beginning of the block |
+| vec | \[1, 1, 1\]   | Point of appearance of players on the map |
+| ang | \[0, 180, 0\] | Angle of rotation of the player when appearing |
 
-### Модель игрока
-Установка моделей осуществляется двумя способами (простым и расширенным).  
+### Player Model
+Models are installed in two ways (simple and advanced).  
 
-**Простой способ:**  
-1. Укажите путь к модели.
-2. Не забудьте добавить её в файл загрузок [downloads.txt](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/downloads.txt).
+**Simple method:**  
+1. Specify the path to the model.
+2. Don't forget to add it to the downloads file [downloads.txt](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/downloads.txt).
 
-Пример:
+Example:
 ```json
 "model":"models/player/custom_player/eternity/scp_049.mdl"
 ```
 
-**Расширенный способ:**  
-Данный способ поддерживает рандомизацию бодигрупп и установку скинов.  
+**Advanced method:**  
+This method supports randomization of body groups and installation of skins.  
 
-Модель разделена на несколько групп:  
-| Параметр      | Значение     |
+The model is divided into several groups:  
+| Parameter      | Value     |
 | ------------- |------------- |
-| base    | Тело                  |
-| head    | Голова                |
-| eyes    | Глаза                 |
-| helmet  | Шлем                  |
-| mask    | Аксессуары лица       |
-| chevron | Шеврон                |
-| armor   | Броня, жилеты и т.п.  |
-| belt    | Ремень                |
-| legs    | Ноги                  |
-| pl      | Карман на левой ноге  |
-| pr      | Карман на правой ноге |
+| base    | Body                  |
+| head    | Head                |
+| eyes    | Eyes                 |
+| helmet  | Helmet                  |
+| mask    | Face Accessories       |
+| chevron | Chevron                |
+| armor   | Armor, waistcoat, etc.  |
+| belt    | Belt                |
+| legs    | Legs                  |
+| pl      | Pocket on the left leg  |
+| pr      | Pocket on the right leg |
 
-Не обязательно строго следовать названию. К примеру, при создание модели Вы можете смело записать в параметр «шеврона» рюкзак. Но крайне рекомендуем всё же придерживаться концепции!  
+It's not necessary to strictly follow the name. For example, when creating a model, you can write a "backpack" to the "chevron" parameter. But we highly recommend that you still stick to the concept!  
 
-Основные параметры модели:  
-| Параметр      | Значение      | Подробно  |
+The main parameters of the model:  
+| Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
-| id | Целое число | Соответствует ID из блока Meta в [config.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/config.json) |
-| bodygroups | Объект целых чисел | Объект данных с идентификаторами бодигрупп. Поддерживает рандомизацию. |
-| skin | Целое число | Номер скина |
+| id | Integer | Matches the ID from the Meta block in [config.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/config.json) |
+| bodygroups | Integer Object | A data object with the ids of the body groups. Supports randomization. |
+| skin | Integer | Skin number |
 
 ### Побег или эвакуация игрока  
 В случае, если данный параметр указан, игрок сможет покинуть комплекс и указанной команде будет зачислено очко победы.
