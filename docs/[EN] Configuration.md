@@ -21,14 +21,14 @@ For any manipulations, it is recommended to use a text editor with support for s
 ## [Classes.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/classes.json)
 
 Responsible for setting up player classes.  
-By default, it is divided into 4 groups (**Personnel**, **MOG**, **Chaos**, **SCP**). You can add as many commands as you want. To do this, just add a section (for example, GOK).  
+By default, it is divided into 4 groups (**Personnel**, **MOG**, **Chaos**, **SCP**). You can add as many teams as you want. To do this, just add a section (for example, GOK).  
 
 | Parameter     | Value         | Details  |
 | ------------- |:-------------:| ---------|
-| percent       | Число от 0 до 100 | Процентное соотношение игроков в командах [^1]|
-| priority      | true или false    | Устанавливает команду приоритетной [^2]|
-| randompick    | true или false    | Случайный выбор класса|
-| reinforce     | true или false    | Возможно ли прибытие подкрепления для данной команды|
+| percent       | Number from 0 to 100 | Percentage of players in teams [^1]|
+| priority      | true or false    | Sets the team to priority [^2]|
+| randompick    | true or false    | Random class selection|
+| reinforce     | true or false    | Is it possible for reinforcements to arrive for this team|
 
 Block starts with the command name, it must be unique.
 
@@ -50,18 +50,18 @@ Not all parameters are required to be configured. If the parameter isn't specifi
 
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
-| percent   | Число от 0 до 100            | Процентное соотношение данного класса в команде при появлении [^1]|
-| priority  | true или false               | Устанавливает класс приоритетным [^2]|
-| overlay   | "имя оверлея"                | Оверлей, который будет показан игроку при появлении |
-| health    | Число от 1 до 100            | Количество hp |
-| armor     | Число от 0 до 100            | Количество брони |
-| helmet    | true или false               | Выдача игроку шлема |
-| speed     | Целое число                  | Скорость игрока |
-| multipler | Число с плавающей точкой     | Множитель базовой скорости |
-| items     | \["Предмет 1", "Предмет 2"\] | Предметы, которые будут у игрока (карты доступа и т.д.). Описываются в файле entities.json |
-| weapons   | \["Оружие 1", "Оружие 2"\]   | Оружие, которое будет у игрока и его количество |
-| doors     | \["Дверь 1", "Дверь 2"\]     | ID двери, которая будет открыта при появлении |
-| comment   | "Текст"                      | Секция для заметок |
+| percent   | Number from 0 to 100            | Percentage ratio of this class in the team when appearing [^1]|
+| priority  | true or false               | Sets the class to priority [^2]|
+| overlay   | "overlay name"                | Overlay that will be shown to the player when it appears |
+| health    | Number from 1 to 100            | Quantity hp |
+| armor     | Number from 0 to 100            | Quantity брони |
+| helmet    | true or false               | Giving a helmet to a player |
+| speed     | Integer                  | Player Speed |
+| multipler | Floating spot number     | Base Speed Multiplier |
+| items     | \["Item 1", "Item 2"\] | The items that the player will have (access cards, etc.). Described in the file entities.json |
+| weapons   | \["Weapon 1", "Weapon 2"\]   | Weapon that the player will have and its quantity |
+| doors     | \["Door 1", "Door 2"\]     | Door ID that will be opened when it appears. |
+| comment   | "Text"                      | Section for notes |
 
 ### Позиция игрока при появлении  
 Настройка позиции игрока может состоять как из одной строчки, так и из большого массива. Во втором случае игроки будут распределены по точкам в случайном порядке.   
