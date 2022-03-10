@@ -219,8 +219,8 @@ You can find out the quantity in Model Viewer from Valve (included in the CS:GO 
 | ------------- |:-------------:| ---------|
 | time | Integer | The time from the moment of activation to the explosion of the warhead |
 | killpos | Integer | The coordinate of the height below which all players will be killed in an explosion |
-| sound | "Путь к звуковому файлу" | The audio file that will be played when the warhead is activated |
-| cancelsound | "Путь к звуковому файлу" | The audio file that will be played when canceled |
+| sound | "The path to the audio file" | The audio file that will be played when the warhead is activated |
+| cancelsound | "The path to the audio file" | The audio file that will be played when canceled |
 
 **Button Block:**  
 | Parameter      | Value      | Details  |
