@@ -10,7 +10,7 @@ During these events, you will have to complete a task that will be assigned to y
 
 ## Contents
 1. [Installation](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Installation.md)
-2. [Configuration]()
+2. [Configuration](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md)
 3. [API]()
 
 
