@@ -383,7 +383,7 @@ In this file, doors and access to them are configured. The block starts with the
 
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
-| location | "Text" | Название, что бы Вы не запутались в этой каше ID’шников (в моде не используется) |
+| location | "Text" | Title, so that you don't get confused in this pile of ID (not used in fashion)|
 | access | Number from 0 to 10 | Access level |
 | scp | true or false | Can SCP open the door |
 
