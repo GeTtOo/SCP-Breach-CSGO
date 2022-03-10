@@ -613,7 +613,7 @@ If it is necessary to carry out manipulations with the player:
 | debug voice mute   | Disable the option to player {1} hear the player {2} (player id) |
 | debug voice unmute | Installation to player {1} ability to hear the player {2} (player id) |
 
-[^1]: Attention! The total share should be 100!
+[^1]: ATTENTION! The total share should be 100!
 [^2]: Required to appear at the beginning of the round. For example: with a small number of players, you need at least one SCP. 
 If the value of this parameter is "true", SCP will be required to spawn.
 [^3]: ATTENTION if you don't understand what it is, DO NOT TOUCH it!
