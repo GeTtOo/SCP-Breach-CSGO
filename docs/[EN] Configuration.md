@@ -18,7 +18,7 @@ For any manipulations, it is recommended to use a text editor with support for s
 
 ------------------
 
-## [Classes.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/classes.json)
+## [Classes.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/classes.json)
 
 Responsible for setting up player classes.  
 By default, it is divided into 4 groups (**Personnel**, **MOG**, **Chaos**, **SCP**). You can add as many teams as you want. To do this, just add a section (for example, GOK).  
@@ -107,7 +107,7 @@ It's not necessary to strictly follow the name. For example, when creating a mod
 The main parameters of the model:  
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
-| id | Integer | Matches the ID from the Meta block in [config.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/config.json) |
+| id | Integer | Matches the ID from the Meta block in [config.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/config.json) |
 | bodygroups | Integer Object | A data object with the ids of the body groups. Supports randomization. |
 | skin | Integer | Skin number |
 
@@ -178,7 +178,7 @@ The main parameters of the model:
 }
 ```
 
-## [config.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/config.json)
+## [config.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/config.json)
 
 В данном файле происходит настройка основных параметров мода.  
 
@@ -377,9 +377,9 @@ Bginf – Информация о количестве бодигрупп в м�
 ```
 
 
-## [doors.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/doors.json)
+## [doors.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/doors.json)
 
-В данном файле настраиваются двери и доступ к ним. Блок начинается с ID двери или кнопки, которые можно узнать при включенном параметре `debug` в [config.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/config.json).  
+В данном файле настраиваются двери и доступ к ним. Блок начинается с ID двери или кнопки, которые можно узнать при включенном параметре `debug` в [config.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/config.json).  
 
 | Параметр      | Значение      | Подробно  |
 | ------------- |:-------------:| ---------|
@@ -396,7 +396,7 @@ Bginf – Информация о количестве бодигрупп в м�
 }
 ```
 
-## [entities.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/entities.json)
+## [entities.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/entities.json)
 
 Файл для настроек своих предметов (entity). Крайне не рекомендуем любые модификации данного файла (особенное если Вы не понимаете что, как и почему).  
 
@@ -442,7 +442,7 @@ Bginf – Информация о количестве бодигрупп в м�
 }
 ```
 
-## [regions.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/regions.json)
+## [regions.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/regions.json)
 
 Настройка собственных зон (указателей на карте).  
 Формат строки: `{"radius":Радиус,"pos":[Позиция],"ltag":"Имя строки локализации"}`  
@@ -453,7 +453,7 @@ Bginf – Информация о количестве бодигрупп в м�
 {"radius":800,"pos":[3250,-2222,100],"ltag":"SCP-914"}
 ```
 
-## [spawnlist.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/spawn_map.json)
+## [spawnlist.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/spawnlist.json)
 
 В данном файле осуществляется настройка появления предметов на карте. Поддерживается рандомизация.    
 
@@ -483,7 +483,7 @@ Bginf – Информация о количестве бодигрупп в м�
 ]
 ```
 
-## [914.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/914.json)[^3]
+## [914.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/914.json)[^3]
 
 В случае отключения модуля 914, данный конфигурационный файл не используется.  
 Настройка рецептов делиться на блоки качества. Всего поддерживаются 5 качеств:  
