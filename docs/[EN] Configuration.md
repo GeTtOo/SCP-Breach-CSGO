@@ -1,6 +1,6 @@
 # Configuration
 
-All configuration files are located in `/addons/sourcemod/configs/scp/*имя_карты*`. If you use a map from the workshop, the path will change to `/addons/sourcemod/configs/scp/workshop/*id*/*имя_карты*`.  
+All configuration files are located in `/addons/sourcemod/configs/scp/*map_name*`. If you use a map from the workshop, the path will change to `/addons/sourcemod/configs/scp/workshop/*id*/*map_name*`.  
 With the exception of the user content download file `downloads.txt`. He is located in `/addons/sourcemod/configs/scp/`  
 For each map needs its own folder with configuration files.  
 
