@@ -621,7 +621,7 @@ If the value of this parameter is "true", SCP will be required to spawn.
 [^5]: The player will be teleported to "conduct a conversation" with it.
 [^6]: This setting is optional. It may not be used if the plugin of the same name is disabled.
 [^7]: First the bottom point, then the top.
-[^8]: To put it simply, where the player teleports after the "call".
+[^8]: To put it simply - where the player teleports after the "call".
 [^9]: In the first case, the player needs to open the inventory and use the card on the door control unit. In the second case, the player only needs to press the button, the system itself will search for the card in the inventory. 
 [^10]: 0 - All the listed methods. 1 - Console only. 2 - File only. 3 - Only third-party plugins (if you use Discord Logger, which is included in the set, it will be used).
 [^11]: This setting appeared due to the lack of necessary functions in SourceMod. We were too lazy to write a full-fledged MDL file parser, so everyone will suffer. (c) Get 
