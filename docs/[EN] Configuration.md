@@ -54,7 +54,7 @@ Not all parameters are required to be configured. If the parameter isn't specifi
 | priority  | true or false               | Sets the class to priority [^2]|
 | overlay   | "overlay name"                | Overlay that will be shown to the player when it appears |
 | health    | Number from 1 to 100            | Quantity hp |
-| armor     | Number from 0 to 100            | Quantity брони |
+| armor     | Number from 0 to 100            | Quantity armor |
 | helmet    | true or false               | Giving a helmet to a player |
 | speed     | Integer                  | Player Speed |
 | multipler | Floating spot number     | Base Speed Multiplier |
