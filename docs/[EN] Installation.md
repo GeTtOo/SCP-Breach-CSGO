@@ -1,7 +1,7 @@
 # Installation
 Move all files to the root of the server.  
 If it is necessary to disable some SCP objects, so you need to delete (or move to the disabled folder) a file named `SCP_ObjectNumber.smx`. Located at `/csgo/addons/sourcemod/plugins/`.  
-Also don't forget to delete the character section in the config file [classes.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/classes.json)  
+Also don't forget to delete the character section in the config file [classes.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/classes.json)  
 
 ### Map list
 1. [Site 101](https://steamcommunity.com/sharedfiles/filedetails/?id=2424265786)
