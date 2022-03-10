@@ -1,7 +1,7 @@
 # Установка
 Переместить все файлы в корень сервера.  
 В случае необходимости отключения некоторых SCP объектов, необходимо удалить (или переместить в папку disabled) файл с именем `SCP_НомерОбъекта.smx`. Находящимся по адресу `/csgo/addons/sourcemod/plugins/`.  
-Также не забудьте удалить секцию персонажа в конфигурационном файле [classes.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/scp_site101/classes.json)  
+Также не забудьте удалить секцию персонажа в конфигурационном файле [classes.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/classes.json)  
 
 ### Список карт
 1. [Site 101](https://steamcommunity.com/sharedfiles/filedetails/?id=2424265786)
