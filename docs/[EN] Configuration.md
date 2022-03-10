@@ -246,48 +246,48 @@ The teleportation point is written in the format: `"Name":{"vec":[coordinates], 
 "D spawn":{"vec":[-2413,-5632,0],"ang":[0,0,0]},
 ```
 
-### \[Опционально\] SCP-914[^6]  
-Любые изменения крайне не рекомендованы![^3]  
+### \[Optional\] SCP-914[^6]  
+Any changes are highly not recommended![^3]  
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
-| usemathcounter | true or false | Выбор режима (countername или switchbutton) |
-| countername | "Имя" | Имя counter'a |
-| switchbutton | Integer | ID кнопки переключения качества |
-| runbutton | Integer | ID кнопки запуска машины |
-| runtime | Integer | время перед телепортацией в другую секцию после нажатия runbutton |
-| searchzone | \[\[Координаты\], \[Координаты\]\] | Два вектора из которых строиться куб поиска предметов [^7] |
-| distance | \[Координаты\] | Вектор смещения относительно первой камеры [^8] |  
+| usemathcounter | true or false | Mode selection (countername or switchbutton) |
+| countername | "Name" | Counter's name |
+| switchbutton | Integer | ID of the quality switch button |
+| runbutton | Integer | ID of the machine start button |
+| runtime | Integer | the time before teleporting to another section after pressing the runbutton |
+| searchzone | \[\[Coordinates\], \[Coordinates\]\] | Two vectors from which the item search cube is built [^7] |
+| distance | \[Coordinates\] | Displacement vector relative to the first camera [^8] |  
 
-### \[Опционально\] SCP-049[^6]  
-Параметры перечисленные ниже настраиваются в блоке "revive"
+### \[Optional\] SCP-049[^6]  
+The parameters listed below are configured in the "revive" block"
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
-| time | Integer | Время, которая понадобиться для «исцеления» игрока |
-| multi | true or false | «Исцелять» сразу нескольких игроков |
-| inpvs | true or false | Поднимать игроков в зоне видимости 049 или вокруг него |
+| time | Integer | The time it will take to "heal" the player |
+| multi | true or false | "Heal" several players at once |
+| inpvs | true or false | Raise players in or around the 049 visibility zone |
 
-### \[Опционально\] SCP-173[^6]  
+### \[Optional\] SCP-173[^6]  
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
-| radius | Integer | Расстояние от игрока до SCP, которое необходимо для срабатывания блокировки при просмотре и активации эффекта моргания |
-| blinktime | Integer | Через сколько секунд игрок будет моргать |
+| radius | Integer | The distance from player to SCP, which is necessary to trigger the lock when viewing and activate the blinking effect |
+| blinktime | Integer | After how many seconds the player will blink |
 
-**Блок звуков:**  
+**Block of sounds:**  
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
-| neckbroke | "Путь до звукового файла" | Звук, который будет воспроизведен при убийстве игрока |
-| death | "Путь до звукового файла" | Звук, который будет воспроизведен при смерти SCP-173 |
+| neckbroke | "The path to the sound file" | The sound that will be played when the player is killed |
+| death | "The path to the sound file" | The sound that will be played at the death of SCP-173 |
 
-Оба параметра поддерживают рандомизацию.  
+Both parameters support randomization.  
 
-### \[Опционально\] SCP-457[^6]  
+### \[Optional\] SCP-457[^6]  
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
-| ignitetime | Integer | Время горения игрока при ударе |
+| ignitetime | Integer | The player's burn time on impact |
 
 ------------------
 
-### Пример конфигурационного файла:  
+### Example of a configuration file:  
 ```json
     "ff":true,
     "debug":true,
@@ -379,15 +379,15 @@ The teleportation point is written in the format: `"Name":{"vec":[coordinates], 
 
 ## [doors.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/doors.json)
 
-В данном файле настраиваются двери и доступ к ним. Блок начинается с ID двери или кнопки, которые можно узнать при включенном параметре `debug` в [config.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/config.json).  
+In this file, doors and access to them are configured. The block starts with the ID Door or button, which can be found when the parameter is enabled `debug` в [config.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/config.json).  
 
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
-| location | "Текст" | Название, что бы Вы не запутались в этой каше ID’шников (в моде не используется) |
-| access | Число от 0 до 10 | Уровень доступа |
-| scp | true or false | Могут ли SCP открыть дверь |
+| location | "Text" | Название, что бы Вы не запутались в этой каше ID’шников (в моде не используется) |
+| access | Number from 0 to 10 | Access level |
+| scp | true or false | Can SCP open the door |
 
-**Пример:**  
+**Example:**  
 ```json
 "354154": {
 	"location": "Gate A Up",
@@ -398,17 +398,17 @@ The teleportation point is written in the format: `"Name":{"vec":[coordinates], 
 
 ## [entities.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/entities.json)
 
-Файл для настроек своих предметов (entity). Крайне не рекомендуем любые модификации данного файла (особенное если Вы не понимаете что, как и почему).  
+A file for customizing your items (entity). We highly don't recommend any modifications to this file (especially if you do not understand how it works).  
 
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
-| model | "путь к модели" | Модель предмета |
-| mass | Число с плавающей точкой | Масса предмета |
-| skin | Integer | Номер текстуры предмета |
-| access | Массив уровней доступа | Доступ, который даёт предмет |
-| cooldown | Integer | Время задержки после использования |
+| model | "The path to the model" | Item Model |
+| mass | Floating spot number | Item weight |
+| skin | Integer | Item Texture number |
+| access | Array of access levels | Access that the subject gives |
+| cooldown | Integer | Delay time after use |
 
-**Пример:**  
+**Example:**  
 ```json
 "card_mog_commander": {
 	"model":"models/eternity/props/keycard.mdl",
@@ -418,21 +418,21 @@ The teleportation point is written in the format: `"Name":{"vec":[coordinates], 
 }
 ```
 
-### Уровни доступа 
+### Access levels 
 Делятся на 10 категорий:
-1. Камеры содержания, уровень 1
-2. Камеры содержания, уровень 2
-3. Камеры содержания, уровень 3
-4. Оружейные, уровень 1
-5. Оружейные, уровень 2
-6. Оружейные, уровень 3
-7. Контрольно-пропускные пункты
-8. Внутренняя связь
-9. Выходы
-10. Альфа-боеголовка
+1. Holding cells, level 1
+2. Holding cells, level 2
+3. Holding cells, level 3
+4. Armory, level 1
+5. Armory, level 2
+6. Armory, level 3
+7. Checkpoints
+8. Internal communication
+9. Escapes
+10. Alpha Warhead
 
-Каждый уровень ставиться отдельно. 
-**Пример карты с уровнем доступа - Камеры содержания 1 и Внутренняя связь:**  
+Each level is set separately. 
+**An example of a card with access level - Content Cameras 1 and Internal communication:**  
 ```json
 "card_facility_manager": {
 	"model":"models/eternity/props/keycard.mdl",
@@ -444,23 +444,23 @@ The teleportation point is written in the format: `"Name":{"vec":[coordinates], 
 
 ## [regions.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/regions.json)
 
-Настройка собственных зон (указателей на карте).  
-Формат строки: `{"radius":Радиус,"pos":[Позиция],"ltag":"Имя строки локализации"}`  
-Само название локации храниться в файле перевода `translations/scpcore.regions.txt`. Здесь же Вы указываете только имя строки перевода!  
+Setting up your own zones (signs on the map).  
+String format: `{"radius":Radius,"pos":[Position],"ltag":"Localization string name"}`  
+The name of the location itself is stored in the translation file `translations/scpcore.regions.txt`. Here you specify only the name of the translation line!  
 
-**Пример:**  
+**Example:**  
 ```json
 {"radius":800,"pos":[3250,-2222,100],"ltag":"SCP-914"}
 ```
 
 ## [spawnlist.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/spawnlist.json)
 
-В данном файле осуществляется настройка появления предметов на карте. Поддерживается рандомизация.    
+This file is used to configure the appearance of objects on the map. Randomization is supported.    
 
-Параметры появление на определённой точке прописываются в блоке предмета.  
-Настройка производится в формате: `{"chance":Шанс,"vec":[Координаты],"ang":[Угол]}`
+The parameters of the appearance at a certain point are prescribed in the item block.  
+The setup is done in the format: `{"chance":Chance,"vec":[Coordinates],"ang":[Angle]}`
 
-Пример:
+Example:
 ```json
 "weapon_deagle":[
 	{"chance":100,"vec":[-9434,2441,36],"ang":[2,-1,0]},
@@ -469,11 +469,11 @@ The teleportation point is written in the format: `"Name":{"vec":[coordinates], 
 ]
 ```
 
-Рандомизация настраивается в отдельном блоке по формату: `"Процент":{"vec":[Координаты],"ang":Угол]}`.  
+Randomization is configured in a separate block according to the format: `"Percent":{"vec":[Coordinates],"ang":Angle]}`.  
 
-В отличии от других параметров общая сумма процентов не должна быть ровна 100. Если Вы хотите сделать 50 процентный шанс появление предметов, то делите эти 50 процентов между всеми предметами. Таким образом, сначала отработает шанс появления предмета, а затем какой именно предмет из списка появится.  
+Unlike other parameters, the total amount of interest should not be equal to 100. If you want to make a 50 percent chance of items appearing, then divide that 50 percent between all the items. Thus, the chance of an item appearing will work first, and then which item from the list will spawn.  
 
-Пример рандомизации:  
+Example of randomization:  
 ```json
 "weapon_deagle":[
         {
@@ -485,23 +485,23 @@ The teleportation point is written in the format: `"Name":{"vec":[coordinates], 
 
 ## [914.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/914.json)[^3]
 
-В случае отключения модуля 914, данный конфигурационный файл не используется.  
-Настройка рецептов делиться на блоки качества. Всего поддерживаются 5 качеств:  
+If the module 914 is disabled, this configuration file is not used.  
+Setting up recipes to be divided into quality blocks. A total of 5 qualities are supported:  
 1. Rough
 2. Coarse
 3. One by one
 4. Fine
 5. Very Fine
 
-В каждом рецепте Вы сначала указываете имя предмета, а затем что из него может получиться в формате:  
+In each recipe, you first specify the name of the item, and then what can come out of it in the format:  
 ```json
-"имя предмета": [
-  "Процентное соотношение":["Получаемый предмет", "Шанс уничтожения от 0 до 100", "Шанс успешного улучшения от 0 до 100 (Eсли улучшения будет не успешно, предмет останется таким же)"]
+"item name": [
+  "Percentage ratio":["Item being received", "Chance of destruction is from 0 to 100", "The chance of successful improvement is from 0 to 100 (If the improvement is a failure, the item will remain the same)"]
 ]
 ```
 
-В случае отсутствия параметра «Процентное соотношение», соотношение делиться на равные доли между всеми получаемыми предметами.  
-К примеру, автоматические разделение 50 на 50:
+In the absence of the "Percentage ratio" parameter, the ratio is divided into equal shares between all the items received.  
+For example, automatic 50-50 split:
 ```json
 "weapon_usp_silencer": [
   ["weapon_deagle", 30, 70],
@@ -509,22 +509,22 @@ The teleportation point is written in the format: `"Name":{"vec":[coordinates], 
 ]
 ```
 
-Если необходимо провести манипуляции с игроком:
+If it is necessary to carry out manipulations with the player:
 ```json
 "player": [
   ["Эффект", "Процент успешного «улучшения» от 0 до 100"]
 ]
 ```
 
-Поддерживается 4 эффекта:
-1. Injure - Кровотечение
-2. Regeneration - Регенерация здоровья
-3. Speed - Увеличение скорости
-4. Butchering - Смерть от распиливания на части
+4 effects are supported:
+1. Injure - Bleeding
+2. Regeneration - Health Regeneration
+3. Speed - Speed increase
+4. Butchering - Death by sawing into pieces
 
 ------------------
 
-### Пример
+### Example
 ```json
 "recipes": {
         "rough": {
@@ -588,40 +588,40 @@ The teleportation point is written in the format: `"Name":{"vec":[coordinates], 
 }
 ```
 
-## Список команд  
+## List of commands  
 
-### Команды для администратора 
-| Команда       | Описание |
+### Commands for the Administrator 
+| Command       | Description |
 | ------------- | ---------|
-| scp_admin     | Показать меню администратора |
-| gm status     | Вывести список игроков в командах в консоль |
-| gm timers     | Вывести список таймеров в консоль |
-| ents getall   | Вывести список всех сущностей в хранилище в консоль |
+| scp_admin     | Show the admin menu |
+| gm status     | Output a list of players in teams to the console |
+| gm timers     | Output a list of timers to the console |
+| ents getall   | Output a list of all entities in the repository to the console |
 
-### Команды для разработки (работают только при включенном параметре debug)  
-| Команда            | Описание |
+### Development commands (work only when the debug parameter is enabled)  
+| Command            | Description |
 | ------------------ | ---------|
-| getmypos           | Вывести в консоль текущую позицию |
-| getentsinbox       | Вывести в чат список объектов вокруг игрока |
-| debug set body     | Установить группу телу |
-| debug set skin     | Установить скин |
-| debug flashlight   | Включить/выключить фонарик |
-| debug nvgs         | Включить/выключить ПНВ |
-| debug round end    | Принудительно завершить раунд |
-| debug round lock   | Заблокировать раунд |
-| debug round unlock | Разблокировать раунд |
-| debug voice mute   | Отключить возможность игроку {1} слышать игрока {2} (id игрока) |
-| debug voice unmute | Установка игроку {1} возможность слышать игрока {2} (id игрока) |
+| getmypos           | Output the current position to the console |
+| getentsinbox       | Display a list of objects around the player in the chat |
+| debug set body     | Set the body group |
+| debug set skin     | Set Skin |
+| debug flashlight   | Turn on/off the flashlight |
+| debug nvgs         | Enable/disable NVD |
+| debug round end    | Forcibly end the round |
+| debug round lock   | Block a round |
+| debug round unlock | Unlock the round |
+| debug voice mute   | Disable the option to player {1} hear the player {2} (player id) |
+| debug voice unmute | Installation to player {1} ability to hear the player {2} (player id) |
 
-[^1]: ВНИМАНИЕ! Общая доля должна равняться 100!
-[^2]: Обязательный для появления в начале раунда. К примеру: при малом количестве игроков Вам необходимо наличие хотя бы одного SCP. 
-При значении данного параметра "true", SCP будет обязан появиться.
-[^3]: ВНИМАНИЕ если Вы не понимаете что это НЕ ТРОГАЙТЕ!
-[^4]: Должен находиться в секции команды.
-[^5]: Игрок будет телепортирован для «проведении беседы».
-[^6]: Данная настройка является опциональной. Она может быть не использована в случае отключения одноимённого плагина.
-[^7]: Сначала нижняя точка, затем верхняя.
-[^8]: Если проще – куда телепортирует игрока после «звонка».
-[^9]: В первом случае игроку необходимо открыть инвентарь и использовать карту на блоке управления дверью. Во втором случае игроку необходимо только нажать кнопку, система сама произведет поиск карты в инвентаре. 
-[^10]: 0 - Все перечисленные способы. 1 - Только консоль. 2 - Только файл. 3 - Только сторонние плагины (в случае, если вы используете Discord Logger, который входит в комплект, будет использоваться именно он).
-[^11]: Данная настройка появилась в связи с отсутствием необходимых функций в SourceMod. Писать полноценный парсер MDL файлов нам было лень, поэтому страдать будут все. ©️ Гет.
+[^1]: Attention! The total share should be 100!
+[^2]: Required to appear at the beginning of the round. For example: with a small number of players, you need at least one SCP. 
+If the value of this parameter is "true", SCP will be required to spawn.
+[^3]: ATTENTION if you don't understand what it is, DO NOT TOUCH it!
+[^4]: Must be located in the team section.
+[^5]: The player will be teleported to "conduct a conversation" with it.
+[^6]: This setting is optional. It may not be used if the plugin of the same name is disabled.
+[^7]: First the bottom point, then the top.
+[^8]: To put it simply, where the player teleports after the "call".
+[^9]: In the first case, the player needs to open the inventory and use the card on the door control unit. In the second case, the player only needs to press the button, the system itself will search for the card in the inventory. 
+[^10]: 0 - All the listed methods. 1 - Console only. 2 - File only. 3 - Only third-party plugins (if you use Discord Logger, which is included in the set, it will be used).
+[^11]: This setting appeared due to the lack of necessary functions in SourceMod. We were too lazy to write a full-fledged MDL file parser, so everyone will suffer. (c) Get 
