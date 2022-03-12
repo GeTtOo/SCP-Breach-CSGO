@@ -7,14 +7,14 @@ For each map needs its own folder with configuration files.
 For any manipulations, it is recommended to use a text editor with support for syntax highlighting and errors.  
 
 ## Table of contents
-1. [Setting up Player Classes](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BRU%5D%20Configuration.md#classesjson)
-2. [General settings of the mod and its modules](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BRU%5D%20Configuration.md#configjson)
-3. [Doors and access to them](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BRU%5D%20Configuration.md#doorsjson)
-4. [Own items and their customization, access levels](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BRU%5D%20Configuration.md#entitiesjson)
-5. [Pointers on the map](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BRU%5D%20Configuration.md#regionsjson)
-6. [Spawn of items on the map](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BRU%5D%20Configuration.md#spawn_mapjson)
-7. [Recipes of SCP-914](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BRU%5D%20Configuration.md#914json3)
-8. [List of commands](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BRU%5D%20Configuration.md#%D1%81%D0%BF%D0%B8%D1%81%D0%BE%D0%BA-%D0%BA%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4)
+1. [Setting up Player Classes](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md#classesjson)
+2. [General settings of the mod and its modules](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md#configjson)
+3. [Doors and access to them](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md#doorsjson)
+4. [Own items and their customization, access levels](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md#entitiesjson)
+5. [Pointers on the map](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md#regionsjson)
+6. [Spawn of items on the map](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md#spawnlistjson)
+7. [Recipes of SCP-914](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md#914json3)
+8. [List of commands](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md#list-of-commands)
 
 ------------------
 
