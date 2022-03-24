@@ -83,6 +83,10 @@ models/player/custom_player/eternity/scp_457.dx90.vtx
 models/player/custom_player/eternity/scp_457.mdl
 models/player/custom_player/eternity/scp_457.phy
 models/player/custom_player/eternity/scp_457.vvd
+materials/models/eternity/overlays/arrested.vmt
+materials/models/eternity/overlays/arrested.vtf
+materials/models/eternity/overlays/arrested_en.vmt
+materials/models/eternity/overlays/arrested_en.vtf
 materials/models/eternity/overlays/cadet.vmt
 materials/models/eternity/overlays/cadet.vtf
 materials/models/eternity/overlays/chaos.vmt
