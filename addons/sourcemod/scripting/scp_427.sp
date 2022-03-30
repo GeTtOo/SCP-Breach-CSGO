@@ -28,66 +28,54 @@
  *
  **/
 
-#if defined _scpcore_included
-    #endinput
-#endif
-#define _scpcore_included
+#include <sdkhooks>
+#include <scpcore>
 
-#pragma dynamic 131072
+#pragma semicolon 1
+#pragma newdecls required
 
-// ¯\_(ツ)_/¯
-#include "scp\structures\base"
-#include "scp\structures\vector"
-#include "scp\structures\angle"
-#include "scp\structures\color"
-#include "scp\structures\json"
+public Plugin myinfo = {
+    name = "[SCP] 427",
+    author = "Andrey::Dono",
+    description = "SCP 427 for CS:GO modification - SCP Foundation",
+    version = "1.0",
+    url = "https://github.com/author/plugin"
+};
 
-#include "scp\classes\meta"
-#include "scp\classes\gamemode"
-#include "scp\classes\logger"
+public void SCP_RegisterMetaData() {
+    gamemode.meta.RegEntEvent(ON_PICKUP, "427_amulet", "OnPickup");
+    gamemode.meta.RegEntEvent(ON_USE, "427_amulet", "OnUse");
+    gamemode.meta.RegEntEvent(ON_DROP, "427_amulet", "OnDrop");
+}
 
-GameMode gamemode;
+public void OnPickup(Player &ply, Entity &ent)
+{
+    if (ent.GetBool("open", false))
+    {
+        
+    }
+}
 
-#include "scp\classes\entity"
-#include "scp\classes\client"
-#include "scp\classes\worldtext"
-#include "scp\classes\singletons"
+public void OnUse(Player &ply, Entity &ent)
+{
+    if (ent.GetBool("open", false))
+    {
+        
+    }
+}
 
-ClientSingleton player;
-EntitySingleton ents;
-WorldTextSingleton worldtext;
+public void OnDrop(Player &ply, Entity &ent)
+{
+    if (ent.GetBool("open", false))
+    {
+        
+    }
+}
 
-#include "scp\classes\manager"
-#include "scp\classes\nuke"
+public void SCP_OnPlayerClear(Player &ply) {
+    
+}
 
-forward void SCP_RegisterMetaData();
-
-forward void SCP_OnLoad();
-
-forward void SCP_OnUnload();
-
-forward void SCP_OnPlayerJoin(Player &ply);
-
-forward void SCP_OnPlayerLeave(Player &ply);
-
-forward void SCP_OnPlayerSpawn(Player &ply);
-
-forward void SCP_OnPlayerReset(Player &ply);
-
-forward void SCP_OnPlayerClear(Player &ply);
-
-forward void SCP_OnPlayerTakeWeapon(Player &ply, Entity &ent);
-
-forward Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype, int &inflictor);
-
-forward void SCP_OnPlayerDeath(Player &vic, Player &atk);
-
-forward void SCP_OnButtonPressed(Player &ply, int doorId);
-
-forward void SCP_OnRoundStart();
-
-forward void SCP_OnRoundEnd();
-
-forward void SCP_OnInput(Player &ply, int buttons);
-
-forward void SCP_OnCallActionMenu(Player &ply);
+public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype) {
+    
+}

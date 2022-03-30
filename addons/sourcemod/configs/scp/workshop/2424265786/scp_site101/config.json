@@ -56,6 +56,20 @@
         "SCP-996":{"vec":[-5406,2626,4],"ang":[-2,-1,0]},
         "SCP-106-Cell":{"vec":[-4306,683,2385],"ang":[22,176,0]}
     },
+    "[SCP] Handcuffs": {
+        "ammocount":5,
+        "breaktime":5,
+        "breakchance":20,
+        "cooldown":35,
+        "sound": {
+            "breaking": [
+                "player/winter/snowball_hit_01.wav"
+            ],
+            "breaked": [
+                "survival/`buy_item_failed_01.wav"
+            ]
+        }
+    },
     "[SCP] Voice": {
         "wtid":8,
         "transmissiontime":10,

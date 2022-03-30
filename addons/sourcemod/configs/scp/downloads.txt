@@ -79,10 +79,16 @@ models/player/custom_player/eternity/scp096.dx90.vtx
 models/player/custom_player/eternity/scp096.mdl
 models/player/custom_player/eternity/scp096.phy
 models/player/custom_player/eternity/scp096.vvd
+models/weapons/arms_scp096long.mdl
+models/weapons/arms_scp096long.vvd
+models/weapons/arms_scp096long.dx90.vtx
 models/player/custom_player/eternity/scp_457.dx90.vtx
 models/player/custom_player/eternity/scp_457.mdl
 models/player/custom_player/eternity/scp_457.phy
 models/player/custom_player/eternity/scp_457.vvd
+models/weapons/arms_scp457.mdl
+models/weapons/arms_scp457.vvd
+models/weapons/arms_scp457.dx90.vtx
 materials/models/eternity/overlays/arrested.vmt
 materials/models/eternity/overlays/arrested.vtf
 materials/models/eternity/overlays/arrested_en.vmt

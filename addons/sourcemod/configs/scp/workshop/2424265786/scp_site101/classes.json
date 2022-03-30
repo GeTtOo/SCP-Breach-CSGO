@@ -142,7 +142,7 @@
             "Security": {
                 "percent":10,
                 "items":["card_guard"],
-                "weapons":["weapon_mp5sd","weapon_usp_silencer"],
+                "weapons":["weapon_mp5sd","weapon_usp_silencer","weapon_taser"],
                 "model":{
                     "id":"mog",
                     "bodygroups":{
@@ -154,6 +154,7 @@
                     },
                     "skin":6
                 },
+                "handsmodel":"models/weapons/arms_scp096long.mdl",
                 "overlay":"guard",
                 "pos":[
                     {"vec":[-10369,-2740,-1008],"ang":[3,90,0]},

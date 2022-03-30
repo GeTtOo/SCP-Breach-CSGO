@@ -45,6 +45,7 @@ Handle OnClientLeaveForward;
 Handle OnClientSpawnForward;
 Handle OnClientResetForward;
 Handle OnClientClearForward;
+Handle OnClientTakeWeaponForward;
 Handle OnTakeDamageForward;
 Handle OnPlayerDeathForward;
 Handle OnButtonPressedForward;
@@ -101,7 +102,8 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     OnClientSpawnForward = CreateGlobalForward("SCP_OnPlayerSpawn", ET_Event, Param_CellByRef);
     OnClientResetForward = CreateGlobalForward("SCP_OnPlayerReset", ET_Event, Param_CellByRef);
     OnClientClearForward = CreateGlobalForward("SCP_OnPlayerClear", ET_Event, Param_CellByRef);
-    OnTakeDamageForward = CreateGlobalForward("SCP_OnTakeDamage", ET_Event, Param_CellByRef, Param_CellByRef, Param_FloatByRef, Param_CellByRef);
+    OnClientTakeWeaponForward = CreateGlobalForward("SCP_OnPlayerTakeWeapon", ET_Event, Param_CellByRef, Param_CellByRef);
+    OnTakeDamageForward = CreateGlobalForward("SCP_OnTakeDamage", ET_Event, Param_CellByRef, Param_CellByRef, Param_FloatByRef, Param_CellByRef, Param_CellByRef);
     OnPlayerDeathForward = CreateGlobalForward("SCP_OnPlayerDeath", ET_Event, Param_CellByRef, Param_CellByRef);
     OnButtonPressedForward = CreateGlobalForward("SCP_OnButtonPressed", ET_Event, Param_CellByRef, Param_Cell);
     OnRoundStartForward = CreateGlobalForward("SCP_OnRoundStart", ET_Event);
@@ -712,6 +714,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
         Call_PushCellRef(atk);
         Call_PushFloatRef(damage);
         Call_PushCellRef(damagetype);
+        Call_PushCellRef(inflictor);
         Call_Finish(result);
 
         return result;
@@ -1363,6 +1366,11 @@ public void WeaponIdUpdate(ArrayList data)
                 {
                     ent.id = item;
                     ents.IndexUpdate(ent);
+
+                    Call_StartForward(OnClientTakeWeaponForward);
+                    Call_PushCellRef(ply);
+                    Call_PushCellRef(ent);
+                    Call_Finish();
                 }
             }
         }

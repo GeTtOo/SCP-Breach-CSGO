@@ -418,7 +418,7 @@ methodmap Player < Entity {
             char handsModel[128];
             this.class.Model(handsModel, sizeof(handsModel));
 
-            //this.SetHandsModel(handsModel);
+            this.SetHandsModel(handsModel);
         }
 
         char teamName[32], className[32];
