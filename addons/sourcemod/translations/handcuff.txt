@@ -1,0 +1,20 @@
+"Phrases"
+{
+    "Handcuff breaking"
+    {
+        "en"        "You're trying to free yourself"
+        "ru"        "Ты пытаешься освободиться от наручников"
+    }
+
+    "Handcuff breaked"
+    {
+        "en"        "You are free"
+        "ru"        "У тебя получилось освободиться"
+    }
+    
+    "Handcuff breaking failed"
+    {
+        "en"        "You didn't get to release"
+        "ru"        "У тебя не получилось освободиться"
+    }
+}
