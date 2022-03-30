@@ -142,7 +142,7 @@
             "Security": {
                 "percent":10,
                 "items":["card_guard"],
-                "weapons":["weapon_mp5sd","weapon_usp_silencer","weapon_taser"],
+                "weapons":["weapon_mp5sd","weapon_usp_silencer", "weapon_taser"],
                 "model":{
                     "id":"mog",
                     "bodygroups":{
@@ -185,7 +185,7 @@
                 "multipler":1.0,
                 "overlay":"commander",
                 "items":["card_mog_commander", "radio"],
-                "weapons":["weapon_m4a1_silencer", "weapon_deagle", "weapon_healthshot"],
+                "weapons":["weapon_m4a1_silencer", "weapon_deagle", "weapon_healthshot", "weapon_taser"],
                 "model":{
                     "id":"mog",
                     "bodygroups":{
@@ -208,7 +208,7 @@
                 "armor":200,
                 "helmet":true,
                 "items":["card_mog_lieutenant", "radio"],
-                "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer"],
+                "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer", "weapon_taser"],
                 "model":{
                     "id":"mog",
                     "bodygroups":{
@@ -237,7 +237,7 @@
                 "armor":150,
                 "helmet":true,
                 "items":["card_senior_guard", "radio"],
-                "weapons":["weapon_mp7", "weapon_p250"],
+                "weapons":["weapon_mp7", "weapon_p250", "weapon_taser"],
                 "model":{
                     "id":"mog",
                     "bodygroups":{
@@ -295,7 +295,7 @@
                 "armor":500,
                 "helmet":true,
                 "items":["card_mog_lieutenant", "radio"],
-                "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 5], "weapon_hegrenade", "weapon_breachcharge"],
+                "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 5], "weapon_hegrenade", "weapon_breachcharge", "weapon_taser"],
                 "model":{
                     "id":"mog",
                     "bodygroups":{
@@ -318,7 +318,7 @@
                 "armor":500,
                 "helmet":true,
                 "items":["card_mog_lieutenant", "radio"],
-                "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 5], "weapon_breachcharge"],
+                "weapons":["weapon_m4a1", "weapon_hkp2000", ["weapon_healthshot", 5], "weapon_breachcharge", "weapon_taser"],
                 "model":{
                     "id":"mog",
                     "bodygroups":{
