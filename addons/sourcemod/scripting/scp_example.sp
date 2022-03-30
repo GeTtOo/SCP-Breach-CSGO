@@ -73,6 +73,10 @@ public void SCP_OnPlayerSpawn(Player &ply) {
     
 }
 
+public void OnPlayerTakeWeapon(Player &ply, Entity &ent) {
+    
+}
+
 public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype) {
     
 }
