@@ -57,21 +57,30 @@ public void OnTouch(Entity &ent1, Entity &ent2)
         Player ply = view_as<Player>(ent1);
         Player soul = view_as<Player>(ent2.GetHandle("soul"));
 
-        if (ply != soul && soul)
+        if (!ply.IsSCP && ply != soul && soul)
         {
             char team[32];
-
             ply.Team(team, sizeof(team));
             
             soul.Team(team);
             soul.class = view_as<Class>(CloneHandle(ply.class));
-            soul.class.Remove("items");
+            //soul.class.Remove("items");
 
             soul.Spawn();
 
+            soul.SetBool("reincarnation", true);
             soul.SetVector("soulpos", ply.GetPos());
             soul.SetAngle("soulang", ply.GetAng());
 
+            if (soul.inv.Pickup(ent2))
+            {
+                ent2.WorldRemove();
+                ents.IndexUpdate(ent2);
+            }
+
+            ply.SetBool("bodyconsumed", true);
+            gamemode.mngr.RestrictWeapons(ply);
+            gamemode.mngr.ClearInventory(ply);
             ply.Kill();
         }
     }
@@ -90,22 +99,28 @@ public void OnDrop(Player &ply, Entity &ent)
 
 public void SCP_OnPlayerSpawn(Player &ply)
 {
-    if (ply.GetVector("soulpos") && ply.GetAngle("soulang"))
+    if (ply.GetBool("reincarnation"))
     {
         ply.SetPos(view_as<Vector>(ply.GetBase("soulpos")), view_as<Angle>(ply.GetBase("soulang")));
+        ply.RemoveValue("reincarnation");
         ply.RemoveValue("soulpos");
         ply.RemoveValue("soulang");
     }
 }
 
 public void SCP_OnPlayerDeath(Player &vic, Player &atk) {
-    if (vic.GetVector("soulpos") && vic.GetAngle("soulang") && vic.ragdoll)
+    if (vic.GetBool("bodyconsumed") && vic.ragdoll)
+    {
+        vic.RemoveValue("bodyconsumed");
         vic.ragdoll.Remove();
+        vic.ragdoll = null;
+    }
 }
 
 public void SCP_OnPlayerLeave(Player &ply) {
-    if (ply.GetVector("soulpos") && ply.GetAngle("soulang"))
+    if (ply.GetBool("reincarnation"))
     {
+        ply.RemoveValue("reincarnation");
         ply.RemoveValue("soulpos");
         ply.RemoveValue("soulang");
     }
