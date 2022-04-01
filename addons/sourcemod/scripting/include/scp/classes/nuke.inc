@@ -92,8 +92,16 @@ methodmap NuclearWarhead < Base {
     }
 
     public void Ready() {
-        this.ready = true;
-        this.Update(" Ready");
+        if (!this.ready)
+        {
+            this.ready = true;
+            this.Update(" Ready");
+        }
+        else
+        {
+            this.ready = false;
+            this.Update("");
+        }
     }
 
     public void Activate() {
@@ -189,7 +197,7 @@ methodmap NuclearWarhead < Base {
     }
     
     public void Controller(int btnId) {
-        if (gamemode.config.nuke.buttons.ready == btnId && !this.ready && !this.IsNuked)
+        if (gamemode.config.nuke.buttons.ready == btnId && !this.IsNuked)
             this.Ready();
         else if (gamemode.config.nuke.buttons.active == btnId && this.ready && !this.active && !this.IsNuked)
             this.Activate();
