@@ -188,24 +188,7 @@ methodmap Player < Entity {
         }
     }
 
-    public void RestrictWeapons() {
-        ArrayList entities = view_as<Base>(gamemode).GetBase("entities").GetArrayList("entities");
-        int item, weparrsize = GetEntPropArraySize(this.id, Prop_Send, "m_hMyWeapons");
-
-        for(int weparridx = 0; weparridx < weparrsize; weparridx++)
-        {
-            item = GetEntPropEnt(this.id, Prop_Send, "m_hMyWeapons", weparridx);
-
-            if(item != -1)
-            {
-                int idx = entities.FindValue(item, 0);
-                if (idx != -1)
-                    entities.Erase(idx);
-                RemovePlayerItem(this.id, item);
-                AcceptEntityInput(item, "Kill");
-            }
-        }
-    }
+    public native void RestrictWeapons();
 
     public bool Check(char[] val, int check) {
         ArrayList checklist = this.GetArrayList(val);

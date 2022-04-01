@@ -191,13 +191,5 @@ methodmap Inventory < Base {
         this.GetArrayList("inventory").Clear();
     }
 
-    public void FullClear() {
-        ArrayList entities = view_as<Base>(gamemode).GetBase("entities").GetArrayList("entities");
-
-        while (this.items.Length != 0) {
-            InvItem item = this.Drop();
-            entities.Erase(entities.FindValue(item, 1));
-            item.Dispose();
-        }
-    }
+    public native void FullClear();
 }

@@ -79,8 +79,8 @@ public void OnTouch(Entity &ent1, Entity &ent2)
             }
 
             ply.SetBool("bodyconsumed", true);
-            gamemode.mngr.RestrictWeapons(ply);
-            gamemode.mngr.ClearInventory(ply);
+            ply.RestrictWeapons();
+            ply.inv.FullClear();
             ply.Kill();
         }
     }

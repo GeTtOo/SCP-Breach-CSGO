@@ -129,6 +129,8 @@ methodmap Manager < Base {
 
         for (int i=1; i <= player.Length; i++) {
             Player ply = player.GetByID(i);
+            
+            if (!ply || !ply.class) continue;
 
             char plyTeamName[32];
             ply.Team(plyTeamName, sizeof(plyTeamName));

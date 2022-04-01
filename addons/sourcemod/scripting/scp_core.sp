@@ -95,6 +95,9 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("WorldTextSingleton.Create", NativeWT_Create);
     CreateNative("WorldTextSingleton.Remove", NativeWT_Remove);
 
+    CreateNative("Player.RestrictWeapons", NativePlayer_RestrictWeapons);
+    CreateNative("Inventory.FullClear", NativePlayer_Inventory_FullClear);
+
     OnLoadGM = CreateGlobalForward("SCP_OnLoad", ET_Event);
     OnUnloadGM = CreateGlobalForward("SCP_OnUnload", ET_Event);
     OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_CellByRef);
@@ -2080,5 +2083,36 @@ public any NativeWT_Remove(Handle Plugin, int numArgs) {
         Entity ent = entities.Get(idx, 0);
         ent.Remove();
         ents.list.Erase(idx);
+    }
+}
+
+public any NativePlayer_RestrictWeapons(Handle Plugin, int numArgs) {
+    ArrayList entities = ents.list;
+    Player ply = GetNativeCell(1);
+
+    int item, weparrsize = GetEntPropArraySize(ply.id, Prop_Send, "m_hMyWeapons");
+    for(int weparridx = 0; weparridx < weparrsize; weparridx++)
+    {
+        item = GetEntPropEnt(ply.id, Prop_Send, "m_hMyWeapons", weparridx);
+
+        if(item != -1)
+        {
+            int idx = entities.FindValue(item, 0);
+            if (idx != -1)
+                entities.Erase(idx);
+            RemovePlayerItem(ply.id, item);
+            AcceptEntityInput(item, "Kill");
+        }
+    }
+}
+
+public any NativePlayer_Inventory_FullClear(Handle Plugin, int numArgs) {
+    ArrayList entities = ents.list;
+    Player ply = view_as<Player>(view_as<Base>(GetNativeCell(1)).GetHandle("ply"));
+
+    while (ply.inv.items.Length != 0) {
+        InvItem item = ply.inv.Drop();
+        entities.Erase(entities.FindValue(item, 1));
+        item.Dispose();
     }
 }
