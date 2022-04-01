@@ -143,8 +143,9 @@ methodmap Player < Entity {
     }
 
     public void ShowOverlay(char[] name) {
-        char overlay[128];
-        Format(overlay, sizeof(overlay), "r_screenoverlay models/eternity/overlays/%s", name);
+        char overlay[128], langcode[3];
+        GetLanguageInfo(GetClientLanguage(this.id), langcode, sizeof(langcode));
+        Format(overlay, sizeof(overlay), "r_screenoverlay models/eternity/overlays/%s_%s", name, langcode);
         ClientCommand(this.id, overlay);
     }
 
@@ -179,7 +180,10 @@ methodmap Player < Entity {
 
             if(item != -1)
             {
-                CS_DropWeapon(this.id, item, false, false);
+                char wepclass[128];
+                GetEntityClassname(item, wepclass, sizeof(wepclass));
+                if (!StrEqual(wepclass, "weapon_fists"))
+                    CS_DropWeapon(this.id, item, false, false);
             }
         }
     }
@@ -418,7 +422,7 @@ methodmap Player < Entity {
             char handsModel[128];
             this.class.Model(handsModel, sizeof(handsModel));
 
-            this.SetHandsModel(handsModel);
+            //this.SetHandsModel(handsModel); Bug...
         }
 
         char teamName[32], className[32];

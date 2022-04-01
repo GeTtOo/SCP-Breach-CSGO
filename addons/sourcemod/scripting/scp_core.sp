@@ -471,6 +471,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         delete players;
 
         SetupMapRegions();
+        SetupIdPads();
         SpawnItemsOnMap();
 
         gamemode.nuke.SpawnDisplay();
@@ -1391,6 +1392,22 @@ public void OpenCameraDoors(JSON_ARRAY doors)
 public void PlyHideOverlay(Player ply)
 {
     ply.HideOverlay();
+}
+
+public void SetupIdPads()
+{
+    int entId = 0;
+    while ((entId = FindEntityByClassname(entId, "prop_dynamic")) != -1) {
+        if (!IsValidEntity(entId)) continue;
+
+        char ModelName[256];
+        GetEntPropString(entId, Prop_Data, "m_ModelName", ModelName, sizeof(ModelName));
+
+        if (StrEqual(ModelName, "models/eternity/map/keypad.mdl"))
+        {
+            SetEntProp(entId, Prop_Send, "m_nSkin", (gamemode.mngr.serverlang == 22) ? 0 : 3);
+        }
+    }
 }
 
 public void ResetIdPad(int entid)
