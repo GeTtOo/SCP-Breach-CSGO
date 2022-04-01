@@ -50,7 +50,7 @@ public void SCP_RegisterMetaData() {
 
 public void OnUse(Player &ply, InvItem &item) {
     if (!item.disabled) {
-        SetEntityRenderMode(ply.id, RENDER_NONE);
+        ply.model.SetRenderMode(RENDER_NONE);
         ply.progress.Start(15000, "InvisibleEffect");
         ply.PrintNotify("Вы ощущаете себя менее заметным");
         item.CooldownStart(item.meta.cd * 1000, "ItemUnlocked", item);
@@ -59,7 +59,7 @@ public void OnUse(Player &ply, InvItem &item) {
 }
 
 public void OnDrop(Player &ply, InvItem &item) {
-    SetEntityRenderMode(ply.id, RENDER_NORMAL);
+    ply.model.SetRenderMode(RENDER_NORMAL);
     ply.progress.Stop();
 }
 
@@ -69,6 +69,6 @@ public void ItemUnlocked(InvItem item) {
 }
 
 public void InvisibleEffect(Player ply) {
-    SetEntityRenderMode(ply.id, RENDER_NORMAL);
+    ply.model.SetRenderMode(RENDER_NORMAL);
     ply.progress.Stop();
 }
