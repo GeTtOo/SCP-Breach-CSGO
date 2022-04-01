@@ -93,7 +93,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 	if(atk.class.Is("096"))
 	{
         if (atk.GetBool("096_IsRage"))
-            damage += 800;
+            damage += 800.0;
         else
             damage = 0.0;
 
