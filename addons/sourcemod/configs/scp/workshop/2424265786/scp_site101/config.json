@@ -59,6 +59,7 @@
     "[SCP] Handcuffs": {
         "ammocount":5,
         "breaktime":5,
+        "breakingcd":3,
         "breakchance":20,
         "cooldown":35,
         "sound": {
