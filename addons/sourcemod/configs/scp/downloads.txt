@@ -540,6 +540,8 @@ sound/scp/173/death3.mp3
 sound/scp/173/neck1.mp3
 sound/scp/173/neck2.mp3
 sound/scp/173/neck3.mp3
+sound/scp/427/active.mp3
+sound/scp/427/transform.mp3
 sound/scp/914_player_rough.mp3
 sound/scp/scp-096_crying.mp3
 sound/scp/scp-096_rage_start.mp3
