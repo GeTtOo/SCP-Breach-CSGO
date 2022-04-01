@@ -202,7 +202,7 @@ public void SCP_OnRoundStart() {
 }
 
 public void SCP_OnButtonPressed(Player &ply, int doorid) {
-    if (gamemode.plconfig.GetInt("buttonid") == doorid && Intercom.ready) Intercom.StrartTransmission(ply);
+    if (gamemode.plconfig.GetInt("buttonid") == doorid && Intercom.ready && !ply.IsSCP) Intercom.StrartTransmission(ply);
 }
 
 public void TransmissionStop()
@@ -278,7 +278,7 @@ public void VoiceLogicHandler()
         {
             speaker = entities.Get(k);
 
-            if (listener != speaker)
+            if ((listener != speaker) && (!speaker.IsSCP))
             {
                 listener.SetListen(speaker, true);
             }
