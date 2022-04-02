@@ -1,6 +1,6 @@
 {
     "ff":true,
-    "debug":true,
+    "debug":false,
     "logmode":0,
     "loglevel":4,
     "DefaultGlobalClass":"Personnel",
