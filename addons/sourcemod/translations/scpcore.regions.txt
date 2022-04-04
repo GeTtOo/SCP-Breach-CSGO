@@ -40,4 +40,109 @@
         "en"    "SCP-106 room"
         "ru"    "Камера SCP-106"
     }
+    "scientists-office"
+    {
+        "en"    "Scientist's Office"
+        "ru"    "Офис учёных"
+    }
+    "construction"
+    {
+        "en"    "Construction"
+        "ru"    "Стройка"
+    }
+    "server-room"
+    {
+        "en"    "Server Room"
+        "ru"    "Серверная"
+    }
+    "scp-079"
+    {
+        "en"    "SCP-079"
+        "ru"    "SCP-079"
+    }
+    "locker-room"
+    {
+        "en"    "Locker Room"
+        "ru"    "Раздевалка"
+    }
+    "womens-toilet"
+    {
+        "en"    "Women's Toilet"
+        "ru"    "Женский туалет"
+    }
+    "mens-toilet"
+    {
+        "en"    "Men's toilet"
+        "ru"    "Мужской туалет"
+    }
+    "staff-room"
+    {
+        "en"    "Staff Room"
+        "ru"    "Комната персонала"
+    }
+    "scp-173"
+    {
+        "en"    "SCP-173"
+        "ru"    "SCP-173"
+    }
+    "storage-room"
+    {
+        "en"    "Storage Room"
+        "ru"    "Склад"
+    }
+    "lite-armory-room"
+    {
+        "en"    "Lite Armory Room"
+        "ru"    "Оружейная лёгкой зоны"
+    }
+    "scp-457"
+    {
+        "en"    "SCP-457"
+        "ru"    "SCP-457"
+    }
+    "gate-zone"
+    {
+        "en"    "Gate Zone"
+        "ru"    "КПП"
+    }
+    "scp-035"
+    {
+        "en"    "SCP-035"
+        "ru"    "SCP-035"
+    }
+    "lite-contaiment-room"
+    {
+        "en"    "Lite Contaiment Room"
+        "ru"    "Лёгкая зона содержания"
+    }
+    "scp-996"
+    {
+        "en"    "SCP-996"
+        "ru"    "SCP-996"
+    }
+    "main-armory-room"
+    {
+        "en"    "Main Armory Room"
+        "ru"    "Главная оружейная"
+    }
+    "nuke-side"
+    {
+        "en"    "Nuke Side"
+        "ru"    "Реакторная зона"
+    }
+    "ventilation"
+    {
+        "en"    "Ventilation"
+        "ru"    "Вентиляция"
+    }
+    "gate-b"
+    {
+        "en"    "Gate B"
+        "ru"    "Выход Б"
+    }
+    "gate-a"
+    {
+        "en"    "Gate A"
+        "ru"    "Выход А"
+    }
 }
