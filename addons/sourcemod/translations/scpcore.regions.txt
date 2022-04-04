@@ -120,6 +120,11 @@
         "en"    "SCP-996"
         "ru"    "SCP-996"
     }
+    "hard-armory-room"
+    {
+        "en"    "Hard Armory Room"
+        "ru"    "Оружейная тяжёлой зоны"
+    }
     "main-armory-room"
     {
         "en"    "Main Armory Room"
@@ -149,5 +154,15 @@
     {
         "en"    "SCP-049"
         "ru"    "SCP-049"
+    }
+    "scp-096"
+    {
+        "en"    "SCP-096"
+        "ru"    "SCP-096"
+    }
+    "intercom"
+    {
+        "en"    "Intercom"
+        "ru"    "Интерком"
     }
 }
