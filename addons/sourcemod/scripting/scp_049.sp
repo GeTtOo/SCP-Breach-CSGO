@@ -130,6 +130,8 @@ public void Revive(Player ply)
 							vic.model.SetSkin(vic.model.GetSkin() + 1);
 							
 							vic.SetPos(vic.ragdoll.GetPos(), ply.GetAng() - new Angle(0.0, 180.0, 0.0));
+
+							ply.health += gamemode.plconfig.GetInt("healing", 2500);
 						}
 					}
 				}
