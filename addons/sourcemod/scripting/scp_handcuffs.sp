@@ -91,6 +91,43 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
     return Plugin_Continue;
 }
 
+public EscapeInfo SCP_OnPlayerEscape(Player &ply, EscapeInfo &data)
+{
+    if (ply.GetBool("handcuffed"))
+    {
+        JSON_OBJECT arrestarr = gamemode.plconfig.GetObject("arrestedesc");
+        StringMapSnapshot arrestarrsnap = arrestarr.Snapshot();
+        
+        char teamname[32], classname[32];
+        for (int i=0; i < arrestarrsnap.Length; i++)
+        {
+            int kl = arrestarrsnap.KeyBufferSize(i);
+            char[] class = new char[kl];
+            arrestarrsnap.GetKey(i, class, kl);
+            if (json_is_meta_key(class)) continue;
+            
+            ply.class.Name(classname, sizeof(classname));
+
+            if (StrEqual(class, classname))
+            {
+                EscapeInfo arrestdata = view_as<EscapeInfo>(arrestarr.GetObject(class));
+                arrestdata.team(teamname, sizeof(teamname));
+                arrestdata.class(classname, sizeof(classname));
+                
+                data.trigger = arrestdata.trigger;
+                data.team(teamname);
+                data.class(classname);
+
+                ply.RemoveValue("handcuffed");
+                ply.RemoveValue("hc_breaking");
+                ply.HideOverlay();
+            }
+        }
+    }
+
+    return data;
+}
+
 public void SCP_OnPlayerClear(Player &ply) {
     ply.RemoveValue("handcuffed");
     ply.RemoveValue("hc_breaking");
