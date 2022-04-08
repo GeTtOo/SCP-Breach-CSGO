@@ -98,6 +98,19 @@ public void SCP_OnPlayerDeath(Player &ply)
     }
 }
 
+public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype)
+{
+    if(vic.class.Is("173"))
+    {
+        PrintToChatAll("Test");
+        damage = damage / 50.0;
+        vic.multipler = vic.class.multipler / (float(vic.health) / float(vic.class.health / gamemode.plconfig.GetInt("hpmultipler", 1)));
+        return Plugin_Changed;
+    }
+
+    return Plugin_Continue;
+}
+
 public void CheckVisualContact(Player ply) 
 {
     if (ply != null && ply.class != null && ply.IsAlive() && ply.class.Is("173")) 
@@ -284,7 +297,8 @@ public void RenderHologram(Player ply)
 
             delete trace;
 
-            if (GetVectorDistance(posarr, endposarr) <= 400.0)
+            float blinkrange = float(gamemode.plconfig.GetInt("blinkrange", 400));
+            if (GetVectorDistance(posarr, endposarr) <= blinkrange / (float(ply.health) / float(ply.class.health / gamemode.plconfig.GetInt("hpmultipler", 1))))
             {
                 ent.SetPos(new Vector(endposarr[0], endposarr[1], endposarr[2]), new Angle(0.0, angarr[1], 0.0)); // posarr[2] - 64.0
                 if (!ply.GetBool("173_renderholo"))
