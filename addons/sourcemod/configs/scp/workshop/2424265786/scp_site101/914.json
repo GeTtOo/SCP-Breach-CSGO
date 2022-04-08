@@ -641,37 +641,37 @@
                 ["005_picklock", 70, 50]
             ],
             "card_facility_manager": [
-                ["card_o5", 10, 80]
+                ["card_o5", 3, 90]
             ],
             "card_containment_engineer": [
-                ["card_facility_manager", 10, 80]
+                ["card_facility_manager", 3, 90]
             ],
             "card_mog_commander": [
-                ["card_containment_engineer", 10, 80]
+                ["card_containment_engineer", 3, 90]
             ],
             "card_mog_lieutenant": [
-                ["card_mog_commander", 10, 80]
+                ["card_mog_commander", 3, 90]
             ],
             "card_guard": [
-                ["card_mog_lieutenant", 10, 80]
+                ["card_mog_lieutenant", 3, 90]
             ],
             "card_senior_guard": [
-                ["card_guard", 10, 80]
+                ["card_guard", 3, 90]
             ],
             "card_zone_manager": [
-                ["card_senior_guard", 10, 80]
+                ["card_senior_guard", 3, 90]
             ],
             "card_major_scientist": [
-                ["card_zone_manager", 10, 80]
+                ["card_zone_manager", 3, 90]
             ],
             "card_scientist": [
-                ["card_major_scientist", 10, 80]
+                ["card_major_scientist", 3, 90]
             ],
             "card_janitor": [
-                ["card_scientist", 10, 80]
+                ["card_scientist", 3, 90]
             ],
             "card_chaos": [
-                ["card_containment_engineer", 10, 80]
+                ["card_containment_engineer", 3, 90]
             ],
             "radio": [
                 ["weapon_hegrenade", 20, 60]
