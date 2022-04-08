@@ -46,7 +46,7 @@ public Plugin myinfo = {
 };
 
 public void SCP_RegisterMetaData() {
-    gamemode.meta.RegEntEvent(ON_PICKUP, "035_mask", "Logic");
+    gamemode.meta.RegEntEvent(ON_PICKUP, "035_mask", "Logic", _, true);
 }
 
 public void SCP_OnPlayerClear(Player &ply)
@@ -56,7 +56,11 @@ public void SCP_OnPlayerClear(Player &ply)
         gamemode.timer.Remove("Timer_SCP-035_Hit");
         Entity ent = view_as<Entity>(ply.GetHandle("035_ent"));
         if (ent)
+        {
+            ent.model.SetRenderMode(RENDER_NONE);
             ents.Remove(ent);
+            ply.RemoveValue("035_ent");
+        }
     }
 }
 
