@@ -88,7 +88,7 @@
             },
             "Scientist": {
                 "percent":20,
-                "items":[{"70":"card_scientist","30":"card_major_scientist"},"963_amulet","963_amulet_bright"],
+                "items":[{"70":"card_scientist","30":"card_major_scientist"}],
                 "model":{
                     "id":"scientist",
                     "bodygroups":{
@@ -112,6 +112,21 @@
                     "savepos":true,
                     "wp":"MOG"
                 }
+            },
+            "Dr.Bright": {
+                "percent":0,
+                "items":["card_major_scientist","963_amulet_bright"],
+                "model":{
+                    "id":"scientist",
+                    "bodygroups":{
+                        "base":0,
+                        "head":5,
+                        "eyes":3
+                    },
+                    "skin":0
+                },
+                "overlay":"dr.bright",
+                "pos":{"vec":[-2751,-2967,0]}
             },
             "Medic": {
                 "percent":10,
@@ -514,7 +529,7 @@
                 "percent":20,
                 "health":15000,
                 "speed":250,
-                "multipler":4.2,
+                "multipler":2.1,
                 "model":"models/player/custom_player/eternity/173.mdl",
                 "fists":false,
                 "overlay":"scp-173",

@@ -64,11 +64,18 @@
         "cooldown":35,
         "sound": {
             "breaking": [
-                "player/winter/snowball_hit_01.wav"
+                "survival/buy_item_failed_01.wav"
             ],
             "breaked": [
-                "survival/`buy_item_failed_01.wav"
+                "player/winter/snowball_hit_01.wav"
             ]
+        },
+        "arrestedesc": {
+            "Class D": {
+                "trigger":330025,
+                "team":"MOG",
+                "class":"Cadet"
+            }
         }
     },
     "[SCP] Voice": {
@@ -99,7 +106,8 @@
         "revive":{
             "time":3,
             "multi":true,
-            "inpvs":true
+            "inpvs":true,
+            "healing":2500
         }
     },
     "[SCP] 096": {
@@ -119,6 +127,8 @@
     "[SCP] 173": {
         "radius":2000,
         "blinktime":5,
+        "blinkrange":400,
+        "hpmultipler":2,
         "sound": {
             "neckbroke":[
                 "*/scp/173/neck1.mp3",

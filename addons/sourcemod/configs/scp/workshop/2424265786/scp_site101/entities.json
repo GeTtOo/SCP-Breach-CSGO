@@ -80,12 +80,12 @@
         "mass":0.5
     },
     "963_amulet_bright": {
-        "model":"models/eternity/props/scp/scp_963_2.mdl",
+        "model":"models/eternity/props/scp/scp_427_2.mdl",
         "mass":2.5,
         "spawnflags":4352
     },
     "963_amulet": {
-        "model":"models/eternity/props/scp/scp_427_2.mdl",
+        "model":"models/eternity/props/scp/scp_963_2.mdl",
         "mass":2.5,
         "spawnflags":4352
     },
