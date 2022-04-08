@@ -48,6 +48,7 @@ Handle OnClientClearForward;
 Handle OnClientTakeWeaponForward;
 Handle OnTakeDamageForward;
 Handle OnPlayerDeathForward;
+Handle OnPlayerEscapeForward;
 Handle OnButtonPressedForward;
 Handle OnRoundStartForward;
 Handle OnRoundEndForward;
@@ -108,6 +109,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     OnClientTakeWeaponForward = CreateGlobalForward("SCP_OnPlayerTakeWeapon", ET_Event, Param_CellByRef, Param_CellByRef);
     OnTakeDamageForward = CreateGlobalForward("SCP_OnTakeDamage", ET_Event, Param_CellByRef, Param_CellByRef, Param_FloatByRef, Param_CellByRef, Param_CellByRef);
     OnPlayerDeathForward = CreateGlobalForward("SCP_OnPlayerDeath", ET_Event, Param_CellByRef, Param_CellByRef);
+    OnPlayerEscapeForward = CreateGlobalForward("SCP_OnPlayerEscape", ET_Event, Param_CellByRef, Param_CellByRef);
     OnButtonPressedForward = CreateGlobalForward("SCP_OnButtonPressed", ET_Event, Param_CellByRef, Param_Cell);
     OnRoundStartForward = CreateGlobalForward("SCP_OnRoundStart", ET_Event);
     OnRoundEndForward = CreateGlobalForward("SCP_OnRoundEnd", ET_Event);
@@ -161,6 +163,7 @@ public void OnMapStart()
     gamemode.SetValue("Logger", new Logger("SCP_OnLog", gamemode.config.logmode, gamemode.config.loglevel, gamemode.config.debug));
     
     gamemode.mngr.CollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
+    gamemode.mngr.CreateEscapeZoneList();
     gamemode.SetHandle("ph", GetMyHandle());
 
     AddCommandListener(Command_Base, "gm");
@@ -200,6 +203,18 @@ public void OnMapStart()
 
 public void OnMapEnd()
 {
+    RemoveCommandListener(Command_Base, "gm");
+    RemoveCommandListener(Command_Ents, "ents");
+
+    if (gamemode.config.debug)
+    {
+        RemoveCommandListener(Command_Debug, "debug");
+        RemoveCommandListener(Command_GetMyPos, "getmypos");
+        RemoveCommandListener(Command_GetEntsInBox, "getentsinbox");
+    }
+
+    RemoveCommandListener(Command_Kill, "kill");
+    
     Call_StartForward(OnUnloadGM);
     Call_Finish();
     
@@ -251,40 +266,43 @@ public void OnClientPostAdminCheck(int id)
 public void OnClientDisconnect(int id)
 {
     Player ply = player.GetByID(id);
-
-    char timername[32];
-    FormatEx(timername, sizeof(timername), "ent-%i", ply.id);
-    gamemode.timer.RemoveIsContains(timername);
-
-    char clientname[32];
-    ply.GetName(clientname, sizeof(clientname));
-    gamemode.log.Info("%t", "Log_PlayerDisconnected", clientname);
-
-    if(!gamemode.mngr.IsWarmup)
-        gamemode.mngr.GameCheck();
-
-    SDKUnhook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
-    SDKUnhook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
-    SDKUnhook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
-    SDKUnhook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
-    SDKUnhook(ply.id, SDKHook_OnTakeDamageAlivePost, OnTakeDamageAlivePost);
-
-    Call_StartForward(OnClientLeaveForward);
-    Call_StartForward(OnClientClearForward);
-    Call_PushCellRef(ply);
-    Call_Finish();
-
-    Base pos = ply.GetBase("spawnpos");
-    if (pos != null)
-        pos.SetBool("lock", false);
-
-    if (ply.ragdoll)
+    
+    if (ply)
     {
-        ents.Remove(ply.ragdoll);
-        ply.ragdoll = null;
-    }
+        char timername[32];
+        FormatEx(timername, sizeof(timername), "ent-%i", ply.id);
+        gamemode.timer.RemoveIsContains(timername);
 
-    player.Remove(id);
+        char clientname[32];
+        ply.GetName(clientname, sizeof(clientname));
+        gamemode.log.Info("%t", "Log_PlayerDisconnected", clientname);
+
+        if(!gamemode.mngr.IsWarmup)
+            gamemode.mngr.GameCheck();
+
+        SDKUnhook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
+        SDKUnhook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
+        SDKUnhook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
+        SDKUnhook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
+        SDKUnhook(ply.id, SDKHook_OnTakeDamageAlivePost, OnTakeDamageAlivePost);
+
+        Call_StartForward(OnClientLeaveForward);
+        Call_StartForward(OnClientClearForward);
+        Call_PushCellRef(ply);
+        Call_Finish();
+
+        Base pos = ply.GetBase("spawnpos");
+        if (pos != null)
+            pos.SetBool("lock", false);
+
+        if (ply.ragdoll)
+        {
+            ents.Remove(ply.ragdoll);
+            ply.ragdoll = null;
+        }
+
+        player.Remove(id);
+    }
 }
 
 public Action OnPlayerSpawn(int client)
@@ -293,8 +311,8 @@ public Action OnPlayerSpawn(int client)
     {
         Player ply = player.GetByID(client);
 
-        if (IsClientExist(client) && GetClientTeam(client) > 1) {
-            gamemode.timer.Simple(100, "PlayerSpawn", ply);
+        if (!ply.GetHandle("rsptmr") && IsClientExist(client) && GetClientTeam(client) > 1) {
+            ply.SetHandle("rsptmr", gamemode.timer.Simple(100, "PlayerSpawn", ply));
             if (ply.FirstSpawn)
                 ply.FirstSpawn = false;
         }
@@ -358,6 +376,8 @@ public void PlayerSpawn(Player ply)
         Call_Finish();
         
         gamemode.log.Debug("Player %L spawned | Team/Class: (%s - %s)", ply.id, team, class);
+
+        ply.RemoveValue("rsptmr");
     }
 }
 
@@ -480,9 +500,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         gamemode.nuke.SpawnDisplay();
         
         gamemode.timer.Create("CombatReinforcement", gamemode.config.reinforce.GetInt("time") * 1000, 0, "CombatReinforcement");
-
         //gamemode.timer.Create("Entities_Limit_Checker", gamemode.config.GetInt("elc", 30) * 1000, 0, "EntitiesLimitChecker");
-
         gamemode.timer.Create("PlayerSpawnAfterRoundStart", 1000, gamemode.config.psars, "PSARS");
 
         Call_StartForward(OnRoundStartForward);
@@ -620,53 +638,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
 
         delete doorsSnapshot;
 
-        if (ply.class.escape != null && doorId == ply.class.escape.trigger)
-        {
-            char className[32], teamName[32];
-            ply.class.escape.class(className, sizeof(className));
-            if (!ply.class.escape.team(teamName, sizeof(teamName)))
-                ply.Team(teamName, sizeof(teamName));
-
-            bool savepos = ply.class.escape.savepos;
-
-            Vector opp;
-            Angle opa;
-
-            if (savepos)
-            {
-                opp = ply.GetPos();
-                opa = ply.GetAng();
-            }
-            
-            Base pos = ply.GetBase("spawnpos");
-            if (pos != null)
-                pos.SetBool("lock", false);
-
-            ply.Team(teamName);
-            ply.class = gamemode.team(teamName).class(className);
-            
-            for (int i=0; i < ply.inv.items.Length; i++)
-            {
-                InvItem item = ply.inv.Get(i);
-
-                if (item.meta.ondrop)
-                {
-                    char funcname[32];
-                    item.meta.ondrop.name(funcname, sizeof(funcname));
-
-                    Call_StartFunction(item.meta.ondrop.hndl, GetFunctionByName(item.meta.ondrop.hndl, funcname));
-                    Call_PushCellRef(ply);
-                    Call_PushCellRef(item);
-                    Call_Finish();
-                }
-            }
-
-            ply.UpdateClass();
-
-            if (savepos)
-                ply.SetPos(opp, opa);
-        }
-
+        EscapeController(ply, doorId);
         gamemode.nuke.Controller(doorId);
 
         Call_StartForward(OnButtonPressedForward);
@@ -1104,7 +1076,7 @@ public void CB_EntTouch(int firstentity, int secondentity)
 {
     Entity ent1 = ents.Get(firstentity), ent2 = ents.Get(secondentity);
 
-    if (ent1.meta.ontouch && ent2)
+    if (ent1.meta && ent1.meta.ontouch && ent2)
     {
         char funcname[32];
         ent1.meta.ontouch.name(funcname, sizeof(funcname));
@@ -1408,7 +1380,7 @@ public void SetupIdPads()
 
         if (StrEqual(ModelName, "models/eternity/map/keypad.mdl"))
         {
-            SetEntProp(entId, Prop_Send, "m_nSkin", (gamemode.mngr.serverlang == 22) ? 0 : 3);
+            SetEntProp(entId, Prop_Send, "m_nSkin", (gamemode.mngr.serverlang == 22) ? 0 : 2);
         }
     }
 }
@@ -1447,6 +1419,82 @@ public void SetPlyDoorAccess(Player &ply, Entity &item)
         ply.RemoveValue("dooraccess");
 
     delete list;
+}
+
+public void EscapeController(Player ply, int doorID)
+{
+    if (gamemode.mngr.IsEscapeZone(doorID) && ply.class.escape)
+    {
+        EscapeInfo data = view_as<EscapeInfo>(new Base());
+
+        char className[32], teamName[32];
+        ply.class.escape.team(teamName, sizeof(teamName));
+        ply.class.escape.class(className, sizeof(className));
+
+        data.trigger = ply.class.escape.trigger;
+        data.team(teamName);
+        data.class(className);
+        data.savepos = ply.class.escape.savepos;
+
+        Call_StartForward(OnPlayerEscapeForward);
+        Call_PushCellRef(ply);
+        Call_PushCellRef(data);
+        Call_Finish();
+
+        if (doorID == data.trigger)
+        {
+            data.team(teamName, sizeof(teamName));
+            data.class(className, sizeof(className));
+
+            Vector opp;
+            Angle opa;
+
+            if (data.savepos)
+            {
+                opp = ply.GetPos();
+                opa = ply.GetAng();
+            }
+            
+            Base pos = ply.GetBase("spawnpos");
+            if (pos != null)
+                pos.SetBool("lock", false);
+
+            ply.Team(teamName);
+            ply.class = gamemode.team(teamName).class(className);
+            
+            for (int i=0; i < ply.inv.items.Length; i++)
+            {
+                InvItem item = ply.inv.Get(i);
+
+                if (item.meta.ondrop)
+                {
+                    char funcname[32];
+                    item.meta.ondrop.name(funcname, sizeof(funcname));
+
+                    Call_StartFunction(item.meta.ondrop.hndl, GetFunctionByName(item.meta.ondrop.hndl, funcname));
+                    Call_PushCellRef(ply);
+                    Call_PushCellRef(item);
+                    Call_Finish();
+                }
+            }
+
+            ply.UpdateClass();
+
+            if (data.savepos)
+                ply.SetPos(opp, opa);
+
+            if (ply.class.HasKey("overlay"))
+            {
+                char name[32];
+                ply.class.overlay(name, sizeof(name));
+                ply.ShowOverlay(name);
+            
+                ply.TimerSimple(gamemode.config.tsto * 1000, "PlyHideOverlay", ply);
+            }
+        }
+
+        delete data;
+    }
 }
 
 public void SetupMapRegions() 
@@ -1560,8 +1608,8 @@ public void PSARS()
 public void CombatReinforcement()
 {
     if (player.Alive() < RoundToNearest(float(player.InGame()) / 100.0 * float(gamemode.config.reinforce.GetInt("ratiodeadplayers")))) {
-        ArrayList teams = gamemode.GetTeamList();
-        ArrayList reinforcedteams = new ArrayList();
+        ArrayList teams = gamemode.GetTeamList(false);
+        ArrayList reinforcedteams = new ArrayList(32);
 
         for (int i = 0; i < teams.Length; i++)
         {
@@ -1623,6 +1671,8 @@ public Action Command_AdminMenu(int client, int args)
     {
         DisplayAdminMenu(client);
     }
+
+    return Plugin_Handled;
 }
 
 public Action Command_Kill(int client, const char[] command, int argc)
@@ -1644,10 +1694,12 @@ public Action Command_Base(int client, const char[] command, int argc)
     if (StrEqual(arg1, "status", false))
     {
         ArrayList GlobalTeams = new ArrayList(32);
+        ArrayList players = player.GetAll();
         int tpc[64];
 
-        for (int i=1; i <= player.Length; i++) {
-            Player plycmd = player.GetByID(i);
+        for (int i=0; i < players.Length; i++)
+        {
+            Player plycmd = players.Get(i);
 
             char plyTeamName[32];
             plycmd.Team(plyTeamName, sizeof(plyTeamName));
@@ -1675,6 +1727,7 @@ public Action Command_Base(int client, const char[] command, int argc)
         PrintToConsole(ply.id, "------------------------------");
 
         delete GlobalTeams;
+        delete players;
     }
     if (StrEqual(arg1, "timers", false))
     {

@@ -36,6 +36,7 @@ methodmap Manager < Base {
 
     public Manager() {
         Manager mngr = view_as<Manager>(new Base());
+        mngr.CreateArrayList("escapezones");
         return mngr;
     }
 
@@ -123,12 +124,46 @@ methodmap Manager < Base {
         EndMessage();
     }
     
+    public bool IsEscapeZone(int id) { return (this.GetArrayList("escapezones").FindValue(id) != -1) ? true : false; }
+
+    public bool CreateEscapeZoneList()
+    {
+        ArrayList teams = gamemode.GetTeamList();
+
+        for (int i = 0; i < teams.Length; i++)
+        {
+            char teamname[32];
+            teams.GetString(i, teamname, sizeof(teamname));
+            
+            GTeam team = gamemode.team(teamname);
+
+            ArrayList classes = team.GetClassList();
+            
+            for (int v = 0; v < classes.Length; v++)
+            {
+                char classname[32];
+                classes.GetString(v, classname, sizeof(classname));
+
+                Class class = team.class(classname);
+
+                if (class.escape && !this.IsEscapeZone(class.escape.trigger))
+                    this.GetArrayList("escapezones").Push(class.escape.trigger);
+            }
+
+            delete classes;
+        }
+
+        delete teams;
+    }
+
     public bool CheckTeamStatus(char[] buffer, int max_size) {
         ArrayList GlobalTeams = new ArrayList(32);
+        ArrayList players = player.GetAll();
         int tpc[64];
 
-        for (int i=1; i <= player.Length; i++) {
-            Player ply = player.GetByID(i);
+        for (int i=0; i < players.Length; i++)
+        {
+            Player ply = players.Get(i);
             
             if (!ply || !ply.class) continue;
 
@@ -166,6 +201,7 @@ methodmap Manager < Base {
         }
 
         delete GlobalTeams;
+        delete players;
 
         return false;
     }

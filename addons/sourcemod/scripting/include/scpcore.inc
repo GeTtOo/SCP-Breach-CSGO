@@ -82,6 +82,8 @@ forward Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &da
 
 forward void SCP_OnPlayerDeath(Player &vic, Player &atk);
 
+forward EscapeInfo SCP_OnPlayerEscape(Player &ply, EscapeInfo &data);
+
 forward void SCP_OnButtonPressed(Player &ply, int doorId);
 
 forward void SCP_OnRoundStart();

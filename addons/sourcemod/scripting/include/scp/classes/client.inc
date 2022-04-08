@@ -416,7 +416,7 @@ methodmap Player < Entity {
 
     public void Spawn() {
         this.spawned = true;
-        if (!IsPlayerAlive(this.id))
+        if (!this.IsAlive())
             CS_RespawnPlayer(this.id);
     }
 

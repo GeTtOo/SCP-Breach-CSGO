@@ -72,14 +72,14 @@ methodmap ProgressBar < Base {
 
         char timername[64];
         Format(timername, sizeof(timername), "ply-%i|progress-bar", this.clientID);
-        
+
         this.timername(timername);
 
         this.active = true;
-        
+
         if (!StrEqual(funcName, ""))
             return gamemode.timer.Create(timername, time, 1, funcName, this.ply);
-        
+
         return null;
     }
 

@@ -108,7 +108,7 @@ methodmap NuclearWarhead < Base {
         char sound[128];
         gamemode.config.nuke.sound(sound, sizeof(sound));
 
-        gamemode.mngr.PlaySoundToAll(sound, 40);
+        gamemode.mngr.PlaySoundToAll(sound, SNDCHAN_ITEM);
 
         gamemode.timer.Create("SCP_ALPHA_WARHEAD_CALL_EXPLODE", gamemode.config.nuke.time * 1000, 1, "NukeExplode");
         gamemode.timer.Create("SCP_ALPHA_WARHEAD_DOOR_CONTROLLER", (gamemode.config.nuke.time - 10) * 1000, 1, "ClosingDoorBeforeNukeExplode");
@@ -153,10 +153,10 @@ methodmap NuclearWarhead < Base {
 
         char sound[128];
         gamemode.config.nuke.sound(sound, sizeof(sound));
-        gamemode.mngr.StopSoundAll(sound, 40);
+        gamemode.mngr.StopSoundAll(sound, SNDCHAN_ITEM);
 
         gamemode.config.nuke.cancelsound(sound, sizeof(sound));
-        gamemode.mngr.PlaySoundToAll(sound, 40);
+        gamemode.mngr.PlaySoundToAll(sound, SNDCHAN_ITEM);
 
         this.Update("Canceled");
     }
@@ -175,6 +175,8 @@ methodmap NuclearWarhead < Base {
 
         for (int i=0; i < this.monitors.Length; i++) {
             Entity display = this.monitors.Get(i);
+
+            display.SetProp("m_nSkin", (gamemode.lang == 22) ? 0 : 2);
             
             Vector dp = (display.GetAng() - new Angle(10.0,90.0,0.0)).Up((display.GetAng() - new Angle(10.0,90.0,0.0)).Right((display.GetAng() - new Angle(10.0,90.0,0.0)).Forward(display.GetPos(), -8.0), -37.5), -17.0);
             Angle da = display.GetAng() - new Angle(10.0,90.0,0.0);
@@ -197,7 +199,7 @@ methodmap NuclearWarhead < Base {
     }
     
     public void Controller(int btnId) {
-        if (gamemode.config.nuke.buttons.ready == btnId && !this.IsNuked)
+        if (gamemode.config.nuke.buttons.ready == btnId && !this.active && !this.IsNuked)
             this.Ready();
         else if (gamemode.config.nuke.buttons.active == btnId && this.ready && !this.active && !this.IsNuked)
             this.Activate();

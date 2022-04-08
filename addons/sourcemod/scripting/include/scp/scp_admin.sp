@@ -95,7 +95,7 @@ methodmap AdminAction < Base
                         ply.Team(team, sizeof(team));
                         ply.class.Name(subclass, sizeof(subclass));
                         
-                        PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x07%s: %s", ply.id, team, subclass);
+                        PrintToChat(this.admin.id, " \x07[SCP] \x01%N: \x07%s: %s \x05(%i%%)", ply.id, team, subclass, RoundFloat(float(ply.health) / float(ply.class.health) * 100.0));
                     }
                     else
                     {

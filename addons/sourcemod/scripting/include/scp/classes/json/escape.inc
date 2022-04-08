@@ -36,18 +36,18 @@
 methodmap EscapeInfo < JSON_OBJECT {
 
     property int trigger {
+        public set(int val) { this.SetInt("trigger", val); }
         public get() { return this.GetInt("trigger"); }
     }
 
     property bool savepos {
+        public set(bool val) { this.SetBool("savepos", val); }
         public get() { return this.GetBool("savepos"); }
     }
 
-    public bool team(char[] buffer, int max_size) {
-        return this.GetString("team", buffer, max_size);
-    }
+    public void team(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("team", buffer) : this.GetString("team", buffer, max_size); }
 
-    public bool class(char[] buffer, int max_size) {
-        return this.GetString("class", buffer, max_size);
-    }
+    public void class(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("class", buffer) : this.GetString("class", buffer, max_size); }
+
+    public void wp(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("wp", buffer) : this.GetString("wp", buffer, max_size); }
 }

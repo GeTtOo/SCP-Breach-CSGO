@@ -42,7 +42,6 @@ methodmap Tmr < Base {
         timer.SetInt("repeations", repeations);
         timer.SetString("func", func);
         timer.SetValue("args", args);
-        timer.SetBool("removed", false);
 
         timer.SetFloat("nextinvoke", GetGameTime() + delay);
 
@@ -94,6 +93,8 @@ methodmap Timers < Base {
         return timer;
     }
 
+    public bool IsAlive(Tmr timer) { return (this.GetArrayList("timers").FindValue(timer) != -1) ? true : false; }
+
     public bool Remove(char[] name) {
         ArrayList list = this.GetArrayList("timers");
         
@@ -107,7 +108,7 @@ methodmap Timers < Base {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -158,6 +159,8 @@ methodmap Timers < Base {
                 if (timer.args)
                     Call_PushCell(timer.args);
                 Call_Finish();
+
+                if (!this.IsAlive(timer)) continue; // Dirty fix invalid handle error...
 
                 if (timer.repeations == 1)
                 {
