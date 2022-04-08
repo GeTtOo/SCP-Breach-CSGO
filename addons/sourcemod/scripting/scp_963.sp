@@ -46,53 +46,74 @@ public Plugin myinfo = {
 public void SCP_RegisterMetaData() {
     //gamemode.meta.RegEntEvent(ON_USE, "ent_id", "Function name");
     //gamemode.meta.RegEntEvent(ON_PICKUP, "ent_id", "Function name", true); // true disable pick up to inventory (def false).
+    gamemode.meta.RegEntEvent(ON_USE, "963_amulet", "OnUse", _, true);
+    gamemode.meta.RegEntEvent(ON_USE, "963_amulet_bright", "OnUse",  _, true);
     gamemode.meta.RegEntEvent(ON_TOUCH, "963_amulet", "OnTouch");
+    gamemode.meta.RegEntEvent(ON_TOUCH, "963_amulet_bright", "OnTouch");
     gamemode.meta.RegEntEvent(ON_DROP, "963_amulet", "OnDrop");
+    gamemode.meta.RegEntEvent(ON_DROP, "963_amulet_bright", "OnDrop");
+}
+
+public void OnUse(Player &ply, InvItem &item)
+{
+    Player soul = view_as<Player>(item.GetHandle("soul"));
+
+    if (Reincarnation(soul, ply) && soul.inv.Pickup(item))
+    {
+        item.WorldRemove();
+        ents.IndexUpdate(item);
+    }
 }
 
 public void OnTouch(Entity &ent1, Entity &ent2)
 {
-    if (ent1.IsClass("player") && ent2.IsClass("963_amulet"))
+    if (ent1.IsClass("player") && (ent2.IsClass("963_amulet") || ent2.IsClass("963_amulet_bright")))
     {
-        Player ply = view_as<Player>(ent1);
         Player soul = view_as<Player>(ent2.GetHandle("soul"));
 
-        if (!ply.IsSCP && ply != soul && soul)
+        if (Reincarnation(soul, view_as<Player>(ent1)) && soul.inv.Pickup(ent2))
         {
-            char team[32];
-            ply.Team(team, sizeof(team));
-            
-            soul.Team(team);
-            soul.class = view_as<Class>(CloneHandle(ply.class));
-            //soul.class.Remove("items");
-
-            soul.Spawn();
-
-            soul.SetBool("reincarnation", true);
-            soul.SetVector("soulpos", ply.GetPos());
-            soul.SetAngle("soulang", ply.GetAng());
-
-            if (soul.inv.Pickup(ent2))
-            {
-                ent2.WorldRemove();
-                ents.IndexUpdate(ent2);
-            }
-
-            ply.SetBool("bodyconsumed", true);
-            ply.RestrictWeapons();
-            ply.inv.FullClear();
-            ply.Kill();
+            ent2.WorldRemove();
+            ents.IndexUpdate(ent2);
         }
     }
 }
 
+public bool Reincarnation(Player &target, Player &consumed)
+{
+    if (!consumed.IsSCP && target && consumed != target)
+    {
+        char team[32];
+        consumed.Team(team, sizeof(team));
+        
+        target.Team(team);
+        target.class = view_as<Class>(CloneHandle(consumed.class));
+        //soul.class.Remove("items");
+
+        target.Spawn();
+
+        target.SetBool("reincarnation", true);
+        target.SetVector("soulpos", consumed.GetPos());
+        target.SetAngle("soulang", consumed.GetAng());
+
+        consumed.SetBool("bodyconsumed", true);
+        consumed.RestrictWeapons();
+        consumed.inv.FullClear();
+        consumed.Kill();
+
+        return true;
+    }
+
+    return false;
+}
+
 public void OnDrop(Player &ply, Entity &ent)
 {
-    if (ent.IsClass("963_amulet"))
+    if (ent.IsClass("963_amulet") || ent.IsClass("963_amulet_bright"))
     {
         if (!ply.IsAlive() && !ent.GetHandle("soul"))
         {
-            ent.SetHandle("soul", ply); 
+            ent.SetHandle("soul", ply);
         }
     }
 }
