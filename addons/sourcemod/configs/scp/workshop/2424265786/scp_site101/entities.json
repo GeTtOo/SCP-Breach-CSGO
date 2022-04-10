@@ -32,13 +32,13 @@
     "card_guard": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
-        "skin":5,
+        "skin":6,
         "access":[1,4,7]
     },
     "card_senior_guard": {
         "model":"models/eternity/props/keycard.mdl",
         "mass":0.2,
-        "skin":6,
+        "skin":5,
         "access":[1,2,4,5,7]
     },
     "card_zone_manager": {
