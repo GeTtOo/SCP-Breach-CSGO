@@ -49,7 +49,7 @@ methodmap Tmr < Base {
     }
 
     property Handle ph {
-        public get() { Handle ph; return this.GetValue("pluginhandle", ph) ? ph : null; }
+        public get() { return this.GetHandle("pluginhandle"); }
     }
 
     public void name(char[] name, int max_len) {

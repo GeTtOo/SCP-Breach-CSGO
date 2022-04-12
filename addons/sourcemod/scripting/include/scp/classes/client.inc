@@ -158,6 +158,11 @@ methodmap Player < Entity {
         SetListenOverride(this.id, ply.id, islisten ? Listen_Yes : Listen_No);
     }
 
+    public bool GetListen(Player ply)
+    {
+        return (GetListenOverride(this.id, ply.id) == Listen_Yes) ? true : false;
+    }
+
     public void PlaySound(char[] path, int channel = 1, int level = 100, int entity = 0) {
         int clients[1];
         clients[0] = this.id;

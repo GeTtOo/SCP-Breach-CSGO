@@ -178,6 +178,21 @@ methodmap Inventory < Base {
         return this.GetArrayList("inventory").Get(index);
     }
 
+    public InvItem GetByClass(char[] classname) {
+        ArrayList list = this.GetArrayList("inventory");
+
+        for (int i=0; i < list.Length; i++) {
+            char itemname[32];
+            Entity item = list.Get(i);
+            item.GetClass(itemname, sizeof(itemname));
+
+            if (StrEqual(itemname, classname))
+                return view_as<InvItem>(item);
+        }
+
+        return null;
+    }
+
     public InvItem Drop(int index = 0) {
         ArrayList inv = this.GetArrayList("inventory");
 

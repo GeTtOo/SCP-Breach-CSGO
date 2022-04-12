@@ -92,4 +92,4 @@ forward void SCP_OnRoundEnd();
 
 forward void SCP_OnInput(Player &ply, int buttons);
 
-forward void SCP_OnCallActionMenu(Player &ply);
+forward void SCP_OnCallAction(Player &ply);

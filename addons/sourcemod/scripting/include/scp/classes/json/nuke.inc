@@ -54,6 +54,14 @@ methodmap NukeConfig < JSON_OBJECT {
         public get() { return this.GetInt("time"); }
     }
 
+    property int ast {
+        public get() { return this.GetInt("ast", 900); }
+    }
+
+    property bool autostart {
+        public get() { return this.GetBool("autostart", false); }
+    }
+
     property bool nukefullreset {
         public get() { return this.GetBool("nukefullreset"); }
     }
@@ -64,6 +72,10 @@ methodmap NukeConfig < JSON_OBJECT {
 
     property NukeButtons buttons {
         public get() { return view_as<NukeButtons>(this.GetObject("buttons")); }
+    }
+
+    property JSON_ARRAY doors {
+        public get() { return view_as<JSON_ARRAY>(this.GetObject("doors")); }
     }
 
     property JSON_ARRAY spawnlist {

@@ -83,14 +83,15 @@ methodmap ProgressBar < Base {
         return null;
     }
 
-    public void Stop() {
+    public void Stop(bool tmrdest = true) {
         char timername[64];
         this.timername(timername, sizeof(timername));
 
         SetEntDataFloat(this.clientID, this.GetInt("pbst"), 0.0, true);
         SetEntData(this.clientID, this.GetInt("pbd"), 0, 1, true);
         
-        gamemode.timer.Remove(timername);
+        if (tmrdest)
+            gamemode.timer.Remove(timername);
         
         this.active = false;
     }

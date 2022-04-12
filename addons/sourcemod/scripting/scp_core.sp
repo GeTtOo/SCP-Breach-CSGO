@@ -53,7 +53,7 @@ Handle OnButtonPressedForward;
 Handle OnRoundStartForward;
 Handle OnRoundEndForward;
 Handle OnInputForward;
-Handle OnCallActionMenuForward;
+Handle OnCallActionForward;
 Handle RegMetaForward;
 
 public Plugin myinfo = {
@@ -114,7 +114,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     OnRoundStartForward = CreateGlobalForward("SCP_OnRoundStart", ET_Event);
     OnRoundEndForward = CreateGlobalForward("SCP_OnRoundEnd", ET_Event);
     OnInputForward = CreateGlobalForward("SCP_OnInput", ET_Event, Param_CellByRef, Param_Cell);
-    OnCallActionMenuForward = CreateGlobalForward("SCP_OnCallActionMenu", ET_Event, Param_CellByRef);
+    OnCallActionForward = CreateGlobalForward("SCP_OnCallAction", ET_Event, Param_CellByRef);
     RegMetaForward = CreateGlobalForward("SCP_RegisterMetaData", ET_Event);
 
     RegPluginLibrary("scp_core");
@@ -168,6 +168,7 @@ public void OnMapStart()
 
     AddCommandListener(Command_Base, "gm");
     AddCommandListener(Command_Ents, "ents");
+    AddCommandListener(Command_Player, "player");
 
     if (gamemode.config.debug)
     {
@@ -277,9 +278,6 @@ public void OnClientDisconnect(int id)
         ply.GetName(clientname, sizeof(clientname));
         gamemode.log.Info("%t", "Log_PlayerDisconnected", clientname);
 
-        if(!gamemode.mngr.IsWarmup)
-            gamemode.mngr.GameCheck();
-
         SDKUnhook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
         SDKUnhook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
         SDKUnhook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
@@ -291,6 +289,9 @@ public void OnClientDisconnect(int id)
         Call_PushCellRef(ply);
         Call_Finish();
 
+        ply.Team("Dead");
+        ply.class = null;
+
         Base pos = ply.GetBase("spawnpos");
         if (pos != null)
             pos.SetBool("lock", false);
@@ -301,16 +302,19 @@ public void OnClientDisconnect(int id)
             ply.ragdoll = null;
         }
 
+        if(!gamemode.mngr.IsWarmup)
+            gamemode.mngr.GameCheck();
+
         player.Remove(id);
     }
 }
 
 public Action OnPlayerSpawn(int client)
 {
+    Player ply = player.GetByID(client);
+    
     if (!gamemode.mngr.IsWarmup)
     {
-        Player ply = player.GetByID(client);
-
         if (!ply.GetHandle("rsptmr") && IsClientExist(client) && GetClientTeam(client) > 1) {
             ply.SetHandle("rsptmr", gamemode.timer.Simple(100, "PlayerSpawn", ply));
             if (ply.FirstSpawn)
@@ -318,6 +322,10 @@ public Action OnPlayerSpawn(int client)
         }
 
         if (!ply.spawned) return Plugin_Handled;
+    }
+    else
+    {
+        ply.TimerSimple(100, "WarmupGiveWeapon", ply);
     }
 
     return Plugin_Continue;
@@ -498,6 +506,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         SpawnItemsOnMap();
 
         gamemode.nuke.SpawnDisplay();
+        if (gamemode.config.nuke.autostart) gamemode.nuke.AutoStart(gamemode.config.nuke.ast);
         
         gamemode.timer.Create("CombatReinforcement", gamemode.config.reinforce.GetInt("time") * 1000, 0, "CombatReinforcement");
         //gamemode.timer.Create("Entities_Limit_Checker", gamemode.config.GetInt("elc", 30) * 1000, 0, "EntitiesLimitChecker");
@@ -534,6 +543,8 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
             ply.Team("None");
             ply.class = null;
             ply.inv.Clear();
+            ply.progress.Stop(false);
+            ply.SetBool("ActionAvailable", true);
             
             Base pos = ply.GetBase("spawnpos");
             if (pos != null)
@@ -1315,6 +1326,13 @@ public void InitKeyCards()
     gamemode.meta.RegEntEvent(ON_USE, "005_picklock", "SetPlyDoorAccess");
 }
 
+public void WarmupGiveWeapon(Player ply)
+{
+    char melees[4][32] = {"weapon_knife", "weapon_axe", "weapon_spanner", "weapon_hammer"};
+
+    if (ply.IsAlive()) ply.Give(melees[GetRandomInt(0, 3)]);
+}
+
 public void WeaponIdUpdate(ArrayList data)
 {
     Player ply = data.Get(0);
@@ -1497,7 +1515,7 @@ public void EscapeController(Player ply, int doorID)
     }
 }
 
-public void SetupMapRegions() 
+public void SetupMapRegions()
 {
     JSON_ARRAY regions = gamemode.config.regions;
 
@@ -1518,7 +1536,7 @@ public void SetupMapRegions()
     }
 }
 
-public void SpawnItemsOnMap() 
+public void SpawnItemsOnMap()
 {
     JSON_OBJECT spawnmap = gamemode.config.spawnmap;
     StringMapSnapshot snapshot = spawnmap.Snapshot();
@@ -1784,6 +1802,59 @@ public Action Command_Ents(int client, const char[] command, int argc)
     return Plugin_Stop;
 }
 
+public Action Command_Player(int client, const char[] command, int argc)
+{
+    Player ply = player.GetByID(client);
+
+    if (!ply.IsAdmin()) return Plugin_Stop;
+
+    char arg1[32],arg2[32],arg3[32];
+
+    GetCmdArg(1, arg1, sizeof(arg1));
+    GetCmdArg(2, arg2, sizeof(arg2));
+    GetCmdArg(3, arg3, sizeof(arg3));
+
+    if (StrEqual(arg1, "getall", false))
+    {
+        ArrayList players = player.GetAll();
+
+        for (int i=0; i < players.Length; i++) 
+        {
+            Player user = players.Get(i);
+            char name[32], team[32], class[32];
+            user.GetName(name, sizeof(name));
+            user.Team(team, sizeof(team));
+            user.class.Name(class, sizeof(class));
+            
+            PrintToConsole(ply.id, "Id: %i | Name: %s | Team: %s | Class: %s", user.id, name, team, class);
+        }
+
+        delete players;
+    }
+    else if (StrEqual(arg1, "get", false))
+    {
+        Player user = player.GetByID(StringToInt(arg2));
+
+        if (StrEqual(arg3, "inv", false))
+        {
+            ArrayList items = user.inv.items;
+            if (items.Length == 0)
+                PrintToConsole(ply.id, "Инвентарь игрока пуст");
+            else
+                for (int i=0; i < items.Length; i++)
+                {
+                    char itemname[32];
+                    InvItem item = items.Get(i);
+                    item.GetClass(itemname, sizeof(itemname));
+
+                    PrintToConsole(ply.id, "slot: %i | item: %s", i, itemname);
+                }
+        }
+    }
+    
+    return Plugin_Stop;
+}
+
 public Action Command_GetMyPos(int client, const char[] command, int argc)
 {
     Player ply = player.GetByID(client);
@@ -1892,12 +1963,12 @@ public void InventoryDisplay(Player ply)
     {
         for (int i=0; i < inv.Length; i++)
         {
-            char itemid[8], itemClass[32];
+            char itemid[8], itemclass[32];
 
             IntToString(i, itemid, sizeof(itemid));
-            view_as<InvItem>(inv.Get(i, 0)).GetClass(itemClass, sizeof(itemClass));
+            view_as<InvItem>(inv.Get(i)).GetClass(itemclass, sizeof(itemclass));
 
-            FormatEx(bstr, sizeof(bstr), "%T", itemClass, ply.id);
+            FormatEx(bstr, sizeof(bstr), "%T", itemclass, ply.id);
             InvMenu.AddItem(itemid, bstr, ITEMDRAW_DEFAULT);
         }
     }
@@ -1914,10 +1985,10 @@ public void SCP_OnInput(Player &ply, int buttons)
 {
     if (buttons & IN_SCORE)
     {
-        if (ply.GetBool("ActionMenuAvailable", true))
+        if (ply.GetBool("ActionAvailable", true))
         {
-            ply.SetBool("ActionMenuAvailable", false);
-            ply.TimerSimple(1000, "ActionMenuUnlock", ply);
+            ply.SetBool("ActionAvailable", false);
+            ply.TimerSimple(1000, "ActionUnlock", ply);
 
             ply.PlaySound("*/scp/menu/select.mp3", SNDCHAN_VOICE);
 
@@ -1925,7 +1996,7 @@ public void SCP_OnInput(Player &ply, int buttons)
                 InventoryDisplay(ply);
             else
             {
-                Call_StartForward(OnCallActionMenuForward);
+                Call_StartForward(OnCallActionForward);
                 Call_PushCellRef(ply);
                 Call_Finish();
             }
@@ -1933,10 +2004,7 @@ public void SCP_OnInput(Player &ply, int buttons)
     }
 }
 
-public void ActionMenuUnlock(Player ply)
-{
-    ply.SetBool("ActionMenuAvailable", true);
-}
+public void ActionUnlock(Player ply) { ply.SetBool("ActionAvailable", true); }
 
 //////////////////////////////////////////////////////////////////////////////
 //

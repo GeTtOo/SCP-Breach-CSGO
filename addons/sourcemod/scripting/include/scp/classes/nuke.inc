@@ -62,6 +62,11 @@ methodmap NuclearWarhead < Base {
         public get() { return this.GetBool("active"); }
     }
 
+    property bool block {
+        public set(bool value) { this.SetBool("block", value); }
+        public get() { return this.GetBool("block"); }
+    }
+
     property float detonationtime {
         public set(float value) { this.SetFloat("detonationtime", value); }
         public get() { return this.GetFloat("detonationtime"); }
@@ -124,6 +129,11 @@ methodmap NuclearWarhead < Base {
             {
                 AcceptEntityInput(ent, "Open");
             }
+
+            for (int i=0; i < gamemode.config.nuke.doors.Length; i++)
+            {
+                AcceptEntityInput(gamemode.config.nuke.doors.GetInt(i), "Open");
+            }
         }
 
         this.detonationtime = GetGameTime() + float(gamemode.config.nuke.time);
@@ -150,6 +160,7 @@ methodmap NuclearWarhead < Base {
         gamemode.timer.Remove("SCP_ALPHA_WARHEAD_CALL_EXPLODE");
         gamemode.timer.Remove("SCP_ALPHA_WARHEAD_DOOR_CONTROLLER");
         gamemode.timer.Remove("SCP_ALPHA_WARHEAD_COUNTDOWN");
+        gamemode.timer.Remove("SCP_ALPHA_WARHEAD_AUTO_COUNTDOWN");
 
         char sound[128];
         gamemode.config.nuke.sound(sound, sizeof(sound));
@@ -203,14 +214,20 @@ methodmap NuclearWarhead < Base {
             this.Ready();
         else if (gamemode.config.nuke.buttons.active == btnId && this.ready && !this.active && !this.IsNuked)
             this.Activate();
-        else if (gamemode.config.nuke.buttons.cancel == btnId && this.ready && this.active)
+        else if (gamemode.config.nuke.buttons.cancel == btnId && this.ready && this.active && !this.block)
             this.Cancel();
     }
     
+    public void AutoStart(int seconds)
+    {
+        gamemode.timer.Create("SCP_ALPHA_WARHEAD_AUTO_COUNTDOWN", seconds * 1000, 1, "SCP_AlphaWarheadAutoStart");
+    }
+
     public void Reset() {
         this.IsNuked = false;
         this.ready = false;
         this.active = false;
+        this.block = false;
         this.resumetime = 0.0;
         this.detonationtime = 0.0;
         this.monitors.Clear();
@@ -229,6 +246,13 @@ public void SCP_AlphaWarheadCountdown() {
 
     //if ((gamemode.nuke.detonationtime - GetGameTime()) < 0.1)
         //gamemode.nuke.Update("Site destroyed");
+}
+
+public void SCP_AlphaWarheadAutoStart()
+{
+    gamemode.nuke.ready = true;
+    gamemode.nuke.Activate();
+    gamemode.nuke.block = true;
 }
 
 public void ClosingDoorBeforeNukeExplode() {
