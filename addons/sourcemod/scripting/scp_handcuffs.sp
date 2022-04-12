@@ -67,7 +67,11 @@ public Action OnWeaponTake(int client, int iWeapon)
 }
 
 public void SCP_OnPlayerTakeWeapon(Player &ply, Entity &ent) {
-    if (ent.IsClass("weapon_taser")) ent.SetProp("m_iClip1", gamemode.plconfig.GetInt("ammocount", 3));
+    if (ent.IsClass("weapon_taser") && ent.GetBool("firsttake", true))
+    {
+        ent.SetProp("m_iClip1", gamemode.plconfig.GetInt("ammocount", 3));
+        ent.SetBool("firsttake", false);
+    }
 }
 
 public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype, int &inflictor) {
@@ -163,7 +167,7 @@ public void BCD(Player ply)
 }
 
 public void HcBreak(Player ply) {
-    ply.progress.Stop();
+    ply.progress.Stop(false);
     ply.SetBool("hc_breaking", false);
     
     if (GetRandomInt(1, 100) <= gamemode.plconfig.GetInt("breakchance", 25))
