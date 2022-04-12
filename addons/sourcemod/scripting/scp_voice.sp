@@ -180,6 +180,10 @@ methodmap IntercomController < Base {
 
 IntercomController Intercom;
 
+public void SCP_RegisterMetaData() {
+    gamemode.meta.RegEntEvent(ON_USE, "radio", "OnUse"); // @arg1 Player, @arg2 Entity
+}
+
 public void SCP_OnLoad()
 {
     Intercom = new IntercomController();
@@ -203,6 +207,12 @@ public void SCP_OnRoundStart() {
 
 public void SCP_OnButtonPressed(Player &ply, int doorid) {
     if (gamemode.plconfig.GetInt("buttonid") == doorid && Intercom.ready && !ply.IsSCP) Intercom.StrartTransmission(ply);
+}
+
+public void OnUse(Player &ply, Entity &ent)
+{
+    ent.SetBool("active", !ent.GetBool("active", true));
+    ply.PrintNotify((ent.GetBool("active")) ? "Рация включена" : "Рация выключена");
 }
 
 public void TransmissionStop()
@@ -261,13 +271,19 @@ public void VoiceLogicHandler()
         {
             speaker = players.Get(k);
 
-            if ((Intercom.IsBroadcast && Intercom.curply == speaker) || (speaker.IsSCP && listener.IsSCP) || (speaker.inv.Have("radio") && listener.inv.Have("radio"))) // SCP can hear other SCP players with no range limits
-                listener.SetListen(speaker, true);
+            if ((Intercom.IsBroadcast && Intercom.curply == speaker) || (speaker.IsSCP && listener.IsSCP) || ((speaker.inv.Have("radio") && speaker.inv.GetByClass("radio").GetBool("active", true)) && listener.inv.Have("radio")) || (!speaker.IsAlive() && !listener.IsAlive())) // SCP can hear other SCP players with no range limits
+            {
+                if (!listener.GetListen(speaker))
+                    listener.SetListen(speaker, true);
+            }
             else
-                listener.SetListen(speaker, false);
+            {
+                if (listener.GetListen(speaker))
+                    listener.SetListen(speaker, false);
+            }
         }
 
-        if (!listener.IsAlive()) continue;
+        //if (!listener.IsAlive()) continue;
 
         float distance = float(gamemode.plconfig.GetInt("distance", 500));
 
@@ -278,9 +294,10 @@ public void VoiceLogicHandler()
         {
             speaker = entities.Get(k);
 
-            if ((listener != speaker) && (!speaker.IsSCP))
+            if (!listener.IsAlive() || (!speaker.IsSCP) && (speaker.IsAlive()))
             {
-                listener.SetListen(speaker, true);
+                if (!listener.GetListen(speaker))
+                    listener.SetListen(speaker, true);
             }
         }
 
