@@ -24,6 +24,8 @@
     },
     "nuke": {
         "time":110,
+        "ast":900,
+        "autostart":true,
         "killpos":1690,
         "sound":"*/scp/warhead_announcement.mp3",
         "cancelsound":"*/scp/warhead_canceled.mp3",
@@ -32,6 +34,7 @@
             "active":356023,
             "cancel":356001
         },
+        "doors":[563,564],
         "spawnlist":[]
     },
     "teleport": {
@@ -71,7 +74,7 @@
             ]
         },
         "arrestedesc": {
-            "Class D": {
+            "D Class": {
                 "trigger":330025,
                 "team":"MOG",
                 "class":"Cadet"
@@ -127,8 +130,8 @@
     "[SCP] 173": {
         "radius":2000,
         "blinktime":5,
-        "blinkrange":400,
-        "hpmultipler":2,
+        "blinkrange":700,
+        "hpmultipler":1.4,
         "sound": {
             "neckbroke":[
                 "*/scp/173/neck1.mp3",
