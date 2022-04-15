@@ -400,7 +400,7 @@
                 "armor":200,
                 "speed":234,
                 "items":["card_chaos", "device_nightvision"],
-                "weapons":["weapon_m249", "weapon_revolver", "weapon_shield", "weapon_hegrenade", "weapon_smokegrenade"],
+                "weapons":["weapon_m249", "weapon_p250", "weapon_hegrenade", "weapon_smokegrenade"],
                 "model":{
                     "id":"chaos",
                     "bodygroups":{
@@ -438,7 +438,7 @@
                 "armor":200,
                 "speed":234,
                 "items":["card_chaos"],
-                "weapons":["weapon_m249", "weapon_deagle"],
+                "weapons":["weapon_negev", "weapon_p250", "weapon_hegrenade", "weapon_smokegrenade"],
                 "model":{
                     "id":"chaos",
                     "bodygroups":{
@@ -476,7 +476,7 @@
                 "armor":200,
                 "speed":234,
                 "items":["card_chaos"],
-                "weapons":["weapon_negev", "weapon_revolver", "weapon_shield"],
+                "weapons":["weapon_xm1014", "weapon_revolver", "weapon_shield", "weapon_hegrenade", "weapon_smokegrenade"],
                 "model":{
                     "id":"chaos",
                     "bodygroups":{
