@@ -46,7 +46,7 @@ public Plugin myinfo = {
 };
 
 public void SCP_RegisterMetaData() {
-    gamemode.meta.RegEntEvent(ON_PICKUP, "035_mask", "Logic", _, true);
+    gamemode.meta.RegEntEvent(ON_PICKUP, "035_mask", "Logic");
 }
 
 public void SCP_OnPlayerClear(Player &ply)
@@ -57,7 +57,8 @@ public void SCP_OnPlayerClear(Player &ply)
         Entity ent = view_as<Entity>(ply.GetHandle("035_ent"));
         if (ent)
         {
-            ent.model.SetRenderMode(RENDER_NONE);
+            //ent.model.SetRenderMode(RENDER_NONE);
+            ent.Input("ClearParrent");
             ents.Remove(ent);
             ply.RemoveValue("035_ent");
         }
@@ -78,13 +79,15 @@ public Action TransmitHandler(int entity, int client)
 
 public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype)
 {
-	if(atk.class.Is("035"))
+    if (atk == null || atk.class == null) return Plugin_Continue;
+   
+    if(atk.class.Is("035"))
     {
         damage += 180;
         return Plugin_Changed;
     }
 
-	return Plugin_Continue;
+    return Plugin_Continue;
 }
 
 public Action HandlerHitSCP(Player ply)
@@ -95,7 +98,7 @@ public Action HandlerHitSCP(Player ply)
         ply.Kill();
 }
 
-public void Logic(Player &ply, Entity &ent)
+public bool Logic(Player &ply, Entity &ent)
 {
     Vector sp = ply.GetPos();
     Angle sa = ply.GetAng();
@@ -120,6 +123,8 @@ public void Logic(Player &ply, Entity &ent)
     ply.TimerSimple(1000, "ExecDelay", data);
     
     gamemode.timer.Create("Timer_SCP-035_Hit", 2500, 0, "HandlerHitSCP", ply);
+
+    return true;
 }
 
 public void ExecDelay(ArrayList data)
@@ -133,7 +138,7 @@ public void ExecDelay(ArrayList data)
 
     delete data;
 
-    ents.IndexUpdate(ent.Create("prop_dynamic_override").Spawn());
+    //ents.IndexUpdate(ent.Create("prop_dynamic_override").Spawn());
     
     ply.SetHandle("035_ent", ent);
     ply.model.SetPath(model);
