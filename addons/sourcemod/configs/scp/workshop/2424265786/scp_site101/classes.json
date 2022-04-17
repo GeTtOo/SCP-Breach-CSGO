@@ -206,7 +206,7 @@
                 "speed":260,
                 "multipler":1.0,
                 "overlay":"commander",
-                "items":["card_mog_commander", "radio"],
+                "items":["card_mog_commander", "radio", "visor_nv"],
                 "weapons":["weapon_sg556", "weapon_deagle", "weapon_healthshot", "weapon_taser"],
                 "model":{
                     "id":"mtf",
@@ -229,7 +229,7 @@
                 "health":100,
                 "armor":200,
                 "helmet":true,
-                "items":["card_mog_lieutenant", "radio"],
+                "items":["card_mog_lieutenant", "radio", "visor_nv"],
                 "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer", "weapon_taser"],
                 "model":{
                     "id":"mtf",
@@ -316,8 +316,8 @@
                 "health":250,
                 "armor":500,
                 "helmet":true,
-                "items":["card_mog_lieutenant", "radio"],
-                "weapons":["weapon_mag7", "weapon_hkp2000", ["weapon_healthshot", 3], "weapon_hegrenade", "weapon_breachcharge", "weapon_taser"],
+                "items":["card_mog_lieutenant", "radio", "visor_nv"],
+                "weapons":["weapon_m249", "weapon_fiveseven", "weapon_healthshot", "weapon_hegrenade", "weapon_breachcharge", "weapon_taser"],
                 "model":{
                     "id":"mtf",
                     "bodygroups":{
@@ -339,8 +339,8 @@
                 "health":250,
                 "armor":500,
                 "helmet":true,
-                "items":["card_mog_lieutenant", "radio"],
-                "weapons":["weapon_scar20", "weapon_p250", ["weapon_healthshot", 5], "weapon_breachcharge", "weapon_taser"],
+                "items":["card_mog_lieutenant", "radio", "visor_nv"],
+                "weapons":["weapon_m4a1", "weapon_p250", ["weapon_healthshot", 5], "weapon_breachcharge", "weapon_taser"],
                 "model":{
                     "id":"mtf",
                     "bodygroups":{
@@ -406,8 +406,8 @@
                 "health":180,
                 "armor":200,
                 "speed":234,
-                "items":["card_chaos", "device_nightvision"],
-                "weapons":["weapon_sawedoff", "weapon_p250", "weapon_hegrenade", "weapon_smokegrenade"],
+                "items":["card_chaos", "visor_nv"],
+                "weapons":["weapon_mag7", "weapon_p250", "weapon_hegrenade", "weapon_smokegrenade"],
                 "model":{
                     "id":"chaos",
                     "bodygroups":{
@@ -444,7 +444,7 @@
                 "health":180,
                 "armor":200,
                 "speed":234,
-                "items":["card_chaos"],
+                "items":["card_chaos", "visor_nv"],
                 "weapons":["weapon_negev", "weapon_p250", "weapon_hegrenade", "weapon_smokegrenade"],
                 "model":{
                     "id":"chaos",
