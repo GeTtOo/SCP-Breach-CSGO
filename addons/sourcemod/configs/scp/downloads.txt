@@ -426,6 +426,8 @@ materials/models/eternity/players/scientists/stripe.vmt
 materials/models/eternity/players/scientists/stripe.vtf
 materials/models/eternity/players/scientists/suit_sheet.vmt
 materials/models/eternity/players/scientists/suit_sheet.vtf
+materials/models/eternity/players/scientists/suit_sheet_z.vmt
+materials/models/eternity/players/scientists/suit_sheet_z.vtf
 materials/models/eternity/players/scientists/suit_sheet_nml.vtf
 materials/models/eternity/players/scientists/ted_facemap.vmt
 materials/models/eternity/players/scientists/ted_facemap.vtf
