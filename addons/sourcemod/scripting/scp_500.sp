@@ -45,9 +45,44 @@ public Plugin myinfo = {
 
 public void SCP_RegisterMetaData() {
     gamemode.meta.RegEntEvent(ON_USE, "500_panacea", "OnUse");
+    gamemode.meta.RegEntEvent(ON_PICKUP, "500_panacea", "OnPickUp");
+}
+
+public void SCP_OnLoad()
+{
+    LoadTranslations("scpcore.phrases");
 }
 
 public void OnUse(Player &ply) {
+    ply.se.Remove("Injure");
+    ply.se.Remove("Radiation");
+    ply.se.Remove("Metamarphose");
     ply.health = ply.class.health;
     ply.inv.Remove("500_panacea");
+}
+
+public bool OnPickUp(Player &ply, Entity &ent) {
+    if (ply.class.Is("049_2"))
+    {   
+        Vector oldpos = ply.GetPos();
+        Angle oldang = ply.GetAng();
+
+        char team[32], class[32];
+        gamemode.config.DefaultGlobalClass(team, sizeof(team));
+        gamemode.config.DefaultClass(class, sizeof(class));
+
+        ply.Team(team);
+        ply.class = gamemode.team(team).class(class);
+        
+        ply.UpdateClass();
+
+        ply.SetPos(oldpos, oldang);
+
+        ent.WorldRemove();
+        ents.IndexUpdate(ent);
+
+        return true;
+    }
+
+    return false;
 }
