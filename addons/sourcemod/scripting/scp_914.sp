@@ -52,6 +52,25 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
+public void SCP_RegisterMetaData() {
+    gamemode.meta.RegisterStatusEffect("Butchering");
+    gamemode.meta.RegStatusEffectEvent(INIT, "Butchering", "Butchering");
+    
+    gamemode.meta.RegisterStatusEffect("Injure", 0.5);
+    gamemode.meta.RegStatusEffectEvent(INIT, "Injure", "Injure_Init");
+    gamemode.meta.RegStatusEffectEvent(UPDATE, "Injure", "Injure_Update");
+    gamemode.meta.RegStatusEffectEvent(END, "Injure", "Injure_End");
+    
+    gamemode.meta.RegisterStatusEffect("Metamarphose", 2.0);
+    gamemode.meta.RegStatusEffectEvent(INIT, "Metamarphose", "Metamarphose_Init");
+    gamemode.meta.RegStatusEffectEvent(UPDATE, "Metamarphose", "Metamarphose_Update");
+    gamemode.meta.RegStatusEffectEvent(END, "Metamarphose", "Metamarphose_End");
+
+    gamemode.meta.RegisterStatusEffect("Heal", 1.5);
+    gamemode.meta.RegStatusEffectEvent(INIT, "Heal", "Heal_Init");
+    gamemode.meta.RegStatusEffectEvent(UPDATE, "Heal", "Heal_Update");
+}
+
 public void SCP_OnLoad() {
     LoadTranslations("scpcore.phrases");
 
@@ -113,7 +132,6 @@ public void SCP_OnButtonPressed(Player &ply, int doorId) {
 
 public void Transform(Player ply) {
     JSON_OBJECT recipes = gconfig.GetObject("recipes").GetObject(curmode);
-    bool AmbientPlay = false;
 
     char filter[3][32] = {"prop_physics", "weapon_", "player"};
     
@@ -173,9 +191,6 @@ public void Transform(Player ply) {
 
                     delete soentdata;
                 }
-
-                char oentclass[32];
-                recipe.GetString(0, oentclass, sizeof(oentclass));
                 
                 if (ent.IsClass("player"))
                 {
@@ -183,26 +198,11 @@ public void Transform(Player ply) {
                     
                     gamemode.mngr.Fade(entply.id, 800, 3000, new Colour(0,0,0,255));
 
-                    if (StrEqual(curmode, "rough") || StrEqual(curmode, "coarse")) {
-                        char sound[128];
-                        JSON_ARRAY soundarr = gamemode.plconfig.GetObject("sound").GetArray("playerkill");
-                        soundarr.GetString(GetRandomInt(0, soundarr.Length - 1), sound, sizeof(sound));
-
-                        if (!AmbientPlay) {
-                            gamemode.mngr.PlayAmbientOnPlayer(sound, entply);
-                            AmbientPlay = true;
-                        }
-                        
-                        entply.PlaySound(sound);
-                    }
-
-                    if (recipe.GetInt(1) >= GetRandomInt(1, 100)) {
+                    if (recipe.GetInt(2) >= GetRandomInt(1, 100)) {
                         char statusname[32];
                         recipe.GetString(0, statusname, sizeof(statusname));
                         
-                        Call_StartFunction(null, GetFunctionByName(null, statusname));
-                        Call_PushCell(ply);
-                        Call_Finish();
+                        entply.se.Create(statusname, recipe.GetInt(1));
                         
                         entply.SetPos(oitempos);
                     }
@@ -213,6 +213,9 @@ public void Transform(Player ply) {
                 }
                 else
                 {
+                    char oentclass[32];
+                    recipe.GetString(0, oentclass, sizeof(oentclass));
+
                     if (recipe.GetInt(1) <= GetRandomInt(1, 100))
                     {
                         if (recipe.GetInt(2) >= GetRandomInt(1, 100))
@@ -283,20 +286,101 @@ public void Speed(Player ply) {
     ply.multipler *= 2.0;
 }
 
-public void Injure(Player ply) {
-    PrintToChat(ply.id, " \x07[SCP] \x01 Ваше тело начинает кровоточить из за множества мелких ран");
+//////////////////////////////////////////////////////////////////////////////
+//
+//                           Metamarphose status effect
+//
+//////////////////////////////////////////////////////////////////////////////
 
-    char  timername[128];
-    Format(timername, sizeof(timername), "injure-%i", ply.id);
+public void Metamarphose_Init(Player ply) {
+    ply.multipler = 2.5;
+    ply.SetArrayList("dooraccess", gamemode.meta.GetEntity("005_picklock").GetArrayList("access"));
+    ply.PrintWarning("Они все недостойны... Убить их всех...");
+}
+
+public void Metamarphose_Update(Player ply) {
+    int max_health = 2500;
+    if (ply.health < max_health)
+        if (ply.health + (max_health * 5 / 100) > max_health)
+            ply.health = max_health;
+        else
+            ply.health += max_health * 5 / 100;
+}
+
+public void Metamarphose_End(Player ply) {
+    ply.RemoveValue("dooraccess");
+    ply.Kill();
+    ply.PrintWarning("Вы перешли на другой уровень бытия...");
+}
+
+public void Metamarphose_End_Force(Player ply) {
+    ply.multipler = ply.class.multipler;
+    ply.RemoveValue("dooraccess");
+    ply.PrintWarning("Вы исцелились");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                              Heal status effect
+//
+//////////////////////////////////////////////////////////////////////////////
+
+public void Heal_Init(Player ply) {
+    ply.PrintWarning("Скорость твоего метаболизма возрасла в разы...");
+}
+
+public void Heal_Update(Player ply) {
+    if (ply.health < ply.class.health)
+        if (ply.health + (ply.class.health * 5 / 100) > ply.class.health)
+            ply.health = ply.class.health;
+        else
+            ply.health += ply.class.health * 5 / 100;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                              Speed status effect
+//
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                              Injure status effect
+//
+//////////////////////////////////////////////////////////////////////////////
+
+public void Injure_Init(Player ply) {
+    ply.PrintWarning("Ваше тело начинает кровоточить из за множества мелких ран");
+
+    char sound[128];
+    JSON_ARRAY soundarr = gamemode.plconfig.GetObject("sound").GetArray("playerkill");
+    soundarr.GetString(GetRandomInt(0, soundarr.Length - 1), sound, sizeof(sound));
     
-    gamemode.timer.Create(timername, 2000, 30, "Debuff_Injure", ply);
+    ply.PlaySound(sound);
 }
 
-public void Debuff_Injure(Player ply) {
-    ply.health -= (ply.class.health * 3 / 100);
+public void Injure_Update(Player ply) {
+    ply.health -= (ply.class.health * 2 / 100);
 }
+
+public void Injure_End(Player ply) {
+    ply.PrintWarning("Вы чувствуете себя немного лучше");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                             Butchering status effect
+//
+//////////////////////////////////////////////////////////////////////////////
 
 public void Butchering(Player ply) {
-    PrintToChat(ply.id, " \x07[SCP] Ваше тело было разделано на компоненты.");
+    ply.PrintWarning("Ваше тело было разделано на компоненты");
+
+    char sound[128];
+    JSON_ARRAY soundarr = gamemode.plconfig.GetObject("sound").GetArray("playerkill");
+    soundarr.GetString(GetRandomInt(0, soundarr.Length - 1), sound, sizeof(sound));
+    
+    ply.PlaySound(sound);
+
     ply.Kill();
 }
