@@ -74,7 +74,10 @@ public void SCP_OnPlayerTakeWeapon(Player &ply, Entity &ent) {
     }
 }
 
-public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype, int &inflictor) {
+public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype, int &inflictor)
+{
+    if (atk == null || atk.class == null) return Plugin_Continue;
+
     char wepname[32];
     GetClientWeapon(atk.id, wepname, sizeof(wepname));
 
