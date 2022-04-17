@@ -46,15 +46,15 @@ public Plugin myinfo = {
 public void SCP_RegisterMetaData() {
     //gamemode.meta.RegEntEvent(ON_USE, "ent_id", "Function name");
     //gamemode.meta.RegEntEvent(ON_PICKUP, "ent_id", "Function name", true); // true disable pick up to inventory (def false).
-    gamemode.meta.RegEntEvent(ON_USE, "963_amulet", "OnUse", _, true);
-    gamemode.meta.RegEntEvent(ON_USE, "963_amulet_bright", "OnUse",  _, true);
+    gamemode.meta.RegEntEvent(ON_PICKUP, "963_amulet", "OnUse");
+    gamemode.meta.RegEntEvent(ON_PICKUP, "963_amulet_bright", "OnUse");
     gamemode.meta.RegEntEvent(ON_TOUCH, "963_amulet", "OnTouch");
     gamemode.meta.RegEntEvent(ON_TOUCH, "963_amulet_bright", "OnTouch");
     gamemode.meta.RegEntEvent(ON_DROP, "963_amulet", "OnDrop");
     gamemode.meta.RegEntEvent(ON_DROP, "963_amulet_bright", "OnDrop");
 }
 
-public void OnUse(Player &ply, InvItem &item)
+public bool OnUse(Player &ply, InvItem &item)
 {
     Player soul = view_as<Player>(item.GetHandle("soul"));
 
@@ -62,7 +62,11 @@ public void OnUse(Player &ply, InvItem &item)
     {
         item.WorldRemove();
         ents.IndexUpdate(item);
+        
+        return true;
     }
+
+    return false;
 }
 
 public void OnTouch(Entity &ent1, Entity &ent2)
@@ -70,8 +74,9 @@ public void OnTouch(Entity &ent1, Entity &ent2)
     if (ent1.IsClass("player") && (ent2.IsClass("963_amulet") || ent2.IsClass("963_amulet_bright")))
     {
         Player soul = view_as<Player>(ent2.GetHandle("soul"));
+        Player consume = view_as<Player>(ent1);
 
-        if (Reincarnation(soul, view_as<Player>(ent1)) && soul.inv.Pickup(ent2))
+        if (!consume.IsAlive() && Reincarnation(soul, consume) && soul.inv.Pickup(ent2))
         {
             ent2.WorldRemove();
             ents.IndexUpdate(ent2);
