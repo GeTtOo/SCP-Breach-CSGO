@@ -70,5 +70,5 @@ public void ItemUnlocked(InvItem item) {
 
 public void InvisibleEffect(Player ply) {
     ply.model.SetRenderMode(RENDER_NORMAL);
-    ply.progress.Stop();
+    ply.progress.Stop(false);
 }
