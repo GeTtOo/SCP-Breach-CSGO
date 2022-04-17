@@ -34,9 +34,8 @@
 
 #include <json>
 
-#include "scp/classes/json/config"
-#include "scp/classes/json/class"
-#include "scp/classes/timers"
+#include "scp\classes\json\config"
+#include "scp\classes\json\class"
 
 methodmap Classes < JSON_OBJECT {
     public Class get(char[] name) { Class class = view_as<Class>(this.GetObject(name)); class.Name(name); return class; }

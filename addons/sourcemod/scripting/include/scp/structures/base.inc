@@ -44,8 +44,6 @@ methodmap List < StringMap {
             keylength = snap.KeyBufferSize(i);
             char[] keyname = new char[keylength];
             snap.GetKey(i, keyname, keylength);
-            if (json_is_meta_key(keyname)) continue;
-            
             list.PushString(keyname);
         }
 

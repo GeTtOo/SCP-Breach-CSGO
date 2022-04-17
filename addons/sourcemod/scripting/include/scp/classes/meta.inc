@@ -35,6 +35,12 @@ enum InventoryEvents {
     ON_DROP
 }
 
+enum StatusEffectEvents {
+    INIT = 0,
+    UPDATE,
+    END
+}
+
 methodmap OnUseMeta < Base {
 
     public OnUseMeta() {
@@ -53,11 +59,6 @@ methodmap OnPickupMeta < Base {
 
     public OnPickupMeta() {
         return view_as<OnPickupMeta>(new Base());
-    }
-
-    property bool invblock {
-        public set(bool val) { this.SetBool("invblock", val); }
-        public get() { return this.GetBool("invblock"); }
     }
     
     property Handle hndl {
@@ -125,6 +126,11 @@ methodmap EntityMeta < Base {
     property bool usable {
         public set(bool val) { this.SetBool("usable", val); }
         public get() { return this.GetBool("usable"); }
+    }
+
+    property bool SCPCanUse {
+        public set(bool val) { this.SetBool("scpcanuse", val); }
+        public get() { return this.GetBool("scpcanuse"); }
     }
 
     property int cd {
@@ -204,12 +210,88 @@ methodmap ModelMeta < Base {
     }
 }
 
+methodmap SEInit < Base {
+
+    public SEInit() {
+        return view_as<SEInit>(new Base());
+    }
+    
+    property Handle hndl {
+        public set(Handle val) { this.SetValue("hndl", val); }
+        public get() { Handle val; return this.GetValue("hndl", val) ? val : null; }
+    }
+
+    public void name(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("name", buffer) : this.GetString("name", buffer, max_size); }
+}
+
+methodmap SEUpdate < Base {
+
+    public SEUpdate() {
+        return view_as<SEUpdate>(new Base());
+    }
+    
+    property Handle hndl {
+        public set(Handle val) { this.SetValue("hndl", val); }
+        public get() { Handle val; return this.GetValue("hndl", val) ? val : null; }
+    }
+
+    public void name(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("name", buffer) : this.GetString("name", buffer, max_size); }
+}
+
+methodmap SEEnd < Base {
+
+    public SEEnd() {
+        return view_as<SEEnd>(new Base());
+    }
+    
+    property Handle hndl {
+        public set(Handle val) { this.SetValue("hndl", val); }
+        public get() { Handle val; return this.GetValue("hndl", val) ? val : null; }
+    }
+
+    public void name(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("name", buffer) : this.GetString("name", buffer, max_size); }
+}
+
+methodmap StatusEffectMeta < Base {
+
+    public StatusEffectMeta(char[] name, float rate) {
+        StatusEffectMeta sem = view_as<StatusEffectMeta>(new Base());
+        sem.SetString("name", name);
+        sem.SetFloat("rate", rate);
+        
+        return sem;
+    }
+
+    property float rate {
+        public set(float val) { this.SetFloat("rate", val); }
+        public get() { return this.GetFloat("rate"); }
+    }
+
+    property SEInit init {
+        public set(SEInit val) { this.SetValue("init", val); }
+        public get() { SEInit val; return this.GetValue("init", val) ? val : null; }
+    }
+
+    property SEUpdate update {
+        public set(SEUpdate val) { this.SetValue("update", val); }
+        public get() { SEUpdate val; return this.GetValue("update", val) ? val : null; }
+    }
+
+    property SEEnd end {
+        public set(SEEnd val) { this.SetValue("end", val); }
+        public get() { SEEnd val; return this.GetValue("end", val) ? val : null; }
+    }
+
+    public void name(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("name", buffer) : this.GetString("name", buffer, max_size); }
+}
+
 methodmap Meta < Base {
 
     public Meta() {
         Meta meta = view_as<Meta>(new Base());
         meta.CreateList("entities");
         meta.CreateList("models");
+        meta.CreateList("statuseffects");
         return meta;
     }
 
@@ -217,7 +299,7 @@ methodmap Meta < Base {
 
     public EntityMeta GetEntity(char[] entclass) { return this.GetList("entities").Get(entclass); }
 
-    public void RegEntEvent(InventoryEvents eid, char[] entclass, char[] funcname, char[] sound = "", bool invblock = false) {
+    public void RegEntEvent(InventoryEvents eid, char[] entclass, char[] funcname, char[] sound = "") {
         EntityMeta entdata = this.GetEntity(entclass);
         
         switch (eid) {
@@ -232,7 +314,6 @@ methodmap Meta < Base {
 
                 entdata.onpickup.hndl = GetMyHandle();
                 entdata.onpickup.name(funcname);
-                entdata.onpickup.invblock = invblock;
             }
             case ON_USE: {
                 entdata.onuse = new OnUseMeta();
@@ -256,4 +337,33 @@ methodmap Meta < Base {
     public void RegisterModel(char[] modelid, ModelMeta mdlmeta) { this.GetList("models").Set(modelid, mdlmeta); }
 
     public ModelMeta GetModel(char[] modelid) { return this.GetList("models").Get(modelid); }
+
+    public void RegisterStatusEffect(char[] sen, float rate = 1.0, StatusEffectMeta sem = null) { this.GetList("statuseffects").Set(sen, (sem) ? sem : new StatusEffectMeta(sen, rate)); }
+
+    public StatusEffectMeta GetStatusEffect(char[] sen) { return this.GetList("statuseffects").Get(sen); }
+
+    public void RegStatusEffectEvent(StatusEffectEvents eid, char[] sen, char[] funcname) {
+        StatusEffectMeta sem = this.GetStatusEffect(sen);
+        
+        switch (eid) {
+            case INIT: {
+                sem.init = new SEInit();
+
+                sem.init.hndl = GetMyHandle();
+                sem.init.name(funcname);
+            }
+            case UPDATE: {
+                sem.update = new SEUpdate();
+
+                sem.update.hndl = GetMyHandle();
+                sem.update.name(funcname);
+            }
+            case END: {
+                sem.end = new SEEnd();
+
+                sem.end.hndl = GetMyHandle();
+                sem.end.name(funcname);
+            }
+        }
+    }
 }

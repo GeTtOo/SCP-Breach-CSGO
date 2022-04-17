@@ -43,13 +43,17 @@
 #include "scp\structures\json"
 
 #include "scp\classes\meta"
+#include "scp\classes\timers"
 #include "scp\classes\gamemode"
 #include "scp\classes\logger"
 
 GameMode gamemode;
 
+#include "scp\classes\statuseffect"
+StatusEffectSingleton statuseffect;
+
 #include "scp\classes\entity"
-#include "scp\classes\client"
+#include "scp\classes\player"
 #include "scp\classes\worldtext"
 #include "scp\classes\singletons"
 

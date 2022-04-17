@@ -38,8 +38,9 @@
 #include <cstrike>
 #include <json>
 
-#include "scp/classes/inventory"
-#include "scp/classes/progress"
+#include "scp/classes/player/inventory"
+#include "scp/classes/player/progress"
+#include "scp/classes/player/statuseffect"
 
 methodmap Player < Entity {
 
@@ -48,6 +49,7 @@ methodmap Player < Entity {
         client.SetBool("spawned", false);
         client.SetValue("inventory", new Inventory(client));
         client.SetValue("progress", new ProgressBar(client));
+        client.SetValue("sel", new StatusEffectList(client));
 
         return client;
     }
@@ -110,6 +112,13 @@ methodmap Player < Entity {
         public get() { ProgressBar pb; return this.GetValue("progress", pb) ? pb : null; }
     }
 
+    property StatusEffectList se {
+        public set(StatusEffectList val) { this.SetHandle("sel", val); }
+        public get() { return view_as<StatusEffectList>(this.GetHandle("sel")); }
+    }
+
+    public void GetLangInfo(char[] name, int max_size) { GetLanguageInfo(this.lang, name, max_size); }
+
     public bool GetName(char[] buffer, int max_size = 0) { return GetClientName(this.id, buffer, max_size); }
 
     public bool GetAuth(char[] buffer, int max_size = 0, AuthIdType type = AuthId_Steam2) { return GetClientAuthId(this.id, type, buffer, max_size, true); }
@@ -144,13 +153,15 @@ methodmap Player < Entity {
 
     public void ShowOverlay(char[] name) {
         char overlay[128], langcode[3];
-        GetLanguageInfo(GetClientLanguage(this.id), langcode, sizeof(langcode));
-        Format(overlay, sizeof(overlay), "r_screenoverlay models/eternity/overlays/%s_%s", name, langcode);
+        this.GetLangInfo(langcode, sizeof(langcode));
+        Format(overlay, sizeof(overlay), "r_screenoverlay models/eternity/overlays/%s_%s_fh", name, langcode);
         ClientCommand(this.id, overlay);
     }
 
     public void HideOverlay() {
-        ClientCommand(this.id, "r_screenoverlay none");
+        char langcode[3];
+        this.GetLangInfo(langcode, sizeof(langcode));
+        ClientCommand(this.id, "r_screenoverlay models/eternity/overlays/inventory_%s_fh", langcode);
     }
 
     public void SetListen(Player ply, bool islisten)
@@ -233,6 +244,7 @@ methodmap Player < Entity {
         ragdoll.meta.spawnflags = 4;
 
         ragdoll.Create("prop_ragdoll");
+        ragdoll.SetBool("IsSCP", this.IsSCP);
         ragdoll.Spawn();
         ragdoll.SetPos(this.GetPos(), this.GetAng());
 
@@ -429,10 +441,17 @@ methodmap Player < Entity {
         this.Spawn();
         this.RestrictWeapons();
         this.inv.FullClear();
+
+        if (this.class.fists) EquipPlayerWeapon(this.id, GivePlayerItem(this.id, "weapon_fists"));
+
         this.Setup();
     }
 
     public void Dispose() {
+        this.RemoveValue("ragdoll");
+        this.RemoveValue("inventory");
+        this.RemoveValue("progress");
+        this.RemoveValue("se");
         delete this;
     }
 }

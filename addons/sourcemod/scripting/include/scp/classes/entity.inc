@@ -37,7 +37,7 @@
 
 #include <sdktools>
 
-#include "scp/classes/model"
+#include "scp/classes/entity/model"
 
 methodmap Entity < Base {
 

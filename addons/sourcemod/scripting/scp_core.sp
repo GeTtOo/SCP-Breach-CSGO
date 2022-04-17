@@ -99,6 +99,8 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("Player.RestrictWeapons", NativePlayer_RestrictWeapons);
     CreateNative("Inventory.FullClear", NativePlayer_Inventory_FullClear);
 
+    CreateNative("StatusEffectSingleton.list.get", NativeStatusEffect_GetList);
+
     OnLoadGM = CreateGlobalForward("SCP_OnLoad", ET_Event);
     OnUnloadGM = CreateGlobalForward("SCP_OnUnload", ET_Event);
     OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_CellByRef);
@@ -148,6 +150,7 @@ public void OnMapStart()
     ents = new EntitySingleton();
     player = new ClientSingleton();
     worldtext = new WorldTextSingleton();
+    statuseffect = new StatusEffectSingleton();
     AdminMenu = new AdminMenuSingleton();
 
     char mapName[128];
@@ -229,6 +232,7 @@ public void OnMapEnd()
 public void OnGameFrame()
 {
     gamemode.timer.Update();
+    statuseffect.Update();
 }
 
 public void OnClientPostAdminCheck(int id)
@@ -244,6 +248,7 @@ public void OnClientPostAdminCheck(int id)
     ply.GetName(clientname, sizeof(clientname));
     gamemode.log.Info("%t", "Log_PlayerConnected", clientname);
 
+    SDKHook(ply.id, SDKHook_WeaponEquipPost, OnWeaponEquipPost);
     SDKHook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
     SDKHook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
     SDKHook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
@@ -278,6 +283,7 @@ public void OnClientDisconnect(int id)
         ply.GetName(clientname, sizeof(clientname));
         gamemode.log.Info("%t", "Log_PlayerDisconnected", clientname);
 
+        SDKUnhook(ply.id, SDKHook_WeaponEquipPost, OnWeaponEquipPost);
         SDKUnhook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
         SDKUnhook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
         SDKUnhook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
@@ -316,7 +322,7 @@ public Action OnPlayerSpawn(int client)
     if (!gamemode.mngr.IsWarmup)
     {
         if (!ply.GetHandle("rsptmr") && IsClientExist(client) && GetClientTeam(client) > 1) {
-            ply.SetHandle("rsptmr", gamemode.timer.Simple(100, "PlayerSpawn", ply));
+            ply.SetHandle("rsptmr", gamemode.timer.Simple(250, "PlayerSpawn", ply));
             if (ply.FirstSpawn)
                 ply.FirstSpawn = false;
         }
@@ -560,6 +566,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
         delete players;
 
         ents.Clear();
+        statuseffect.ClearAll();
         gamemode.mngr.RoundComplete = false;
         gamemode.nuke.Reset();
         gamemode.timer.ClearAll();
@@ -693,7 +700,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
             atk = null;
         }
 
-        if (atk == null || atk.class == null) return Plugin_Continue;
+        //if (atk == null || atk.class == null) return Plugin_Continue;
         if (vic == null || vic.class == null) return Plugin_Continue;
         
         Call_StartForward(OnTakeDamageForward);
@@ -808,6 +815,21 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
     }
 
     return Plugin_Handled;
+}
+
+public Action OnWeaponEquipPost(int client, int iWeapon)
+{
+    Player ply = player.GetByID(client);
+
+    char classname[64];
+    GetEntityClassname(iWeapon, classname, sizeof(classname));
+    PrintToConsole(ply.id, classname);
+
+    if (!ply.IsSCP && StrEqual(classname, "weapon_fists"))
+    {
+        PrintToConsole(ply.id, "Test");
+        ply.ShowOverlay("fists");
+    }
 }
 
 public Action OnWeaponTake(int client, int iWeapon)
@@ -1050,10 +1072,12 @@ public SDKHookCB CB_EntUse(int entity, int client)
     Player ply = player.GetByID(client);
     Entity ent = ents.Get(entity);
 
-    if (ply.IsSCP) return;
-
     if (ent.meta)
     {
+        if (ply.IsSCP && !ent.meta.SCPCanUse) return;
+        
+        bool blockpickup = false;
+        
         if (ent.meta.onpickup)
         {
             char funcname[32];
@@ -1062,10 +1086,10 @@ public SDKHookCB CB_EntUse(int entity, int client)
             Call_StartFunction(ent.meta.onpickup.hndl, GetFunctionByName(ent.meta.onpickup.hndl, funcname));
             Call_PushCellRef(ply);
             Call_PushCellRef(ent);
-            Call_Finish();
+            Call_Finish(blockpickup);
         }
 
-        if (!ent.meta.onpickup || !ent.meta.onpickup.invblock)
+        if (!blockpickup)
             if (ply.inv.Pickup(ent))
             {
                 ent.WorldRemove();
@@ -1075,11 +1099,12 @@ public SDKHookCB CB_EntUse(int entity, int client)
             {
                 ply.PrintNotify("%t", "Inventory full");
             }
-        else
+        
+        /*if (blockpickup)
         {
             ent.WorldRemove();
             ents.IndexUpdate(ent);
-        }
+        }*/
     }
 }
 
@@ -1641,7 +1666,14 @@ public void CombatReinforcement()
         char teamname[32];
         reinforcedteams.GetString(GetRandomInt(0, reinforcedteams.Length - 1), teamname, sizeof(teamname));
 
-        gamemode.mngr.CombatReinforcement(teamname);
+        if (gamemode.mngr.CombatReinforcement(teamname))
+        {
+            char path[128], langcode[3];
+            
+            gamemode.mngr.GetServerLangInfo(langcode, sizeof(langcode));
+            Format(path, sizeof(path), "*/scp/other/%s_reinforced_%s", teamname, langcode);
+            gamemode.mngr.PlaySoundToAll(path, SNDCHAN_ITEM);
+        }
 
         delete teams;
         delete reinforcedteams;
@@ -1704,10 +1736,11 @@ public Action Command_Base(int client, const char[] command, int argc)
     
     if (!ply.IsAdmin()) return Plugin_Stop;
 
-    char arg1[32], arg2[32];
+    char arg1[32], arg2[32], arg3[32];
 
     GetCmdArg(1, arg1, sizeof(arg1));
     GetCmdArg(2, arg2, sizeof(arg2));
+    GetCmdArg(3, arg3, sizeof(arg3));
 
     if (StrEqual(arg1, "status", false))
     {
@@ -1761,6 +1794,11 @@ public Action Command_Base(int client, const char[] command, int argc)
             PrintToConsole(ply.id, "Name: %s | delay: %.3f | repeations: %i", timername, timer.delay, timer.repeations);
         }
     }
+    if (StrEqual(arg1, "changelevel", false))
+        ServerCommand("changelevel %s", arg2);
+
+    if (StrEqual(arg1, "wme", false))
+        ServerCommand("mp_warmup_end");
 
     return Plugin_Stop;
 }
@@ -2237,3 +2275,5 @@ public any NativePlayer_Inventory_FullClear(Handle Plugin, int numArgs) {
         item.Dispose();
     }
 }
+
+public any NativeStatusEffect_GetList(Handle Plugin, int numArgs) { return statuseffect.GetArrayList("list"); }

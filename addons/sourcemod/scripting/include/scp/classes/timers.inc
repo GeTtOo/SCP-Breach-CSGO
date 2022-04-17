@@ -164,8 +164,11 @@ methodmap Timers < Base {
 
                 if (timer.repeations == 1)
                 {
-                    list.Erase(i);
-                    delete timer;
+                    char name[64];
+                    timer.name(name, sizeof(name));
+                    this.Remove(name);
+                    //list.Erase(i);
+                    //delete timer;
                 }
                 else if (timer.repeations > 1) {
                     timer.nextinvoke += timer.delay;

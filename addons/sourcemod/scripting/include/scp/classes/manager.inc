@@ -68,6 +68,8 @@ methodmap Manager < Base {
             ents.SpawnedClear();
     }
 
+    public void GetServerLangInfo(char[] name, int max_size) { GetLanguageInfo(this.serverlang, name, max_size); }
+
     public void SetCollisionGroup(int entity, int group) {
         SetEntData(entity, this.CollisionGroup, group, 4, true);
     }
@@ -77,12 +79,16 @@ methodmap Manager < Base {
     }
 
     public void StopSoundAll(char[] path, int channel) {
-        for (int i=0; i < MAXPLAYERS; i++) {
-            Player ply = player.GetByID(i);
+        ArrayList players = player.GetAll();
 
-            if (ply != null)
-                StopSound(ply.id, channel, path);
+        for (int i=0; i < players.Length; i++)
+        {
+            Player ply = players.Get(i);
+
+            StopSound(ply.id, channel, path);
         }
+
+        delete players;
     }
 
     public void PlayAmbient(char[] path, Entity ent) {
@@ -259,7 +265,8 @@ methodmap Manager < Base {
         }
     }
 
-    public void CombatReinforcement(char[] teamName) {
+    public bool CombatReinforcement(char[] teamName) {
+        bool status = false;
         ArrayList players = player.GetAll();
         ArrayList deadPlayers = new ArrayList();
 
@@ -326,6 +333,8 @@ methodmap Manager < Base {
                     ply.class = class;
                     ply.Spawn();
 
+                    status = true;
+
                     if (gamemode.config.debug)
                         gamemode.log.Info("[Class] %s setup on player: %i", classname, ply.id);
                 }
@@ -335,5 +344,7 @@ methodmap Manager < Base {
         delete players;
         delete deadPlayers;
         delete classes;
+
+        return status;
     }
 }
