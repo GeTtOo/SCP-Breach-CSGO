@@ -241,14 +241,14 @@ public void StartCrying(Player ply) {
 }
 
 public void Crying(Player ply) {
-    ply.PlaySound("*/scp/scp-096_crying.mp3", 48);
+    gamemode.mngr.PlayAmbientOnPlayer("*/scp/scp-096_crying.mp3", ply);
 }
 
 public void CooldownReset(Player ply) {
     ply.SetBool("096_cooldown", false);
 }
 
-public void SCP_OnCallActionMenu(Player &ply) {
+public void SCP_OnCallAction(Player &ply) {
     if (ply.GetBool("096_IsRage")){
         ply.TimerSimple(500, "DisableAbility", ply);
         ply.multipler *= 2;
