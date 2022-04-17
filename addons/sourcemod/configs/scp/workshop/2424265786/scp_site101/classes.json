@@ -125,7 +125,7 @@
                     },
                     "skin":0
                 },
-                "overlay":"dr.bright",
+                "overlay":"drbright",
                 "pos":{"vec":[-2751,-2967,0]},
                 "escape":{
                     "trigger":330025,

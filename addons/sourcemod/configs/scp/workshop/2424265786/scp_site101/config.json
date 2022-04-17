@@ -131,7 +131,7 @@
         "radius":2000,
         "blinktime":5,
         "blinkrange":700,
-        "hpmultipler":1.4,
+        "hpmultipler":1.2,
         "sound": {
             "neckbroke":[
                 "*/scp/173/neck1.mp3",
