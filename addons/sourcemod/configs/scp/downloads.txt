@@ -421,6 +421,8 @@ materials/models/eternity/players/scientists/sandro_facemap.vmt
 materials/models/eternity/players/scientists/sandro_facemap.vtf
 materials/models/eternity/players/scientists/scrubs1_sheet.vmt
 materials/models/eternity/players/scientists/scrubs1_sheet.vtf
+materials/models/eternity/players/scientists/scrubs1_sheet_z.vmt
+materials/models/eternity/players/scientists/scrubs1_sheet_z.vtf
 materials/models/eternity/players/scientists/scrubs1_sheet_n.vtf
 materials/models/eternity/players/scientists/stripe.vmt
 materials/models/eternity/players/scientists/stripe.vtf
