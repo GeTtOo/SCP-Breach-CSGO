@@ -77,7 +77,8 @@
     },
     "500_panacea": {
         "model":"models/eternity/props/scp/scp_500.mdl",
-        "mass":0.5
+        "mass":0.5,
+        "scpcanuse":true
     },
     "963_amulet_bright": {
         "model":"models/eternity/props/scp/scp_427_2.mdl",

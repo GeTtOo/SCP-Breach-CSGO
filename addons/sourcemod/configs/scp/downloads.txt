@@ -569,3 +569,5 @@ sound/scp/scp-096_rage.mp3
 sound/scp/scp-096_tranquility.mp3
 sound/scp/warhead_announcement.mp3
 sound/scp/warhead_canceled.mp3
+sound/scp/other/mtf_reinforced_en.mp3
+sound/scp/other/mtf_reinforced_ru.mp3

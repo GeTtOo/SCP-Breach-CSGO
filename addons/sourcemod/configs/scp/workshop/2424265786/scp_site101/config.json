@@ -3,11 +3,11 @@
     "debug":false,
     "logmode":0,
     "loglevel":4,
-    "DefaultGlobalClass":"Personnel",
+    "DefaultGlobalClass":"Staff",
     "DefaultClass":"D Class",
     "invsize": 5,
     "usablecards":true,
-    "tsto":5,
+    "tsto":10,
     "psars": 30,
     "AdminRoom": [-4890,-6340,0],
     "reinforce":{
@@ -18,13 +18,13 @@
         "models": [
             {"id":"dclass","path":"models/player/custom_player/eternity/d_class.mdl","bginf":[0,7,4,1,0,0,1,0,1,0,0]},
             {"id":"scientist","path":"models/player/custom_player/eternity/scientists.mdl","bginf":[1,6,4,0,0,0,0,0,0,0,0]},
-            {"id":"mog","path":"models/player/custom_player/eternity/mog.mdl","bginf":[0,4,3,5,2,15,3,3,0,1,1]},
+            {"id":"mtf","path":"models/player/custom_player/eternity/mog.mdl","bginf":[0,4,3,5,2,15,3,3,0,1,1]},
             {"id":"chaos","path":"models/player/custom_player/eternity/chaos.mdl","bginf":[3,4,3,4,2,0,0,0,3,0,0]}
         ]
     },
     "nuke": {
         "time":110,
-        "ast":900,
+        "ast":1500,
         "autostart":true,
         "killpos":1690,
         "sound":"*/scp/warhead_announcement.mp3",
@@ -38,8 +38,8 @@
         "spawnlist":[]
     },
     "teleport": {
-        "D spawn":{"vec":[-2413,-5632,0],"ang":[0,0,0]},
-        "MOG spawn":{"vec":[-10739,-5920,1712],"ang":[0,0,0]},
+        "D spawn":{"vec":[-2195,-4950,0],"ang":[0,-138,0]},
+        "MTF spawn":{"vec":[-10739,-5920,1712],"ang":[0,0,0]},
         "Chaos spawn":{"vec":[-7128,-5693,1712],"ang":[0,-135,0]},
         "Security spawn":{"vec":[-11089,-2298,-978],"ang":[1,-87,0]},
         "Medic spawn":{"vec":[-6107,-7136,14],"ang":[-2,-180,0]},
@@ -76,7 +76,7 @@
         "arrestedesc": {
             "D Class": {
                 "trigger":330025,
-                "team":"MOG",
+                "team":"MTF",
                 "class":"Cadet"
             }
         }
