@@ -87,9 +87,17 @@ public void SCP_OnInput(Player &ply, int buttons)
 	}
 }
 
+public void SCP_OnPlayerClear(Player &ply)
+{
+	if (ply && ply.class && ply.class.Is("049")) {
+		ply.RemoveValue("049_reviving");
+		ply.RemoveValue("049_lock");
+	}
+}
+
 public void Revive(Player ply)
 {
-	ply.progress.Stop();
+	ply.progress.Stop(false);
 	ply.SetBool("049_reviving", false);
 
 	if (gamemode.plconfig.GetObject("revive").GetBool("inpvs", true))
@@ -112,7 +120,7 @@ public void Revive(Player ply)
 
 					if (vic != ply && !vic.IsAlive() && vic.ragdoll)
 					{
-						if (vic.ragdoll == vicrag)
+						if (vic.ragdoll == vicrag && !vic.ragdoll.GetBool("IsSCP"))
 						{
 							ArrayList bglist = vic.model.bglist;
 							char modelname[256];
@@ -177,6 +185,8 @@ public void ReviveUnlock(Player ply) {
 
 public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype)
 {
+	if (atk == null || atk.class == null) return Plugin_Continue;
+	
 	if(atk.class.Is("049"))
 	{
 		damage += 250.0;
@@ -197,7 +207,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 	return Plugin_Continue;
 }
 
-public void SCP_OnCallActionMenu(Player &ply)
+public void SCP_OnCallAction(Player &ply)
 {
     if (ply.class.Is("049") && !g_MusicPlay)
 	{
