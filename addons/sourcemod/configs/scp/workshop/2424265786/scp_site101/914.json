@@ -7,7 +7,7 @@
     "recipes": {
         "rough": {
             "player": [
-                ["Butchering", 100]
+                ["Butchering", 1, 100]
             ],
             "card_o5": [
                 ["card_senior_guard", 50, 80]
@@ -213,7 +213,7 @@
         },
         "coarse": {
             "player": [
-                ["Injure", 100]
+                ["Injure", 50, 100]
             ],
             "card_o5": [
                 ["card_guard", 30, 80]
@@ -419,10 +419,10 @@
         },
         "one_by_one": {
             "player": {
-                "40":["Injure", 100],
-                "30":["Butchering", 100],
-                "20":["Speed", 100],
-                "10":["Regeneration", 100]
+                "40":["Injure", 10, 100],
+                "30":["Butchering", 1, 100],
+                "20":["Speed", 10, 100],
+                "10":["Regeneration", 10, 100]
             },
             "card_o5": [
                 ["card_facility_manager", 50, 80]
@@ -635,7 +635,7 @@
         },
         "fine": {
             "player": [
-                ["Speed", 20]
+                ["Heal", 240, 25]
             ],
             "card_o5": [
                 ["005_picklock", 70, 50]
@@ -850,7 +850,7 @@
         },
         "very_fine": {
             "player": [
-                ["Regeneration", 20]
+                ["Metamarphose", 75, 50]
             ],
             "card_o5": [
                 ["005_picklock", 70, 20]
