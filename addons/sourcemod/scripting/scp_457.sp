@@ -45,6 +45,8 @@ public Plugin myinfo = {
 
 public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype)
 {
+    if (atk == null || atk.class == null) return Plugin_Continue;
+    
     if(atk.class.Is("457") && atk.id != vic.id)
     {
         IgniteEntity(vic.id, float(gamemode.plconfig.GetInt("ignitetime", 20)));
@@ -62,10 +64,42 @@ public void SCP_OnPlayerClear(Player &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("457") && ply.InGame())
     {
+        ply.RemoveValue("457_abilitycd");
+
         if (ply.ragdoll)
         {
             ents.Remove(ply.ragdoll);
             ply.ragdoll = null;
         }
     }
+}
+
+public void SCP_OnCallAction(Player &ply)
+{
+    if (ply.class.Is("457") && !ply.GetBool("457_abilitycd"))
+    {
+        float abradius = float(gamemode.plconfig.GetInt("abradius", 250));
+        char filter[1][32] = {"player"};
+        ArrayList players = ents.FindInBox(ply.GetPos() - new Vector(abradius, abradius, 400.0), ply.GetPos() + new Vector(abradius, abradius, 400.0), filter, sizeof(filter));
+
+        for (int i=0; i < players.Length; i++) {
+            Player target = players.Get(i);
+            
+            if (ply == target || target.IsSCP || !target.IsAlive()) continue;
+
+            IgniteEntity(target.id, float(gamemode.plconfig.GetInt("ignitetime", 20)));
+        }
+
+        delete players;
+
+        ply.SetBool("457_abilitycd", true);
+        ply.progress.Start(gamemode.plconfig.GetInt("abcd", 15) * 1000, "AbilityUnlock");
+        ply.PrintNotify("Перезарядка способности");
+    }
+}
+
+public void AbilityUnlock(Player ply)
+{
+    ply.SetBool("457_abilitycd", false);
+    ply.progress.Stop(false);
 }
