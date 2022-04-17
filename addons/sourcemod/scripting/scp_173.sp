@@ -59,7 +59,7 @@ public void SCP_OnPlayerSpawn(Player &ply)
 
         Entity hologramm = ents.Create("prop_dynamic");
         
-        hologramm.model.SetPath(model).SetRenderMode(RENDER_NONE).SetRenderColor(new Colour(255,255,255,75));
+        hologramm.model.SetPath(model).SetRenderMode(RENDER_TRANSCOLOR).SetRenderColor(new Colour(255,255,255,75));
         hologramm.Spawn().SetHook(SDKHook_SetTransmit, TransmitHandler);
 
         ply.SetHandle("173_holo", hologramm);
@@ -99,13 +99,12 @@ public void SCP_OnPlayerDeath(Player &ply)
 }
 
 public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype)
-{
-    if(vic.class.Is("173"))
+{   
+    if (vic.class.Is("173"))
     {
-        PrintToChatAll("Test");
-        damage = damage / 50.0;
-        vic.multipler = vic.class.multipler / (float(vic.health) / float(vic.class.health / gamemode.plconfig.GetInt("hpmultipler", 1)));
-        return Plugin_Changed;
+        //damage = damage / 50.0;
+        vic.multipler = vic.class.multipler / (float(vic.health) / (float(vic.class.health) / gamemode.plconfig.GetFloat("hpmultipler", 1.0)));
+        //return Plugin_Changed;
     }
 
     return Plugin_Continue;
@@ -156,7 +155,7 @@ public void CheckVisualContact(Player ply)
         {
             if (!ply.GetBool("173_isvis"))
             {
-                ply.SetMoveType(MOVETYPE_NONE);
+                ply.speed = 0.1;
                 ply.SetBool("173_isvis", true);
 
                 if (!ply.GetHandle("173_abtmr") && !ply.GetBool("173_abready"))
@@ -171,7 +170,7 @@ public void CheckVisualContact(Player ply)
         {
             if (ply.GetBool("173_isvis"))
             {
-                ply.SetMoveType(MOVETYPE_WALK);
+                ply.speed = ply.class.speed;
                 ply.SetBool("173_isvis", false);
             }
         }
@@ -237,9 +236,9 @@ public void AbilityCooldown(Player ply)
     ply.progress.Stop();
 }
 
-public void SCP_OnCallActionMenu(Player &ply)
+public void SCP_OnCallAction(Player &ply)
 {
-    if (ply.GetBool("173_abready")) //ply.GetBool("173_abready")
+    if (ply.GetBool("173_isvis") && ply.GetBool("173_abready")) //ply.GetBool("173_abready")
     {
         Entity ent = view_as<Entity>(ply.GetHandle("173_holo"));
 
@@ -252,7 +251,7 @@ public void SCP_OnCallActionMenu(Player &ply)
         ply.SetBool("173_isvis", false);
         ply.SetBool("173_abready", false);
 
-        ply.SetMoveType(MOVETYPE_WALK);
+        ply.speed = ply.class.speed;
     }
 }
 
@@ -262,7 +261,7 @@ public void RenderHologram(Player ply)
 
     if (ply.GetBool("173_isvis"))
     {
-        if (ply.GetHandle("173_holo"))
+        if (ent)
         {
             Vector pos = ply.EyePos();
             Angle ang = ply.GetAng();
@@ -278,33 +277,39 @@ public void RenderHologram(Player ply)
 
             bool correct;
             int loop = 100;
+            float blinkrange = float(gamemode.plconfig.GetInt("blinkrange", 400));
 
             if (TR_DidHit(trace))
             {
                 TR_GetEndPosition(endposarr, trace);
-                
-                while (IsStuck(endposarr, ply.id) && !correct)
-                {
-                    SubtractVectors(endposarr, backvecarr, endposarr);
+            }
 
-                    if (GetVectorDistance(endposarr, posarr) < 10 || loop-- < 1)
-                    {
-                        correct = true;
-                        endposarr = posarr;
-                    }
+            if (GetVectorDistance(posarr, endposarr) >= blinkrange / (float(ply.health) / (float(ply.class.health) / gamemode.plconfig.GetFloat("hpmultipler", 1.0))))
+            {
+                Vector endpos = ply.GetAng().Forward(ply.EyePos(), blinkrange / (float(ply.health) / (float(ply.class.health) / gamemode.plconfig.GetFloat("hpmultipler", 1.0))));
+                endpos.GetArrD(endposarr);
+            }
+
+            while (IsStuck(endposarr, ply.id) && !correct)
+            {
+                SubtractVectors(endposarr, backvecarr, endposarr);
+
+                if (GetVectorDistance(endposarr, posarr) < 10 || loop-- < 1)
+                {
+                    correct = true;
+                    endposarr = posarr;
                 }
             }
 
             delete trace;
-
-            float blinkrange = float(gamemode.plconfig.GetInt("blinkrange", 400));
-            if (GetVectorDistance(posarr, endposarr) <= blinkrange / (float(ply.health) / float(ply.class.health / gamemode.plconfig.GetInt("hpmultipler", 1))))
+            
+            if (GetVectorDistance(posarr, endposarr) >= 80)
             {
                 ent.SetPos(new Vector(endposarr[0], endposarr[1], endposarr[2]), new Angle(0.0, angarr[1], 0.0)); // posarr[2] - 64.0
                 if (!ply.GetBool("173_renderholo"))
                 {
                     ply.SetBool("173_renderholo", true);
-                    ent.model.SetRenderMode(RENDER_TRANSCOLOR);
+                    ent.model.SetRenderColor(new Colour(255,255,255,75));
                 }
             }
         }
@@ -314,7 +319,7 @@ public void RenderHologram(Player ply)
         if (ent && ply.GetBool("173_renderholo"))
         {
             ply.SetBool("173_renderholo", false);
-            ent.model.SetRenderMode(RENDER_NONE);
+            ent.model.SetRenderColor(new Colour(255,255,255,0));
         }
     }
 
