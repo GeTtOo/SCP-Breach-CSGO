@@ -313,7 +313,7 @@ public void Metamarphose_End(Player ply) {
     ply.PrintWarning("Вы перешли на другой уровень бытия...");
 }
 
-public void Metamarphose_End_Force(Player ply) {
+public void Metamarphose_ForceEnd(Player ply) {
     ply.multipler = ply.class.multipler;
     ply.RemoveValue("dooraccess");
     ply.PrintWarning("Вы исцелились");
