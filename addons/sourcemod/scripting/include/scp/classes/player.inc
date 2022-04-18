@@ -161,7 +161,10 @@ methodmap Player < Entity {
     public void HideOverlay() {
         char langcode[3];
         this.GetLangInfo(langcode, sizeof(langcode));
-        ClientCommand(this.id, "r_screenoverlay models/eternity/overlays/inventory_%s_fh", langcode);
+        if (!this.IsSCP)
+            ClientCommand(this.id, "r_screenoverlay models/eternity/overlays/inventory_%s_fh", langcode);
+        else
+            ClientCommand(this.id, "r_screenoverlay none");
     }
 
     public void SetListen(Player ply, bool islisten)
@@ -328,6 +331,23 @@ methodmap Player < Entity {
             }
         }
 
+        if (this.class.fists)
+        {
+            int id = this.Give("weapon_fists");
+            Entity ent = new Entity(id);
+            ent.SetString("class", "weapon_fists");
+
+            any data[2];
+            data[0] = ent.id;
+            data[1] = ent;
+            
+            Base entities;
+            gamemode.GetValue("entities", entities);
+            entities.GetArrayList("entities").PushArray(data); 
+
+            EquipPlayerWeapon(this.id, id);
+        }
+
         if (this.class.weapons)
             for (int i=0; i < this.class.weapons.Length; i++) {
                 if (view_as<int>(this.class.weapons.GetKeyType(i)) != 4) {
@@ -441,8 +461,6 @@ methodmap Player < Entity {
         this.Spawn();
         this.RestrictWeapons();
         this.inv.FullClear();
-
-        if (this.class.fists) EquipPlayerWeapon(this.id, GivePlayerItem(this.id, "weapon_fists"));
 
         this.Setup();
     }

@@ -82,6 +82,8 @@ forward void SCP_OnPlayerClear(Player &ply);
 
 forward void SCP_OnPlayerTakeWeapon(Player &ply, Entity &ent);
 
+forward void SCP_OnPlayerSwitchWeapon(Player &ply, Entity &ent);
+
 forward Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype, int &inflictor);
 
 forward void SCP_OnPlayerDeath(Player &vic, Player &atk);

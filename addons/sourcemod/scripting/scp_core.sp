@@ -46,6 +46,7 @@ Handle OnClientSpawnForward;
 Handle OnClientResetForward;
 Handle OnClientClearForward;
 Handle OnClientTakeWeaponForward;
+Handle OnClientSwitchWeaponForward;
 Handle OnTakeDamageForward;
 Handle OnPlayerDeathForward;
 Handle OnPlayerEscapeForward;
@@ -109,6 +110,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     OnClientResetForward = CreateGlobalForward("SCP_OnPlayerReset", ET_Event, Param_CellByRef);
     OnClientClearForward = CreateGlobalForward("SCP_OnPlayerClear", ET_Event, Param_CellByRef);
     OnClientTakeWeaponForward = CreateGlobalForward("SCP_OnPlayerTakeWeapon", ET_Event, Param_CellByRef, Param_CellByRef);
+    OnClientSwitchWeaponForward = CreateGlobalForward("SCP_OnPlayerSwitchWeapon", ET_Event, Param_CellByRef, Param_CellByRef);
     OnTakeDamageForward = CreateGlobalForward("SCP_OnTakeDamage", ET_Event, Param_CellByRef, Param_CellByRef, Param_FloatByRef, Param_CellByRef, Param_CellByRef);
     OnPlayerDeathForward = CreateGlobalForward("SCP_OnPlayerDeath", ET_Event, Param_CellByRef, Param_CellByRef);
     OnPlayerEscapeForward = CreateGlobalForward("SCP_OnPlayerEscape", ET_Event, Param_CellByRef, Param_CellByRef);
@@ -248,7 +250,7 @@ public void OnClientPostAdminCheck(int id)
     ply.GetName(clientname, sizeof(clientname));
     gamemode.log.Info("%t", "Log_PlayerConnected", clientname);
 
-    SDKHook(ply.id, SDKHook_WeaponEquipPost, OnWeaponEquipPost);
+    SDKHook(ply.id, SDKHook_WeaponSwitch, OnWeaponSwitch);
     SDKHook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
     SDKHook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
     SDKHook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
@@ -283,7 +285,7 @@ public void OnClientDisconnect(int id)
         ply.GetName(clientname, sizeof(clientname));
         gamemode.log.Info("%t", "Log_PlayerDisconnected", clientname);
 
-        SDKUnhook(ply.id, SDKHook_WeaponEquipPost, OnWeaponEquipPost);
+        SDKUnhook(ply.id, SDKHook_WeaponSwitch, OnWeaponSwitch);
         SDKUnhook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
         SDKUnhook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
         SDKUnhook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
@@ -294,6 +296,8 @@ public void OnClientDisconnect(int id)
         Call_StartForward(OnClientClearForward);
         Call_PushCellRef(ply);
         Call_Finish();
+
+        ply.se.ClearAll();
 
         ply.Team("Dead");
         ply.class = null;
@@ -352,9 +356,6 @@ public void PlayerSpawn(Player ply)
         gamemode.mngr.SetCollisionGroup(ply.id, 2);
 
         ply.RestrictWeapons();
-
-        if (ply.class.fists)
-            EquipPlayerWeapon(ply.id, GivePlayerItem(ply.id, "weapon_fists"));
 
         if (ply.class.HasKey("overlay"))
         {
@@ -770,6 +771,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
             ents.IndexUpdate(item);
         }
 
+        vic.se.ClearAll();
+
         if (vic.progress.active)
             vic.progress.Stop();
 
@@ -815,21 +818,6 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
     }
 
     return Plugin_Handled;
-}
-
-public Action OnWeaponEquipPost(int client, int iWeapon)
-{
-    Player ply = player.GetByID(client);
-
-    char classname[64];
-    GetEntityClassname(iWeapon, classname, sizeof(classname));
-    PrintToConsole(ply.id, classname);
-
-    if (!ply.IsSCP && StrEqual(classname, "weapon_fists"))
-    {
-        PrintToConsole(ply.id, "Test");
-        ply.ShowOverlay("fists");
-    }
 }
 
 public Action OnWeaponTake(int client, int iWeapon)
@@ -892,6 +880,22 @@ public Action OnWeaponTake(int client, int iWeapon)
     if (StrEqual(classname, "weapon_melee") || StrEqual(classname, "weapon_knife"))
     {
         EquipPlayerWeapon(client, iWeapon);
+    }
+
+    return Plugin_Continue;
+}
+
+public Action OnWeaponSwitch(int client, int iWeapon)
+{
+    Player ply = player.GetByID(client);
+    Entity ent = ents.Get(iWeapon);
+
+    if (ply && ply.class && ent)
+    {
+        Call_StartForward(OnClientSwitchWeaponForward);
+        Call_PushCellRef(ply);
+        Call_PushCellRef(ent);
+        Call_Finish();
     }
 
     return Plugin_Continue;
@@ -1058,7 +1062,7 @@ public void OnPlayerRunCmdPost(int client, int buttons)
 {
     Player ply = player.GetByID(client);
     
-    if (ply != null && ply.class != null)
+    if (ply && ply.class)
     {
         Call_StartForward(OnInputForward);
         Call_PushCellRef(ply);
@@ -1498,6 +1502,8 @@ public void EscapeController(Player ply, int doorID)
                 opa = ply.GetAng();
             }
             
+            ply.se.ClearAll();
+
             Base pos = ply.GetBase("spawnpos");
             if (pos != null)
                 pos.SetBool("lock", false);
