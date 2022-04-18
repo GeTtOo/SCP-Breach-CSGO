@@ -347,4 +347,31 @@ methodmap Manager < Base {
 
         return status;
     }
+
+    public void GetSpecInfo(Player ply, Player target)
+    {
+        char team[32], class[32];
+
+        target.Team(team, sizeof(team));
+        target.class.Name(class, sizeof(class));
+
+        char invstr[160];
+
+        for (int i=0; i < target.inv.items.Length; i++)
+        {
+            InvItem item = target.inv.Get(i);
+
+            char itemclass[64], itemname[64];
+            item.GetClass(itemclass, sizeof(itemclass));
+            FormatEx(itemname, sizeof(itemname), "%T", itemclass, ply.id);
+            
+            Format(invstr, sizeof(invstr), "%s%i. %s\n", invstr, i+1, itemname);
+        }
+
+        char fullinfo[512];
+
+        Format(fullinfo, sizeof(fullinfo), "      %s - %s\n--------------------\n%s", team, class, invstr);
+
+        ply.PrintNotify(fullinfo);
+    }
 }
