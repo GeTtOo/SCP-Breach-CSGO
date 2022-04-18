@@ -105,6 +105,6 @@ public void SCP_OnButtonPressed(Player &ply, int doorId) {
     
 }
 
-public void SCP_OnCallActionMenu(Player &ply) {
+public void SCP_OnCallAction(Player &ply) {
     
 }
