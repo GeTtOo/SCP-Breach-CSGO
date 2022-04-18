@@ -63,4 +63,9 @@ methodmap StatusEffectList < Base {
     {
         statuseffect.Remove(this.ply, name);
     }
+    
+    public void ClearAll()
+    {
+        statuseffect.ClearAllOnPlayer(this.ply);
+    }
 }
