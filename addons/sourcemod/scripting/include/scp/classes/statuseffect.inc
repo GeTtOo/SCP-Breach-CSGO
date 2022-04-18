@@ -152,10 +152,10 @@ methodmap StatusEffectSingleton < Base {
             {
                 char funcname[64];
                 
-                se.meta.end.name(funcname, sizeof(funcname));
-                Format(funcname, sizeof(funcname), "%s_Force", funcname);
+                se.meta.name(funcname, sizeof(funcname));
+                Format(funcname, sizeof(funcname), "%s_ForceEnd", funcname);
 
-                if (GetFunctionByName(se.meta.end.hndl, funcname) != INVALID_FUNCTION)
+                if (se.meta.end && GetFunctionByName(se.meta.end.hndl, funcname) != INVALID_FUNCTION)
                 {
                     Call_StartFunction(se.meta.end.hndl, GetFunctionByName(se.meta.end.hndl, funcname));
                     Call_PushCell(se.ply);
@@ -169,6 +169,33 @@ methodmap StatusEffectSingleton < Base {
         }
 
         return false;
+    }
+
+    public void ClearAllOnPlayer(Handle ply)
+    {
+        for (int i=0; i < this.list.Length; i ++)
+        {
+            StatusEffect se = this.list.Get(i);
+
+            if (se.ply == ply)
+            {
+                char funcname[64];
+                
+                se.meta.name(funcname, sizeof(funcname));
+                Format(funcname, sizeof(funcname), "%s_ForceEnd", funcname);
+
+                if (se.meta.end && GetFunctionByName(se.meta.end.hndl, funcname) != INVALID_FUNCTION)
+                {
+                    Call_StartFunction(se.meta.end.hndl, GetFunctionByName(se.meta.end.hndl, funcname));
+                    Call_PushCell(se.ply);
+                    Call_Finish();
+                }
+
+                this.list.Erase(i);
+                delete se;
+                i--;
+            }
+        }
     }
 
     public void ClearAll()
