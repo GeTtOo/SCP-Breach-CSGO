@@ -75,10 +75,10 @@ public void SCP_OnPlayerClear(Player &ply)
         if (ent) ents.Remove(ent);
 
         Format(timername, sizeof(timername), "SCP-173-VisChecker-%i", ply.id);
-        gamemode.timer.Remove(timername);
+        gamemode.timer.RemoveByName(timername);
 
         Format(timername, sizeof(timername), "SCP-173-Holo-%i", ply.id);
-        gamemode.timer.Remove(timername);
+        gamemode.timer.RemoveByName(timername);
 
         ply.RemoveValue("173_isvis");
         ply.RemoveValue("173_abtmr");

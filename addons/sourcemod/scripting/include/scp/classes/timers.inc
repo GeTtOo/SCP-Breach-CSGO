@@ -95,7 +95,21 @@ methodmap Timers < Base {
 
     public bool IsAlive(Tmr timer) { return (this.GetArrayList("timers").FindValue(timer) != -1) ? true : false; }
 
-    public bool Remove(char[] name) {
+    public bool Remove(Tmr timer) {
+        ArrayList list = this.GetArrayList("timers");
+        
+        for (int i=0; i < list.Length; i++) {
+            if (list.Get(i) == timer) {
+                list.Erase(i);
+                delete timer;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool RemoveByName(char[] name) {
         ArrayList list = this.GetArrayList("timers");
         
         for (int i=0; i < list.Length; i++) {

@@ -91,7 +91,7 @@ methodmap ProgressBar < Base {
         SetEntData(this.clientID, this.GetInt("pbd"), 0, 1, true);
         
         if (tmrdest)
-            gamemode.timer.Remove(timername);
+            gamemode.timer.RemoveByName(timername);
         
         this.active = false;
     }

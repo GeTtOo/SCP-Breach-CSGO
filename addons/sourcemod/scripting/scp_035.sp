@@ -53,7 +53,7 @@ public void SCP_OnPlayerClear(Player &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("035"))
     {
-        gamemode.timer.Remove("Timer_SCP-035_Hit");
+        gamemode.timer.RemoveByName("Timer_SCP-035_Hit");
         Entity ent = view_as<Entity>(ply.GetHandle("035_ent"));
         if (ent)
         {

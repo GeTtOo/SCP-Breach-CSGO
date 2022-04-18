@@ -131,7 +131,7 @@ methodmap IntercomController < Base {
     }
 
     public void CooldownRelease() {
-        gamemode.timer.Remove("Intercom_cd_countdown");
+        gamemode.timer.RemoveByName("Intercom_cd_countdown");
         this.Ready();
     }
 
@@ -170,9 +170,9 @@ methodmap IntercomController < Base {
     }
 
     public void Dispose() {
-        gamemode.timer.Remove("Intercom_transmission_active");
-        gamemode.timer.Remove("Intercom_cd_release");
-        gamemode.timer.Remove("Intercom_cd_countdown");
+        gamemode.timer.RemoveByName("Intercom_transmission_active");
+        gamemode.timer.RemoveByName("Intercom_cd_release");
+        gamemode.timer.RemoveByName("Intercom_cd_countdown");
         delete this.monitors;
         delete this;
     }
@@ -191,7 +191,7 @@ public void SCP_OnLoad()
 
 public void SCP_OnUnload()
 {
-    gamemode.timer.Remove("AdvancedVoice");
+    gamemode.timer.RemoveByName("AdvancedVoice");
     Intercom.Dispose();
 }
 

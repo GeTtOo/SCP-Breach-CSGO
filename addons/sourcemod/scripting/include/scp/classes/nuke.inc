@@ -157,10 +157,10 @@ methodmap NuclearWarhead < Base {
         this.active = false;
         this.ready = false;
         
-        gamemode.timer.Remove("SCP_ALPHA_WARHEAD_CALL_EXPLODE");
-        gamemode.timer.Remove("SCP_ALPHA_WARHEAD_DOOR_CONTROLLER");
-        gamemode.timer.Remove("SCP_ALPHA_WARHEAD_COUNTDOWN");
-        gamemode.timer.Remove("SCP_ALPHA_WARHEAD_AUTO_COUNTDOWN");
+        gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_CALL_EXPLODE");
+        gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_DOOR_CONTROLLER");
+        gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_COUNTDOWN");
+        gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_AUTO_COUNTDOWN");
 
         char sound[128];
         gamemode.config.nuke.sound(sound, sizeof(sound));
@@ -296,7 +296,7 @@ public void NukeExplode() {
         }
     }
 
-    gamemode.timer.Remove("SCP_ALPHA_WARHEAD_COUNTDOWN");
+    gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_COUNTDOWN");
 
     gamemode.nuke.Update("Site destroyed", 8);
 
