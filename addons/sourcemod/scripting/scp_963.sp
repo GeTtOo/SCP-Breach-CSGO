@@ -58,7 +58,7 @@ public bool OnUse(Player &ply, InvItem &item)
 {
     Player soul = view_as<Player>(item.GetHandle("soul"));
 
-    if (Reincarnation(soul, ply) && soul.inv.Pickup(item))
+    if (!soul.IsAlive() && Reincarnation(soul, ply) && soul.inv.Pickup(item))
     {
         item.WorldRemove();
         ents.IndexUpdate(item);
@@ -76,7 +76,7 @@ public void OnTouch(Entity &ent1, Entity &ent2)
         Player soul = view_as<Player>(ent2.GetHandle("soul"));
         Player consume = view_as<Player>(ent1);
 
-        if (!consume.IsAlive() && Reincarnation(soul, consume) && soul.inv.Pickup(ent2))
+        if (!soul.IsAlive() && Reincarnation(soul, consume) && soul.inv.Pickup(ent2))
         {
             ent2.WorldRemove();
             ents.IndexUpdate(ent2);
@@ -140,6 +140,15 @@ public void SCP_OnPlayerDeath(Player &vic, Player &atk) {
         vic.RemoveValue("bodyconsumed");
         vic.ragdoll.Remove();
         vic.ragdoll = null;
+    }
+}
+
+public void SCP_OnPlayerReset(Player &ply) {
+    if (ply.GetBool("reincarnation"))
+    {
+        ply.RemoveValue("reincarnation");
+        ply.RemoveValue("soulpos");
+        ply.RemoveValue("soulang");
     }
 }
 
