@@ -44,7 +44,7 @@ public Plugin myinfo = {
 
 public void SCP_OnPlayerSwitchWeapon(Player &ply, Entity &ent)
 {
-    if (!ply.IsSCP)
+    if (!ply.IsSCP && !ply.GetHandle("fct"))
         if (ent.IsClass("weapon_fists"))
             ply.ShowOverlay("fists");
         else
@@ -53,11 +53,16 @@ public void SCP_OnPlayerSwitchWeapon(Player &ply, Entity &ent)
 
 public void SCP_OnPlayerSpawn(Player &ply)
 {
-    ply.TimerSimple(gamemode.config.tsto * 1010, "ShowCrosshair", ply);
+    ply.SetHandle("fct", ply.TimerSimple(gamemode.config.tsto * 1010, "ShowCrosshair", ply));
 }
 
 public void ShowCrosshair(Player ply)
 {
-    if (ply.class.Is("D Class") || ply.class.Is("Scientist") || ply.class.Is("Dr.Bright"))
-        ply.ShowOverlay("fists");
+    if (ply.GetHandle("fct"))
+    {
+        ply.RemoveValue("fct");
+        
+        if (ply.class.Is("D Class") || ply.class.Is("Scientist") || ply.class.Is("Dr.Bright"))
+            ply.ShowOverlay("fists");
+    }
 }
