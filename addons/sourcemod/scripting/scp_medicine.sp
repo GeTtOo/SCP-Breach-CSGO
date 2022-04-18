@@ -54,23 +54,46 @@ public Action Event_WeaponFire(Event event, const char[] name, bool dontBroadcas
     char weapon[64];
     event.GetString("weapon", weapon, sizeof(weapon));
 
-    if(StrEqual(weapon, "weapon_healthshot"))
+    Player ply = player.GetByID(client);
+
+    if(StrEqual(weapon, "weapon_healthshot") && ply.GetBool("ha") && !ply.GetBool("hip"))
     {
-        Player ply = player.GetByID(client);
-        ply.TimerSimple(1000, "HealthShotTimer", ply);
+        ply.SetInt("temphealth", ply.health);
+        ply.SetBool("hip", true);
+        ply.SetBool("hwb", false);
+        ply.TimerSimple(800, "HealthShotTimer", ply);
     }
 
     return Plugin_Continue;
 }
 
+public void SCP_OnPlayerSwitchWeapon(Player &ply, Entity &ent)
+{
+    if (ent.IsClass("weapon_healthshot"))
+        ply.SetBool("ha", true);
+    else
+    {
+        ply.SetBool("hwb", true);
+        ply.SetBool("ha", false);
+    }
+}
+
 public void HealthShotTimer(Player ply)
 {
-    if (ply.health < ply.class.health) {
-        if (ply.health + (ply.class.health * 25 / 100) > ply.class.health)
-            ply.health = ply.class.health;
-        else
-            ply.health += ply.class.health * 25 / 100;
-    }
+    ply.health = ply.GetInt("temphealth");
+    ply.RemoveValue("hip");
+    ply.RemoveValue("temphealth");
 
-    ply.se.Create("Heal", 2);
+    if (ply.GetBool("ha") && !ply.GetBool("hwb")) 
+    {
+
+        if (ply.health < ply.class.health) {
+            if (ply.health + (ply.class.health * 25 / 100) > ply.class.health)
+                ply.health = ply.class.health;
+            else
+                ply.health += ply.class.health * 25 / 100;
+        }
+
+        ply.se.Create("Heal", 7);
+    }
 }
