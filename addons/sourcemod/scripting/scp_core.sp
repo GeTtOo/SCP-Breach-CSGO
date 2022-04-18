@@ -356,15 +356,6 @@ public void PlayerSpawn(Player ply)
         gamemode.mngr.SetCollisionGroup(ply.id, 2);
 
         ply.RestrictWeapons();
-
-        if (ply.class.HasKey("overlay"))
-        {
-            char name[32];
-            ply.class.overlay(name, sizeof(name));
-            ply.ShowOverlay(name);
-        
-            ply.TimerSimple(gamemode.config.tsto * 1000, "PlyHideOverlay", ply);
-        }
         
         ply.Setup();
 
@@ -390,6 +381,15 @@ public void PlayerSpawn(Player ply)
         Call_PushCellRef(ply);
         Call_Finish();
         
+        if (ply.class.HasKey("overlay"))
+        {
+            char name[32];
+            ply.class.overlay(name, sizeof(name));
+            ply.ShowOverlay(name);
+        
+            ply.TimerSimple(gamemode.config.tsto * 1000, "PlyHideOverlay", ply);
+        }
+
         gamemode.log.Debug("Player %L spawned | Team/Class: (%s - %s)", ply.id, team, class);
 
         ply.RemoveValue("rsptmr");
@@ -885,6 +885,19 @@ public Action OnWeaponTake(int client, int iWeapon)
     return Plugin_Continue;
 }
 
+public void OnPlayerRunCmdPost(int client, int buttons)
+{
+    Player ply = player.GetByID(client);
+    
+    if (ply && ply.class)
+    {
+        Call_StartForward(OnInputForward);
+        Call_PushCellRef(ply);
+        Call_PushCell(buttons);
+        Call_Finish();
+    }
+}
+
 public Action OnWeaponSwitch(int client, int iWeapon)
 {
     Player ply = player.GetByID(client);
@@ -1057,19 +1070,6 @@ public void LoadModels()
 //                                Callbacks
 //
 //////////////////////////////////////////////////////////////////////////////
-
-public void OnPlayerRunCmdPost(int client, int buttons)
-{
-    Player ply = player.GetByID(client);
-    
-    if (ply && ply.class)
-    {
-        Call_StartForward(OnInputForward);
-        Call_PushCellRef(ply);
-        Call_PushCell(buttons);
-        Call_Finish();
-    }
-}
 
 public SDKHookCB CB_EntUse(int entity, int client)
 {
