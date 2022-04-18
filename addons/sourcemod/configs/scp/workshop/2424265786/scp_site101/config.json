@@ -130,7 +130,7 @@
     "[SCP] 173": {
         "radius":2000,
         "blinktime":5,
-        "blinkrange":700,
+        "blinkrange":580,
         "hpmultipler":1.2,
         "sound": {
             "neckbroke":[
