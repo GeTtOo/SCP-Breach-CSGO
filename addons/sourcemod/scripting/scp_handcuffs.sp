@@ -39,7 +39,7 @@ public Plugin myinfo = {
     author = "Andrey::Dono",
     description = "Handcuffs for CS:GO modification - SCP Foundation",
     version = "1.0",
-    url = "https://github.com/author/plugin"
+    url = "https://github.com/GeTtOo/csgo_scp"
 };
 
 public void SCP_OnLoad()
@@ -87,6 +87,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
         
         vic.SetBool("handcuffed", true);
         vic.DropWeapons();
+        vic.inv.DropAll();
 
         vic.ShowOverlay("arrested");
 
