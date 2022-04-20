@@ -39,7 +39,7 @@ public Plugin myinfo = {
     author = "Anyone",
     description = "Plugin example for CS:GO modification - SCP Foundation",
     version = "1.0",
-    url = "https://github.com/author/plugin"
+    url = "https://github.com/GeTtOo/csgo_scp"
 };
 
 public void SCP_OnPlayerSwitchWeapon(Player &ply, Entity &ent)
