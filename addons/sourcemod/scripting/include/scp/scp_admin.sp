@@ -213,25 +213,25 @@ public void DisplayAdminMenu(int client)
         hMenu.SetTitle(buffer);
 
         FormatEx(buffer, sizeof(buffer), "%T", "Show class", client);
-        hMenu.AddItem("item1", buffer, ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item1", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(SHOW_PLAYER_CLASS))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
         FormatEx(buffer, sizeof(buffer), "%T", "Respawn", client);
-        hMenu.AddItem("item2", buffer, ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item2", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(RESPAWN_PLAYER))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
         FormatEx(buffer, sizeof(buffer), "%T", "Teleport", client);
-        hMenu.AddItem("item3", buffer, ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item3", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(TELEPORT))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
         FormatEx(buffer, sizeof(buffer), "%T", "Reinforce", client);
-        hMenu.AddItem("item4", buffer, ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item4", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(REINFORCE))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
         FormatEx(buffer, sizeof(buffer), "%T", "Give item", client);
-        hMenu.AddItem("item7", buffer, ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item7", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(GIVE_PLAYER_ITEM))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
         FormatEx(buffer, sizeof(buffer), "%T", "Door access", client);
-        hMenu.AddItem("item6", buffer, ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item6", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(IGNORE_DOOR_ACCESS))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
         /*FormatEx(buffer, sizeof(buffer), "%T", "Move to spec", client);
-        hMenu.AddItem("item4", buffer, ITEMDRAW_DEFAULT);*/
+        hMenu.AddItem("item4", buffer, GetAdminFlag(GetUserAdmin(this.id), GetFlagFromConfig(MOVE_TO_SPEC))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);*/
         FormatEx(buffer, sizeof(buffer), "%T", "Talk", client);
-        hMenu.AddItem("item5", buffer, ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item5", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(MOVE_TO_ADMIN_ZONE))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
         FormatEx(buffer, sizeof(buffer), "%T", "Restart", client);
-        hMenu.AddItem("item8", buffer, ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item8", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(ROUND_RESTART))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
         FormatEx(buffer, sizeof(buffer), "%T", "Explode", client);
-        hMenu.AddItem("item9", buffer, ITEMDRAW_DEFAULT);
+        hMenu.AddItem("item9", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(DESTROY_SITE))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
 
         hMenu.Display(client, 30);
     }
@@ -630,4 +630,79 @@ public int MenuHandler_GiveMenu(Menu hMenu, MenuAction action, int client, int i
             gamemode.log.Admin("%t", "Log_Admin_GiveItem", adminname, adminauth, targetname, targetauth, itemclass);
         }
     }
+}
+
+public AdminFlag GetFlagFromConfig(TypeAdminAction action)
+{
+    char buffer[64];
+
+    switch(action)
+    {
+        case SHOW_PLAYER_CLASS:
+            gamemode.config.GetObject("AdminCommandsFlag").GetString("SHOW_PLAYER_CLASS", buffer, sizeof(buffer));
+        case RESPAWN_PLAYER:
+            gamemode.config.GetObject("AdminCommandsFlag").GetString("RESPAWN_PLAYER", buffer, sizeof(buffer));
+        case TELEPORT:
+            gamemode.config.GetObject("AdminCommandsFlag").GetString("TELEPORT", buffer, sizeof(buffer));
+        case REINFORCE:
+            gamemode.config.GetObject("AdminCommandsFlag").GetString("REINFORCE", buffer, sizeof(buffer));
+        case GIVE_PLAYER_ITEM:
+            gamemode.config.GetObject("AdminCommandsFlag").GetString("GIVE_PLAYER_ITEM", buffer, sizeof(buffer));
+        case IGNORE_DOOR_ACCESS:
+            gamemode.config.GetObject("AdminCommandsFlag").GetString("IGNORE_DOOR_ACCESS", buffer, sizeof(buffer));
+        /*case MOVE_TO_SPEC:
+            gamemode.config.GetObject("AdminCommandsFlag").GetString("MOVE_TO_SPEC", buffer, sizeof(buffer));*/
+        case MOVE_TO_ADMIN_ZONE:
+            gamemode.config.GetObject("AdminCommandsFlag").GetString("MOVE_TO_ADMIN_ZONE", buffer, sizeof(buffer));
+        case ROUND_RESTART:
+            gamemode.config.GetObject("AdminCommandsFlag").GetString("ROUND_RESTART", buffer, sizeof(buffer));
+        case DESTROY_SITE:
+            gamemode.config.GetObject("AdminCommandsFlag").GetString("DESTROY_SITE", buffer, sizeof(buffer));
+    }
+
+    // ¯\_(ツ)_/¯
+    if(StrEqual(buffer, "Admin_Reservation"))
+        return Admin_Reservation;
+    else if(StrEqual(buffer, "Admin_Generic"))
+        return Admin_Generic;
+    else if(StrEqual(buffer, "Admin_Kick"))
+        return Admin_Kick;
+    else if(StrEqual(buffer, "Admin_Ban"))
+        return Admin_Ban;
+    else if(StrEqual(buffer, "Admin_Unban"))
+        return Admin_Unban;
+    else if(StrEqual(buffer, "Admin_Slay"))
+        return Admin_Slay;
+    else if(StrEqual(buffer, "Admin_Changemap"))
+        return Admin_Changemap;
+    else if(StrEqual(buffer, "Admin_Convars"))
+        return Admin_Convars;
+    else if(StrEqual(buffer, "Admin_Config"))
+        return Admin_Config;
+    else if(StrEqual(buffer, "Admin_Chat"))
+        return Admin_Chat;
+    else if(StrEqual(buffer, "Admin_Vote"))
+        return Admin_Vote;
+    else if(StrEqual(buffer, "Admin_Password"))
+        return Admin_Password;
+    else if(StrEqual(buffer, "Admin_RCON"))
+        return Admin_RCON;
+    else if(StrEqual(buffer, "Admin_Cheats"))
+        return Admin_Cheats;
+    else if(StrEqual(buffer, "Admin_Root"))
+        return Admin_Root;
+    else if(StrEqual(buffer, "Admin_Custom1"))
+        return Admin_Custom1;
+    else if(StrEqual(buffer, "Admin_Custom2"))
+        return Admin_Custom2;
+    else if(StrEqual(buffer, "Admin_Custom3"))
+        return Admin_Custom3;
+    else if(StrEqual(buffer, "Admin_Custom4"))
+        return Admin_Custom4;
+    else if(StrEqual(buffer, "Admin_Custom5"))
+        return Admin_Custom5;
+    else if(StrEqual(buffer, "Admin_Custom6"))
+        return Admin_Custom6;
+    else
+        return Admin_Root;
 }

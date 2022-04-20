@@ -59,8 +59,20 @@
         "SCP-996":{"vec":[-5406,2626,4],"ang":[-2,-1,0]},
         "SCP-106-Cell":{"vec":[-4306,683,2385],"ang":[22,176,0]}
     },
-    "[SCP] Bomberman": {
-        "bcmultipler":3
+    "AdminCommandsFlag": {
+        "SHOW_PLAYER_CLASS": "Admin_Ban",
+        "RESPAWN_PLAYER": "Admin_Custom1",
+        "TELEPORT": "Admin_Ban",
+        "REINFORCE": "Admin_Custom1",
+        "GIVE_PLAYER_ITEM": "Admin_Custom1",
+        "IGNORE_DOOR_ACCESS": "Admin_Root",
+        "MOVE_TO_ADMIN_ZONE": "Admin_Ban",
+        "ROUND_RESTART": "Admin_Ban",
+        "DESTROY_SITE": "Admin_Root"
+    },
+    "[SCP] Sapper": {
+        "bcmultipler":3,
+        "bccount":10
     },
     "[SCP] Handcuffs": {
         "ammocount":5,
