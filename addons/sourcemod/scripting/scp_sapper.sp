@@ -45,7 +45,7 @@ public Plugin myinfo = {
 public void SCP_OnPlayerTakeWeapon(Player &ply, Entity &ent) {
     if (ent.IsClass("weapon_breachcharge") && ent.GetBool("firsttake", true))
     {
-        ent.SetProp("m_iClip1", gamemode.plconfig.GetInt("ammocount", gamemode.plconfig.GetInt("bccount", 10)));
+        ent.SetProp("m_iClip1", gamemode.plconfig.GetInt("bccount", 10));
         ent.SetBool("firsttake", false);
     }
 }
