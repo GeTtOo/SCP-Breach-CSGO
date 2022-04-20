@@ -77,12 +77,20 @@ public void OnPlayerTakeWeapon(Player &ply, Entity &ent) {
     
 }
 
-public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype) {
+public void SCP_OnPlayerSwitchWeapon(Player &ply, Entity &ent) {
+    
+}
+
+public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype, int &inflictor) {
     
 }
 
 public void SCP_OnPlayerDeath(Player &vic, Player &atk) {
 
+}
+
+public EscapeInfo SCP_OnPlayerEscape(Player &ply, EscapeInfo &data) {
+    
 }
 
 public void SCP_OnPlayerReset(Player &ply) {
