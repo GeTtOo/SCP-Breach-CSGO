@@ -37,6 +37,8 @@
 
 #define MATH_COUNTER_VALUE_OFFSET 924
 
+Handle OnModify;
+
 JSON_OBJECT gconfig;
 
 int Counter = 0;
@@ -51,6 +53,10 @@ public Plugin myinfo = {
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"
 };
+
+public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) {
+    OnModify = CreateGlobalForward("SCP914_OnModify", ET_Event, Param_CellByRef, Param_CellByRef, Param_CellByRef);
+}
 
 public void SCP_RegisterMetaData() {
     gamemode.meta.RegisterStatusEffect("Butchering");
@@ -198,7 +204,16 @@ public void Transform(Player ply) {
                     
                     gamemode.mngr.Fade(entply.id, 800, 3000, new Colour(0,0,0,255));
 
-                    if (recipe.GetInt(2) >= GetRandomInt(1, 100)) {
+                    int modifychance = recipe.GetInt(2);
+                    int ruinechance = -1;
+
+                    Call_StartForward(OnModify);
+                    Call_PushCellRef(ply);
+                    Call_PushCellRef(modifychance);
+                    Call_PushCellRef(ruinechance);
+                    Call_Finish();
+
+                    if (modifychance >= GetRandomInt(1, 100)) {
                         char statusname[32];
                         recipe.GetString(0, statusname, sizeof(statusname));
                         
@@ -216,9 +231,18 @@ public void Transform(Player ply) {
                     char oentclass[32];
                     recipe.GetString(0, oentclass, sizeof(oentclass));
 
-                    if (recipe.GetInt(1) <= GetRandomInt(1, 100))
+                    int modifychance = recipe.GetInt(1);
+                    int ruinechance = recipe.GetInt(2);
+
+                    Call_StartForward(OnModify);
+                    Call_PushCellRef(ply);
+                    Call_PushCellRef(modifychance);
+                    Call_PushCellRef(ruinechance);
+                    Call_Finish();
+
+                    if (modifychance <= GetRandomInt(1, 100))
                     {
-                        if (recipe.GetInt(2) >= GetRandomInt(1, 100))
+                        if (ruinechance >= GetRandomInt(1, 100))
                         {
                             ents.Create(oentclass)
                             .SetPos(oitempos, ent.GetAng())
