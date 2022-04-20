@@ -233,27 +233,6 @@
         "en"        "Nuke"
         "ru"        "Альфа-боеголовка"
     }
-    "ControlNotify"
-    {
-        "#format"   "{1:s},{2:s}"
-        "en"        "----------{1}-{2}----------"
-        "ru"        "----------{1}-{2}----------"
-    }
-    "SCP-079-Notify"
-    {
-        "en"        "Left Mouse - next camera\nRight Mouse - previous camera\nTab - abilities menu"
-        "ru"        "Left Mouse - следующая камера\nRight Mouse - предыдущая камера\nTab - меню способностей"
-    }
-    "SCP-173-Notify"
-    {
-        "en"        "Tab - Ability 173 jump"
-        "ru"        "Tab - Способность 173 прыжок"
-    }
-    "SCP-049-Notify"
-    {
-        "en"        "Tab - Say something\nE - Revive"
-        "ru"        "Tab - Сказать что-нибудь\nE - Провести операцию"
-    }
     "Log_PlayerConnected"
     {
         "#format"   "{1:s}"

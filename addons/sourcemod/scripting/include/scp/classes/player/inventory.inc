@@ -193,14 +193,9 @@ methodmap Inventory < Base {
         return null;
     }
 
-    public InvItem Drop(int index = 0) {
-        ArrayList inv = this.GetArrayList("inventory");
+    public native InvItem Drop(int index = 0);
 
-        InvItem itm = inv.Get(index);
-        inv.Erase(index);
-
-        return itm;
-    }
+    public native void DropAll();
 
     public void Clear() {
         this.GetArrayList("inventory").Clear();

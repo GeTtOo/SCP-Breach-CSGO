@@ -393,6 +393,14 @@ methodmap Player < Entity {
             else
                 this.TimerSimple(this.class.GetInt("doorsdelay") * 1000, "OpenCameraDoors", this.class.doors);
 
+
+        char teamName[32], className[32];
+        this.Team(teamName, sizeof(teamName));
+        this.class.Name(className, sizeof(className));
+        PrintToChat(this.id, " \x07[SCP] \x01%t", "Show class when player spawn", teamName, className);
+    }
+
+    public void SetupModel() {
         if (this.class.HasKey("model")) {
             if (view_as<int>(this.class.GetKeyType("model")) == 0)
             {
@@ -444,11 +452,6 @@ methodmap Player < Entity {
 
             //this.SetHandsModel(handsModel); Bug...
         }
-
-        char teamName[32], className[32];
-        this.Team(teamName, sizeof(teamName));
-        this.class.Name(className, sizeof(className));
-        PrintToChat(this.id, " \x07[SCP] \x01%t", "Show class when player spawn", teamName, className);
     }
 
     public void Spawn() {

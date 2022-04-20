@@ -98,6 +98,9 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("WorldTextSingleton.Remove", NativeWT_Remove);
 
     CreateNative("Player.RestrictWeapons", NativePlayer_RestrictWeapons);
+
+    CreateNative("Inventory.Drop", NativePlayer_Inventory_Drop);
+    CreateNative("Inventory.DropAll", NativePlayer_Inventory_DropAll);
     CreateNative("Inventory.FullClear", NativePlayer_Inventory_FullClear);
 
     CreateNative("StatusEffectSingleton.list.get", NativeStatusEffect_GetList);
@@ -356,30 +359,19 @@ public void PlayerSpawn(Player ply)
         gamemode.mngr.SetCollisionGroup(ply.id, 2);
 
         ply.RestrictWeapons();
-        
-        ply.Setup();
+
+        ply.SetupModel();
+
+        Call_StartForward(OnClientSpawnForward);
+        Call_PushCellRef(ply);
+        Call_Finish();
 
         char team[32], class[32];
 
         ply.Team(team, sizeof(team));
         ply.class.GetString("name", class, sizeof(class));
 
-        char notifytag[32];
-        FormatEx(notifytag, sizeof(notifytag), "%s-%s-Notify", team, class);
-
-        if (TranslationPhraseExists(notifytag))
-        {
-            char notify[2048];
-
-            FormatEx(notify, sizeof(notify), "%t", "ControlNotify", team, class);
-            Format(notify, sizeof(notify), "%s\n%t", notify, notifytag);
-            
-            ply.PrintNotify(notify);
-        }
-
-        Call_StartForward(OnClientSpawnForward);
-        Call_PushCellRef(ply);
-        Call_Finish();
+        ply.Setup();
         
         if (ply.class.HasKey("overlay"))
         {
@@ -746,31 +738,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
         ents.list.PushArray(data);
 
-        while (vic.inv.items.Length != 0)
-        {   
-            InvItem item = vic.inv.Drop();
-
-            if (item.meta.ondrop)
-            {
-                char funcname[32];
-                item.meta.ondrop.name(funcname, sizeof(funcname));
-
-                Call_StartFunction(item.meta.ondrop.hndl, GetFunctionByName(item.meta.ondrop.hndl, funcname));
-                Call_PushCellRef(vic);
-                Call_PushCellRef(item);
-                Call_Finish();
-            }
-
-            item
-            .Create()
-            .SetHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse))
-            .SetHook(SDKHook_TouchPost, CB_EntTouch)
-            .SetPos(vic.GetPos() + new Vector(GetRandomFloat(-30.0,30.0), GetRandomFloat(-30.0,30.0), 0.0), vic.GetAng())
-            .Spawn();
-
-            ents.IndexUpdate(item);
-        }
-
+        vic.inv.DropAll();
         vic.se.ClearAll();
 
         if (vic.progress.active)
@@ -1296,30 +1264,6 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                         ply.PlaySound(path);
                     else
                         ply.PlaySound("*/scp/menu/select.mp3", SNDCHAN_VOICE);
-
-                    if (item.meta.ondrop)
-                    {
-                        char funcname[32];
-                        item.meta.ondrop.name(funcname, sizeof(funcname));
-
-                        Call_StartFunction(item.meta.ondrop.hndl, GetFunctionByName(item.meta.ondrop.hndl, funcname));
-                        Call_PushCellRef(ply);
-                        Call_PushCellRef(item);
-                        Call_Finish();
-                    }
-
-                    if (ply.progress.active)
-                        ply.progress.Stop();
-
-                    item
-                    .Create()
-                    .SetHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse))
-                    .SetHook(SDKHook_TouchPost, CB_EntTouch)
-                    .SetPos(ply.GetAng().Forward(ply.EyePos(), 5.0) - new Vector(0.0, 0.0, 15.0), ply.GetAng())
-                    .Spawn()
-                    .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
-
-                    ents.IndexUpdate(item);
                 }
             }
         }
@@ -1511,21 +1455,11 @@ public void EscapeController(Player ply, int doorID)
             ply.Team(teamName);
             ply.class = gamemode.team(teamName).class(className);
             
-            for (int i=0; i < ply.inv.items.Length; i++)
-            {
-                InvItem item = ply.inv.Get(i);
+            ply.inv.FullClear();
 
-                if (item.meta.ondrop)
-                {
-                    char funcname[32];
-                    item.meta.ondrop.name(funcname, sizeof(funcname));
-
-                    Call_StartFunction(item.meta.ondrop.hndl, GetFunctionByName(item.meta.ondrop.hndl, funcname));
-                    Call_PushCellRef(ply);
-                    Call_PushCellRef(item);
-                    Call_Finish();
-                }
-            }
+            Call_StartForward(OnClientSpawnForward);
+            Call_PushCellRef(ply);
+            Call_Finish();
 
             ply.UpdateClass();
 
@@ -1674,11 +1608,14 @@ public void CombatReinforcement()
 
         if (gamemode.mngr.CombatReinforcement(teamname))
         {
-            char path[128], langcode[3];
-            
+            char path[128], patchcheck[128], langcode[3];
+
             gamemode.mngr.GetServerLangInfo(langcode, sizeof(langcode));
-            Format(path, sizeof(path), "*/scp/other/%s_reinforced_%s", teamname, langcode);
-            gamemode.mngr.PlaySoundToAll(path, SNDCHAN_ITEM);
+            Format(path, sizeof(path), "*/scp/other/%s_reinforced_%s.mp3", teamname, langcode);
+            Format(patchcheck, sizeof(patchcheck), "sound/scp/other/%s_reinforced_%s.mp3", teamname, langcode);
+            
+            if (FileExists(patchcheck, true))
+                gamemode.mngr.PlaySoundToAll(path, SNDCHAN_ITEM);
         }
 
         delete teams;
@@ -2271,12 +2208,54 @@ public any NativePlayer_RestrictWeapons(Handle Plugin, int numArgs) {
     }
 }
 
+public any NativePlayer_Inventory_Drop(Handle Plugin, int numArgs) {
+    Inventory inv = GetNativeCell(1);
+    Player ply = view_as<Player>(inv.ply);
+    int index = GetNativeCell(2);
+    InvItem item = inv.Get(index);
+    inv.items.Erase(index);
+
+    if (item.meta.ondrop)
+    {
+        char funcname[32];
+        item.meta.ondrop.name(funcname, sizeof(funcname));
+
+        Call_StartFunction(item.meta.ondrop.hndl, GetFunctionByName(item.meta.ondrop.hndl, funcname));
+        Call_PushCellRef(ply);
+        Call_PushCellRef(item);
+        Call_Finish();
+    }
+
+    if (ply.progress.active)
+        ply.progress.Stop();
+
+    item
+    .Create()
+    .SetHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse))
+    .SetHook(SDKHook_TouchPost, CB_EntTouch)
+    .SetPos(ply.GetAng().Forward(ply.EyePos(), 5.0) - new Vector(0.0, 0.0, 15.0), ply.GetAng())
+    .Spawn()
+    .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
+
+    ents.IndexUpdate(item);
+    
+    return item;
+}
+
+public any NativePlayer_Inventory_DropAll(Handle Plugin, int numArgs) {
+    Player ply = view_as<Player>(view_as<Base>(GetNativeCell(1)).GetHandle("ply"));
+
+    while (ply.inv.items.Length != 0)
+        ply.inv.Drop();
+}
+
 public any NativePlayer_Inventory_FullClear(Handle Plugin, int numArgs) {
     ArrayList entities = ents.list;
     Player ply = view_as<Player>(view_as<Base>(GetNativeCell(1)).GetHandle("ply"));
 
     while (ply.inv.items.Length != 0) {
-        InvItem item = ply.inv.Drop();
+        InvItem item = ply.inv.Get();
+        ply.inv.items.Erase(0);
         entities.Erase(entities.FindValue(item, 1));
         item.Dispose();
     }

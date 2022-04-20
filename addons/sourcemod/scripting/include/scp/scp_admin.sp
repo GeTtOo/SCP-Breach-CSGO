@@ -561,7 +561,17 @@ public int MenuHandler_Reinforce(Menu hMenu, MenuAction action, int client, int 
             char team[32];
             hMenu.GetItem(item, team, sizeof(team));
 
-            gamemode.mngr.CombatReinforcement(team);
+            if (gamemode.mngr.CombatReinforcement(team))
+            {
+                char path[128], patchcheck[128], langcode[3];
+
+                gamemode.mngr.GetServerLangInfo(langcode, sizeof(langcode));
+                Format(path, sizeof(path), "*/scp/other/%s_reinforced_%s.mp3", team, langcode);
+                Format(patchcheck, sizeof(patchcheck), "sound/scp/other/%s_reinforced_%s.mp3", team, langcode);
+                
+                if (FileExists(patchcheck, true))
+                    gamemode.mngr.PlaySoundToAll(path, SNDCHAN_ITEM);
+            }
 
             char adminname[32], adminauth[32];
             AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));

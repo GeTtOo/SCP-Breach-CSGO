@@ -143,11 +143,12 @@ methodmap GameMode < Base {
             if (!StrEqual(pname, "[SCP] GameMode"))
             {
                 JSON_OBJECT plconfig = this.config.GetObject(pname);
-                if (plconfig == null)
+                if (!plconfig)
                 {
                     plconfig = view_as<JSON_OBJECT>(CreateTrie());
-                    this.config.SetObject(pname, view_as<JSON_OBJECT>(CloneHandle(plconfig, this.GetHandle("ph"))));
-                    delete plconfig;
+                    //this.config.SetObject(pname, view_as<JSON_OBJECT>(CloneHandle(plconfig, FindPluginByFile("scp_core.sp"))));
+                    //delete plconfig;
+                    this.config.SetObject(pname, view_as<JSON_OBJECT>(plconfig));
                 }
                 return plconfig;
             }
