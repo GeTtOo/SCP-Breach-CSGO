@@ -59,6 +59,9 @@
         "SCP-996":{"vec":[-5406,2626,4],"ang":[-2,-1,0]},
         "SCP-106-Cell":{"vec":[-4306,683,2385],"ang":[22,176,0]}
     },
+    "[SCP] Bomberman": {
+        "bcmultipler":3
+    },
     "[SCP] Handcuffs": {
         "ammocount":5,
         "breaktime":5,
@@ -98,7 +101,7 @@
         "runbutton": 516151,
         "runtime": 8,
         "searchzone":[[3630, -2072, 20],[3762, -1947, 90]],
-        "distance":[0, 425, 0],
+        "distance":[0, 425, -10],
         "sound": {
             "playerkill": [
                 "*/scp/914_player_rough.mp3"
