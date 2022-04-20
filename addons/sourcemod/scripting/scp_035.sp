@@ -100,29 +100,34 @@ public Action HandlerHitSCP(Player ply)
 
 public bool Logic(Player &ply, Entity &ent)
 {
-    Vector sp = ply.GetPos();
-    Angle sa = ply.GetAng();
+    if (!ent.GetBool("used"))
+    {
+        Vector sp = ply.GetPos();
+        Angle sa = ply.GetAng();
 
-    char model[256];
-    ply.model.GetPath(model, sizeof(model));
+        char model[256];
+        ply.model.GetPath(model, sizeof(model));
 
-    ArrayList data = new ArrayList(256);
-    data.Push(ply);
-    data.Push(ent);
-    data.Push(ply.model.GetSkin());
-    data.PushString(model);
+        ArrayList data = new ArrayList(256);
+        data.Push(ply);
+        data.Push(ent);
+        data.Push(ply.model.GetSkin());
+        data.PushString(model);
 
-    ply.Kill();
+        ply.Kill();
 
-    ply.Team("SCP");
-    ply.class = gamemode.team("SCP").class("035");
-    
-    ply.Spawn();
-    ply.SetPos(sp, sa);
-    
-    ply.TimerSimple(1000, "ExecDelay", data);
-    
-    gamemode.timer.Create("Timer_SCP-035_Hit", 2500, 0, "HandlerHitSCP", ply);
+        ply.Team("SCP");
+        ply.class = gamemode.team("SCP").class("035");
+        
+        ply.Spawn();
+        ply.SetPos(sp, sa);
+        
+        ply.TimerSimple(1000, "ExecDelay", data);
+        
+        gamemode.timer.Create("Timer_SCP-035_Hit", 2500, 0, "HandlerHitSCP", ply);
+        
+        ent.SetBool("used", true);
+    }
 
     return true;
 }
