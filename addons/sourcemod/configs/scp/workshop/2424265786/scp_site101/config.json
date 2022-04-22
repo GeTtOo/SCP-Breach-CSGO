@@ -65,10 +65,10 @@
         "TELEPORT": "Admin_Ban",
         "REINFORCE": "Admin_Custom1",
         "GIVE_PLAYER_ITEM": "Admin_Custom1",
-        "IGNORE_DOOR_ACCESS": "Admin_Root",
+        "IGNORE_DOOR_ACCESS": "Admin_Custom2",
         "MOVE_TO_ADMIN_ZONE": "Admin_Ban",
         "ROUND_RESTART": "Admin_Ban",
-        "DESTROY_SITE": "Admin_Root"
+        "DESTROY_SITE": "Admin_Custom2"
     },
     "[SCP] Sapper": {
         "bcmultipler":3,
