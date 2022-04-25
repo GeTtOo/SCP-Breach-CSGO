@@ -52,6 +52,11 @@ methodmap Mdl < Base {
         public get() { return this.GetInt("entid"); }
     }
 
+    property float scale {
+        public set(float val) { SetEntPropFloat(this.entid, Prop_Send, "m_flModelScale", val); }
+        public get() { return GetEntPropFloat(this.entid, Prop_Send, "m_flModelScale"); }
+    }
+
     property ModelMeta mdlmeta {
         public set(ModelMeta value) { this.SetValue("mdlmeta", value); }
         public get() { ModelMeta meta; return this.GetValue("mdlmeta", meta) ? meta : null; }
