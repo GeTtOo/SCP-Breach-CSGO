@@ -61,7 +61,7 @@
     },
     "AdminCommandsFlag": {
         "SHOW_PLAYER_CLASS": "Admin_Ban",
-        "RESPAWN_PLAYER": "Admin_Custom1",
+        "RESPAWN_PLAYER": "Admin_Ban",
         "TELEPORT": "Admin_Ban",
         "REINFORCE": "Admin_Custom1",
         "GIVE_PLAYER_ITEM": "Admin_Custom1",
