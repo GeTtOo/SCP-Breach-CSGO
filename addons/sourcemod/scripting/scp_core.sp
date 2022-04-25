@@ -134,7 +134,7 @@ public void OnPluginStart()
     LoadTranslations("scpcore.regions");
     LoadTranslations("scpcore.entities");
 
-    RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_CUSTOM1);
+    RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_GENERIC);
     
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_prestart", OnRoundPreStart);
@@ -172,7 +172,6 @@ public void OnMapStart()
     
     gamemode.mngr.CollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
     gamemode.mngr.CreateEscapeZoneList();
-    gamemode.SetHandle("ph", GetMyHandle());
 
     AddCommandListener(Command_Base, "gm");
     AddCommandListener(Command_Ents, "ents");
@@ -227,9 +226,13 @@ public void OnMapEnd()
     Call_StartForward(OnUnloadGM);
     Call_Finish();
     
+    gamemode.timer.ClearAll();
+    statuseffect.ClearAll();
+
     ents.Dispose();
     player.Dispose();
     worldtext.Dispose();
+    statuseffect.Dispose();
     AdminMenu.Dispose();
     gamemode.Dispose();
 }
@@ -244,21 +247,18 @@ public void OnClientPostAdminCheck(int id)
 {
     Player ply = player.Add(id);
 
-    if(GetAdminFlag(GetUserAdmin(id), Admin_Custom1))
-    {
-        AdminMenu.Add(ply);
-    }
+    if(GetAdminFlag(GetUserAdmin(id), Admin_Generic)) AdminMenu.Add(ply);
 
     char clientname[32];
     ply.GetName(clientname, sizeof(clientname));
     gamemode.log.Info("%t", "Log_PlayerConnected", clientname);
 
-    SDKHook(ply.id, SDKHook_WeaponSwitch, OnWeaponSwitch);
-    SDKHook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
-    SDKHook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
-    SDKHook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
-    SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
-    SDKHook(ply.id, SDKHook_OnTakeDamageAlivePost, OnTakeDamageAlivePost);
+    ply.SetHook(SDKHook_WeaponSwitch, OnWeaponSwitch);
+    ply.SetHook(SDKHook_WeaponCanUse, OnWeaponTake);
+    ply.SetHook(SDKHook_Spawn, OnPlayerSpawn);
+    ply.SetHook(SDKHook_SpawnPost, OnPlayerSpawnPost);
+    ply.SetHook(SDKHook_OnTakeDamage, OnTakeDamage);
+    ply.SetHook(SDKHook_OnTakeDamageAlivePost, OnTakeDamageAlivePost);
 
     Call_StartForward(OnClientJoinForward);
     Call_PushCellRef(ply);
@@ -284,23 +284,23 @@ public void OnClientDisconnect(int id)
         FormatEx(timername, sizeof(timername), "ent-%i", ply.id);
         gamemode.timer.RemoveIsContains(timername);
 
+        ply.se.ClearAll();
+
         char clientname[32];
         ply.GetName(clientname, sizeof(clientname));
         gamemode.log.Info("%t", "Log_PlayerDisconnected", clientname);
 
-        SDKUnhook(ply.id, SDKHook_WeaponSwitch, OnWeaponSwitch);
-        SDKUnhook(ply.id, SDKHook_WeaponCanUse, OnWeaponTake);
-        SDKUnhook(ply.id, SDKHook_Spawn, OnPlayerSpawn);
-        SDKUnhook(ply.id, SDKHook_SpawnPost, OnPlayerSpawnPost);
-        SDKUnhook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
-        SDKUnhook(ply.id, SDKHook_OnTakeDamageAlivePost, OnTakeDamageAlivePost);
+        ply.RemoveHook(SDKHook_WeaponSwitch, OnWeaponSwitch);
+        ply.RemoveHook(SDKHook_WeaponCanUse, OnWeaponTake);
+        ply.RemoveHook(SDKHook_Spawn, OnPlayerSpawn);
+        ply.RemoveHook(SDKHook_SpawnPost, OnPlayerSpawnPost);
+        ply.RemoveHook(SDKHook_OnTakeDamage, OnTakeDamage);
+        ply.RemoveHook(SDKHook_OnTakeDamageAlivePost, OnTakeDamageAlivePost);
 
         Call_StartForward(OnClientLeaveForward);
         Call_StartForward(OnClientClearForward);
         Call_PushCellRef(ply);
         Call_Finish();
-
-        ply.se.ClearAll();
 
         ply.Team("Dead");
         ply.class = null;
@@ -325,20 +325,19 @@ public void OnClientDisconnect(int id)
 public Action OnPlayerSpawn(int client)
 {
     Player ply = player.GetByID(client);
-    
-    if (!gamemode.mngr.IsWarmup)
-    {
-        if (!ply.GetHandle("rsptmr") && IsClientExist(client) && GetClientTeam(client) > 1) {
-            ply.SetHandle("rsptmr", gamemode.timer.Simple(250, "PlayerSpawn", ply));
-            if (ply.FirstSpawn)
-                ply.FirstSpawn = false;
-        }
 
-        if (!ply.spawned) return Plugin_Handled;
-    }
-    else
-    {
-        ply.TimerSimple(100, "WarmupGiveWeapon", ply);
+    if (ply && !ply.GetHandle("rsptmr") && GetClientTeam(client) > 1) {
+        if (!gamemode.mngr.IsWarmup)
+        {
+            ply.SetHandle("rsptmr", ply.TimerSimple(250, "PlayerSpawn", ply));
+            if (ply.FirstSpawn) ply.FirstSpawn = false;
+
+            //if (!ply.spawned) return Plugin_Stop;
+        }
+        else
+        {
+            ply.TimerSimple(100, "WarmupGiveWeapon", ply);
+        }
     }
 
     return Plugin_Continue;
@@ -360,18 +359,17 @@ public void PlayerSpawn(Player ply)
 
         ply.RestrictWeapons();
 
-        ply.SetupModel();
-
         Call_StartForward(OnClientSpawnForward);
         Call_PushCellRef(ply);
         Call_Finish();
+
+        ply.SetupModel();
+        ply.Setup();
 
         char team[32], class[32];
 
         ply.Team(team, sizeof(team));
         ply.class.GetString("name", class, sizeof(class));
-
-        ply.Setup();
         
         if (ply.class.HasKey("overlay"))
         {
@@ -390,7 +388,7 @@ public void PlayerSpawn(Player ply)
 
 public Action OnPlayerSpawnPost(int client)
 {
-    SetEntProp(client, Prop_Send, "m_iHideHUD", 1<<12);
+    player.GetByID(client).SetProp("m_iHideHUD", 1<<12);
 }
 
 public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
@@ -508,7 +506,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         if (gamemode.config.nuke.autostart) gamemode.nuke.AutoStart(gamemode.config.nuke.ast);
         
         gamemode.timer.Create("CombatReinforcement", gamemode.config.reinforce.GetInt("time") * 1000, 0, "CombatReinforcement");
-        //gamemode.timer.Create("Entities_Limit_Checker", gamemode.config.GetInt("elc", 30) * 1000, 0, "EntitiesLimitChecker");
+        gamemode.timer.Create("EntitiesLimitController", gamemode.config.GetInt("elc", 15) * 1000, 0, "EntitiesLimitChecker");
         gamemode.timer.Create("PlayerSpawnAfterRoundStart", 1000, gamemode.config.psars, "PSARS");
 
         Call_StartForward(OnRoundStartForward);
@@ -740,6 +738,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
         vic.inv.DropAll();
         vic.se.ClearAll();
+
+        vic.HideOverlay();
 
         if (vic.progress.active)
             vic.progress.Stop();
@@ -1107,7 +1107,9 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int idx)
         Player ply = player.GetByID(client);
         InvItem item = ply.inv.Get(idx);
         
-        ply.PlaySound("*/scp/menu/select.mp3", SNDCHAN_VOICE);
+        if (!item) return;
+
+        ply.PlayNonCheckSound("scp/menu/select.mp3");
 
         char class[32];
         item.GetClass(class, sizeof(class));
@@ -1214,56 +1216,65 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                 {
                     InvItem item = ply.inv.Get(StringToInt(itemid));
                     
-                    char path[128];
-                    if (item.meta.GetString("usesound", path, sizeof(path)))
-                        ply.PlaySound(path);
-                    else
-                        ply.PlaySound("*/scp/menu/select.mp3", SNDCHAN_VOICE);
+                    if (item)
+                    {
+                        char path[128];
+                        if (item.meta.GetString("usesound", path, sizeof(path)))
+                            ply.PlayNonCheckSound(path);
+                        else
+                            ply.PlayNonCheckSound("scp/menu/select.mp3");
 
-                    char funcname[32];
-                    item.meta.onuse.name(funcname, sizeof(funcname));
+                        char funcname[32];
+                        item.meta.onuse.name(funcname, sizeof(funcname));
 
-                    Call_StartFunction(item.meta.onuse.hndl, GetFunctionByName(item.meta.onuse.hndl, funcname));
-                    Call_PushCellRef(ply);
-                    Call_PushCellRef(item);
-                    Call_Finish();
+                        Call_StartFunction(item.meta.onuse.hndl, GetFunctionByName(item.meta.onuse.hndl, funcname));
+                        Call_PushCellRef(ply);
+                        Call_PushCellRef(item);
+                        Call_Finish();
+                    }
                 }
                 case 1:
                 {
                     InvItem item = ply.inv.Get(StringToInt(itemid));
                     
-                    ply.PlaySound("*/scp/menu/select.mp3", SNDCHAN_VOICE);
-
-                    char class[64], classname[64];
-                    item.GetClass(class, sizeof(class));
-                    FormatEx(classname, sizeof(classname), "%T", class, ply.id);
-                    Format(class, sizeof(class), "%s_info", class);
-
-                    PrintToChat(ply.id, "------------------------------%s------------------------------", classname);
-
-                    char text[8192];
-                    char exptext[20][1024];
-                    FormatEx(text, sizeof(text), "%T", class, ply.id);
-                    ExplodeString(text, "<br>", exptext, 20, 1024);
-
-                    int i=0;
-                    while (strlen(exptext[i]) != 0)
+                    if (item)
                     {
-                        PrintToChat(ply.id, exptext[i]);
-                        i++;
+                        ply.PlayNonCheckSound("scp/menu/select.mp3");
+
+                        char class[64], classname[64];
+                        item.GetClass(class, sizeof(class));
+                        FormatEx(classname, sizeof(classname), "%T", class, ply.id);
+                        Format(class, sizeof(class), "%s_info", class);
+
+                        PrintToChat(ply.id, "------------------------------%s------------------------------", classname);
+
+                        char text[8192];
+                        char exptext[20][1024];
+                        FormatEx(text, sizeof(text), "%T", class, ply.id);
+                        ExplodeString(text, "<br>", exptext, 20, 1024);
+
+                        int i=0;
+                        while (strlen(exptext[i]) != 0)
+                        {
+                            PrintToChat(ply.id, exptext[i]);
+                            i++;
+                        }
+                            
+                        PrintToChat(ply.id, "------------------------------------------------------------");
                     }
-                        
-                    PrintToChat(ply.id, "------------------------------------------------------------");
                 }
                 case 2:
                 {
                     InvItem item = ply.inv.Drop(StringToInt(itemid));
 
-                    char path[128];
-                    if (item.meta.GetString("dropsound", path, sizeof(path)))
-                        ply.PlaySound(path);
-                    else
-                        ply.PlaySound("*/scp/menu/select.mp3", SNDCHAN_VOICE);
+                    if (item)
+                    {
+                        char path[128];
+                        if (item.meta.GetString("dropsound", path, sizeof(path)))
+                            ply.PlayNonCheckSound(path);
+                        else
+                            ply.PlayNonCheckSound("scp/menu/select.mp3");
+                    }
                 }
             }
         }
@@ -1474,6 +1485,8 @@ public void EscapeController(Player ply, int doorID)
             
                 ply.TimerSimple(gamemode.config.tsto * 1000, "PlyHideOverlay", ply);
             }
+
+            gamemode.mngr.GameCheck();
         }
 
         delete data;
@@ -1611,11 +1624,11 @@ public void CombatReinforcement()
             char path[128], patchcheck[128], langcode[3];
 
             gamemode.mngr.GetServerLangInfo(langcode, sizeof(langcode));
-            Format(path, sizeof(path), "*/scp/other/%s_reinforced_%s.mp3", teamname, langcode);
+            Format(path, sizeof(path), "scp/other/%s_reinforced_%s.mp3", teamname, langcode);
             Format(patchcheck, sizeof(patchcheck), "sound/scp/other/%s_reinforced_%s.mp3", teamname, langcode);
             
             if (FileExists(patchcheck, true))
-                gamemode.mngr.PlaySoundToAll(path, SNDCHAN_ITEM);
+                gamemode.mngr.PlayNonCheckSoundToAll(path);
         }
 
         delete teams;
@@ -1670,7 +1683,13 @@ public Action Command_AdminMenu(int client, int args)
 
 public Action Command_Kill(int client, const char[] command, int argc)
 {
-    return Plugin_Handled;
+    if (player.GetByID(client).IsSCP)
+    {
+        PrintToConsole(client, "Самоуйбиство за класс SCP запрещено!");
+        return Plugin_Handled;
+    }
+
+    return Plugin_Continue;
 }
 
 public Action Command_Base(int client, const char[] command, int argc)
@@ -1737,11 +1756,32 @@ public Action Command_Base(int client, const char[] command, int argc)
             PrintToConsole(ply.id, "Name: %s | delay: %.3f | repeations: %i", timername, timer.delay, timer.repeations);
         }
     }
+    if (StrEqual(arg1, "se", false))
+    {
+        ArrayList sel = statuseffect.GetArrayList("list");
+
+        PrintToConsole(ply.id, "---------------Status effects---------------");
+
+        for (int i=0; i < sel.Length; i++)
+        {
+            char sename[64];
+            StatusEffect se = sel.Get(i);
+            se.name(sename, sizeof(sename));
+            PrintToConsole(ply.id, "Player: %i | name: %s | time: %i | count: %i", se.GetBase("player").GetInt("id"), sename, se.time, se.count);
+        }
+    }
     if (StrEqual(arg1, "changelevel", false))
         ServerCommand("changelevel %s", arg2);
 
-    if (StrEqual(arg1, "wme", false))
-        ServerCommand("mp_warmup_end");
+    if (StrEqual(arg1, "round", false))
+    {
+        if (StrEqual(arg2, "end", false))
+            (gamemode.mngr.IsWarmup) ? ServerCommand("mp_warmup_end") : gamemode.mngr.EndGame("restart");
+        if (StrEqual(arg2, "lock", false))
+            gamemode.mngr.RoundLock = true;
+        if (StrEqual(arg2, "unlock", false))
+            gamemode.mngr.RoundLock = false;
+    }
 
     return Plugin_Stop;
 }
@@ -1789,11 +1829,12 @@ public Action Command_Player(int client, const char[] command, int argc)
 
     if (!ply.IsAdmin()) return Plugin_Stop;
 
-    char arg1[32],arg2[32],arg3[32];
+    char arg1[32],arg2[32],arg3[32],arg4[32];
 
     GetCmdArg(1, arg1, sizeof(arg1));
     GetCmdArg(2, arg2, sizeof(arg2));
     GetCmdArg(3, arg3, sizeof(arg3));
+    GetCmdArg(4, arg4, sizeof(arg4));
 
     if (StrEqual(arg1, "getall", false))
     {
@@ -1812,24 +1853,35 @@ public Action Command_Player(int client, const char[] command, int argc)
 
         delete players;
     }
-    else if (StrEqual(arg1, "get", false))
+    else if (StringToInt(arg1) <= player.InGame())
     {
-        Player user = player.GetByID(StringToInt(arg2));
+        Player user = player.GetByID(StringToInt(arg1));
 
-        if (StrEqual(arg3, "inv", false))
+        if (StrEqual(arg2, "inv", false))
         {
-            ArrayList items = user.inv.items;
-            if (items.Length == 0)
-                PrintToConsole(ply.id, "Инвентарь игрока пуст");
-            else
-                for (int i=0; i < items.Length; i++)
-                {
-                    char itemname[32];
-                    InvItem item = items.Get(i);
-                    item.GetClass(itemname, sizeof(itemname));
+            if (StrEqual(arg3, "getall", false))
+            {
+                ArrayList items = user.inv.items;
+                if (items.Length == 0)
+                    PrintToConsole(ply.id, "Инвентарь игрока пуст");
+                else
+                    for (int i=0; i < items.Length; i++)
+                    {
+                        char itemname[32];
+                        InvItem item = items.Get(i);
+                        item.GetClass(itemname, sizeof(itemname));
 
-                    PrintToConsole(ply.id, "slot: %i | item: %s", i, itemname);
-                }
+                        PrintToConsole(ply.id, "slot: %i | item: %s", i, itemname);
+                    }
+            }
+            else if (StrEqual(arg3, "drop", false))
+            {
+                user.inv.Drop(StringToInt(arg4));
+            }
+        }
+        else if (StrEqual(arg2, "scale", false))
+        {
+            user.model.scale = StringToFloat(arg3);
         }
     }
     
@@ -1901,16 +1953,6 @@ public Action Command_Debug(int client, const char[] command, int argc)
         ply.SetProp("m_fEffects", ply.GetProp("m_fEffects") ^ 4);
     if (StrEqual(arg1, "nvgs", false))
         ply.SetProp("m_bNightVisionOn", (ply.GetProp("m_bNightVisionOn") == 0) ? 1 : 0);
-    if (StrEqual(arg1, "round", false))
-    {
-        if (StrEqual(arg2, "end", false))
-            gamemode.mngr.EndGame("restart");
-        if (StrEqual(arg2, "lock", false))
-            gamemode.mngr.RoundLock = true;
-        if (StrEqual(arg2, "unlock", false))
-            gamemode.mngr.RoundLock = false;
-    }
-
     if (StrEqual(arg1, "voice", false))
     {
         if (StrEqual(arg2, "mute", false))
@@ -1971,7 +2013,7 @@ public void SCP_OnInput(Player &ply, int buttons)
             ply.SetBool("ActionAvailable", false);
             ply.TimerSimple(1000, "ActionUnlock", ply);
 
-            ply.PlaySound("*/scp/menu/select.mp3", SNDCHAN_VOICE);
+            ply.PlayNonCheckSound("scp/menu/select.mp3");
 
             if (!ply.IsSCP)
                 InventoryDisplay(ply);
@@ -2213,6 +2255,9 @@ public any NativePlayer_Inventory_Drop(Handle Plugin, int numArgs) {
     Player ply = view_as<Player>(inv.ply);
     int index = GetNativeCell(2);
     InvItem item = inv.Get(index);
+    
+    if (!item) return view_as<InvItem>(null);
+
     inv.items.Erase(index);
 
     if (item.meta.ondrop)

@@ -137,6 +137,13 @@ methodmap Player < Entity {
 
     public void Team(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("team", buffer) : this.GetString("team", buffer, max_size); }
 
+    public void ExecCommand(char[] format, any ...) {
+        int len = strlen(format) + 255;
+        char[] data = new char[len];
+        VFormat(data, len, format, 3);
+        ClientCommand(this.id, data);
+    }
+
     public void PrintNotify(const char[] format, any ...) {
         int len = strlen(format) + 8192;
         char[] formattedText = new char[len];
@@ -155,16 +162,16 @@ methodmap Player < Entity {
         char overlay[128], langcode[3];
         this.GetLangInfo(langcode, sizeof(langcode));
         Format(overlay, sizeof(overlay), "r_screenoverlay models/eternity/overlays/%s_%s_fh", name, langcode);
-        ClientCommand(this.id, overlay);
+        this.ExecCommand(overlay);
     }
 
     public void HideOverlay() {
         char langcode[3];
         this.GetLangInfo(langcode, sizeof(langcode));
-        if (!this.IsSCP)
-            ClientCommand(this.id, "r_screenoverlay models/eternity/overlays/inventory_%s_fh", langcode);
+        if (!this.IsSCP && this.IsAlive())
+            this.ExecCommand("r_screenoverlay models/eternity/overlays/inventory_%s_fh", langcode);
         else
-            ClientCommand(this.id, "r_screenoverlay none");
+            this.ExecCommand("r_screenoverlay none");
     }
 
     public void SetListen(Player ply, bool islisten)
@@ -184,9 +191,17 @@ methodmap Player < Entity {
         EmitSound(clients, sizeof(clients), path, (entity == 0) ? this.id : entity, channel, level);
     }
 
+    public void PlayNonCheckSound(char[] path) {
+        char soundcommand[256];
+        FormatEx(soundcommand, sizeof(soundcommand), "playgamesound %s", path);
+        this.ExecCommand(soundcommand);
+    }
+
     public void StopSound(char[] path, int channel = 1) {
         StopSound(this.id, channel, path);
     }
+
+    public void GetCurWeapon(char[] name, int max_size = 0) { GetClientWeapon(this.id, name, max_size); }
 
     public int Give(char[] item) { return GivePlayerItem(this.id, item); }
 
@@ -465,6 +480,7 @@ methodmap Player < Entity {
         this.RestrictWeapons();
         this.inv.FullClear();
 
+        this.SetupModel();
         this.Setup();
     }
 
@@ -473,6 +489,7 @@ methodmap Player < Entity {
         this.RemoveValue("inventory");
         this.RemoveValue("progress");
         this.RemoveValue("se");
+        this.model.Dispose();
         delete this;
     }
 }

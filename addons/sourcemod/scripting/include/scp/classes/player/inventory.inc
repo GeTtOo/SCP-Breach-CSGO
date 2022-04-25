@@ -175,7 +175,10 @@ methodmap Inventory < Base {
     }
 
     public InvItem Get(int index = 0) {
-        return this.GetArrayList("inventory").Get(index);
+        if (this.GetArrayList("inventory").Length > index)
+            return this.GetArrayList("inventory").Get(index);
+        
+        return null;
     }
 
     public InvItem GetByClass(char[] classname) {
