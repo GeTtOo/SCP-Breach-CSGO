@@ -64,7 +64,7 @@ methodmap Manager < Base {
     }
 
     public void CheckLimitEntities() {
-        if (ents.list.Length > 300)
+        if (ents.list.Length > 500)
             ents.SpawnedClear();
     }
 
@@ -76,6 +76,19 @@ methodmap Manager < Base {
 
     public void PlaySoundToAll(char[] path, int channel) {
         EmitSoundToAll(path, _, channel);
+    }
+
+    public void PlayNonCheckSoundToAll(char[] path) {
+        ArrayList players = player.GetAll();
+
+        for (int i=0; i < players.Length; i++)
+        {
+            Player ply = players.Get(i);
+
+            ply.PlayNonCheckSound(path);
+        }
+
+        delete players;
     }
 
     public void StopSoundAll(char[] path, int channel) {
@@ -242,26 +255,25 @@ methodmap Manager < Base {
             delete players;
         }
 
-        CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_TargetBombed, false);
+        CS_TerminateRound(GetConVarFloat(FindConVar("mp_round_restart_delay")), CSRoundEnd_Draw, false);
     }
 
     public void GameCheck() {
-        if (!this.RoundLock)
+        if (this.RoundLock || this.RoundComplete) return;
+        
+        if(player.Alive() != 0 && player.InGame() != 0)
         {
-            if(player.Alive() != 0 && player.InGame() != 0)
-            {
-                char winTeam[32];
-                if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
-                    this.EndGame(winTeam);
-            }
-            else if (player.InGame() == 0)
-            {
-                this.EndGame("nobody");
-            }
-            else if (player.InGame() > 1 && player.Alive() == 0)
-            {
-                this.EndGame("nobody");
-            }
+            char winTeam[32];
+            if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
+                this.EndGame(winTeam);
+        }
+        else if (player.InGame() == 0)
+        {
+            this.EndGame("nobody");
+        }
+        else if (player.InGame() > 1 && player.Alive() == 0)
+        {
+            this.EndGame("nobody");
         }
     }
 
@@ -280,65 +292,49 @@ methodmap Manager < Base {
         deadPlayers.Sort(Sort_Random, Sort_Integer);
 
         GTeam team = gamemode.team(teamName);
-        
         ArrayList classes = team.GetClassList();
 
-        if (team.randompick)
+        int baseclasschance = 0;
+        char baseclass[32];
+
+        for (int v = 0; v < classes.Length; v++)
         {
-            for (int scc = 1; scc <= deadPlayers.Length; scc++)
+            char classname[32];
+            classes.GetString(v, classname, sizeof(classname));
+
+            Class class = team.class(classname);
+            int classCount = deadPlayers.Length * class.percent / 100;
+            classCount = (classCount != 0 || !class.priority) ? classCount : 1;
+
+            if (class.percent > baseclasschance)
+                baseclass = classname;
+
+            for (int scc = 1; scc <= classCount; scc++)
             {
                 int id = deadPlayers.Length - 1;
                 if (id < 0) break;
-                
-                int classid = GetRandomInt(0, classes.Length - 1);
-
-                char classname[32];
-                classes.GetString(classid, classname, sizeof(classname));
-                classes.Erase(classid);
-
-                Class class = team.class(classname);
-
                 Player ply = deadPlayers.Get(id);
                 deadPlayers.Erase(id);
                 ply.Team(teamName);
                 ply.class = class;
                 ply.Spawn();
 
+                status = true;
+
                 if (gamemode.config.debug)
-                    gamemode.log.Info("[Class] %s random setup on player: %i", classname, ply.id);
+                    gamemode.log.Info("[Class] %s setup on player: %i", classname, ply.id);
             }
         }
-        else
+
+        for (int i=0; i < deadPlayers.Length; i++)
         {
-            for (int v = 0; v < classes.Length; v++)
-            {
-                char classname[32];
-                classes.GetString(v, classname, sizeof(classname));
+            Player ply = deadPlayers.Get(i);
 
-                Class class = team.class(classname);
+            ply.Team(teamName);
+            ply.class = team.class(baseclass);
+            ply.Spawn();
 
-                int classCount = deadPlayers.Length * class.percent / 100;
-                classCount = (classCount != 0 || !class.priority) ? classCount : 1;
-
-                /*if (gamemode.config.debug)
-                    gamemode.log.Info("[Class] %s trying setup on %i players", classname, classCount);*/
-
-                for (int scc = 1; scc <= classCount; scc++)
-                {
-                    int id = deadPlayers.Length - 1;
-                    if (id < 0) break;
-                    Player ply = deadPlayers.Get(id);
-                    deadPlayers.Erase(id);
-                    ply.Team(teamName);
-                    ply.class = class;
-                    ply.Spawn();
-
-                    status = true;
-
-                    if (gamemode.config.debug)
-                        gamemode.log.Info("[Class] %s setup on player: %i", classname, ply.id);
-                }
-            }
+            status = true;
         }
 
         delete players;
