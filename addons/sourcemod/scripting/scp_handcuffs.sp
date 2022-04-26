@@ -78,10 +78,11 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 {
     if (atk == null || atk.class == null) return Plugin_Continue;
 
-    char wepname[32];
+    char wepname[32], inflictorname[32];
     GetClientWeapon(atk.id, wepname, sizeof(wepname));
+    GetEntityClassname(inflictor, inflictorname, sizeof(inflictorname));
 
-    if (!vic.IsSCP && StrEqual(wepname, "weapon_taser"))
+    if (!vic.IsSCP && StrEqual(wepname, "weapon_taser") && StrEqual(inflictorname, "player"))
     {
         damage = 0.0;
         
@@ -90,8 +91,6 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
         vic.inv.DropAll();
 
         vic.ShowOverlay("arrested");
-
-        vic.model.SetRenderMode(RENDER_TRANSCOLOR).SetRenderColor(new Colour(255,255,255,150));
 
         return Plugin_Changed;
     }
@@ -139,7 +138,6 @@ public EscapeInfo SCP_OnPlayerEscape(Player &ply, EscapeInfo &data)
 public void SCP_OnPlayerClear(Player &ply) {
     ply.RemoveValue("handcuffed");
     ply.RemoveValue("hc_breaking");
-    ply.model.SetRenderMode(RENDER_NORMAL);
 }
 
 public void SCP_OnInput(Player &ply, int buttons) {
@@ -180,8 +178,6 @@ public void HcBreak(Player ply) {
         ply.PrintNotify("%t", "Handcuff breaked");
 
         ply.HideOverlay();
-
-        ply.model.SetRenderMode(RENDER_NORMAL);
 
         char sound[128];
         JSON_ARRAY sndarr = gamemode.plconfig.GetObject("sound").GetArray("breaked");
