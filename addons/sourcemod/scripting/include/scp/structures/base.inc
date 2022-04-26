@@ -85,13 +85,13 @@ methodmap Base < StringMap {
     }
 
     public void Dispose() {
-        int keylen = 0;
         StringMapSnapshot snap = this.Snapshot();
 
+        int kl = 0;
         for (int i=0; i < snap.Length; i++) {
-            keylen = snap.KeyBufferSize(i);
-            char[] key = new char[keylen];
-            snap.GetKey(i, key, keylen);
+            kl = snap.KeyBufferSize(i);
+            char[] key = new char[kl];
+            snap.GetKey(i, key, kl);
             delete this.GetBase(key);
         }
 
