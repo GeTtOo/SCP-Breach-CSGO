@@ -59,6 +59,7 @@ public void OnUse(Player &ply) {
     ply.se.Remove("Metamarphose");
     ply.health = ply.class.health;
     ply.inv.Remove("500_panacea");
+    ply.PrintNotify("Вы излечились");
 }
 
 public bool OnPickUp(Player &ply, Entity &ent) {
