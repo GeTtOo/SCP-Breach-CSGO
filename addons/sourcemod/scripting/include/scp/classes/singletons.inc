@@ -86,10 +86,10 @@ methodmap EntitySingleton < Base {
         {
             Entity ent = list.Get(i, 1);
 
-            if (ent != null && ent.id > MaxClients && ent.id != 5000)
+            if (ent && ent.id > MaxClients && ent.id != 5000 && ent.IsValid() && (ent.HasProp("m_hOwnerEntity") && (GetEntPropEnt(ent.id, Prop_Send, "m_hOwnerEntity") == -1)))
             {
-                ent.Remove();
                 list.Erase(i);
+                ent.Remove();
                 i--;
             }
         }
@@ -326,7 +326,7 @@ methodmap WorldTextSingleton < Base {
 
             WorldText wt = list.Get(i, 1);
 
-            if (wt != null && (wt.type == type || type == All))
+            if (wt && (wt.type == type || type == All))
                 sortedlist.Push(wt);
         }
 
