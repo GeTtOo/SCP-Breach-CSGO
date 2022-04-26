@@ -28,7 +28,6 @@
  *
  **/
 
-#include <sourcemod>
 #include <sdkhooks>
 #include <scpcore>
 
@@ -43,9 +42,14 @@ public Plugin myinfo = {
 	url = "https://github.com/GeTtOo/csgo_scp"
 };
 
+public void SCP_OnLoad()
+{
+    LoadTranslations("scpcore.phrases");
+}
+
 public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype)
 {
-    if (atk == null || atk.class == null) return Plugin_Continue;
+    if (!atk || !atk.class) return Plugin_Continue;
     
     if(atk.class.Is("457") && atk.id != vic.id)
     {
@@ -62,7 +66,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 
 public void SCP_OnPlayerClear(Player &ply)
 {
-    if (ply != null && ply.class != null && ply.class.Is("457") && ply.InGame())
+    if (ply && ply.class && ply.class.Is("457") && ply.InGame())
     {
         ply.RemoveValue("457_abilitycd");
 
@@ -94,8 +98,9 @@ public void SCP_OnCallAction(Player &ply)
 
         ply.SetBool("457_abilitycd", true);
         ply.progress.Start(gamemode.plconfig.GetInt("abcd", 15) * 1000, "AbilityUnlock");
-        ply.PrintNotify("Перезарядка способности");
     }
+    else if (ply.class.Is("457") && ply.GetBool("457_abilitycd"))
+        ply.PrintWarning("%t", "Ability cooldown");
 }
 
 public void AbilityUnlock(Player ply)
