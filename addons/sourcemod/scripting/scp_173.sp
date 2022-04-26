@@ -43,6 +43,11 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
+public void SCP_OnLoad()
+{
+    LoadTranslations("scpcore.phrases");
+}
+
 public void SCP_OnPlayerSpawn(Player &ply) 
 {
     if (ply.class != null && ply.class.Is("173")) {
@@ -55,10 +60,11 @@ public void SCP_OnPlayerSpawn(Player &ply)
         gamemode.timer.Create(timername, 20, 0, "RenderHologram", ply);
 
         char model[256];
-        ply.model.GetPath(model, sizeof(model));
+        ply.class.Model(model, sizeof(model));
 
         Entity hologramm = ents.Create("prop_dynamic");
         
+        hologramm.SetPropEnt("m_hOwnerEntity", ply);
         hologramm.model.SetPath(model).SetRenderMode(RENDER_TRANSCOLOR).SetRenderColor(new Colour(255,255,255,75));
         hologramm.Spawn().SetHook(SDKHook_SetTransmit, TransmitHandler);
 
@@ -103,7 +109,8 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
     if (vic.class.Is("173"))
     {
         //damage = damage / 50.0;
-        vic.multipler = vic.class.multipler / (float(vic.health) / (float(vic.class.health) / gamemode.plconfig.GetFloat("hpmultipler", 1.0)));
+        if (vic.health >= gamemode.plconfig.GetInt("minhpscale", 4000))
+            vic.multipler = float(vic.class.health) / (float(vic.health) / vic.class.multipler);
         //return Plugin_Changed;
     }
 
@@ -213,9 +220,6 @@ public void KillInPVS(Player ply, int radius)
             
             break;
         }
-
-        entArr.Erase(i);
-        delete vic;
     }
 
     delete entArr;
@@ -225,7 +229,7 @@ public void SCP_OnInput(Player &ply, int buttons)
 {
     if (ply.class.Is("173") && !ply.GetBool("173_isvis") && buttons & IN_ATTACK)  // 2^0 +attack
     {
-        KillInPVS(ply, 130);
+        KillInPVS(ply, 90);
     }
 }
 
@@ -253,6 +257,8 @@ public void SCP_OnCallAction(Player &ply)
 
         ply.speed = ply.class.speed;
     }
+    else if (ply.GetBool("173_isvis") && !ply.GetBool("173_abready"))
+        ply.PrintWarning("%t", "Ability cooldown");
 }
 
 public void RenderHologram(Player ply)
@@ -284,9 +290,11 @@ public void RenderHologram(Player ply)
                 TR_GetEndPosition(endposarr, trace);
             }
 
-            if (GetVectorDistance(posarr, endposarr) >= blinkrange / (float(ply.health) / (float(ply.class.health) / gamemode.plconfig.GetFloat("hpmultipler", 1.0))))
+            float blinkdistance = (ply.health >= gamemode.plconfig.GetInt("minhpscale", 4000)) ? float(ply.class.health) / (float(ply.health) / blinkrange) : float(ply.class.health) / (float(gamemode.plconfig.GetInt("minhpscale", 4000)) / blinkrange);
+
+            if (GetVectorDistance(posarr, endposarr) >= blinkdistance)
             {
-                Vector endpos = ply.GetAng().Forward(ply.EyePos(), blinkrange / (float(ply.health) / (float(ply.class.health) / gamemode.plconfig.GetFloat("hpmultipler", 1.0))));
+                Vector endpos = ply.GetAng().Forward(ply.EyePos(), blinkdistance);
                 endpos.GetArrD(endposarr);
             }
 
