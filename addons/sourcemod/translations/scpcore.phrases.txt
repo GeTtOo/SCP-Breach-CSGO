@@ -177,6 +177,11 @@
         "en"        "Drop"
         "ru"        "Выбросить"
     }
+    "Ability cooldown"
+    {
+        "en"        "Ability cooldown"
+        "ru"        "Способность перезаряжается"
+    }
     "Door access denied"
     {
         "#format"   "{1:s}"
