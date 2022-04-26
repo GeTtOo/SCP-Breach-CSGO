@@ -301,7 +301,21 @@ public void DisplayTargetMenu(int client)
     FormatEx(buffer, sizeof(buffer), "%T", "Select target", client);
     hMenu.SetTitle(buffer);
 
-    AddTargetsToMenu2(hMenu, client, COMMAND_FILTER_NO_BOTS|COMMAND_FILTER_CONNECTED);
+    ArrayList players = player.GetAll();
+
+    for (int i=0; i < players.Length; i++)
+    {
+        Player ply = players.Get(i);
+        
+        char id[3], name[32];
+
+        IntToString(ply.id, id, sizeof(id));
+        ply.GetName(name, sizeof(name));
+
+        hMenu.AddItem(id, name, ITEMDRAW_DEFAULT);
+    }
+
+    delete players;
 
     hMenu.Display(client, 30);
 }
@@ -315,22 +329,18 @@ public int MenuHandler_ScpAdminMenuTarget(Menu hMenu, MenuAction action, int cli
     else if(action == MenuAction_Select)
     {
         char info[32], name[32];
-        int userid, target;
 
         hMenu.GetItem(item, info, sizeof(info), _, name, sizeof(name));
-        userid = StringToInt(info);
 
-        if((target = GetClientOfUserId(userid)) == 0)
+        Player target = player.GetByID(StringToInt(info));
+
+        if(!target)
         {
             PrintToChat(client, " \x07[SCP] \x01%t", "Target unavailable");
         }
-        else if (!CanUserTarget(client, target))
-		{
-			PrintToChat(client, " \x07[SCP] \x01%t", "Cant find");
-		}
         else
 		{
-            AdminMenu.Get(client).target = player.GetByID(target);
+            AdminMenu.Get(client).target = target;
             
             switch(AdminMenu.Get(client).action)
             {
@@ -351,9 +361,10 @@ public int MenuHandler_ScpAdminMenuTarget(Menu hMenu, MenuAction action, int cli
                 }*/
                 case MOVE_TO_ADMIN_ZONE:
                 {
-                    if(AdminMenu.Get(client).target && IsPlayerAlive(target) && !IsClientInSpec(target))
+                    if(AdminMenu.Get(client).target && IsPlayerAlive(target.id) && !IsClientInSpec(target.id))
                     {
-                        AdminMenu.Get(client).target.SetPos(gamemode.config.AdminRoom);
+                        AdminMenu.Get(client).target.SetPos(gamemode.config.AdminRoom + new Vector(100.0,0.0,0.0), new Angle(0.0,-180.0,0.0));
+                        AdminMenu.Get(client).admin.SetPos(gamemode.config.AdminRoom - new Vector(100.0,0.0,0.0), new Angle(0.0,0.0,0.0));
                     }
                 }
                 case GIVE_PLAYER_ITEM:
@@ -556,29 +567,26 @@ public int MenuHandler_Reinforce(Menu hMenu, MenuAction action, int client, int 
     }
     else if (action == MenuAction_Select)
     {
-        if(AdminMenu.Get(client).target && !IsClientInSpec(AdminMenu.Get(client).target.id))
+        char team[32];
+        hMenu.GetItem(item, team, sizeof(team));
+
+        if (gamemode.mngr.CombatReinforcement(team))
         {
-            char team[32];
-            hMenu.GetItem(item, team, sizeof(team));
+            char path[128], patchcheck[128], langcode[3];
 
-            if (gamemode.mngr.CombatReinforcement(team))
-            {
-                char path[128], patchcheck[128], langcode[3];
-
-                gamemode.mngr.GetServerLangInfo(langcode, sizeof(langcode));
-                Format(path, sizeof(path), "*/scp/other/%s_reinforced_%s.mp3", team, langcode);
-                Format(patchcheck, sizeof(patchcheck), "sound/scp/other/%s_reinforced_%s.mp3", team, langcode);
-                
-                if (FileExists(patchcheck, true))
-                    gamemode.mngr.PlaySoundToAll(path, SNDCHAN_ITEM);
-            }
-
-            char adminname[32], adminauth[32];
-            AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));
-            AdminMenu.Get(client).admin.GetAuth(adminauth, sizeof(adminauth));
-
-            gamemode.log.Admin("%t", "Log_Admin_Reinforce", adminname, adminauth);
+            gamemode.mngr.GetServerLangInfo(langcode, sizeof(langcode));
+            Format(path, sizeof(path), "scp/other/%s_reinforced_%s.mp3", team, langcode);
+            Format(patchcheck, sizeof(patchcheck), "sound/scp/other/%s_reinforced_%s.mp3", team, langcode);
+            
+            if (FileExists(patchcheck, true))
+                gamemode.mngr.PlayNonCheckSoundToAll(path);
         }
+
+        char adminname[32], adminauth[32];
+        AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));
+        AdminMenu.Get(client).admin.GetAuth(adminauth, sizeof(adminauth));
+
+        gamemode.log.Admin("%t", "Log_Admin_Reinforce", adminname, adminauth);
     }
 }
 
