@@ -126,18 +126,19 @@ methodmap Timers < Base {
         return false;
     }
 
-    public bool RemoveIsContains(char[] name) {
+    public void RemoveIsContains(char[] name) {
         ArrayList list = this.GetArrayList("timers");
         
         for (int i=0; i < list.Length; i++) {
             char timername[64];
-            view_as<Tmr>(list.Get(i)).name(timername, sizeof(timername));
+            Tmr timer = list.Get(i);
+            timer.name(timername, sizeof(timername));
             if (StrContains(timername, name) != -1) {
                 list.Erase(i);
+                i--;
+                delete timer;
             }
         }
-        
-        return false;
     }
 
     public void ClearAll() {
@@ -149,7 +150,10 @@ methodmap Timers < Base {
         if (list.Length != 0)
             for (int i=0; i < list.Length; i++)
                 if (view_as<Tmr>(list.Get(i)).ph == GetMyHandle())
+                {
                     list.Erase(i);
+                    i--;
+                }
     }
     
     public Tmr Simple(int delay, char[] funcname, any args = false) {
@@ -183,6 +187,7 @@ methodmap Timers < Base {
                     //this.Remove(name);
                     list.Erase(i);
                     delete timer;
+                    //i--;
                 }
                 else if (timer.repeations > 1) {
                     timer.nextinvoke += timer.delay;

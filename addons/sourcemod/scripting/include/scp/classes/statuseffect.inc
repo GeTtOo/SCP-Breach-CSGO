@@ -164,6 +164,7 @@ methodmap StatusEffectSingleton < Base {
 
                 this.list.Erase(i);
                 delete se;
+                i--;
                 return true;
             }
         }
