@@ -93,6 +93,11 @@
                 "trigger":330025,
                 "team":"MTF",
                 "class":"Cadet"
+            },
+            "Scientist": {
+                "trigger":689698,
+                "team":"Chaos",
+                "class":"Beta"
             }
         }
     },
@@ -101,9 +106,10 @@
         "transmissiontime":10,
         "cooldown":30,
         "buttonid":946850,
+        "localdistance":800,
         "sound": {
-            "start":"*/scp/other/intercom_start.mp3",
-            "stop":"*/scp/other/intercom_stop.mp3"
+            "start":"scp/other/intercom_start.mp3",
+            "stop":"scp/other/intercom_stop.mp3"
         }
     },
     "[SCP] 914": {
@@ -146,7 +152,7 @@
         "radius":2000,
         "blinktime":5,
         "blinkrange":580,
-        "hpmultipler":1.2,
+        "minhpscale":3500,
         "sound": {
             "neckbroke":[
                 "*/scp/173/neck1.mp3",
