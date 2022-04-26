@@ -593,7 +593,7 @@
                 "model":"models/player/custom_player/eternity/scp_457.mdl",
                 "handsmodel":"models/weapons/arms_scp457.mdl",
                 "overlay":"scp-457",
-                "pos":{"vec":[-5200,-3030,2],"ang":[0,180,0]},
+                "pos":{"vec":[-5200,-3030,2]},
                 "doors":[840],
                 "comment":"Fire man"
             },
