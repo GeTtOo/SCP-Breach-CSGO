@@ -46,11 +46,11 @@ methodmap Player < Entity {
 
     public Player(int id) {
         Player ply = view_as<Player>(new Entity(id));
-        ply.SetBool("spawned", false);
         ply.SetBase("storage", new PlayerStorage(ply));
         ply.SetBase("inventory", new Inventory(ply));
         ply.SetBase("progress", new ProgressBar(ply));
         ply.SetBase("sel", new StatusEffectList(ply));
+        ply.SetBool("spawned", false);
 
         return ply;
     }
@@ -103,14 +103,19 @@ methodmap Player < Entity {
         public get() { Entity val; return this.GetValue("ragdoll", val) ? val : null; }
     }
 
+    property PlayerStorage store {
+        public set(PlayerStorage store) { this.SetHandle("storage", store); }
+        public get() { return view_as<PlayerStorage>(this.GetHandle("storage")); }
+    }
+
     property Inventory inv {
-        public set(Inventory inv) { this.SetValue("inventory", inv); }
-        public get() { Inventory inv; return this.GetValue("inventory", inv) ? inv : null; }
+        public set(Inventory inv) { this.SetHandle("inventory", inv); }
+        public get() { return view_as<Inventory>(this.GetHandle("inventory")); }
     }
 
     property ProgressBar progress {
-        public set(ProgressBar pb) { this.SetValue("progress", pb); }
-        public get() { ProgressBar pb; return this.GetValue("progress", pb) ? pb : null; }
+        public set(ProgressBar pb) { this.SetHandle("progress", pb); }
+        public get() { return view_as<ProgressBar>(this.GetHandle("progress")); }
     }
 
     property StatusEffectList se {
