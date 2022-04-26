@@ -35,10 +35,61 @@
 methodmap PlayerStorage < Base {
 
     public PlayerStorage(Base ply) {
-        PlayerStorage store = view_as<PlayerStorage>(new Base());
+        PlayerStorage storage = view_as<PlayerStorage>(new Base());
 
-        store.SetHandle("player", ply);
+        storage.SetHandle("player", ply);
         
-        return store;
+        char steamid[32];
+        GetClientAuthId(ply.GetInt("id"), AuthId_Steam2, steamid, sizeof(steamid), true);
+        storage.SetString("steamid", steamid);
+        
+        return storage;
     }
+
+    property JSON_OBJECT store {
+        public set(JSON_OBJECT data) { this.SetHandle("store", data); }
+        public get() { return view_as<JSON_OBJECT>(this.GetHandle("store")); }
+    }
+
+    public void LoadOrCreate() {
+        char path[256], steamid[32];
+
+        this.GetString("steamid", steamid, sizeof(steamid));
+        BuildPath(Path_SM, path, sizeof(path), "data/scp/player/%s.json", steamid);
+        
+        if (FileExists(path))
+        {
+            char buffer[65536];
+            Handle file = OpenFile(path,"r+");
+            ReadFileString(file, buffer, sizeof(buffer));
+            delete file;
+
+            this.store = view_as<JSON_OBJECT>(json_decode(buffer));
+        }
+        else
+            this.store = new JSON_OBJECT();
+    }
+
+    public void Save() {
+        char path[256], steamid[32];
+
+        this.GetString("steamid", steamid, sizeof(steamid));
+        BuildPath(Path_SM, path, sizeof(path), "data/scp/player/%s.json", steamid);
+
+        char buffer[65536];
+        Handle file = OpenFile(path,"w+");
+        json_encode(this.store, buffer, sizeof(buffer));
+        WriteFileString(file, buffer, true);
+        delete file;
+    }
+
+    public bool SetInt(char[] index, int val) { this.store.SetInt(index, val); }
+    public bool SetFloat(char[] index, float val) { this.store.SetFloat(index, val); }
+    public bool SetBool(char[] index, bool val) { this.store.SetBool(index, val); }
+
+    public int GetInt(char[] index, int defval = 0) { return this.store.GetInt(index, defval); }
+    public float GetFloat(char[] index, float defval = 0.0) { return this.store.GetFloat(index, defval); }
+    public bool GetBool(char[] index, bool defval = false) { return this.store.GetBool(index, defval); }
+
+    public bool RemoveValue(char[] index) { return this.store.Remove(index); }
 }
