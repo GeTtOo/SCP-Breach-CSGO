@@ -40,4 +40,4 @@
 | `void SCP_OnRoundStart()` | Вызывается при старте раунда, после распределения игроков.  |
 | `void SCP_OnRoundEnd()` | Вызывается в конце раунда.  |
 | `void SCP_OnInput(Player &ply, int buttons)` | Аналог OnPlayerRunCmd.  |
-| `void SCP_OnCallActionMenu(Player &ply)` | Вызывается при открытии меню (клавиша TAB).  |
+| `void SCP_OnCallAction(Player &ply)` | Вызывается при открытии меню (клавиша TAB).  |
