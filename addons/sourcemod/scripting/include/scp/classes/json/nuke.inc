@@ -31,8 +31,6 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#include <json>
-
 methodmap NukeButtons < JSON_OBJECT {
 
     property int ready {

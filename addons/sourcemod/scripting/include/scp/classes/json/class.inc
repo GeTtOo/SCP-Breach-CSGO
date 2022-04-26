@@ -31,7 +31,6 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#include <json>
 #include <scp/classes/json/escape>
 
 methodmap Class < JSON_OBJECT {
