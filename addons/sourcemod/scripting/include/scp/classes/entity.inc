@@ -120,6 +120,8 @@ methodmap Entity < Base {
         return this;
     }
 
+    public bool IsValid() { return (IsValidEdict(this.id) && IsValidEntity(this.id) ? true : false); }
+
     public Tmr TimerSimple(int delay, char[] funcname, any args = false) {
         char timername[64];
         FormatEx(timername, sizeof(timername), "ent-%i|time-%i|seed-%i", this.id, GetTime(), GetRandomInt(1, 1000));
