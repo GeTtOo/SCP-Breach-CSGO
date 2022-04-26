@@ -36,8 +36,8 @@
 
 #include <sdktools>
 #include <cstrike>
-#include <json>
 
+#include "scp/classes/player/store"
 #include "scp/classes/player/inventory"
 #include "scp/classes/player/progress"
 #include "scp/classes/player/statuseffect"
@@ -45,13 +45,14 @@
 methodmap Player < Entity {
 
     public Player(int id) {
-        Player client = view_as<Player>(new Entity(id));
-        client.SetBool("spawned", false);
-        client.SetValue("inventory", new Inventory(client));
-        client.SetValue("progress", new ProgressBar(client));
-        client.SetValue("sel", new StatusEffectList(client));
+        Player ply = view_as<Player>(new Entity(id));
+        ply.SetBool("spawned", false);
+        ply.SetBase("storage", new PlayerStorage(ply));
+        ply.SetBase("inventory", new Inventory(ply));
+        ply.SetBase("progress", new ProgressBar(ply));
+        ply.SetBase("sel", new StatusEffectList(ply));
 
-        return client;
+        return ply;
     }
 
     property int lang {
@@ -214,10 +215,10 @@ methodmap Player < Entity {
 
             if(item != -1)
             {
-                char wepclass[128];
+                /*char wepclass[128];
                 GetEntityClassname(item, wepclass, sizeof(wepclass));
-                if (!StrEqual(wepclass, "weapon_fists"))
-                    CS_DropWeapon(this.id, item, false, false);
+                if (!StrEqual(wepclass, "weapon_fists"))**/
+                CS_DropWeapon(this.id, item, false, false);
             }
         }
     }
