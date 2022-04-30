@@ -42,10 +42,18 @@ public Plugin myinfo = {
     url = "https://github.com/author/plugin"
 };
 
+public void SCP_OnLoad() {
+    AddCommandListener(Command_VIP, "say");
+}
+
+public void SCP_OnUnload() {
+    RemoveCommandListener(Command_VIP, "say");
+}
+
 public void SCP_OnPlayerSpawn(Player &ply) {
     if (GetAdminFlag(GetUserAdmin(ply.id), Admin_Custom5))
     {
-        if (ply.class.Is("D Class"))
+        if (ply.class.Is("D Class") && ply.store.GetBool("vip_replace_dclass"))
         {
             char team[32];
 
@@ -53,7 +61,7 @@ public void SCP_OnPlayerSpawn(Player &ply) {
 
             ply.class = gamemode.team(team).class("Medic");
         }
-        else if (ply.class.Is("Scientist"))
+        else if (ply.class.Is("Scientist") && ply.store.GetBool("vip_replace_scientist"))
         {
             char team[32];
 
@@ -61,7 +69,7 @@ public void SCP_OnPlayerSpawn(Player &ply) {
 
             ply.class = gamemode.team(team).class("Dr.Bright");
         }
-        else if (ply.class.Is("Cadet"))
+        else if (ply.class.Is("Cadet") && ply.store.GetBool("vip_replace_cadet"))
         {
             char team[32];
 
@@ -69,7 +77,7 @@ public void SCP_OnPlayerSpawn(Player &ply) {
 
             ply.class = gamemode.team(team).class("Sapper");
         }
-        else if (ply.class.Is("Lieutenant"))
+        else if (ply.class.Is("Lieutenant") && ply.store.GetBool("vip_replace_lieutenant"))
         {
             char team[32];
 
@@ -80,13 +88,146 @@ public void SCP_OnPlayerSpawn(Player &ply) {
     }
 }
 
-public void SCP914_OnModify(Player &ply, int &modifychance, int &ruinechance) {
+public void SCP914_OnModify(Player &ply, int &ruinechance, int &modifychance) {
     if (GetAdminFlag(GetUserAdmin(ply.id), Admin_Custom5))
     {
-        if ((modifychance + 20) <= 100)
-            modifychance += 20;
-
-        if ((ruinechance != -1) && (ruinechance - 20) >= 0)
-            ruinechance -= 20;
+        if ((ruinechance != -1))
+            if ((ruinechance - 25) >= 0)
+                ruinechance -= 25;
+            else
+                ruinechance = 0;
+                
+        if ((modifychance + 25) <= 100)
+            modifychance += 25;
+        else
+            modifychance = 100;
     }
+}
+
+public Action Command_VIP(int client, const char[] command, int argc)
+{
+    Player ply = player.GetByID(client);
+    
+    char arg1[32];
+
+    GetCmdArg(1, arg1, sizeof(arg1));
+
+    if (StrEqual(arg1, "!vip") || StrEqual(arg1, "/vip") || StrEqual(arg1, "vip"))
+    {
+        if (GetAdminFlag(GetUserAdmin(ply.id), Admin_Custom5))
+            VIP_Menu_Render(ply);
+        else
+            PrintToChat(ply.id, "У вас нет доступа к данной команде!");
+
+        return Plugin_Stop;
+    }
+
+    return Plugin_Continue;
+}
+
+public void VIP_Menu_Render(Player ply)
+{
+    Menu hndl = new Menu(VIPMenuHandler, MenuAction_Select);
+
+    hndl.SetTitle("Меню VIP | Баланс: 0 Doge");
+
+    hndl.AddItem("0", "Замена класса", ITEMDRAW_DEFAULT);
+    hndl.AddItem("1", "Вероятности SCP-914", ITEMDRAW_DISABLED);
+    
+    hndl.Display(ply.id, 30);
+}
+
+public int VIPMenuHandler(Menu hMenu, MenuAction action, int arg1, int idx) 
+{
+    switch (action)
+    {
+        case MenuAction_Select:
+        {
+            Player ply = player.GetByID(arg1);
+            
+            switch (idx)
+            {
+                case 0:
+                VIP_Menu_Change_Class_Render(ply);
+            }
+        }
+    }
+
+    return 0;
+}
+
+public void VIP_Menu_Change_Class_Render(Player ply)
+{
+    Menu hndl = new Menu(VIP_Menu_Change_Class_Handler, MenuAction_DisplayItem | MenuAction_Select | MenuAction_End);
+
+    hndl.SetTitle("Меню VIP");
+
+    hndl.AddItem("1", "", ITEMDRAW_DEFAULT);
+    hndl.AddItem("2", "", ITEMDRAW_DEFAULT);
+    hndl.AddItem("3", "", ITEMDRAW_DEFAULT);
+    hndl.AddItem("4", "", ITEMDRAW_DEFAULT);
+    
+    hndl.Display(ply.id, 30);
+}
+
+public int VIP_Menu_Change_Class_Handler(Menu hMenu, MenuAction action, int arg1, int idx) 
+{
+    switch (action)
+    {
+        case MenuAction_DisplayItem:
+        {
+            Player ply = player.GetByID(arg1);
+
+            char buffer[128];
+
+            switch (idx)
+            {
+                case 0:
+                {
+                    FormatEx(buffer, sizeof(buffer), "D Class => Medic | %s", (ply.store.GetBool("vip_replace_dclass")) ? "Вкл" : "Выкл");
+                    return RedrawMenuItem(buffer);
+                }
+                case 1:
+                {
+                    FormatEx(buffer, sizeof(buffer), "Scientist => Dr.Bright | %s", (ply.store.GetBool("vip_replace_scientist")) ? "Вкл" : "Выкл");
+                    return RedrawMenuItem(buffer);
+                }
+                case 2:
+                {
+                    FormatEx(buffer, sizeof(buffer), "Cadet => Sapper | %s", (ply.store.GetBool("vip_replace_cadet")) ? "Вкл" : "Выкл");
+                    return RedrawMenuItem(buffer);
+                }
+                case 3:
+                {
+                    FormatEx(buffer, sizeof(buffer), "Lieutenant => Lieutenant-Medic | %s", (ply.store.GetBool("vip_replace_lieutenant")) ? "Вкл" : "Выкл");
+                    return RedrawMenuItem(buffer);
+                }
+            }
+        }
+        case MenuAction_Select:
+        {
+            Player ply = player.GetByID(arg1);
+            
+            switch (idx)
+            {
+                case 0:
+                    ply.store.SetBool("vip_replace_dclass", !ply.store.GetBool("vip_replace_dclass"));
+                case 1:
+                    ply.store.SetBool("vip_replace_scientist", !ply.store.GetBool("vip_replace_scientist"));
+                case 2:
+                    ply.store.SetBool("vip_replace_cadet", !ply.store.GetBool("vip_replace_cadet"));
+                case 3:
+                    ply.store.SetBool("vip_replace_lieutenant", !ply.store.GetBool("vip_replace_lieutenant"));
+            }
+            
+            VIP_Menu_Change_Class_Render(ply);
+        }
+        case MenuAction_End:
+        {
+            //if (arg1 == MenuEnd_Selected)
+            delete hMenu;
+        }
+    }
+
+    return 0;
 }
