@@ -635,7 +635,7 @@
         },
         "fine": {
             "player": [
-                ["Heal", 240, 25]
+                ["Heal", 60, 25]
             ],
             "card_o5": [
                 ["005_picklock", 70, 50]

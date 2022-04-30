@@ -62,28 +62,16 @@ public void SCP_RegisterMetaData() {
     gamemode.meta.RegisterStatusEffect("Butchering");
     gamemode.meta.RegStatusEffectEvent(INIT, "Butchering", "Butchering");
     
-    gamemode.meta.RegisterStatusEffect("Injure", 0.5);
-    gamemode.meta.RegStatusEffectEvent(INIT, "Injure", "Injure_Init");
-    gamemode.meta.RegStatusEffectEvent(UPDATE, "Injure", "Injure_Update");
-    gamemode.meta.RegStatusEffectEvent(END, "Injure", "Injure_End");
-    
     gamemode.meta.RegisterStatusEffect("Metamarphose", 2.0);
     gamemode.meta.RegStatusEffectEvent(INIT, "Metamarphose", "Metamarphose_Init");
     gamemode.meta.RegStatusEffectEvent(UPDATE, "Metamarphose", "Metamarphose_Update");
     gamemode.meta.RegStatusEffectEvent(END, "Metamarphose", "Metamarphose_End");
-
-    gamemode.meta.RegisterStatusEffect("Heal", 1.5);
-    gamemode.meta.RegStatusEffectEvent(INIT, "Heal", "Heal_Init");
-    gamemode.meta.RegStatusEffectEvent(UPDATE, "Heal", "Heal_Update");
 }
 
 public void SCP_OnLoad() {
     LoadTranslations("scpcore.phrases");
 
-    char mapName[128];
-    GetCurrentMap(mapName, sizeof(mapName));
-
-    gconfig = ReadConfig(mapName, "914");
+    gconfig = Utils.ReadCurMapConfig("914");
     
     if (gconfig) gamemode.log.Debug("Recipes loaded");
 }
@@ -198,20 +186,22 @@ public void Transform(Player ply) {
                     delete soentdata;
                 }
                 
+                int ruinechance = recipe.GetInt(1);
+                int modifychance = recipe.GetInt(2);
+
+                Call_StartForward(OnModify);
+                Call_PushCellRef(ply);
+                Call_PushCellRef(ruinechance);
+                Call_PushCellRef(modifychance);
+                Call_Finish();
+
                 if (ent.IsClass("player"))
                 {
                     Player entply = view_as<Player>(ent);
                     
                     gamemode.mngr.Fade(entply.id, 800, 3000, new Colour(0,0,0,255));
 
-                    int modifychance = recipe.GetInt(2);
-                    int ruinechance = -1;
-
-                    Call_StartForward(OnModify);
-                    Call_PushCellRef(ply);
-                    Call_PushCellRef(modifychance);
-                    Call_PushCellRef(ruinechance);
-                    Call_Finish();
+                    ruinechance = -1;
 
                     if (modifychance >= GetRandomInt(1, 100)) {
                         char statusname[32];
@@ -231,18 +221,9 @@ public void Transform(Player ply) {
                     char oentclass[32];
                     recipe.GetString(0, oentclass, sizeof(oentclass));
 
-                    int modifychance = recipe.GetInt(1);
-                    int ruinechance = recipe.GetInt(2);
-
-                    Call_StartForward(OnModify);
-                    Call_PushCellRef(ply);
-                    Call_PushCellRef(modifychance);
-                    Call_PushCellRef(ruinechance);
-                    Call_Finish();
-
-                    if (modifychance <= GetRandomInt(1, 100))
+                    if (ruinechance <= GetRandomInt(1, 100))
                     {
-                        if (ruinechance >= GetRandomInt(1, 100))
+                        if (modifychance >= GetRandomInt(1, 100))
                         {
                             ents.Create(oentclass)
                             .SetPos(oitempos, ent.GetAng())
@@ -287,29 +268,6 @@ public void Transform(Player ply) {
     delete entities;
 }
 
-public void Regeneration(Player ply) {
-    PrintToChat(ply.id, " \x07[SCP] \x01 Вы ощущаете необычайный прилив сил");
-
-    char  timername[128];
-    Format(timername, sizeof(timername), "regeneration-%i", ply.id);
-    
-    gamemode.timer.Create(timername, 1000, 60, "Buff_Regeneration", ply);
-}
-
-public void Buff_Regeneration(Player ply) {
-    if (ply.health < ply.class.health)
-        if (ply.health + (ply.class.health * 5 /100) > ply.class.health)
-            ply.health = ply.class.health;
-        else
-            ply.health += ply.class.health * 5 /100;
-}
-
-public void Speed(Player ply) {
-    PrintToChat(ply.id, " \x07[SCP] \x01 Вы впадаете в ярость");
-    
-    ply.multipler *= 2.0;
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //
 //                           Metamarphose status effect
@@ -338,27 +296,8 @@ public void Metamarphose_End(Player ply) {
 }
 
 public void Metamarphose_ForceEnd(Player ply) {
-    ply.multipler = ply.class.multipler;
+    if (ply.class) ply.multipler = ply.class.multipler;
     ply.RemoveValue("dooraccess");
-    ply.PrintWarning("Вы исцелились");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-//                              Heal status effect
-//
-//////////////////////////////////////////////////////////////////////////////
-
-public void Heal_Init(Player ply) {
-    ply.PrintWarning("Скорость твоего метаболизма возрасла в разы...");
-}
-
-public void Heal_Update(Player ply) {
-    if (ply.health < ply.class.health)
-        if (ply.health + (ply.class.health * 5 / 100) > ply.class.health)
-            ply.health = ply.class.health;
-        else
-            ply.health += ply.class.health * 5 / 100;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -369,36 +308,12 @@ public void Heal_Update(Player ply) {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-//                              Injure status effect
-//
-//////////////////////////////////////////////////////////////////////////////
-
-public void Injure_Init(Player ply) {
-    ply.PrintWarning("Ваше тело начинает кровоточить из за множества мелких ран");
-
-    char sound[128];
-    JSON_ARRAY soundarr = gamemode.plconfig.GetObject("sound").GetArray("playerkill");
-    soundarr.GetString(GetRandomInt(0, soundarr.Length - 1), sound, sizeof(sound));
-    
-    ply.PlaySound(sound);
-}
-
-public void Injure_Update(Player ply) {
-    ply.health -= (ply.class.health * 2 / 100);
-}
-
-public void Injure_End(Player ply) {
-    ply.PrintWarning("Вы чувствуете себя немного лучше");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 //                             Butchering status effect
 //
 //////////////////////////////////////////////////////////////////////////////
 
 public void Butchering(Player ply) {
-    ply.PrintWarning("Ваше тело было разделано на компоненты");
+    ply.PrintWarning("Ваше тело было разорвано на части...");
 
     char sound[128];
     JSON_ARRAY soundarr = gamemode.plconfig.GetObject("sound").GetArray("playerkill");
