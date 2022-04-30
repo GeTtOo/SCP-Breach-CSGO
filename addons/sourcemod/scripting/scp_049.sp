@@ -36,8 +36,6 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-bool g_MusicPlay = false;
-
 char sounds[10][32] = {
     { "*/scp/049/049_2.wav" },
     { "*/scp/049/049_3.wav" }, 
@@ -92,6 +90,7 @@ public void SCP_OnPlayerClear(Player &ply)
 	if (ply && ply.class && ply.class.Is("049")) {
 		ply.RemoveValue("049_reviving");
 		ply.RemoveValue("049_lock");
+		ply.RemoveValue("049_saying");
 	}
 }
 
@@ -209,22 +208,22 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 
 public void SCP_OnCallAction(Player &ply)
 {
-    if (ply.class.Is("049") && !g_MusicPlay)
+    if (ply.class.Is("049") && !ply.GetBool("049_saying"))
 	{
-		g_MusicPlay = true;
+		ply.SetBool("049_saying", true);
 		
 		float pos[3];
 		GetClientAbsOrigin(ply.id, pos);
 
 		int rnd = GetRandomInt(0, 9);
 		EmitAmbientSound(sounds[rnd], pos, ply.id);
-		gamemode.timer.Simple(soundstime[rnd] * 1000, "AllowMusicPlay");
+		ply.TimerSimple(soundstime[rnd] * 1000, "AllowMusicPlay", ply);
 	}
 }
 
-public void AllowMusicPlay()
+public void AllowMusicPlay(Player ply)
 {
-	g_MusicPlay = false;
+	ply.SetBool("049_saying", false);
 }
 
 stock bool IsClientExist(int client)
