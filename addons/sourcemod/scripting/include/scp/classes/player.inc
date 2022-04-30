@@ -292,14 +292,9 @@ methodmap Player < Entity {
     public void Kick(char[] reason) { KickClient(this.id, reason); }
 
     public void SetupBaseStats() {
-        this.armor = 0;
-        this.SetProp("m_bHasHelmet", 0);
-        
         this.health = this.class.health;
-        if (this.class.armor != 0)
-            this.armor = this.class.armor;
-        if (this.class.helmet)
-            this.SetProp("m_bHasHelmet", 1);
+        (this.class.armor != 0)  ? (this.armor = this.class.armor) : (this.armor = 0);
+        (this.class.helmet) ? this.SetProp("m_bHasHelmet", 1) : this.SetProp("m_bHasHelmet", 0);
         this.speed = this.class.speed;
         this.multipler = this.class.multipler;
     }
