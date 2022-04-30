@@ -44,18 +44,10 @@ public Plugin myinfo = {
 };
 
 public void SCP_RegisterMetaData() {
-    gamemode.meta.RegisterStatusEffect("Butchering");
-    gamemode.meta.RegStatusEffectEvent(INIT, "Butchering", "Butchering");
-    
     gamemode.meta.RegisterStatusEffect("Injure", 0.5);
     gamemode.meta.RegStatusEffectEvent(INIT, "Injure", "Injure_Init");
     gamemode.meta.RegStatusEffectEvent(UPDATE, "Injure", "Injure_Update");
     gamemode.meta.RegStatusEffectEvent(END, "Injure", "Injure_End");
-    
-    gamemode.meta.RegisterStatusEffect("Metamarphose", 2.0);
-    gamemode.meta.RegStatusEffectEvent(INIT, "Metamarphose", "Metamarphose_Init");
-    gamemode.meta.RegStatusEffectEvent(UPDATE, "Metamarphose", "Metamarphose_Update");
-    gamemode.meta.RegStatusEffectEvent(END, "Metamarphose", "Metamarphose_End");
 
     gamemode.meta.RegisterStatusEffect("Heal", 1.5);
     gamemode.meta.RegStatusEffectEvent(INIT, "Heal", "Heal_Init");
