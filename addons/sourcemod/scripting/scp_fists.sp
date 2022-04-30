@@ -35,9 +35,9 @@
 #pragma newdecls required
 
 public Plugin myinfo = {
-    name = "[SCP] Plugin example",
-    author = "Anyone",
-    description = "Plugin example for CS:GO modification - SCP Foundation",
+    name = "[SCP] Fists",
+    author = "Andrey::Dono",
+    description = "Plugin added crosshair to fists for CS:GO modification - SCP Foundation",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"
 };
@@ -53,7 +53,7 @@ public void SCP_OnPlayerSwitchWeapon(Player &ply, Entity &ent)
 
 public void SCP_OnPlayerSpawn(Player &ply)
 {
-    ply.SetHandle("fct", ply.TimerSimple(gamemode.config.tsto * 1010, "ShowCrosshair", ply));
+    if (!ply.IsSCP) ply.SetHandle("fct", ply.TimerSimple(gamemode.config.tsto * 1010, "ShowCrosshair", ply));
 }
 
 public void ShowCrosshair(Player ply)
@@ -62,7 +62,10 @@ public void ShowCrosshair(Player ply)
     {
         ply.RemoveValue("fct");
         
-        if (ply.class.Is("D Class") || ply.class.Is("Scientist") || ply.class.Is("Dr.Bright"))
+        char weapon[32];
+        ply.GetCurWeapon(weapon, sizeof(weapon));
+
+        if (!ply.IsSCP && StrEqual(weapon, "weapon_fists"))
             ply.ShowOverlay("fists");
     }
 }
