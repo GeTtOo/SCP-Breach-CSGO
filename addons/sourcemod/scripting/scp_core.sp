@@ -133,6 +133,7 @@ public void OnPluginStart()
     LoadTranslations("scpcore.phrases");
     LoadTranslations("scpcore.regions");
     LoadTranslations("scpcore.entities");
+    LoadTranslations("scpcore.logs");
 
     RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_GENERIC);
     
@@ -163,12 +164,12 @@ public void OnMapStart()
     
     gamemode = new GameMode();
 
-    gamemode.SetValue("clients", player);
-    gamemode.SetValue("entities", ents);
+    gamemode.SetHandle("clients", player);
+    gamemode.SetHandle("entities", ents);
     
-    gamemode.SetValue("Manager", new Manager());
-    gamemode.SetValue("Nuke", new NuclearWarhead());
-    gamemode.SetValue("Logger", new Logger("SCP_OnLog", gamemode.config.logmode, gamemode.config.loglevel, gamemode.config.debug));
+    gamemode.SetHandle("Manager", new Manager());
+    gamemode.SetHandle("Nuke", new NuclearWarhead());
+    gamemode.SetHandle("Logger", new Logger("SCP_OnLog", gamemode.config.logmode, gamemode.config.loglevel, gamemode.config.debug));
     
     gamemode.mngr.CollisionGroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
     gamemode.mngr.CreateEscapeZoneList();
@@ -176,6 +177,7 @@ public void OnMapStart()
     AddCommandListener(Command_Base, "gm");
     AddCommandListener(Command_Ents, "ents");
     AddCommandListener(Command_Player, "player");
+    AddCommandListener(Command_Kill, "kill");
 
     if (gamemode.config.debug)
     {
@@ -183,8 +185,6 @@ public void OnMapStart()
         AddCommandListener(Command_GetMyPos, "getmypos");
         AddCommandListener(Command_GetEntsInBox, "getentsinbox");
     }
-
-    AddCommandListener(Command_Kill, "kill");
 
     LoadMetaData();
     
@@ -194,7 +194,6 @@ public void OnMapStart()
     Call_StartForward(RegMetaForward);
     Call_Finish();
 
-    PrecacheSound(NUKE_EXPLOSION_SOUND);
     LoadAndPrecacheFileTable();
     
     Call_StartForward(OnLoadGM);
@@ -910,6 +909,7 @@ public Action CS_OnTerminateRound(float &delay, CSRoundEndReason &reason)
 
 public void LoadAndPrecacheFileTable()
 {
+    PrecacheSound("weapons/c4/c4_exp_deb1.wav");
     Handle hFile = OpenFile("addons/sourcemod/configs/scp/downloads.txt", "r");
     
     if(hFile)

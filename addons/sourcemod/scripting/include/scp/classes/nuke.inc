@@ -32,8 +32,6 @@
 /*-----------------------------------------------Nuclear warhead manager------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
-#define NUKE_EXPLOSION_SOUND "weapons/c4/c4_exp_deb1.wav"
-
 methodmap NuclearWarhead < Base {
 
     public NuclearWarhead() {
@@ -288,7 +286,7 @@ public void NukeExplode() {
             }
             else
             {
-                EmitSoundToClient(ply.id, NUKE_EXPLOSION_SOUND);
+                EmitSoundToClient(ply.id, "weapons/c4/c4_exp_deb1.wav");
                 gamemode.mngr.Shake(ply.id, 5, 10, 50);
             }
 

@@ -54,6 +54,60 @@ public void SCP_RegisterMetaData() {
     gamemode.meta.RegStatusEffectEvent(UPDATE, "Heal", "Heal_Update");
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+//                              Heal status effect
+//
+//////////////////////////////////////////////////////////////////////////////
+
+public void Heal_Init(Player ply) {
+    ply.PrintWarning("Скорость твоего метаболизма возрасла в разы...");
+}
+
+public void Heal_Update(Player ply) {
+    if (ply.health < ply.class.health)
+        if (ply.health + (ply.class.health * 5 / 100) > ply.class.health)
+            ply.health = ply.class.health;
+        else
+            ply.health += ply.class.health * 5 / 100;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                              Injure status effect
+//
+//////////////////////////////////////////////////////////////////////////////
+
+public void Injure_Init(Player ply) {
+    ply.speed = ply.class.speed / 1.4;
+
+    ply.PrintWarning("Ваше тело начинает кровоточить из множества мелких ран...");
+
+    char sound[128];
+    JSON_ARRAY soundarr = gamemode.plconfig.GetObject("sound").GetArray("playerkill");
+    soundarr.GetString(GetRandomInt(0, soundarr.Length - 1), sound, sizeof(sound));
+    
+    ply.PlaySound(sound);
+}
+
+public void Injure_Update(Player ply) {
+    ply.health -= (ply.class.health * 2 / 100);
+}
+
+public void Injure_End(Player ply) {
+    ply.PrintWarning("Вы чувствуете себя немного лучше...");
+}
+
+public void Injure_ForceEnd(Player ply) {
+    if (ply.class) ply.speed = ply.class.speed;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                              Main
+//
+//////////////////////////////////////////////////////////////////////////////
+
 public void SCP_OnLoad()
 {
     HookEvent("weapon_fire", Event_WeaponFire, EventHookMode_Pre);
@@ -116,52 +170,4 @@ public void HealthShotTimer(Player ply)
 
         ply.se.Create("Heal", 7);
     }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-//                              Heal status effect
-//
-//////////////////////////////////////////////////////////////////////////////
-
-public void Heal_Init(Player ply) {
-    ply.PrintWarning("Скорость твоего метаболизма возрасла в разы...");
-}
-
-public void Heal_Update(Player ply) {
-    if (ply.health < ply.class.health)
-        if (ply.health + (ply.class.health * 5 / 100) > ply.class.health)
-            ply.health = ply.class.health;
-        else
-            ply.health += ply.class.health * 5 / 100;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-//                              Injure status effect
-//
-//////////////////////////////////////////////////////////////////////////////
-
-public void Injure_Init(Player ply) {
-    ply.speed = ply.class.speed / 1.4;
-
-    ply.PrintWarning("Ваше тело начинает кровоточить из множества мелких ран...");
-
-    char sound[128];
-    JSON_ARRAY soundarr = gamemode.plconfig.GetObject("sound").GetArray("playerkill");
-    soundarr.GetString(GetRandomInt(0, soundarr.Length - 1), sound, sizeof(sound));
-    
-    ply.PlaySound(sound);
-}
-
-public void Injure_Update(Player ply) {
-    ply.health -= (ply.class.health * 2 / 100);
-}
-
-public void Injure_End(Player ply) {
-    ply.PrintWarning("Вы чувствуете себя немного лучше...");
-}
-
-public void Injure_ForceEnd(Player ply) {
-    if (ply.class) ply.speed = ply.class.speed;
 }
