@@ -65,8 +65,8 @@ methodmap Player < Entity {
     }
 
     property int armor {
-        public set(int val) { SetEntProp(this.id, Prop_Send, "m_ArmorValue", val); }
-        public get() { return GetEntProp(this.id, Prop_Send, "m_ArmorValue"); }
+        public set(int val) { this.SetProp("m_ArmorValue", val); }
+        public get() { return this.GetProp("m_ArmorValue"); }
     }
 
     property float speed {
@@ -220,10 +220,11 @@ methodmap Player < Entity {
 
             if(item != -1)
             {
-                /*char wepclass[128];
+                char wepclass[128];
                 GetEntityClassname(item, wepclass, sizeof(wepclass));
-                if (!StrEqual(wepclass, "weapon_fists"))**/
-                CS_DropWeapon(this.id, item, false, false);
+                
+                if (!StrEqual(wepclass, "weapon_fists"))
+                    CS_DropWeapon(this.id, item, false, false);
             }
         }
     }
@@ -290,22 +291,20 @@ methodmap Player < Entity {
 
     public void Kick(char[] reason) { KickClient(this.id, reason); }
 
-    public void SetupBaseStats(Class class) {
+    public void SetupBaseStats() {
         this.armor = 0;
         this.SetProp("m_bHasHelmet", 0);
         
-        this.health = class.health;
-        if (class.armor != 0)
-            this.armor = class.armor;
-        if (class.helmet)
+        this.health = this.class.health;
+        if (this.class.armor != 0)
+            this.armor = this.class.armor;
+        if (this.class.helmet)
             this.SetProp("m_bHasHelmet", 1);
-        this.speed = class.speed;
-        this.multipler = class.multipler;
+        this.speed = this.class.speed;
+        this.multipler = this.class.multipler;
     }
 
     public void Setup() {
-        this.SetupBaseStats(this.class);
-
         JSON_OBJECT pos = this.class.GetVecAng();
         if (pos)
         {
