@@ -110,8 +110,8 @@ methodmap GTeam < JSON_OBJECT {
 
 methodmap Teams < JSON_OBJECT {
     
-    public Teams(char[] mapname) {
-        return view_as<Teams>(ReadConfig(mapname, "classes"));
+    public Teams() {
+        return view_as<Teams>(Utils.ReadCurMapConfig("classes"));
     }
 
     public void Add(char[] name, Class class) {
@@ -123,10 +123,10 @@ methodmap Teams < JSON_OBJECT {
 
 methodmap GameMode < Base {
     
-    public GameMode(char[] mapname) {
+    public GameMode() {
         GameMode self = view_as<GameMode>(new JSON_OBJECT());
-        self.SetValue("Teams", new Teams(mapname));
-        self.SetValue("Config", new Config(mapname));
+        self.SetValue("Teams", new Teams());
+        self.SetValue("Config", new Config());
         self.SetValue("Meta", new Meta());
         self.SetValue("Timers", new Timers());
         return self;
@@ -204,21 +204,4 @@ methodmap GameMode < Base {
 
         delete this;
     }
-}
-
-public JSON_OBJECT ReadConfig(char[] mapname, char[] filename) {
-    char path[PLATFORM_MAX_PATH];
-    JSON_OBJECT obj;
-    Format(path, sizeof(path), "%s%s%s%s%s", "configs/scp/", mapname, "/", filename, ".json");
-    BuildPath(Path_SM, path, PLATFORM_MAX_PATH, path);
-    if (FileExists(path)) {
-        char buffer[65536];
-        Handle file = OpenFile(path,"r+");
-        ReadFileString(file, buffer, sizeof(buffer));
-        obj = view_as<JSON_OBJECT>(json_decode(buffer));
-    } else {
-        obj = new JSON_OBJECT();
-    }
-
-    return obj;
 }

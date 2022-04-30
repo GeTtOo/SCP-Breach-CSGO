@@ -42,6 +42,8 @@
 #include "scp\structures\color"
 #include "scp\structures\json"
 
+#include "scp\utils"
+
 #include "scp\classes\meta"
 #include "scp\classes\timers"
 #include "scp\classes\gamemode"

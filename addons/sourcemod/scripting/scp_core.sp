@@ -36,7 +36,7 @@
 #include <sdkhooks>
 // ¯\_(ツ)_/¯
 #include <scpcore>
-#include "include/scp/scp_admin.sp"
+#include "include/scp_admin"
 
 Handle OnLoadGM;
 Handle OnUnloadGM;
@@ -60,7 +60,7 @@ Handle RegMetaForward;
 public Plugin myinfo = {
     name = "[SCP] GameMode",
     author = "Andrey::Dono, GeTtOo",
-    description = "SCP gamemmode for CS:GO",
+    description = "SCP gamemode for CS:GO",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"
 };
@@ -159,9 +159,9 @@ public void OnMapStart()
     AdminMenu = new AdminMenuSingleton();
 
     char mapName[128];
-
     GetCurrentMap(mapName, sizeof(mapName));
-    gamemode = new GameMode(mapName);
+    
+    gamemode = new GameMode();
 
     gamemode.SetValue("clients", player);
     gamemode.SetValue("entities", ents);
@@ -186,7 +186,7 @@ public void OnMapStart()
 
     AddCommandListener(Command_Kill, "kill");
 
-    LoadMetaData(mapName);
+    LoadMetaData();
     
     if (gamemode.config.usablecards)
         InitKeyCards();
@@ -249,6 +249,8 @@ public void OnClientPostAdminCheck(int id)
 
     if(GetAdminFlag(GetUserAdmin(id), Admin_Generic)) AdminMenu.Add(ply);
 
+    ply.store.LoadOrCreate();
+
     char clientname[32];
     ply.GetName(clientname, sizeof(clientname));
     gamemode.log.Info("%t", "Log_PlayerConnected", clientname);
@@ -285,6 +287,7 @@ public void OnClientDisconnect(int id)
         gamemode.timer.RemoveIsContains(timername);
 
         ply.se.ClearAll();
+        ply.store.Save();
 
         char clientname[32];
         ply.GetName(clientname, sizeof(clientname));
@@ -329,7 +332,7 @@ public Action OnPlayerSpawn(int client)
     if (ply && !ply.GetHandle("rsptmr") && GetClientTeam(client) > 1) {
         if (!gamemode.mngr.IsWarmup)
         {
-            ply.SetHandle("rsptmr", ply.TimerSimple(250, "PlayerSpawn", ply));
+            ply.SetHandle("rsptmr", ply.TimerSimple(100, "PlayerSpawn", ply));
             if (ply.FirstSpawn) ply.FirstSpawn = false;
 
             //if (!ply.spawned) return Plugin_Stop;
@@ -345,7 +348,7 @@ public Action OnPlayerSpawn(int client)
 
 public void PlayerSpawn(Player ply)
 {
-    if(ply != null && ply.class != null && IsClientExist(ply.id))
+    if(ply && ply.class && IsClientExist(ply.id))
     {
         if (ply.ragdoll) //Fix check if valid
         {
@@ -356,8 +359,9 @@ public void PlayerSpawn(Player ply)
         ply.Spawn();
 
         gamemode.mngr.SetCollisionGroup(ply.id, 2);
-
         ply.RestrictWeapons();
+
+        ply.SetupBaseStats();
 
         Call_StartForward(OnClientSpawnForward);
         Call_PushCellRef(ply);
@@ -381,9 +385,9 @@ public void PlayerSpawn(Player ply)
         }
 
         gamemode.log.Debug("Player %L spawned | Team/Class: (%s - %s)", ply.id, team, class);
-
-        ply.RemoveValue("rsptmr");
     }
+
+    ply.RemoveValue("rsptmr");
 }
 
 public Action OnPlayerSpawnPost(int client)
@@ -505,7 +509,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         gamemode.nuke.SpawnDisplay();
         if (gamemode.config.nuke.autostart) gamemode.nuke.AutoStart(gamemode.config.nuke.ast);
         
-        gamemode.timer.Create("CombatReinforcement", gamemode.config.reinforce.GetInt("time") * 1000, 0, "CombatReinforcement");
+        gamemode.timer.Create("CombatReinforcement", gamemode.config.reinforce.GetInt("time", 300) * 1000, 0, "CombatReinforcement");
         gamemode.timer.Create("EntitiesLimitController", gamemode.config.GetInt("elc", 15) * 1000, 0, "EntitiesLimitChecker");
         gamemode.timer.Create("PlayerSpawnAfterRoundStart", 1000, gamemode.config.psars, "PSARS");
 
@@ -941,15 +945,15 @@ public void LoadAndPrecacheFileTable()
     }
 }
 
-public void LoadMetaData(char[] mapName)
+public void LoadMetaData()
 {
     LoadModels();
-    LoadEntities(mapName);
+    LoadEntities();
 }
 
-public void LoadEntities(char[] mapName)
+public void LoadEntities()
 {
-    JSON_OBJECT entities = ReadConfig(mapName, "entities");
+    JSON_OBJECT entities = Utils.ReadCurMapConfig("entities");
     StringMapSnapshot sents = entities.Snapshot();
 
     int keylen;
