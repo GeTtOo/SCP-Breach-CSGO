@@ -60,6 +60,7 @@ public void SCP_OnPlayerSpawn(Player &ply) {
             ply.Team(team, sizeof(team));
 
             ply.class = gamemode.team(team).class("Medic");
+            ply.SetupBaseStats();
         }
         else if (ply.class.Is("Scientist") && ply.store.GetBool("vip_replace_scientist"))
         {
@@ -68,6 +69,7 @@ public void SCP_OnPlayerSpawn(Player &ply) {
             ply.Team(team, sizeof(team));
 
             ply.class = gamemode.team(team).class("Dr.Bright");
+            ply.SetupBaseStats();
         }
         else if (ply.class.Is("Cadet") && ply.store.GetBool("vip_replace_cadet"))
         {
@@ -76,6 +78,7 @@ public void SCP_OnPlayerSpawn(Player &ply) {
             ply.Team(team, sizeof(team));
 
             ply.class = gamemode.team(team).class("Sapper");
+            ply.SetupBaseStats();
         }
         else if (ply.class.Is("Lieutenant") && ply.store.GetBool("vip_replace_lieutenant"))
         {
@@ -84,6 +87,7 @@ public void SCP_OnPlayerSpawn(Player &ply) {
             ply.Team(team, sizeof(team));
 
             ply.class = gamemode.team(team).class("Lieutenant-Medic");
+            ply.SetupBaseStats();
         }
     }
 }
