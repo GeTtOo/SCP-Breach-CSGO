@@ -92,7 +92,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 
 	if(atk.class.Is("096"))
 	{
-        if (atk.GetBool("096_IsRage"))
+        if (atk.GetBool("096_candmg"))
             damage += 800.0;
         else
             damage = 0.0;
@@ -196,7 +196,7 @@ public void CheckVisualContact(Player ply)
                 ply.StopSound("*/scp/scp-096_crying.mp3", 48);
                 
                 ply.TimerSimple(5500, "Rage", ply);
-                gamemode.mngr.PlayAmbientOnPlayer("*/scp/scp-096_rage_start.mp3", ply);
+                gamemode.mngr.PlayAmbientOnPlayer("*/scp/096/rage_start.mp3", ply);
                 ply.SetBool("096_IsRage", true);
             }
         }
@@ -210,10 +210,11 @@ public bool RayFilter(int ent, int mask, any plyidx)
 }
 
 public void Rage(Player ply) {
+    ply.SetBool("096_candmg", true);
     ply.speed = 260.0;
     ply.multipler = 2.5;
 
-    gamemode.mngr.PlayAmbientOnPlayer("*/scp/scp-096_rage.mp3", ply);
+    gamemode.mngr.PlayAmbientOnPlayer("*/scp/096/rage.mp3", ply);
 
     ply.TimerSimple(10500, "Tranquility", ply);
 }
@@ -224,8 +225,9 @@ public void Tranquility(Player ply) {
         ply.multipler = ply.class.multipler;
         ply.SetBool("096_IsRage", false);
         ply.SetBool("096_cooldown", true);
+        ply.GetBool("096_candmg", false);
 
-        gamemode.mngr.PlayAmbientOnPlayer("*/scp/scp-096_tranquility.mp3", ply);
+        gamemode.mngr.PlayAmbientOnPlayer("*/scp/096/tranquility.mp3", ply);
 
         ply.TimerSimple(25000, "CooldownReset", ply);
         ply.TimerSimple(5900, "StartCrying", ply);
@@ -241,7 +243,7 @@ public void StartCrying(Player ply) {
 }
 
 public void Crying(Player ply) {
-    gamemode.mngr.PlayAmbientOnPlayer("*/scp/scp-096_crying.mp3", ply);
+    gamemode.mngr.PlayAmbientOnPlayer("*/scp/096/crying.mp3", ply);
 }
 
 public void CooldownReset(Player ply) {
