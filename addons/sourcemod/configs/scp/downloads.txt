@@ -561,10 +561,13 @@ sound/scp/173/neck3.mp3
 sound/scp/427/active.mp3
 sound/scp/427/transform.mp3
 sound/scp/914_player_rough.mp3
-sound/scp/scp-096_crying.mp3
-sound/scp/scp-096_rage_start.mp3
-sound/scp/scp-096_rage.mp3
-sound/scp/scp-096_tranquility.mp3
+sound/scp/096/crying.mp3
+sound/scp/096/rage_start.mp3
+sound/scp/096/rage.mp3
+sound/scp/096/tranquility.mp3
+sound/scp/096/doorbroke1.mp3
+sound/scp/096/doorbroke2.mp3
+sound/scp/096/doorbroke3.mp3
 sound/scp/warhead_announcement.mp3
 sound/scp/warhead_canceled.mp3
 sound/scp/other/mtf_reinforced_en.mp3
