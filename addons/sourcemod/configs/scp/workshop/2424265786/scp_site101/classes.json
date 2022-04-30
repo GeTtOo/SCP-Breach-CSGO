@@ -409,7 +409,7 @@
                 "armor":200,
                 "speed":234,
                 "items":["card_chaos", "visor_nv"],
-                "weapons":["weapon_mag7", "weapon_p250", "weapon_hegrenade", "weapon_smokegrenade"],
+                "weapons":["weapon_scar20", "weapon_p250", "weapon_hegrenade", "weapon_smokegrenade"],
                 "model":{
                     "id":"chaos",
                     "bodygroups":{
@@ -593,7 +593,7 @@
                 "model":"models/player/custom_player/eternity/scp_457.mdl",
                 "handsmodel":"models/weapons/arms_scp457.mdl",
                 "overlay":"scp-457",
-                "pos":{"vec":[-5200,-3030,2]},
+                "pos":{"vec":[-5200,-3030,2],"ang":[0,180,0]},
                 "doors":[840],
                 "comment":"Fire man"
             },

@@ -119,7 +119,7 @@
         "runbutton": 516151,
         "runtime": 8,
         "searchzone":[[3630, -2072, 20],[3762, -1947, 90]],
-        "distance":[0, 425, -10],
+        "distance":[0, 425, -1],
         "sound": {
             "playerkill": [
                 "*/scp/914_player_rough.mp3"
