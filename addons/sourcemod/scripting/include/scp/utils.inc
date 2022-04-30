@@ -30,7 +30,7 @@
 
 methodmap Utils < StringMap {
     
-    public static JSON_OBJECT ReadConfig(char[] path)
+    public static JSON_OBJECT JSONRead(char[] path)
     {
         BuildPath(Path_SM, path, PLATFORM_MAX_PATH, path);
         
@@ -47,18 +47,28 @@ methodmap Utils < StringMap {
             return new JSON_OBJECT();
     }
     
+    public static void JSONWrite(char[] path, JSON_OBJECT json)
+    {
+        BuildPath(Path_SM, path, PLATFORM_MAX_PATH, path);
+
+        char buffer[65536];
+        Handle file = OpenFile(path,"w+");
+        json_encode(json, buffer, sizeof(buffer));
+        WriteFileString(file, buffer, true);
+        delete file;
+    }
+
     public static JSON_OBJECT ReadMapConfig(char[] mapname, char[] filename)
     {
         char path[256];
         Format(path, sizeof(path),"configs/scp/%s/%s.json", mapname, filename);
-        return Utils.ReadConfig(path);
+        return Utils.JSONRead(path);
     }
 
     public static JSON_OBJECT ReadCurMapConfig(char[] filename)
     {
-        char path[256], mapname[128];
+        char mapname[128];
         GetCurrentMap(mapname, sizeof(mapname));
-        Format(path, sizeof(path),"configs/scp/%s/%s.json", mapname, filename);
-        return Utils.ReadConfig(path);
+        return Utils.ReadMapConfig(mapname, filename);
     }
 }

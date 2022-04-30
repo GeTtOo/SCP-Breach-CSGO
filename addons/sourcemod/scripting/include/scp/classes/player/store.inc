@@ -55,32 +55,18 @@ methodmap PlayerStorage < Base {
         char path[256], steamid[32];
 
         this.GetString("steamid", steamid, sizeof(steamid));
-        BuildPath(Path_SM, path, sizeof(path), "data/scp/player/%s.json", steamid);
+        Format(path, sizeof(path), "data/scp/player/%s.json", steamid);
         
-        if (FileExists(path))
-        {
-            char buffer[65536];
-            Handle file = OpenFile(path,"r+");
-            ReadFileString(file, buffer, sizeof(buffer));
-            delete file;
-
-            this.store = view_as<JSON_OBJECT>(json_decode(buffer));
-        }
-        else
-            this.store = new JSON_OBJECT();
+        this.store = Utils.JSONRead(path);
     }
 
     public void Save() {
         char path[256], steamid[32];
 
         this.GetString("steamid", steamid, sizeof(steamid));
-        BuildPath(Path_SM, path, sizeof(path), "data/scp/player/%s.json", steamid);
-
-        char buffer[65536];
-        Handle file = OpenFile(path,"w+");
-        json_encode(this.store, buffer, sizeof(buffer));
-        WriteFileString(file, buffer, true);
-        delete file;
+        Format(path, sizeof(path), "data/scp/player/%s.json", steamid);
+        
+        Utils.JSONWrite(path, this.store);
     }
 
     public bool SetInt(char[] index, int val) { this.store.SetInt(index, val); }
