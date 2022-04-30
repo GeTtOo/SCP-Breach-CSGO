@@ -818,7 +818,7 @@ public Action OnWeaponTake(int client, int iWeapon)
                 
         for (int i=0; i < ply.class.weapons.Length; i++)
         {
-            if (view_as<int>(ply.class.weapons.GetKeyType(i)) != 4)
+            if (ply.class.weapons.GetType(i) != Object)
             {
                 ply.class.weapons.GetString(i, buf, sizeof(buf));
             }
@@ -976,7 +976,7 @@ public void LoadEntities()
             sent.GetKey(k, keyname, kl);
             if (json_is_meta_key(keyname)) continue;
 
-            switch(ent.GetKeyType(keyname))
+            switch(ent.GetType(keyname))
             {
                 case 0: {
                     char str[128];

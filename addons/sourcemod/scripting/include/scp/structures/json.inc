@@ -30,12 +30,25 @@
 
 #include <json>
 
+enum JSON_TYPE {
+    Invalid = -1,
+    String = 0,
+    Int,
+    Float,
+    Bool,
+    Object
+}
+
 methodmap JSON_ARRAY < JSON_Array {
 
     public JSON_ARRAY() { return view_as<JSON_ARRAY>(CreateTrie()); }
     
     property JSON_Array Super {
         public get() { return view_as<JSON_Array>(this); }
+    }
+    
+    public JSON_TYPE GetType(int index) {
+        return view_as<JSON_TYPE>(this.GetKeyType(index));
     }
     
     public Vector GetVector(int index) {
@@ -70,6 +83,10 @@ methodmap JSON_OBJECT < JSON_Object {
 
     property JSON_Object Super {
         public get() { return view_as<JSON_Object>(this); }
+    }
+
+    public JSON_TYPE GetType(char[] name) {
+        return view_as<JSON_TYPE>(this.GetKeyType(name));
     }
 
     public Vector GetVector(char[] name) {

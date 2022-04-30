@@ -318,7 +318,7 @@ methodmap Player < Entity {
             JSON_ARRAY items = this.class.items;
 
             for (int i=0; i < items.Length; i++) {
-                if (view_as<int>(items.GetKeyType(i)) == 0)
+                if (items.GetType(i) == String)
                 {
                     char entclass[32];
                     items.GetString(i, entclass, sizeof(entclass));
@@ -370,7 +370,7 @@ methodmap Player < Entity {
 
         if (this.class.weapons)
             for (int i=0; i < this.class.weapons.Length; i++) {
-                if (view_as<int>(this.class.weapons.GetKeyType(i)) != 4) {
+                if (this.class.weapons.GetType(i) != Object) {
                     char weapon[32];
                     this.class.weapons.GetString(i, weapon, sizeof(weapon));
                     Entity ent = new Entity(this.Give(weapon));
@@ -422,7 +422,7 @@ methodmap Player < Entity {
 
     public void SetupModel() {
         if (this.class.HasKey("model")) {
-            if (view_as<int>(this.class.GetKeyType("model")) == 0)
+            if (this.class.GetType("model") == String)
             {
                 char modelName[256];
                 this.class.Model(modelName, sizeof(modelName));
@@ -437,7 +437,7 @@ methodmap Player < Entity {
                 this.model.SetById(mdlid);
 
                 if (modeldata.HasKey("bodygroups"))
-                    if (view_as<int>(modeldata.GetKeyType("bodygroups")) == 1) {
+                    if (modeldata.GetType("bodygroups") == Int) {
                         this.SetProp("m_nBody", modeldata.GetInt("bodygroups", 0));
                     }
                     else
@@ -452,7 +452,7 @@ methodmap Player < Entity {
                             spgi.GetKey(i, name, keylen);
                             if (json_is_meta_key(name)) continue;
                             
-                            if (view_as<int>(pgi.GetKeyType(name)) == 1)
+                            if (pgi.GetType(name) == Int)
                                 this.model.SetBodyGroup(name, pgi.GetInt(name));
                             else
                                 this.model.SetBodyGroup(name, pgi.GetArray(name).GetInt(GetRandomInt(0, pgi.GetArray(name).Length - 1)));
