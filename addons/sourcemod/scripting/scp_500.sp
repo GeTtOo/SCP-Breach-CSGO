@@ -30,7 +30,6 @@
  
 #include <sdkhooks>
 #include <scpcore>
-#include <json>
 
 #pragma semicolon 1
 #pragma newdecls required

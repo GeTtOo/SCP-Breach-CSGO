@@ -30,7 +30,6 @@
 
 #include <sdkhooks>
 #include <scpcore>
-#include <json>
 #include <discord_extended>
 
 #pragma semicolon 1
