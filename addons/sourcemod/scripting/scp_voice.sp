@@ -101,7 +101,7 @@ methodmap IntercomController < Base {
     public void StrartTransmission(Player speaker) {
         char sound[128];
         gamemode.plconfig.GetObject("sound").GetString("start", sound, sizeof(sound));
-        gamemode.mngr.PlaySoundToAll(sound, SNDCHAN_VOICE);
+        gamemode.mngr.PlayNonCheckSoundToAll(sound);
 
         gamemode.timer.Create("Intercom_transmission_active", gamemode.plconfig.GetInt("transmissiontime", 8) * 1000, 1, "TransmissionStop");
 
@@ -120,11 +120,9 @@ methodmap IntercomController < Base {
         gamemode.timer.Create("Intercom_cd_countdown", 100, 0, "DisplayCounterUpdate");
 
         char sound[128];
-        gamemode.plconfig.GetObject("sound").GetString("start", sound, sizeof(sound));
-        gamemode.mngr.StopSoundAll(sound, SNDCHAN_VOICE);
 
         gamemode.plconfig.GetObject("sound").GetString("stop", sound, sizeof(sound));
-        gamemode.mngr.PlaySoundToAll(sound, SNDCHAN_VOICE);
+        gamemode.mngr.PlayNonCheckSoundToAll(sound);
 
         this.curply = null;
         this.IsBroadcast = false;
@@ -193,6 +191,24 @@ public void SCP_OnUnload()
 {
     gamemode.timer.RemoveByName("AdvancedVoice");
     Intercom.Dispose();
+}
+
+public void SCP_OnPlayerJoin(Player &ply) {
+    ArrayList players = player.GetAll();
+    Player firstply;
+
+    for (int i=0; i < players.Length; i++)
+    {
+        firstply = players.Get(i);
+
+        if (ply != firstply)
+        {
+            firstply.SetListen(ply, false);
+            ply.SetListen(firstply, false);
+        }
+    }
+
+    delete players;
 }
 
 public void SCP_OnRoundStart() {
@@ -285,7 +301,7 @@ public void VoiceLogicHandler()
 
         //if (!listener.IsAlive()) continue;
 
-        float distance = float(gamemode.plconfig.GetInt("distance", 500));
+        float distance = float(gamemode.plconfig.GetInt("localdistance", 500));
 
         char filter[1][32] = {"player"};
         ArrayList entities = ents.FindInBox(listener.GetPos() - new Vector(distance, distance, distance), listener.GetPos() + new Vector(distance, distance, distance), filter, sizeof(filter));
