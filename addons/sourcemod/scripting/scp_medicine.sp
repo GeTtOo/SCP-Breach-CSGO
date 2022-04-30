@@ -37,13 +37,32 @@
 
 public Plugin myinfo = {
     name = "[SCP] HealthShot",
-    author = "GeTtOo",
+    author = "Andrey::Dono, GeTtOo",
     description = "Removes hp restriction when using healthshot",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void OnPluginStart()
+public void SCP_RegisterMetaData() {
+    gamemode.meta.RegisterStatusEffect("Butchering");
+    gamemode.meta.RegStatusEffectEvent(INIT, "Butchering", "Butchering");
+    
+    gamemode.meta.RegisterStatusEffect("Injure", 0.5);
+    gamemode.meta.RegStatusEffectEvent(INIT, "Injure", "Injure_Init");
+    gamemode.meta.RegStatusEffectEvent(UPDATE, "Injure", "Injure_Update");
+    gamemode.meta.RegStatusEffectEvent(END, "Injure", "Injure_End");
+    
+    gamemode.meta.RegisterStatusEffect("Metamarphose", 2.0);
+    gamemode.meta.RegStatusEffectEvent(INIT, "Metamarphose", "Metamarphose_Init");
+    gamemode.meta.RegStatusEffectEvent(UPDATE, "Metamarphose", "Metamarphose_Update");
+    gamemode.meta.RegStatusEffectEvent(END, "Metamarphose", "Metamarphose_End");
+
+    gamemode.meta.RegisterStatusEffect("Heal", 1.5);
+    gamemode.meta.RegStatusEffectEvent(INIT, "Heal", "Heal_Init");
+    gamemode.meta.RegStatusEffectEvent(UPDATE, "Heal", "Heal_Update");
+}
+
+public void SCP_OnLoad()
 {
     HookEvent("weapon_fire", Event_WeaponFire, EventHookMode_Pre);
 }
@@ -67,6 +86,14 @@ public Action Event_WeaponFire(Event event, const char[] name, bool dontBroadcas
     return Plugin_Continue;
 }
 
+public void SCP_OnPlayerClear(Player &ply)
+{
+    if (ply && ply.class) {
+        ply.RemoveValue("hip");
+        ply.RemoveValue("temphealth");
+    }
+}
+
 public void SCP_OnPlayerSwitchWeapon(Player &ply, Entity &ent)
 {
     if (ent.IsClass("weapon_healthshot"))
@@ -86,7 +113,8 @@ public void HealthShotTimer(Player ply)
 
     if (ply.GetBool("ha") && !ply.GetBool("hwb")) 
     {
-
+        ply.se.Remove("Injure");
+        
         if (ply.health < ply.class.health) {
             if (ply.health + (ply.class.health * 25 / 100) > ply.class.health)
                 ply.health = ply.class.health;
@@ -96,4 +124,52 @@ public void HealthShotTimer(Player ply)
 
         ply.se.Create("Heal", 7);
     }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                              Heal status effect
+//
+//////////////////////////////////////////////////////////////////////////////
+
+public void Heal_Init(Player ply) {
+    ply.PrintWarning("Скорость твоего метаболизма возрасла в разы...");
+}
+
+public void Heal_Update(Player ply) {
+    if (ply.health < ply.class.health)
+        if (ply.health + (ply.class.health * 5 / 100) > ply.class.health)
+            ply.health = ply.class.health;
+        else
+            ply.health += ply.class.health * 5 / 100;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+//                              Injure status effect
+//
+//////////////////////////////////////////////////////////////////////////////
+
+public void Injure_Init(Player ply) {
+    ply.speed = ply.class.speed / 1.4;
+
+    ply.PrintWarning("Ваше тело начинает кровоточить из множества мелких ран...");
+
+    char sound[128];
+    JSON_ARRAY soundarr = gamemode.plconfig.GetObject("sound").GetArray("playerkill");
+    soundarr.GetString(GetRandomInt(0, soundarr.Length - 1), sound, sizeof(sound));
+    
+    ply.PlaySound(sound);
+}
+
+public void Injure_Update(Player ply) {
+    ply.health -= (ply.class.health * 2 / 100);
+}
+
+public void Injure_End(Player ply) {
+    ply.PrintWarning("Вы чувствуете себя немного лучше...");
+}
+
+public void Injure_ForceEnd(Player ply) {
+    if (ply.class) ply.speed = ply.class.speed;
 }
