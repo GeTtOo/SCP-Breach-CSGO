@@ -115,6 +115,22 @@ methodmap Entity < Base {
         return new Entity(GetEntPropEnt(this.id, type, name, element));
     }
 
+    public int GetPropEntId(char[] name, any type = Prop_Send, int element = 0) {
+        return GetEntPropEnt(this.id, type, name, element);
+    }
+
+    public Vector GetPropVector(char[] name, any type = Prop_Send) {
+        float pos[3];
+        GetEntPropVector(this.id, type, name, pos);
+        return new Vector(pos[0], pos[1], pos[2]);
+    }
+
+    public Angle GetPropAngle(char[] name, any type = Prop_Send) {
+        float pos[3];
+        GetEntPropVector(this.id, type, name, pos);
+        return new Angle(pos[0], pos[1], pos[2]);
+    }
+
     public Entity Input(char[] input, Entity activator = null, Entity caller = null) {
         AcceptEntityInput(this.id, input, (activator) ? activator.id : -1, (caller) ? caller.id : -1);
         return this;
@@ -178,9 +194,9 @@ methodmap Entity < Base {
 
     public bool IsClass(char[] equalClass) { char thisClass[32]; this.GetClass(thisClass, sizeof(thisClass)); return StrEqual(thisClass, equalClass); }
 
-    public Vector GetPos() { float pos[3]; GetEntPropVector(this.id, Prop_Send, "m_vecOrigin", pos); return new Vector(pos[0], pos[1], pos[2]); }
+    public Vector GetPos() { return this.GetPropVector("m_vecOrigin"); }
 
-    public Angle GetAng() { float ang[3]; GetEntPropVector(this.id, Prop_Send, "m_angRotation", ang); return new Angle(ang[0], ang[1], ang[2]); }
+    public Angle GetAng() { return this.GetPropAngle("m_angRotation"); }
     
     public Entity SetPos(Vector vec = null, Angle ang = null) {
         float vectorArr[3], angleArr[3];
