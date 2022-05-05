@@ -158,6 +158,17 @@ methodmap Vector < Base {
 
         return this;
     }
+
+    public Vector Lerp(Vector vec, float percent) {
+        float vecarr1[3], vecarr2[3], vecarr3[3];
+        this.GetArr(vecarr1);
+        vec.GetArrD(vecarr2);
+        vecarr3[0] = vecarr1[0] + (vecarr2[0] - vecarr1[0]) * percent;
+        vecarr3[1] = vecarr1[1] + (vecarr2[1] - vecarr1[1]) * percent;
+        vecarr3[2] = vecarr1[2] + (vecarr2[2] - vecarr1[2]) * percent;
+        this.SetArr(vecarr3);
+        return this;
+    }
 }
 
 stock Vector operator+(Vector first, Vector second) {
@@ -170,6 +181,16 @@ stock Vector operator-(Vector first, Vector second) {
     Vector result = new Vector(first.x - second.x, first.y - second.y, first.z - second.z);
     delete first; delete second;
     return result;
+}
+
+stock Vector operator*(Vector first, float val) {
+    float vecarr1[3];
+    first.GetArr(vecarr1);
+    vecarr1[0] *= val;
+    vecarr1[1] *= val;
+    vecarr1[2] *= val;
+    first.SetArr(vecarr1);
+    return first;
 }
 
 stock bool operator>(Vector first, Vector second) {
