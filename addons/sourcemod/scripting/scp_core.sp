@@ -84,6 +84,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 
     CreateNative("EntitySingleton.list.get", NativeEntities_GetList);
     CreateNative("EntitySingleton.Create", NativeEntities_Create);
+    CreateNative("EntitySingleton.Push", NativeEntities_Push);
     CreateNative("EntitySingleton.Remove", NativeEntities_Remove);
     CreateNative("EntitySingleton.RemoveByID", NativeEntities_RemoveByID);
     CreateNative("EntitySingleton.IndexUpdate", NativeEntities_IndexUpdate);
@@ -308,8 +309,7 @@ public void OnClientDisconnect(int id)
         ply.class = null;
 
         Base pos = ply.GetBase("spawnpos");
-        if (pos != null)
-            pos.SetBool("lock", false);
+        if (pos) pos.SetBool("lock", false);
 
         if (ply.ragdoll)
         {
@@ -547,8 +547,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
             ply.SetBool("ActionAvailable", true);
             
             Base pos = ply.GetBase("spawnpos");
-            if (pos != null)
-                pos.SetBool("lock", false);
+            if (pos) pos.SetBool("lock", false);
             
             if (ply.ragdoll)
             {
@@ -729,15 +728,11 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         Player vic = player.GetByID(GetClientOfUserId(GetEventInt(event, "userid")));
         Player atk = player.GetByID(GetClientOfUserId(GetEventInt(event, "attacker")));
 
-        if (vic == null) return Plugin_Handled;
+        if (!vic) return Plugin_Handled;
         
         vic.ragdoll = vic.CreateRagdoll();
         
-        any data[2];
-        data[0] = vic.ragdoll.id;
-        data[1] = vic.ragdoll;
-
-        ents.list.PushArray(data);
+        ents.Push(vic.ragdoll);
 
         vic.inv.DropAll();
         vic.se.ClearAll();
@@ -766,8 +761,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         vic.class = null;
 
         Base pos = vic.GetBase("spawnpos");
-        if (pos != null)
-            pos.SetBool("lock", false);
+        if (pos) pos.SetBool("lock", false);
 
         gamemode.mngr.GameCheck();
 
@@ -1464,8 +1458,7 @@ public void EscapeController(Player ply, int doorID)
             ply.se.ClearAll();
 
             Base pos = ply.GetBase("spawnpos");
-            if (pos != null)
-                pos.SetBool("lock", false);
+            if (pos) pos.SetBool("lock", false);
 
             ply.Team(teamName);
             ply.class = gamemode.team(teamName).class(className);
@@ -2081,10 +2074,7 @@ public any NativeEntities_GetList(Handle Plugin, int numArgs) { return ents.GetA
 public any NativeClients_Add(Handle Plugin, int numArgs) {
     int id = GetNativeCell(2);
     Player ply = new Player(id);
-    any data[2];
-    data[0] = id;
-    data[1] = ply;
-    ents.list.PushArray(data);
+    ents.Push(ply);
     return ply;
 }
 
@@ -2120,14 +2110,22 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
     
     if (view_as<bool>(GetNativeCell(3)))
     {
-        any data[2];
-        data[0] = entity.id;
-        data[1] = entity;
-
-        ents.list.PushArray(data);
+        ents.Push(entity);
     }
 
     return entity;
+}
+
+public any NativeEntities_Push(Handle Plugin, int numArgs) {
+    Entity ent = GetNativeCell(2);
+
+    any data[2];
+    data[0] = ent.id;
+    data[1] = ent;
+
+    ents.list.PushArray(data);
+
+    return ent;
 }
 
 public any NativeEntities_Remove(Handle Plugin, int numArgs) {
@@ -2207,10 +2205,7 @@ public any NativeEntities_Clear(Handle Plugin, int numArgs) {
     {
         Player ply = players.Get(i);
 
-        any data[2];
-        data[0] = ply.id;
-        data[1] = ply;
-        entities.PushArray(data);
+        ents.Push(ply);
     }
 
     delete players;

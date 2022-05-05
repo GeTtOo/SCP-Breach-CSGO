@@ -71,6 +71,8 @@ methodmap EntitySingleton < Base {
 
     public native Entity Create(char[] EntName, bool register = true);
 
+    public native Entity Push(Entity ent);
+
     public native void Remove(Entity ent);
 
     public native void RemoveByID(int id);
@@ -88,6 +90,8 @@ methodmap EntitySingleton < Base {
 
             if (ent && ent.id > MaxClients && ent.id != 5000 && ent.IsValid() && (ent.HasProp("m_hOwnerEntity") && (GetEntPropEnt(ent.id, Prop_Send, "m_hOwnerEntity") == -1)))
             {
+                if (ent.IsClass("point_worldtext")) continue;
+                
                 list.Erase(i);
                 ent.Remove();
                 i--;
