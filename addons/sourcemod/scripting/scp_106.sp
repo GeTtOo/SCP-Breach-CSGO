@@ -160,14 +160,7 @@ public void CheckSurface(int client, int entity) {
 
                 Vector target = ply.GetPos() - doorforward.Clone() * doorforward.DotProduct(ply.GetPos() - door.GetPos());
 
-                for (float i=0.1; i < 2.2; i+=0.1)
-                {
-                    Vector vec = ply.GetPos().Lerp(target.Clone(), i);
-                    Vector vectemp = ply.GetPos();
-                    vec.z = vectemp.z;
-                    delete vectemp;
-                    smoothtp.Push(vec);
-                }
+                for (float i=0.1; i < 2.4; i+=0.1) smoothtp.Push(ply.GetPos().Lerp(target.Clone(), i));
 
                 delete target;
 
@@ -175,7 +168,7 @@ public void CheckSurface(int client, int entity) {
 
                 char timername[64];
                 FormatEx(timername, sizeof(timername), "SCP-106-DoorWalk-%i", ply.id);
-                gamemode.timer.Create(timername, 10, 22, "DoorWalk", ply);
+                gamemode.timer.Create(timername, 10, 24, "DoorWalk", ply);
             }
 
             door.Dispose();
