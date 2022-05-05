@@ -63,10 +63,7 @@ methodmap Manager < Base {
         public get() { return this.GetBool("roundlock", false); }
     }
 
-    public void CheckLimitEntities() {
-        if (ents.list.Length > 500)
-            ents.SpawnedClear();
-    }
+    public void CheckLimitEntities() { if (ents.list.Length > 500) ents.SpawnedClear(); }
 
     public void GetServerLangInfo(char[] name, int max_size) { GetLanguageInfo(this.serverlang, name, max_size); }
 
