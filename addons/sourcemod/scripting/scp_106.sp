@@ -30,7 +30,6 @@
 
 #include <sdkhooks>
 #include <scpcore>
-#include <json>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -49,10 +48,21 @@ public void SCP_OnPlayerJoin(Player &ply) {
 
 public void SCP_OnPlayerClear(Player &ply) {
     SDKUnhook(ply.id, SDKHook_StartTouch, CheckSurface);
+    delete view_as<Vector>(ply.GetHandle("106_tp"));
+    delete view_as<Vector>(ply.GetHandle("106_tp_ang"));
+    delete view_as<Vector>(ply.GetHandle("106_temp_pos"));
+    delete view_as<Vector>(ply.GetHandle("106_temp_ang"));
+    ply.RemoveValue("106_tp");
+    ply.RemoveValue("106_tp_ang");
+    ply.RemoveValue("106_tplock");
+    ply.RemoveValue("106_temp_pos");
+    ply.RemoveValue("106_temp_ang");
+    ply.RemoveValue("106_inpd");
+    ply.RemoveValue("106_tplock");
 }
 
 public void SCP_OnPlayerSpawn(Player &ply) {
-    if (ply != null && ply.class != null && ply.class.Is("106"))
+    if (ply && ply.class && ply.class.Is("106"))
     {
         SDKHook(ply.id, SDKHook_StartTouch, CheckSurface);
     }
@@ -60,17 +70,59 @@ public void SCP_OnPlayerSpawn(Player &ply) {
 
 public void Scp_OnRoundEnd()
 {
-    for (int i=0; i < player.Length; i++)
+    ArrayList players = player.GetAll();
+
+    for (int i=0; i < players.Length; i++)
     {
-        Player ply = player.GetByID(i);
+        Player ply = players.Get(i);
         
-        if (ply != null && ply.class != null && ply.class.Is("106"))
+        if (ply && ply.class && ply.class.Is("106"))
             SDKUnhook(ply.id, SDKHook_StartTouch, CheckSurface);
     }
+
+    delete players;
 }
 
-public void SCP_OnButtonPressed(Player &ply, int doorId) {
-    
+public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype, int &inflictor) {
+    if (vic.class.Is("106"))
+    {
+        switch (damagetype)
+        {
+            case DMG_GENERIC:
+            {
+                if (vic.health < vic.class.health) ((vic.health + 2) >= vic.class.health) ? (vic.health = vic.class.health) : (vic.health += 2);
+                return Plugin_Handled;
+            }
+            default:
+            {
+                damage /= 20.0;
+                return Plugin_Changed;
+            }
+        }
+    }
+
+    if (vic.GetBool("106_inp") && damagetype == DMG_CRUSH)
+    {
+        vic.SetPos(new Vector(-4306.0, 683.0, 2297.0), new Angle(0.0, 0.0, 0.0));
+        vic.SetHandle("106_tp", new Vector(-11110.0, 520.0, -435.0));
+        vic.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
+        SmoothTP(vic);
+        vic.RemoveValue("106_inp");
+        return Plugin_Handled;
+    }
+
+    if (!atk || !atk.class) return Plugin_Continue;
+
+    if (atk.class.Is("106") && vic.IsClass("player"))
+    {
+        vic.SetHandle("106_tp", new Vector(-4306.0, 683.0, 2297.0));
+        vic.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
+        SmoothTP(vic);
+        vic.SetBool("106_inp", true);
+        return Plugin_Handled;
+    }
+
+    return Plugin_Continue;
 }
 
 public void CheckSurface(int client, int entity) {
@@ -80,33 +132,239 @@ public void CheckSurface(int client, int entity) {
     
     if (StrEqual(className, "prop_dynamic"))
     {
-        int entid = GetEntPropEnt(entity, Prop_Data, "m_hMoveParent");
-        Entity model = (entid != -1) ? new Entity(entid) : null;
+        int doorid = GetEntPropEnt(entity, Prop_Data, "m_hMoveParent");
+        Entity door = (doorid != -1) ? new Entity(doorid) : null;
 
-        char dcn[32];
-
-        model.GetClass(dcn, sizeof(dcn));
-
-        if (StrEqual(dcn, "func_door") || StrEqual(dcn, "func_door_rotating") || StrEqual(dcn, "prop_door_rotating")) {
-            if (gamemode.config.debug)
-                PrintToChat(client, "Ded touched door. (ID: %i)", entity);
-
-            int entidq = GetEntPropEnt(model.id, Prop_Data, "m_hMoveChild");
-            Entity idpad = (entidq != -1) ? new Entity(entidq) : null;
+        if (door && (door.IsClass("func_door") || door.IsClass("prop_door_rotating"))) // door.IsClass("func_door_rotating")
+        {
 
             Player ply = player.GetByID(client);
-
-            char t[32];
-            FormatEx(t, sizeof(t), "Test_1234_%i", ply.id);
             
-            ply.SetPos(ply.GetPos().GetFromPoint(idpad.GetPos()).Normalize().Scale(70.0));
+            if (!ply.GetArrayList("106_sdw")) // Smooth door walk
+            {
+                ArrayList smoothtp = new ArrayList();
 
-            //ply.SetPos(ply.GetAng().Forward(ply.GetPos(), 70.0));
+                Vector doorforward;
+                if (!door.IsClass("prop_door_rotating"))
+                {
+                    Vector doordir = door.GetPropVector("m_vecMoveDir", Prop_Data);
+                    doorforward = (FloatAbs(doordir.x) < 0.3) ? new Vector(1.0,0.0,0.0) : new Vector(0.0,1.0,0.0); //Don't judge me for that :d
+                    delete doordir;
+                }
+                else
+                {
+                    Angle doorang = door.GetPropAngle("m_angRotation");
+                    doorforward = (RoundToCeil(doorang.y) % 180 < 45) ? new Vector(1.0,0.0,0.0) : new Vector(0.0,1.0,0.0);
+                    delete doorang;
+                }
+
+                Vector target = ply.GetPos() - doorforward.Clone() * doorforward.DotProduct(ply.GetPos() - door.GetPos());
+
+                for (float i=0.1; i < 2.2; i+=0.1)
+                {
+                    Vector vec = ply.GetPos().Lerp(target.Clone(), i);
+                    Vector vectemp = ply.GetPos();
+                    vec.z = vectemp.z;
+                    delete vectemp;
+                    smoothtp.Push(vec);
+                }
+
+                delete target;
+
+                ply.SetArrayList("106_sdw", smoothtp);
+
+                char timername[64];
+                FormatEx(timername, sizeof(timername), "SCP-106-DoorWalk-%i", ply.id);
+                gamemode.timer.Create(timername, 10, 22, "DoorWalk", ply);
+            }
+
+            door.Dispose();
+
         }
     }
 }
 
-public void Test(Entity ply)
+public void DoorWalk(Player ply)
 {
-    ply.SetPos(ply.GetAng().Forward(ply.GetPos(), float(5)));
+    ArrayList list = ply.GetArrayList("106_sdw");
+
+    if (list && list.Length > 1)
+    {
+        Vector vec = list.Get(0);
+        ply.SetPos(vec);
+        list.Erase(0);
+    }
+    else
+    {
+        delete list;
+        char timername[64];
+        FormatEx(timername, sizeof(timername), "SCP-106-DoorWalk-%i", ply.id);
+        gamemode.timer.RemoveByName(timername);
+        ply.RemoveValue("106_sdw");
+    }
+}
+
+public void SmoothTP(Player ply)
+{
+    if (ply.GetHandle("106_tp") && !ply.GetArrayList("106_stpin"))
+    {
+        ArrayList smoothtp = new ArrayList();
+
+        for (int i=1; i < 70; i++)
+        {
+            Vector vec = ply.GetPos();
+            vec.z -= i;
+            smoothtp.Push(vec);
+        }
+
+        ply.SetArrayList("106_stpin", smoothtp);
+
+        char timername[64];
+        FormatEx(timername, sizeof(timername), "SCP-106-Smooth-Tp-%i", ply.id);
+        gamemode.timer.Create(timername, 10, 70, "HandlerSmoothTPIn", ply);
+        
+        ply.SetBool("106_tplock", true);
+    }
+}
+
+public void HandlerSmoothTPIn(Player ply)
+{
+    ArrayList list = ply.GetArrayList("106_stpin");
+
+    if (list && list.Length > 1)
+    {
+        Vector vec = list.Get(0);
+        ply.SetPos(vec);
+        list.Erase(0);
+    }
+    else
+    {
+        delete list;
+        char timername[64];
+        FormatEx(timername, sizeof(timername), "SCP-106-Smooth-Tp-%i", ply.id);
+        gamemode.timer.RemoveByName(timername);
+        ply.RemoveValue("106_stpin");
+        
+        ply.SetPos(view_as<Vector>(ply.GetHandle("106_tp")).Clone(), view_as<Angle>(view_as<Angle>(ply.GetHandle("106_tp_ang")).Clone()));
+
+        ArrayList smoothtp = new ArrayList();
+
+        for (int i=1; i < 70; i++)
+        {
+            Vector vec = ply.GetPos(); 
+            vec.z += i;
+            smoothtp.Push(vec);
+        }
+
+        ply.SetArrayList("106_stpout", smoothtp);
+
+        FormatEx(timername, sizeof(timername), "SCP-106-Smooth-Tp-%i", ply.id);
+        gamemode.timer.Create(timername, 10, 70, "HandlerSmoothTPOut", ply);
+    }
+}
+
+public void HandlerSmoothTPOut(Player ply)
+{
+    ArrayList list = ply.GetArrayList("106_stpout");
+
+    if (list && list.Length > 1)
+    {
+        Vector vec = list.Get(0);
+        ply.SetPos(vec.Clone());
+        list.Erase(0);
+    }
+    else
+    {
+        delete list;
+        char timername[64];
+        FormatEx(timername, sizeof(timername), "SCP-106-Smooth-Tp-%i", ply.id);
+        gamemode.timer.RemoveByName(timername);
+        ply.RemoveValue("106_stpout");
+        
+        if (ply.GetHandle("106_temp_pos"))
+        {
+            delete view_as<Vector>(ply.GetHandle("106_tp"));
+            delete view_as<Angle>(ply.GetHandle("106_tp_ang"));
+            ply.RemoveValue("106_tp");
+            ply.SetHandle("106_tp", ply.GetHandle("106_temp_pos"));
+            ply.RemoveValue("106_tp_ang");
+            ply.SetHandle("106_tp_ang", ply.GetHandle("106_temp_ang"));
+            ply.RemoveValue("106_temp_pos");
+            ply.RemoveValue("106_temp_ang");
+        }
+        
+        ply.SetBool("106_tplock", false);
+    }
+}
+
+public void SCP_OnCallAction(Player &ply) {
+    if (ply.class.Is("106"))
+        ActionsMenu(ply);
+}
+
+public void ActionsMenu(Player ply) {
+    Menu hndl = new Menu(ActionsMenuHandler);
+
+    hndl.SetTitle("SCP-106 Actions");
+
+    hndl.AddItem("1", "Set point", (!ply.GetBool("106_inpd")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+    hndl.AddItem("2", "Move to point", (ply.GetHandle("106_tp") && !ply.GetBool("106_tplock")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+    hndl.AddItem("3", "Move to a pocket dimension", (ply.GetHandle("106_tp") && !ply.GetBool("106_tplock") && !ply.GetBool("106_inpd")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+    
+    hndl.Display(ply.id, 30);
+}
+
+public int ActionsMenuHandler(Menu hMenu, MenuAction action, int client, int idx) 
+{
+    switch (action)
+    {
+        case MenuAction_Select:
+        {
+            Player ply = player.GetByID(client);
+            
+            switch (idx)
+            {
+                case 0:
+                {
+                    if (ply.GetPropEntId("m_hGroundEntity") == 0)
+                    {
+                        if (ply.GetHandle("106_tp"))
+                        {
+                            delete view_as<Vector>(ply.GetHandle("106_tp"));
+                            delete view_as<Angle>(ply.GetHandle("106_tp_ang"));
+                            ply.RemoveValue("106_tp");
+                            ply.RemoveValue("106_tp_ang");
+                        }
+                        
+                        ply.SetHandle("106_tp", ply.GetPos() - new Vector(0.0, 0.0, 68.0));
+                        ply.SetHandle("106_tp_ang", ply.GetAng());
+                    }
+                }
+                case 1:
+                {
+                    if (ply.GetPropEntId("m_hGroundEntity") == 0)
+                    {
+                        SmoothTP(ply);
+                        
+                        ply.SetBool("106_inpd", false);
+                    }
+                }
+                case 2:
+                {
+                    if (ply.GetPropEntId("m_hGroundEntity") == 0)
+                    {
+                        ply.SetHandle("106_temp_pos", ply.GetHandle("106_tp"));
+                        ply.SetHandle("106_temp_ang", ply.GetHandle("106_tp_ang"));
+                        ply.SetHandle("106_tp", new Vector(-4306.0, 683.0, 2297.0));
+                        ply.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
+                        SmoothTP(ply);
+
+                        ply.SetBool("106_inpd", true);
+                    }
+                }
+            }
+        }
+    }
+
+    return 0;
 }
