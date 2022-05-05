@@ -48,22 +48,22 @@ public void SCP_RegisterMetaData() {
 }
 
 public void OnUse(Player &ply, InvItem &item) {
-    if(item.GetBool("status"))
-        item.SetBool("status", false);
+    if(item.GetBool("active"))
+        item.SetBool("active", false);
     else
-        item.SetBool("status", true);
+        item.SetBool("active", true);
 
     ToogleStatus(ply);
 }
 
 public void OnDrop(Player &ply, InvItem &item) {
-    if(item.GetBool("status"))
+    if(item.GetBool("active"))
     {
-        item.SetBool("status", false);
+        item.SetBool("active", false);
         ToogleStatus(ply);
     }
 }
 
 public void ToogleStatus(Player &ply) {
-    ply.SetProp("m_bNightVisionOn", (ply.GetProp("m_bNightVisionOn") == 0) ? 1 : 0);
+    if (ply.IsAlive()) ply.SetProp("m_bNightVisionOn", (ply.GetProp("m_bNightVisionOn") == 0) ? 1 : 0);
 }

@@ -52,23 +52,23 @@ public void SCP_RegisterMetaData() {
 }
 
 public void OnUse(Player &ply, InvItem &item) {
-    if(item.GetBool("enable"))
-        item.SetBool("enable", false);
+    if(item.GetBool("active"))
+        item.SetBool("active", false);
     else
-        item.SetBool("enable", true);
+        item.SetBool("active", true);
 
     ToogleFlashLight(ply);
 }
 
 public void OnDrop(Player &ply, InvItem &item) {
-    if(item.GetBool("enable"))
+    if(item.GetBool("active"))
     {
-        item.SetBool("enable", false);
+        item.SetBool("active", false);
         ToogleFlashLight(ply);
     }
 }
 
 public void ToogleFlashLight(Player &ply) {
-    ply.SetProp("m_fEffects", ply.GetProp("m_fEffects") ^ 4);
+    if (ply.IsAlive()) ply.SetProp("m_fEffects", ply.GetProp("m_fEffects") ^ 4);
     //EmitSoundToClient(ply.id, "items/flashlight1.wav"); 
 }
