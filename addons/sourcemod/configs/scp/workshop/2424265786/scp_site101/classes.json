@@ -588,7 +588,6 @@
             "457": {
                 "percent":10,
                 "health":14000,
-                "armor":2000,
                 "speed":240,
                 "multipler":0.9,
                 "model":"models/player/custom_player/eternity/scp_457.mdl",
@@ -597,10 +596,8 @@
                 "doors":[840],
                 "comment":"Fire man"
             },
-            "996": {
-                "autospawn":false,
+            "966": {
                 "health":4000,
-                "armor":2000,
                 "speed":250,
                 "multipler":1.2,
                 "overlay":"scp-996",
