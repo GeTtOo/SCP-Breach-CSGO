@@ -1964,6 +1964,8 @@ public Action Command_Debug(int client, const char[] command, int argc)
         if (StrEqual(arg2, "unmute", false))
             SetListenOverride(StringToInt(arg3), StringToInt(arg4), Listen_Yes);
     }
+    if (StrEqual(arg1, "getground"))
+        PrintToChat(ply.id, "%i", GetEntPropEnt(ply.id, Prop_Send, "m_hGroundEntity"));
 
     return Plugin_Stop;
 }
