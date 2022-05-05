@@ -105,7 +105,7 @@
     "weapon_sg556":[
     ],
     "weapon_scar20":[
-        {"chance":5,"vec":[-6810,-7033,37],"ang":[1,-172,84],"comment":"Medic Spawn. Rare drop"}
+        {"chance":3,"vec":[-6810,-7033,37],"ang":[1,-172,84],"comment":"Medic Spawn. Rare drop"}
     ],
     "weapon_g3sg1":[
     ],
