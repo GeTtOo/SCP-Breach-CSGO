@@ -463,9 +463,9 @@ methodmap Player < Entity {
 
         if (this.class.HasKey("handsmodel")) {
             char handsModel[128];
-            this.class.Model(handsModel, sizeof(handsModel));
+            this.class.HandsModel(handsModel, sizeof(handsModel));
 
-            //this.SetHandsModel(handsModel); Bug...
+            this.SetHandsModel(handsModel);
         }
     }
 
@@ -479,7 +479,8 @@ methodmap Player < Entity {
         this.Spawn();
         this.RestrictWeapons();
         this.inv.FullClear();
-
+        
+        this.SetupBaseStats();
         this.SetupModel();
         this.Setup();
     }
