@@ -1,6 +1,6 @@
 {
     "Staff": {
-        "percent":80,
+        "percent":75,
         "priority":true,
         "classes": {
             "D Class": {
@@ -178,7 +178,6 @@
                     },
                     "skin":6
                 },
-                "handsmodel":"models/weapons/arms_scp096long.mdl",
                 "overlay":"guard",
                 "pos":[
                     {"vec":[-10369,-2740,-1008],"ang":[3,90,0]},
@@ -520,7 +519,7 @@
         }
     },
     "SCP": {
-        "percent":10,
+        "percent":15,
         "priority":true,
         "randompick":true,
         "classes": {
@@ -553,10 +552,9 @@
             },
             "096": {
                 "percent":20,
-                "health":25000,
+                "health":20000,
                 "speed":130,
                 "model":"models/player/custom_player/eternity/scp096.mdl",
-                "handsmodel":"models/weapons/arms_scp096long.mdl",
                 "overlay":"scp-096",
                 "pos":{"vec":[-13250, -2550, 0]},
                 "doors":[223,224],
@@ -564,9 +562,12 @@
                 "comment":"096"
             },
             "106": {
+                "percent":30,
                 "autospawn":false,
-                "health":55000,
+                "health":10000,
                 "speed":220,
+                "model":"models/player/custom_player/eternity/scp_106.mdl",
+                "handsmodel":"models/player/custom_player/eternity/arms_scp106.mdl",
                 "overlay":"scp-106",
                 "pos":{"vec":[-11110,520,-365]},
                 "comment":"Ded"
@@ -591,7 +592,6 @@
                 "speed":240,
                 "multipler":0.9,
                 "model":"models/player/custom_player/eternity/scp_457.mdl",
-                "handsmodel":"models/weapons/arms_scp457.mdl",
                 "overlay":"scp-457",
                 "pos":{"vec":[-5200,-3030,2],"ang":[0,180,0]},
                 "doors":[840],
