@@ -49,7 +49,7 @@ public void SCP_OnLoad()
 
 public void SCP_OnPlayerSpawn(Player &ply) 
 {
-    if (ply.class != null && ply.class.Is("173")) {
+    if (ply.class && ply.class.Is("173")) {
         char  timername[64];
         
         Format(timername, sizeof(timername), "SCP-173-VisChecker-%i", ply.id);
@@ -212,7 +212,7 @@ public void KillInPVS(Player ply, int radius)
                 nbs.GetString(GetRandomInt(0, nbs.Length - 1), sound, sizeof(sound));
                 gamemode.mngr.PlayAmbientOnPlayer(sound, vic);
 
-                vic.Kill();
+                vic.TakeDamage(ply, 4500.0, DMG_CRUSH);
             }
 
             delete ray;
