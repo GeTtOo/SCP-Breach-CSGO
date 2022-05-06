@@ -72,6 +72,7 @@ public void SCP_OnPlayerClear(Player &ply)
         
         ply.RemoveValue("096_IsRage");
         ply.RemoveValue("096_cooldown");
+        ply.RemoveValue("096_candmg");
         
         char  timername[64];
         Format(timername, sizeof(timername), "SCP-096-%i", ply.id);
@@ -92,7 +93,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
 	if(atk.class.Is("096"))
 	{
         if (atk.GetBool("096_candmg"))
-            damage += 800.0;
+            damage += 10000.0;
         else
             damage = 0.0;
 
@@ -224,7 +225,7 @@ public void Tranquility(Player ply) {
         ply.multipler = ply.class.multipler;
         ply.SetBool("096_IsRage", false);
         ply.SetBool("096_cooldown", true);
-        ply.GetBool("096_candmg", false);
+        ply.SetBool("096_candmg", false);
 
         gamemode.mngr.PlayAmbientOnPlayer("*/scp/096/tranquility.mp3", ply);
 
