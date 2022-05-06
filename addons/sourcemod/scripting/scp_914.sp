@@ -290,8 +290,22 @@ public void Metamarphose_Update(Player ply) {
 
 public void Metamarphose_End(Player ply) {
     ply.RemoveValue("dooraccess");
-    ply.Kill();
+    ply.TakeDamage(ply, 3000.0, DMG_ENERGYBEAM);
     ply.PrintWarning("Вы перешли на другой уровень бытия...");
+    
+    char targetname[32];
+    
+    FormatEx(targetname, sizeof(targetname), "dis_rag_%i", ply.id);
+    ply.ragdoll.SetKV("targetname", targetname);
+    
+    Entity disolver = new Entity();
+    disolver.Create("env_entity_dissolver");
+    disolver.SetKV("dissolvetype", "0");
+    disolver.SetKV("target", targetname);
+    disolver.Input("Dissolve");
+    disolver.Remove();
+
+    ply.ragdoll = null;
 }
 
 public void Metamarphose_ForceEnd(Player ply) {
@@ -320,5 +334,5 @@ public void Butchering(Player ply) {
     
     ply.PlaySound(sound);
 
-    ply.Kill();
+    ply.TakeDamage(_, 100000.0, DMG_SLASH);
 }
