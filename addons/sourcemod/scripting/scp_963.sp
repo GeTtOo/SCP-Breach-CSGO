@@ -30,7 +30,6 @@
 
 #include <sdkhooks>
 #include <scpcore>
-#include <json>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -46,19 +45,19 @@ public Plugin myinfo = {
 public void SCP_RegisterMetaData() {
     //gamemode.meta.RegEntEvent(ON_USE, "ent_id", "Function name");
     //gamemode.meta.RegEntEvent(ON_PICKUP, "ent_id", "Function name", true); // true disable pick up to inventory (def false).
-    gamemode.meta.RegEntEvent(ON_PICKUP, "963_amulet", "OnUse");
-    gamemode.meta.RegEntEvent(ON_PICKUP, "963_amulet_bright", "OnUse");
+    gamemode.meta.RegEntEvent(ON_PICKUP, "963_amulet", "OnPickup");
+    gamemode.meta.RegEntEvent(ON_PICKUP, "963_amulet_bright", "OnPickup");
     gamemode.meta.RegEntEvent(ON_TOUCH, "963_amulet", "OnTouch");
     gamemode.meta.RegEntEvent(ON_TOUCH, "963_amulet_bright", "OnTouch");
     gamemode.meta.RegEntEvent(ON_DROP, "963_amulet", "OnDrop");
     gamemode.meta.RegEntEvent(ON_DROP, "963_amulet_bright", "OnDrop");
 }
 
-public bool OnUse(Player &ply, InvItem &item)
+public bool OnPickup(Player &ply, InvItem &item)
 {
     Player soul = view_as<Player>(item.GetHandle("soul"));
 
-    if (!soul.IsAlive() && Reincarnation(soul, ply) && soul.inv.Pickup(item))
+    if (soul && !soul.IsAlive() && Reincarnation(soul, ply) && soul.inv.Pickup(item))
     {
         item.WorldRemove();
         ents.IndexUpdate(item);
@@ -76,7 +75,7 @@ public void OnTouch(Entity &ent1, Entity &ent2)
         Player soul = view_as<Player>(ent2.GetHandle("soul"));
         Player consume = view_as<Player>(ent1);
 
-        if (!soul.IsAlive() && Reincarnation(soul, consume) && soul.inv.Pickup(ent2))
+        if (soul && !soul.IsAlive() && Reincarnation(soul, consume) && soul.inv.Pickup(ent2))
         {
             ent2.WorldRemove();
             ents.IndexUpdate(ent2);
@@ -127,11 +126,17 @@ public void SCP_OnPlayerSpawn(Player &ply)
 {
     if (ply.GetBool("reincarnation"))
     {
-        ply.SetPos(view_as<Vector>(ply.GetBase("soulpos")), view_as<Angle>(ply.GetBase("soulang")));
         ply.RemoveValue("reincarnation");
-        ply.RemoveValue("soulpos");
-        ply.RemoveValue("soulang");
+        ply.TimerSimple(1, "SetPos", ply);
     }
+}
+
+public void SetPos(Player ply)
+{
+    ply.SetPos(view_as<Vector>(ply.GetBase("soulpos")), view_as<Angle>(ply.GetBase("soulang")));
+
+    ply.RemoveValue("soulpos");
+    ply.RemoveValue("soulang");
 }
 
 public void SCP_OnPlayerDeath(Player &vic, Player &atk) {
