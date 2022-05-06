@@ -98,6 +98,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("WorldTextSingleton.Create", NativeWT_Create);
     CreateNative("WorldTextSingleton.Remove", NativeWT_Remove);
 
+    CreateNative("Player.DropWeapons", NativePlayer_DropWeapons);
     CreateNative("Player.RestrictWeapons", NativePlayer_RestrictWeapons);
 
     CreateNative("Inventory.Drop", NativePlayer_Inventory_Drop);
@@ -358,7 +359,6 @@ public void PlayerSpawn(Player ply)
         ply.Spawn();
 
         gamemode.mngr.SetCollisionGroup(ply.id, 2);
-        ply.RestrictWeapons();
 
         ply.SetupBaseStats();
 
@@ -509,6 +509,7 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         if (gamemode.config.nuke.autostart) gamemode.nuke.AutoStart(gamemode.config.nuke.ast);
         
         gamemode.timer.Create("CombatReinforcement", gamemode.config.reinforce.GetInt("time", 300) * 1000, 0, "CombatReinforcement");
+        gamemode.timer.Create("UpdateSpectatorInfo", 1000, 0, "UpdateSpectatorInfo");
         gamemode.timer.Create("EntitiesLimitController", gamemode.config.GetInt("elc", 15) * 1000, 0, "EntitiesLimitChecker");
         gamemode.timer.Create("PlayerSpawnAfterRoundStart", 1000, gamemode.config.psars, "PSARS");
 
@@ -546,6 +547,8 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
             ply.progress.Stop(false);
             ply.SetBool("ActionAvailable", true);
             
+            ply.RestrictWeapons();
+
             Base pos = ply.GetBase("spawnpos");
             if (pos) pos.SetBool("lock", false);
             
@@ -769,7 +772,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         vic.GetName(vicname, sizeof(vicname));
         vic.GetAuth(vicauth, sizeof(vicauth));
         
-        if(atk) {
+        if(atk)
+        {
             char atkname[32], atkauth[32];
 
             atk.GetName(atkname, sizeof(atkname));
@@ -777,7 +781,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
             gamemode.log.Info("%t", "Log_Core_PlayerDead", vicname, vicauth, atkname, atkauth);
         }
-        else {
+        else
+        {
             gamemode.log.Info("%t", "Log_Core_Suicide",  vicname, vicauth);
         }
     }
@@ -1315,6 +1320,20 @@ public void WarmupGiveWeapon(Player ply)
     if (ply.IsAlive()) ply.Give(melees[GetRandomInt(0, 3)]);
 }
 
+public void UpdateSpectatorInfo()
+{
+    ArrayList players = player.GetAll();
+    
+    for (int i=0; i < players.Length; i++)
+    {
+        Player ply = players.Get(i);
+
+        if (!ply.IsAlive()) gamemode.mngr.GetSpecInfo(ply, player.GetByID(ply.GetPropEntId("m_hObserverTarget")));
+    }
+    
+    delete players;
+}
+
 public void WeaponIdUpdate(ArrayList data)
 {
     Player ply = data.Get(0);
@@ -1680,13 +1699,17 @@ public Action Command_AdminMenu(int client, int args)
 
 public Action Command_Kill(int client, const char[] command, int argc)
 {
-    if (player.GetByID(client).IsSCP)
+    Player ply = player.GetByID(client);
+
+    if (ply.IsSCP)
     {
         PrintToConsole(client, "Самоуйбиство за класс SCP запрещено!");
         return Plugin_Handled;
     }
 
-    return Plugin_Continue;
+    ply.Kill();
+
+    return Plugin_Handled;
 }
 
 public Action Command_Base(int client, const char[] command, int argc)
@@ -1858,7 +1881,7 @@ public Action Command_Player(int client, const char[] command, int argc)
         {
             if (StrEqual(arg3, "getall", false))
             {
-                ArrayList items = user.inv.items;
+                ArrayList items = user.inv.list;
                 if (items.Length == 0)
                     PrintToConsole(ply.id, "Инвентарь игрока пуст");
                 else
@@ -1979,7 +2002,7 @@ public void InventoryDisplay(Player ply)
     FormatEx(bstr, sizeof(bstr), "%T", "Inventory", ply.id);
     InvMenu.SetTitle(bstr);
     
-    ArrayList inv = ply.inv.items;
+    ArrayList inv = ply.inv.list;
 
     if (inv.Length)
     {
@@ -2097,8 +2120,8 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
         entity = new Entity();
         entity.meta = entdata;
         entity.Create();
-        entity.SetHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
-        entity.SetHook(SDKHook_TouchPost, CB_EntTouch);
+        if (entity.meta.onuse) entity.SetHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
+        if (entity.meta.ontouch) entity.SetHook(SDKHook_TouchPost, CB_EntTouch);
     }
     else
     {
@@ -2137,13 +2160,11 @@ public any NativeEntities_Remove(Handle Plugin, int numArgs) {
         Entity ent = entities.Get(idx, 1);
         if (ent.meta)
         {
-            if (ent.meta.onuse)
-                ent.RemoveHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
-            if (ent.meta.ontouch)
-                ent.RemoveHook(SDKHook_TouchPost, CB_EntTouch);
+            if (ent.meta.onuse) ent.RemoveHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
+            if (ent.meta.ontouch) ent.RemoveHook(SDKHook_TouchPost, CB_EntTouch);
         }
         ent.Remove();
-        ents.list.Erase(idx);
+        entities.Erase(idx);
     }
     else
     {
@@ -2152,22 +2173,26 @@ public any NativeEntities_Remove(Handle Plugin, int numArgs) {
         gamemode.log.Error("Cant find entity in storage. id:%i, class:%s", entin.id, classname);
         entin.Remove();
     }
-    //delete entin;
 }
 
 public any NativeEntities_RemoveByID(Handle Plugin, int numArgs) {
     ArrayList entities = ents.list;
     int idx = entities.FindValue(GetNativeCell(2), 0);
-    Entity ent = entities.Get(idx, 1);
-    if (ent.meta)
+    if (idx != -1)
     {
-        if (ent.meta.onuse)
-            ent.RemoveHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
-        if (ent.meta.ontouch)
-            ent.RemoveHook(SDKHook_TouchPost, CB_EntTouch);
+        Entity ent = entities.Get(idx, 1);
+        if (ent.meta)
+        {
+            if (ent.meta.onuse) ent.RemoveHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
+            if (ent.meta.ontouch) ent.RemoveHook(SDKHook_TouchPost, CB_EntTouch);
+        }
+        ent.Remove();
+        entities.Erase(idx);
     }
-    ent.Remove();
-    ents.list.Erase(idx);
+    else
+    {
+        gamemode.log.Error("Cant find entity in storage. id:%i", idx);
+    }
 }
 
 public any NativeEntities_IndexUpdate(Handle Plugin, int numArgs) {
@@ -2231,22 +2256,41 @@ public any NativeWT_Remove(Handle Plugin, int numArgs) {
     }
 }
 
-public any NativePlayer_RestrictWeapons(Handle Plugin, int numArgs) {
-    ArrayList entities = ents.list;
+public any NativePlayer_DropWeapons(Handle Plugin, int numArgs) {
     Player ply = GetNativeCell(1);
 
-    int item, weparrsize = GetEntPropArraySize(ply.id, Prop_Send, "m_hMyWeapons");
+    int itemid, weparrsize = GetEntPropArraySize(ply.id, Prop_Send, "m_hMyWeapons");
+
+    for(int weparridx = 0; weparridx < weparrsize; weparridx++)
+    { 
+        itemid = GetEntPropEnt(ply.id, Prop_Send, "m_hMyWeapons", weparridx);
+
+        if(itemid != -1)
+        {
+            char wepclass[128];
+            GetEntityClassname(itemid, wepclass, sizeof(wepclass));
+            
+            if (!StrEqual(wepclass, "weapon_fists"))
+                CS_DropWeapon(ply.id, itemid, false, false);
+            else
+                ents.RemoveByID(itemid);
+        }
+    }
+}
+
+public any NativePlayer_RestrictWeapons(Handle Plugin, int numArgs) {
+    Player ply = GetNativeCell(1);
+
+    int itemid, weparrsize = GetEntPropArraySize(ply.id, Prop_Send, "m_hMyWeapons");
     for(int weparridx = 0; weparridx < weparrsize; weparridx++)
     {
-        item = GetEntPropEnt(ply.id, Prop_Send, "m_hMyWeapons", weparridx);
+        itemid = GetEntPropEnt(ply.id, Prop_Send, "m_hMyWeapons", weparridx);
 
-        if(item != -1)
+        if(itemid != -1)
         {
-            int idx = entities.FindValue(item, 0);
-            if (idx != -1)
-                entities.Erase(idx);
-            RemovePlayerItem(ply.id, item);
-            AcceptEntityInput(item, "Kill");
+            ents.RemoveByID(itemid);
+            RemovePlayerItem(ply.id, itemid);
+            AcceptEntityInput(itemid, "Kill");
         }
     }
 }
@@ -2259,7 +2303,7 @@ public any NativePlayer_Inventory_Drop(Handle Plugin, int numArgs) {
     
     if (!item) return view_as<InvItem>(null);
 
-    inv.items.Erase(index);
+    inv.list.Erase(index);
 
     if (item.meta.ondrop)
     {
@@ -2277,11 +2321,12 @@ public any NativePlayer_Inventory_Drop(Handle Plugin, int numArgs) {
 
     item
     .Create()
-    .SetHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse))
-    .SetHook(SDKHook_TouchPost, CB_EntTouch)
     .SetPos(ply.GetAng().Forward(ply.EyePos(), 5.0) - new Vector(0.0, 0.0, 15.0), ply.GetAng())
     .Spawn()
     .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
+
+    if (item.meta.onuse) item.SetHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
+    if (item.meta.ontouch) item.SetHook(SDKHook_TouchPost, CB_EntTouch);
 
     ents.IndexUpdate(item);
     
@@ -2291,7 +2336,7 @@ public any NativePlayer_Inventory_Drop(Handle Plugin, int numArgs) {
 public any NativePlayer_Inventory_DropAll(Handle Plugin, int numArgs) {
     Player ply = view_as<Player>(view_as<Base>(GetNativeCell(1)).GetHandle("ply"));
 
-    while (ply.inv.items.Length != 0)
+    while (ply.inv.list.Length != 0)
         ply.inv.Drop();
 }
 
@@ -2299,9 +2344,9 @@ public any NativePlayer_Inventory_FullClear(Handle Plugin, int numArgs) {
     ArrayList entities = ents.list;
     Player ply = view_as<Player>(view_as<Base>(GetNativeCell(1)).GetHandle("ply"));
 
-    while (ply.inv.items.Length != 0) {
+    while (ply.inv.list.Length != 0) {
         InvItem item = ply.inv.Get();
-        ply.inv.items.Erase(0);
+        ply.inv.list.Erase(0);
         entities.Erase(entities.FindValue(item, 1));
         item.Dispose();
     }

@@ -63,7 +63,7 @@ methodmap Inventory < Base {
         public get() { Base val; return this.GetValue("ply", val) ? val : null; }
     }
 
-    property ArrayList items {
+    property ArrayList list {
         public set(ArrayList val) { this.SetArrayList("inventory", val); }
         public get() { return this.GetArrayList("inventory"); }
     }

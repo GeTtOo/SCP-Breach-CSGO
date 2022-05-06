@@ -343,6 +343,8 @@ methodmap Manager < Base {
 
     public void GetSpecInfo(Player ply, Player target)
     {
+        if (!ply || !target || !target.class || ply == target) return;
+        
         char team[32], class[32];
 
         target.Team(team, sizeof(team));
@@ -350,7 +352,7 @@ methodmap Manager < Base {
 
         char invstr[160];
 
-        for (int i=0; i < target.inv.items.Length; i++)
+        for (int i=0; i < target.inv.list.Length; i++)
         {
             InvItem item = target.inv.Get(i);
 

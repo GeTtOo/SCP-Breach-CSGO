@@ -211,23 +211,7 @@ methodmap Player < Entity {
 
     public int Give(char[] item) { return GivePlayerItem(this.id, item); }
 
-    public void DropWeapons() {
-        int item, weparrsize = GetEntPropArraySize(this.id, Prop_Send, "m_hMyWeapons");
-
-        for(int weparridx = 0; weparridx < weparrsize; weparridx++)
-        { 
-            item = GetEntPropEnt(this.id, Prop_Send, "m_hMyWeapons", weparridx);
-
-            if(item != -1)
-            {
-                char wepclass[128];
-                GetEntityClassname(item, wepclass, sizeof(wepclass));
-                
-                if (!StrEqual(wepclass, "weapon_fists"))
-                    CS_DropWeapon(this.id, item, false, false);
-            }
-        }
-    }
+    public native void DropWeapons();
 
     public native void RestrictWeapons();
 
@@ -277,6 +261,10 @@ methodmap Player < Entity {
     }
 
     //public void SetCollisionGroup(int group) { gamemode.mngr.SetCollisionGroup(this.id, group); }
+
+    public void TakeDamage(Player ply = null, float damage = 25.0, any dmgtype = DMG_GENERIC) {
+        SDKHooks_TakeDamage(this.id, (ply) ? ply.id : 0, (ply) ? ply.id : 0, damage, dmgtype);
+    }
 
     public void Kill() {
         this.DropWeapons();
