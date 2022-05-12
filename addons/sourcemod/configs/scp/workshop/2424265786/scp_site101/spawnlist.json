@@ -370,7 +370,7 @@
         {"chance":20,"vec":[-12497,-2419,36],"ang":[0,-120,0],"comment":"Heavy Zone: SCP-996"},
         {"chance":30,"vec":[-10985,-6621,48],"ang":[0,0,0],"comment":"Heavy Zone: Garage"},
         {"chance":30,"vec":[-10275,-6618,48],"ang":[0,0,0],"comment":"Heavy Zone: Garage"},
-        {"chance":35,"vec":[-7681,-5888,1762],"ang":[0,-90,0],"comment":"Upstairs Chaos zone"},
+        {"chance":35,"vec":[-7696,-6026,1764],"ang":[1,58,90],"comment":"Upstairs Chaos zone"},
         {"chance":30,"vec":[-11627,-2499,-973],"ang":[0,-180,0],"comment":"Security Spawn"},
         {"chance":30,"vec":[-11979,-2672,-973],"ang":[0,-104,0],"comment":"Security Spawn"},
         {"chance":30,"vec":[-11624,-2820,-973],"ang":[0,-71,0],"comment":"Security Spawn"} 
