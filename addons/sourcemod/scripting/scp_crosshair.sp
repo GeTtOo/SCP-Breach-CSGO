@@ -45,7 +45,7 @@ public Plugin myinfo = {
 public void SCP_OnPlayerSwitchWeapon(Player &ply, Entity &ent)
 {
     if (!ply.IsSCP && !ply.GetHandle("fct"))
-        if (ent.IsClass("weapon_fists") || ent.IsClass("weapon_awp") || ent.IsClass("weapon_scar20"))
+        if (ent.IsClass("weapon_fists") || ent.IsClass("weapon_ssg08") || ent.IsClass("weapon_awp") || ent.IsClass("weapon_scar20") || ent.IsClass("weapon_g3sg1"))
             ply.ShowOverlay("fists");
         else
             ply.HideOverlay();
@@ -65,7 +65,7 @@ public void ShowCrosshair(Player ply)
         char weapon[32];
         ply.GetCurWeapon(weapon, sizeof(weapon));
 
-        if (!ply.IsSCP && (StrEqual(weapon, "weapon_fists") || StrEqual(weapon, "weapon_awp") || StrEqual(weapon, "weapon_scar20")))
+        if (!ply.IsSCP && (StrEqual(weapon, "weapon_fists") || StrEqual(weapon, "weapon_ssg08") || StrEqual(weapon, "weapon_awp") || StrEqual(weapon, "weapon_scar20") || StrEqual(weapon, "weapon_g3sg1")))
             ply.ShowOverlay("fists");
     }
 }
