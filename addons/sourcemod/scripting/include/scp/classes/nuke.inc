@@ -282,7 +282,7 @@ public void NukeExplode() {
 
             if(pos.z <= gamemode.config.nuke.killpos)
             {
-                ply.Kill();
+                ply.TakeDamage(_, 50000.0, DMG_BLAST);
             }
             else
             {
