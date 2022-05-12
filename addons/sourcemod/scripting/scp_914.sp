@@ -200,9 +200,11 @@ public void Transform(Player ply) {
                     
                     gamemode.mngr.Fade(entply.id, 800, 3000, new Colour(0,0,0,255));
 
+        
+
                     ruinechance = -1;
 
-                    if (modifychance >= GetRandomInt(1, 100)) {
+                    if (!entply.IsSCP && modifychance >= GetRandomInt(1, 100)) {
                         char statusname[32];
                         recipe.GetString(0, statusname, sizeof(statusname));
                         
@@ -224,9 +226,7 @@ public void Transform(Player ply) {
                     {
                         if (modifychance >= GetRandomInt(1, 100))
                         {
-                            ents.Create(oentclass)
-                            .SetPos(oitempos, ent.GetAng())
-                            .Spawn();
+                            ents.Create(oentclass).SetPos(oitempos, ent.GetAng()).Spawn();
 
                             ents.Remove(ent);
                         }
@@ -296,15 +296,7 @@ public void Metamarphose_End(Player ply) {
     char targetname[32];
     
     FormatEx(targetname, sizeof(targetname), "dis_rag_%i", ply.id);
-    ply.ragdoll.SetKV("targetname", targetname);
-    
-    Entity disolver = new Entity();
-    disolver.Create("env_entity_dissolver");
-    disolver.SetKV("dissolvetype", "0");
-    disolver.SetKV("target", targetname);
-    disolver.Input("Dissolve");
-    disolver.Remove();
-
+    ents.Dissolve(ply.ragdoll);
     ply.ragdoll = null;
 }
 
