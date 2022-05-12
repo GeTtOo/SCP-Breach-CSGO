@@ -30,7 +30,6 @@
 
 #include <sdkhooks>
 #include <scpcore>
-#include <json>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -108,11 +107,11 @@ public bool Logic(Player &ply, Entity &ent)
         char model[256];
         ply.model.GetPath(model, sizeof(model));
 
-        ArrayList data = new ArrayList(256);
-        data.Push(ply);
-        data.Push(ent);
-        data.Push(ply.model.GetSkin());
-        data.PushString(model);
+        Base data = new Base();
+        data.SetHandle("player", ply);
+        data.SetHandle("entity", ent);
+        data.SetInt("skin", ply.model.GetSkin());
+        data.SetString("modelname", model);
 
         ply.Kill();
 
@@ -132,14 +131,14 @@ public bool Logic(Player &ply, Entity &ent)
     return true;
 }
 
-public void ExecDelay(ArrayList data)
+public void ExecDelay(Base data)
 {
     char model[256];
     
-    Player ply = data.Get(0);
-    Entity ent = data.Get(1);
-    int skinid = data.Get(2);
-    data.GetString(3, model, sizeof(model));
+    Player ply = view_as<Player>(data.GetHandle("player"));
+    Entity ent = view_as<Entity>(data.GetHandle("entity"));
+    int skinid = data.GetInt("skin");
+    data.GetString("modelname", model, sizeof(model));
 
     delete data;
 
@@ -156,5 +155,5 @@ public void ExecDelay(ArrayList data)
     SetVariantString("facemask");
     ent.Input("SetParentAttachment", ent, ent);
 
-    ent.SetPos(_, new Angle(0.0, 180.0, 90.0));
+    ent.SetPos(_, new Angle(0.0, 180.0, 90.0)); // ent.SetPos(_, ply.GetAng());
 }
