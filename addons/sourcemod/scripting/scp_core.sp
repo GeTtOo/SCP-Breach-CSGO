@@ -56,6 +56,7 @@ Handle OnRoundEndForward;
 Handle OnInputForward;
 Handle OnCallActionForward;
 Handle RegMetaForward;
+Handle Log_PlayerDeathForward;
 
 public Plugin myinfo = {
     name = "[SCP] GameMode",
@@ -87,6 +88,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("EntitySingleton.Push", NativeEntities_Push);
     CreateNative("EntitySingleton.Remove", NativeEntities_Remove);
     CreateNative("EntitySingleton.RemoveByID", NativeEntities_RemoveByID);
+    CreateNative("EntitySingleton.Dissolve", NativeEntities_Dissolve);
     CreateNative("EntitySingleton.IndexUpdate", NativeEntities_IndexUpdate);
     CreateNative("EntitySingleton.Clear", NativeEntities_Clear);
 
@@ -98,8 +100,11 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("WorldTextSingleton.Create", NativeWT_Create);
     CreateNative("WorldTextSingleton.Remove", NativeWT_Remove);
 
+    CreateNative("Player.Give", NativePlayer_GiveWeapon);
     CreateNative("Player.DropWeapons", NativePlayer_DropWeapons);
     CreateNative("Player.RestrictWeapons", NativePlayer_RestrictWeapons);
+
+    CreateNative("Inventory.Give", NativePlayer_Inventory_GiveItem);
 
     CreateNative("Inventory.Drop", NativePlayer_Inventory_Drop);
     CreateNative("Inventory.DropAll", NativePlayer_Inventory_DropAll);
@@ -125,6 +130,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     OnInputForward = CreateGlobalForward("SCP_OnInput", ET_Event, Param_CellByRef, Param_Cell);
     OnCallActionForward = CreateGlobalForward("SCP_OnCallAction", ET_Event, Param_CellByRef);
     RegMetaForward = CreateGlobalForward("SCP_RegisterMetaData", ET_Event);
+    Log_PlayerDeathForward = CreateGlobalForward("SCP_Log_PlayerDeath", ET_Event, Param_CellByRef, Param_CellByRef, Param_Cell, Param_Cell, Param_Cell);
 
     RegPluginLibrary("scp_core");
     return APLRes_Success;
@@ -165,9 +171,6 @@ public void OnMapStart()
     GetCurrentMap(mapName, sizeof(mapName));
     
     gamemode = new GameMode();
-
-    gamemode.SetHandle("clients", player);
-    gamemode.SetHandle("entities", ents);
     
     gamemode.SetHandle("Manager", new Manager());
     gamemode.SetHandle("Nuke", new NuclearWarhead());
@@ -180,13 +183,10 @@ public void OnMapStart()
     AddCommandListener(Command_Ents, "ents");
     AddCommandListener(Command_Player, "player");
     AddCommandListener(Command_Kill, "kill");
+    AddCommandListener(Command_GetMyPos, "getmypos");
+    AddCommandListener(Command_GetEntsInBox, "getentsinbox");
 
-    if (gamemode.config.debug)
-    {
-        AddCommandListener(Command_Debug, "debug");
-        AddCommandListener(Command_GetMyPos, "getmypos");
-        AddCommandListener(Command_GetEntsInBox, "getentsinbox");
-    }
+    if (gamemode.config.debug) AddCommandListener(Command_Debug, "debug");
 
     LoadMetaData();
     
@@ -258,6 +258,7 @@ public void OnClientPostAdminCheck(int id)
 
     ply.SetHook(SDKHook_WeaponSwitch, OnWeaponSwitch);
     ply.SetHook(SDKHook_WeaponCanUse, OnWeaponTake);
+    ply.SetHook(SDKHook_WeaponEquipPost, OnWeaponEquip);
     ply.SetHook(SDKHook_Spawn, OnPlayerSpawn);
     ply.SetHook(SDKHook_SpawnPost, OnPlayerSpawnPost);
     ply.SetHook(SDKHook_OnTakeDamage, OnTakeDamage);
@@ -296,6 +297,7 @@ public void OnClientDisconnect(int id)
 
         ply.RemoveHook(SDKHook_WeaponSwitch, OnWeaponSwitch);
         ply.RemoveHook(SDKHook_WeaponCanUse, OnWeaponTake);
+        ply.RemoveHook(SDKHook_WeaponEquipPost, OnWeaponEquip);
         ply.RemoveHook(SDKHook_Spawn, OnPlayerSpawn);
         ply.RemoveHook(SDKHook_SpawnPost, OnPlayerSpawnPost);
         ply.RemoveHook(SDKHook_OnTakeDamage, OnTakeDamage);
@@ -718,9 +720,48 @@ public void OnTakeDamageAlivePost(int victim, int attacker, int inflictor, float
     if(IsClientExist(victim))
     {
         Player vic = player.GetByID(victim);
+        Player atk = player.GetByID(attacker);
 
         if (vic.health <= 0)
+        {
             vic.DropWeapons();
+            
+            bool logchange = false;
+                
+            Call_StartForward(Log_PlayerDeathForward);
+            Call_PushCellRef(vic);
+            Call_PushCellRef(atk);
+            Call_PushCell(damage);
+            Call_PushCell(damagetype);
+            Call_PushCell(inflictor);
+            Call_Finish(logchange);
+
+            if (logchange) return;
+
+            char vicname[32], vicauth[32];
+            vic.GetName(vicname, sizeof(vicname));
+            vic.GetAuth(vicauth, sizeof(vicauth));
+            
+            if(atk)
+            {
+                char atkname[32], atkauth[32];
+
+                atk.GetName(atkname, sizeof(atkname));
+                atk.GetAuth(atkauth, sizeof(atkauth));
+
+                gamemode.log.Info("%t", "Log_Core_PlayerDead", vicname, vicauth, atkname, atkauth);
+            }
+            else
+            {
+                switch (damagetype)
+                {
+                    case DMG_BLAST:
+                        gamemode.log.Info("%t", "Log_Core_Death_By_Alpha_Warhead",  vicname, vicauth);
+                    default:
+                        gamemode.log.Info("%t", "Log_Core_Suicide",  vicname, vicauth);
+                }
+            }
+        }
     }
 }
 
@@ -767,24 +808,6 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         if (pos) pos.SetBool("lock", false);
 
         gamemode.mngr.GameCheck();
-
-        char vicname[32], vicauth[32];
-        vic.GetName(vicname, sizeof(vicname));
-        vic.GetAuth(vicauth, sizeof(vicauth));
-        
-        if(atk)
-        {
-            char atkname[32], atkauth[32];
-
-            atk.GetName(atkname, sizeof(atkname));
-            atk.GetAuth(atkauth, sizeof(atkauth));
-
-            gamemode.log.Info("%t", "Log_Core_PlayerDead", vicname, vicauth, atkname, atkauth);
-        }
-        else
-        {
-            gamemode.log.Info("%t", "Log_Core_Suicide",  vicname, vicauth);
-        }
     }
 
     return Plugin_Handled;
@@ -796,17 +819,10 @@ public Action OnWeaponTake(int client, int iWeapon)
 
     char classname[64];
     GetEntityClassname(iWeapon, classname, sizeof(classname));
-    
-    ArrayList data = new ArrayList(64);
-    data.Push(ply);
-    data.Push(iWeapon);
-    data.PushString(classname);
-    
-    ply.TimerSimple(1000, "WeaponIdUpdate", data);
 
     bool weaponAllow = false;
 
-    if (ply != null && ply.class != null && ply.class.weapons != null)
+    if (ply && ply.class && ply.class.weapons)
     {
         ArrayList meleeFix = new ArrayList(32);
         meleeFix.PushString("weapon_axe");
@@ -842,7 +858,7 @@ public Action OnWeaponTake(int client, int iWeapon)
         }
     }
 
-    if(ply != null && ply.class != null && ply.IsSCP)
+    if(ply && ply.class && ply.IsSCP)
     {
         return Plugin_Handled;
     }
@@ -853,6 +869,21 @@ public Action OnWeaponTake(int client, int iWeapon)
     }
 
     return Plugin_Continue;
+}
+
+public void OnWeaponEquip(int client, int iWeapon)
+{
+    Player ply = player.GetByID(client);
+
+    char classname[64];
+    GetEntityClassname(iWeapon, classname, sizeof(classname));
+    
+    Base data = new Base();
+    data.SetHandle("player", ply);
+    data.SetInt("weapon", iWeapon);
+    data.SetString("wepname", classname);
+    
+    ply.TimerSimple(1000, "WeaponIdUpdate", data);
 }
 
 public void OnPlayerRunCmdPost(int client, int buttons)
@@ -1042,7 +1073,7 @@ public void LoadModels()
 //
 //////////////////////////////////////////////////////////////////////////////
 
-public SDKHookCB CB_EntUse(int entity, int client)
+public Action CB_EntUse(int entity, int client)
 {
     Player ply = player.GetByID(client);
     Entity ent = ents.Get(entity);
@@ -1074,12 +1105,12 @@ public SDKHookCB CB_EntUse(int entity, int client)
             {
                 ply.PrintNotify("%t", "Inventory full");
             }
-        
-        /*if (blockpickup)
-        {
-            ent.WorldRemove();
-            ents.IndexUpdate(ent);
-        }*/
+    }
+    else
+    {
+        char entname[64];
+        ent.GetClass(entname, sizeof(entname));
+        gamemode.log.Info("Can't find meta data for entity %i - %s", entity, entname);
     }
 }
 
@@ -1334,12 +1365,12 @@ public void UpdateSpectatorInfo()
     delete players;
 }
 
-public void WeaponIdUpdate(ArrayList data)
+public void WeaponIdUpdate(Base data)
 {
-    Player ply = data.Get(0);
-    int weaponid = data.Get(1);
+    Player ply = view_as<Player>(data.GetHandle("player"));
+    int weaponid = data.GetInt("weapon");
     char weaponclass[64];
-    data.GetString(2, weaponclass, sizeof(weaponclass));
+    data.GetString("wepname", weaponclass, sizeof(weaponclass));
     delete data;
 
     int arrsize = GetEntPropArraySize(ply.id, Prop_Send, "m_hMyWeapons");
@@ -1707,7 +1738,7 @@ public Action Command_Kill(int client, const char[] command, int argc)
         return Plugin_Handled;
     }
 
-    ply.Kill();
+    ply.TakeDamage(_, 10000.0, DMG_GENERIC);
 
     return Plugin_Handled;
 }
@@ -2095,10 +2126,7 @@ public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
 public any NativeEntities_GetList(Handle Plugin, int numArgs) { return ents.GetArrayList("entities"); }
 
 public any NativeClients_Add(Handle Plugin, int numArgs) {
-    int id = GetNativeCell(2);
-    Player ply = new Player(id);
-    ents.Push(ply);
-    return ply;
+    return ents.Push(new Player(GetNativeCell(2)));
 }
 
 public any NativeClients_Remove(Handle Plugin, int numArgs) {
@@ -2115,12 +2143,13 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
     EntityMeta entdata = gamemode.meta.GetEntity(EntName);
     
     Entity entity;
-    if (entdata != null)
+    if (entdata)
     {
         entity = new Entity();
         entity.meta = entdata;
         entity.Create();
-        if (entity.meta.onuse) entity.SetHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
+        
+        if (entity.meta.onuse) entity.SetHook(SDKHook_Use, CB_EntUse);
         if (entity.meta.ontouch) entity.SetHook(SDKHook_TouchPost, CB_EntTouch);
     }
     else
@@ -2160,7 +2189,7 @@ public any NativeEntities_Remove(Handle Plugin, int numArgs) {
         Entity ent = entities.Get(idx, 1);
         if (ent.meta)
         {
-            if (ent.meta.onuse) ent.RemoveHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
+            if (ent.meta.onuse) ent.RemoveHook(SDKHook_Use, CB_EntUse);
             if (ent.meta.ontouch) ent.RemoveHook(SDKHook_TouchPost, CB_EntTouch);
         }
         ent.Remove();
@@ -2177,13 +2206,14 @@ public any NativeEntities_Remove(Handle Plugin, int numArgs) {
 
 public any NativeEntities_RemoveByID(Handle Plugin, int numArgs) {
     ArrayList entities = ents.list;
-    int idx = entities.FindValue(GetNativeCell(2), 0);
+    int id = GetNativeCell(2);
+    int idx = entities.FindValue(id, 0);
     if (idx != -1)
     {
         Entity ent = entities.Get(idx, 1);
         if (ent.meta)
         {
-            if (ent.meta.onuse) ent.RemoveHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
+            if (ent.meta.onuse) ent.RemoveHook(SDKHook_Use, CB_EntUse);
             if (ent.meta.ontouch) ent.RemoveHook(SDKHook_TouchPost, CB_EntTouch);
         }
         ent.Remove();
@@ -2191,8 +2221,40 @@ public any NativeEntities_RemoveByID(Handle Plugin, int numArgs) {
     }
     else
     {
-        gamemode.log.Error("Cant find entity in storage. id:%i", idx);
+        gamemode.log.Error("Cant find entity in storage. id:%i", id);
     }
+}
+
+public any NativeEntities_Dissolve(Handle Plugin, int numArgs) {
+    ArrayList entities = ents.list;
+    Entity ent = GetNativeCell(2);
+    int idx = entities.FindValue(ent, 1);
+
+    char targetname[32];
+
+    FormatEx(targetname, sizeof(targetname), "dis_ent_%i", ent.id);
+    ent.SetKV("targetname", targetname);
+
+    Entity disolver = new Entity();
+    disolver.Create("env_entity_dissolver");
+    disolver.SetKV("dissolvetype", "0");
+    disolver.SetKV("target", targetname);
+        
+    if (idx != -1)
+    {
+        ent.Dispose();
+        ents.list.Erase(idx);
+    }
+    else
+    {
+        char classname[32];
+        ent.GetClass(classname, sizeof(classname));
+        gamemode.log.Error("Cant find entity in storage. id:%i, class:%s", ent.id, classname);
+        ent.Dispose();
+    }
+
+    disolver.Input("Dissolve");
+    disolver.Remove();
 }
 
 public any NativeEntities_IndexUpdate(Handle Plugin, int numArgs) {
@@ -2256,6 +2318,55 @@ public any NativeWT_Remove(Handle Plugin, int numArgs) {
     }
 }
 
+public any NativePlayer_GiveWeapon(Handle Plugin, int numArgs) {
+    Player ply = GetNativeCell(1);
+    
+    char itemname[32];
+    GetNativeString(2, itemname, sizeof(itemname));
+
+    Entity item = new Entity(GivePlayerItem(ply.id, itemname));
+    item.SetClass(itemname);
+
+    ents.Push(item);
+
+    return item;
+}
+
+public any NativePlayer_Inventory_GiveItem(Handle Plugin, int numArgs) {
+    Inventory inv = GetNativeCell(1);
+    Player ply = view_as<Player>(inv.GetBase("ply"));
+    
+    char itemname[32];
+    GetNativeString(2, itemname, sizeof(itemname));
+
+    if (inv.list.Length <= gamemode.config.invsize) {
+        EntityMeta entdata = gamemode.meta.GetEntity(itemname);
+
+        if (entdata)
+        {
+            Entity ent = new Entity();
+            ent.meta = entdata;
+            ent.spawned = false;
+            ent.SetString("class", itemname);
+
+            ents.Push(ent);
+            inv.list.Push(ent);
+
+            return ent;
+        }
+        else
+        {
+            gamemode.log.Warning("Can't give item: %s for player with id: %i. (Doesn't have metadata)", itemname, ply.id);
+        }
+    }
+    else
+    {
+        gamemode.log.Info("Can't give item: %s for player with id: %i. (Don't have enough space in inventory)", itemname, ply.id);
+    }
+
+    return view_as<Entity>(null);
+}
+
 public any NativePlayer_DropWeapons(Handle Plugin, int numArgs) {
     Player ply = GetNativeCell(1);
 
@@ -2272,8 +2383,6 @@ public any NativePlayer_DropWeapons(Handle Plugin, int numArgs) {
             
             if (!StrEqual(wepclass, "weapon_fists"))
                 CS_DropWeapon(ply.id, itemid, false, false);
-            else
-                ents.RemoveByID(itemid);
         }
     }
 }
@@ -2325,7 +2434,7 @@ public any NativePlayer_Inventory_Drop(Handle Plugin, int numArgs) {
     .Spawn()
     .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
 
-    if (item.meta.onuse) item.SetHook(SDKHook_Use, view_as<SDKHookCB>(CB_EntUse));
+    if (item.meta.onuse) item.SetHook(SDKHook_Use, CB_EntUse);
     if (item.meta.ontouch) item.SetHook(SDKHook_TouchPost, CB_EntTouch);
 
     ents.IndexUpdate(item);

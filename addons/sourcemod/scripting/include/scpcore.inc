@@ -101,3 +101,5 @@ forward void SCP_OnRoundEnd();
 forward void SCP_OnInput(Player &ply, int buttons);
 
 forward void SCP_OnCallAction(Player &ply);
+
+forward bool SCP_Log_PlayerDeath(Player &vic, Player &atk, float damage, int damagetype, int inflictor);

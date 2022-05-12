@@ -110,40 +110,7 @@ methodmap Inventory < Base {
         return false;
     }
 
-    public bool Give(char[] entclass) {
-        ArrayList inv = this.GetArrayList("inventory");
-
-        if (inv.Length <= gamemode.config.invsize) {
-            EntityMeta entdata = gamemode.meta.GetEntity(entclass);
-    
-            if (entdata != null)
-            {
-                Entity ent = new Entity();
-                ent.meta = entdata;
-                ent.spawned = false;
-                ent.SetString("class", entclass);
-
-                any data[2];
-                data[0] = ent.id;
-                data[1] = ent;
-                
-                gamemode.GetBase("entities").GetArrayList("entities").PushArray(data);
-                inv.Push(ent);
-
-                return true;
-            }
-            else
-            {
-                gamemode.log.Warning("Can't give item: %s to the player id: %i. (Not registered in entities list)", entclass, this.ply.GetInt("id"));
-            }
-        }
-        else
-        {
-            gamemode.log.Info("Can't give item: %s to the player id: %i. (Not enough space in inventory)", entclass, this.ply.GetInt("id"));
-        }
-        
-        return false;
-    }
+    public native Entity Give(char[] entclass);
 
     public bool Pickup(Entity item) {
         ArrayList inv = this.GetArrayList("inventory");

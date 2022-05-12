@@ -46,8 +46,7 @@ methodmap EntitySingleton < Base {
         for (int i=0; i < this.list.Length; i++)
         {
             Entity ent = this.list.Get(i, 1);
-            if (ent != null)
-                entities.Push(ent);
+            if (ent) entities.Push(ent);
         }
         return entities;
     }
@@ -56,8 +55,7 @@ methodmap EntitySingleton < Base {
     {
         ArrayList entities = this.list;
         int idx = entities.FindValue(id, 0);
-        if (idx == -1) return view_as<Entity>(null);
-        return entities.Get(idx, 1);
+        return (idx != -1) ? entities.Get(idx, 1) : view_as<Entity>(null);
     }
     
     public bool TryGet(int id, Entity &ent)
@@ -76,6 +74,8 @@ methodmap EntitySingleton < Base {
     public native void Remove(Entity ent);
 
     public native void RemoveByID(int id);
+
+    public native void Dissolve(Entity ent);
 
     public native bool IndexUpdate(Entity ent);
 

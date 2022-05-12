@@ -178,11 +178,6 @@ methodmap Entity < Base {
                 IntToString(this.meta.spawnflags, flags, sizeof(flags));
                 this.SetKV("spawnflags", flags);
             }
-            
-            if (this.meta.usable) {
-                char funcname[32];
-                this.meta.GetString("function", funcname, sizeof(funcname));
-            }
         }
 
         return this;

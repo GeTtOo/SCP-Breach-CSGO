@@ -209,7 +209,7 @@ methodmap Player < Entity {
 
     public void GetCurWeapon(char[] name, int max_size = 0) { GetClientWeapon(this.id, name, max_size); }
 
-    public int Give(char[] item) { return GivePlayerItem(this.id, item); }
+    public native Entity Give(char[] item);
 
     public native void DropWeapons();
 
@@ -298,22 +298,28 @@ methodmap Player < Entity {
 
         if (this.class.items)
         {
-            JSON_ARRAY items = this.class.items;
-
-            for (int i=0; i < items.Length; i++) {
-                if (items.GetType(i) == String)
+            for (int i=0; i < this.class.items.Length; i++) {
+                if (this.class.items.GetType(i) == String)
                 {
-                    char entclass[32];
-                    items.GetString(i, entclass, sizeof(entclass));
-                    this.inv.Give(entclass);
+                    char itemname[32];
+                    this.class.items.GetString(i, itemname, sizeof(itemname));
+                    this.inv.Give(itemname);
                 }
                 else
                 {
-                    JSON_OBJECT itemsobj = view_as<JSON_OBJECT>(items.GetObject(i));
-                    StringMapSnapshot sitems = itemsobj.Snapshot();
-                    int keylen;
-                    int random = GetRandomInt(1,100);
-                    int count = 0;
+                    JSON_OBJECT items = view_as<JSON_OBJECT>(this.class.items.GetObject(i));
+
+                    if (items.IsArray)
+                    {
+                        char itemname[32];
+                        view_as<JSON_ARRAY>(items).GetString(GetRandomInt(0, view_as<JSON_ARRAY>(items).Length - 1), itemname, sizeof(itemname));
+                        this.Give(itemname);
+                        continue;
+                    }
+                    
+                    StringMapSnapshot sitems = items.Snapshot();
+                    int keylen, random = GetRandomInt(1,100), count = 0;
+
                     for (int k=0; k < sitems.Length; k++) {
                         keylen = sitems.KeyBufferSize(k);
                         char[] chance = new char[keylen];
@@ -321,10 +327,10 @@ methodmap Player < Entity {
                         if (json_is_meta_key(chance)) continue;
 
                         count += StringToInt(chance);
+                        char itemname[32];
                         if (count >= random) {
-                            char entclass[32];
-                            itemsobj.GetString(chance, entclass, sizeof(entclass));
-                            this.inv.Give(entclass);
+                            items.GetString(chance, itemname, sizeof(itemname));
+                            this.inv.Give(itemname);
                             break;
                         }
                     }
@@ -336,56 +342,47 @@ methodmap Player < Entity {
 
         if (this.class.fists)
         {
-            int id = this.Give("weapon_fists");
-            Entity ent = new Entity(id);
-            ent.SetString("class", "weapon_fists");
-
-            any data[2];
-            data[0] = ent.id;
-            data[1] = ent;
-            
-            Base entities;
-            gamemode.GetValue("entities", entities);
-            entities.GetArrayList("entities").PushArray(data); 
-
-            EquipPlayerWeapon(this.id, id);
+            EquipPlayerWeapon(this.id, this.Give("weapon_fists").id);
         }
 
         if (this.class.weapons)
             for (int i=0; i < this.class.weapons.Length; i++) {
-                if (this.class.weapons.GetType(i) != Object) {
+                if (this.class.weapons.GetType(i) == String) {
                     char weapon[32];
                     this.class.weapons.GetString(i, weapon, sizeof(weapon));
-                    Entity ent = new Entity(this.Give(weapon));
-                    ent.SetString("class", weapon);
-
-                    any data[2];
-                    data[0] = ent.id;
-                    data[1] = ent;
-                    
-                    Base entities;
-                    gamemode.GetValue("entities", entities);
-                    entities.GetArrayList("entities").PushArray(data);
+                    this.Give(weapon);
                 }
                 else
                 {
-                    JSON_ARRAY multigive = view_as<JSON_ARRAY>(this.class.weapons.GetObject(i));
+                    JSON_OBJECT weapons = view_as<JSON_OBJECT>(this.class.weapons.GetObject(i));
 
-                    for (int k=0; k < multigive.GetInt(1); k++)
+                    if (weapons.IsArray)
                     {
                         char weapon[32];
-                        multigive.GetString(0, weapon, sizeof(weapon));
-                        Entity ent = new Entity(this.Give(weapon));
-                        ent.SetString("class", weapon);
-
-                        any data[2];
-                        data[0] = ent.id;
-                        data[1] = ent;
-                        
-                        Base entities;
-                        gamemode.GetValue("entities", entities);
-                        entities.GetArrayList("entities").PushArray(data);
+                        view_as<JSON_ARRAY>(weapons).GetString(GetRandomInt(0, view_as<JSON_ARRAY>(weapons).Length - 1), weapon, sizeof(weapon));
+                        this.Give(weapon);
+                        continue;
                     }
+                    
+                    StringMapSnapshot sweapons = weapons.Snapshot();
+                    int keylen, random = GetRandomInt(1,100), count = 0;
+                    
+                    for (int k=0; k < sweapons.Length; k++) {
+                        keylen = sweapons.KeyBufferSize(k);
+                        char[] chance = new char[keylen];
+                        sweapons.GetKey(k, chance, keylen);
+                        if (json_is_meta_key(chance)) continue;
+
+                        count += StringToInt(chance);
+                        char weapon[32];
+                        if (count >= random) {
+                            weapons.GetString(chance, weapon, sizeof(weapon));
+                            this.Give(weapon);
+                            break;
+                        }
+                    }
+
+                    delete sweapons;
                 }
             }
         
