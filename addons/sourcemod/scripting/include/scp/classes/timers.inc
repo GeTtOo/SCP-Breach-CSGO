@@ -77,6 +77,11 @@ methodmap Tmr < Base {
         public set(float time) { this.SetFloat("nextinvoke", time); }
         public get() { return this.GetFloat("nextinvoke"); }
     }
+
+    property bool active {
+        public set(bool val) { this.SetBool("active", val); }
+        public get() { return this.GetBool("active"); }
+    }
 }
 
 methodmap Timers < Base {
@@ -89,6 +94,7 @@ methodmap Timers < Base {
 
     public Tmr Create(char[] name, int delay, int repeations, char[] funcname, any args = false) {
         Tmr timer = new Tmr(GetMyHandle(), name, (float(delay) / float(1000)), repeations, funcname, args);
+        timer.active = true;
         this.GetArrayList("timers").Push(timer);
         return timer;
     }
@@ -100,8 +106,7 @@ methodmap Timers < Base {
         
         for (int i=0; i < list.Length; i++) {
             if (list.Get(i) == timer) {
-                list.Erase(i);
-                delete timer;
+                timer.active = false;
                 return true;
             }
         }
@@ -117,8 +122,7 @@ methodmap Timers < Base {
             Tmr timer = list.Get(i);
             timer.name(timername, sizeof(timername));
             if (StrEqual(timername, name)) {
-                list.Erase(i);
-                delete timer;
+                timer.active = false;
                 return true;
             }
         }
@@ -134,9 +138,7 @@ methodmap Timers < Base {
             Tmr timer = list.Get(i);
             timer.name(timername, sizeof(timername));
             if (StrContains(timername, name) != -1) {
-                list.Erase(i);
-                i--;
-                delete timer;
+                timer.active = false;
             }
         }
     }
@@ -163,12 +165,23 @@ methodmap Timers < Base {
         return this.Create(timername, delay, 1, funcname, args);
     }
 
-    public void Update() {
+    public void Update()
+    {
         ArrayList list = this.GetArrayList("timers");
 
-        for (int i=0; i < list.Length; i++) {
+        for (int i=0; i < list.Length; i++)
+        {
             Tmr timer = list.Get(i);
-            if (GetGameTime() >= timer.nextinvoke) {
+
+            if (!timer.GetBool("active"))
+            {
+                delete timer;
+                list.Erase(i); i--;
+                continue;
+            }
+
+            if (timer.nextinvoke <= GetGameTime())
+            {
 
                 char funcname[64];
                 timer.func(funcname, sizeof(funcname));
@@ -178,18 +191,14 @@ methodmap Timers < Base {
                     Call_PushCell(timer.args);
                 Call_Finish();
 
-                if (!this.IsAlive(timer)) continue; // Dirty fix invalid handle error...
+                //if (!this.IsAlive(timer)) continue; // Dirty fix invalid handle error...
 
                 if (timer.repeations == 1)
                 {
-                    //char name[64];
-                    //timer.name(name, sizeof(name));
-                    //this.Remove(name);
-                    list.Erase(i);
-                    delete timer;
-                    //i--;
+                    timer.active = false;
                 }
-                else if (timer.repeations > 1) {
+                else if (timer.repeations > 1)
+                {
                     timer.nextinvoke += timer.delay;
                     timer.repeations--;
                 }
