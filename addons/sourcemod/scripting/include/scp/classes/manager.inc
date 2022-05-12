@@ -345,8 +345,9 @@ methodmap Manager < Base {
     {
         if (!ply || !target || !target.class || ply == target) return;
         
-        char team[32], class[32];
+        char playername[64], team[32], class[32];
 
+        target.GetName(playername, sizeof(playername));
         target.Team(team, sizeof(team));
         target.class.Name(class, sizeof(class));
 
@@ -365,7 +366,7 @@ methodmap Manager < Base {
 
         char fullinfo[512];
 
-        Format(fullinfo, sizeof(fullinfo), "      %s - %s\n--------------------\n%s", team, class, invstr);
+        Format(fullinfo, sizeof(fullinfo), "      %s: %s - %s\n-------------------------------------------------\n%s", playername, team, class, invstr);
 
         ply.PrintNotify(fullinfo);
     }
