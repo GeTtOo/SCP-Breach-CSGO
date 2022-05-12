@@ -18,10 +18,6 @@ models/eternity/props/scp/scp_427_2.mdl
 models/eternity/props/scp/scp_427_2.dx90.vtx
 models/eternity/props/scp/scp_427_2.vvd
 models/eternity/props/scp/scp_427_2.phy
-models/eternity/props/scp/scp_963_2.mdl
-models/eternity/props/scp/scp_963_2.dx90.vtx
-models/eternity/props/scp/scp_963_2.vvd
-models/eternity/props/scp/scp_963_2.phy
 models/eternity/props/scp/scp_500.mdl
 models/eternity/props/scp/scp_500.dx90.vtx
 models/eternity/props/scp/scp_500.vvd
@@ -42,7 +38,6 @@ models/eternity/props/plastic.mdl
 models/eternity/props/plastic.dx90.vtx
 models/eternity/props/plastic.vvd
 models/eternity/props/plastic.phy
-models/props/coop_autumn/autumn_flashlight/autumn_flashlight.mdl
 models/eternity/props/visor_nv.mdl
 models/eternity/props/visor_nv.dx90.vtx
 models/eternity/props/visor_nv.vvd
@@ -99,9 +94,6 @@ models/player/custom_player/eternity/arms/arms_scp049-2.dx90.vtx
 models/player/custom_player/eternity/arms/arms_scp096.mdl
 models/player/custom_player/eternity/arms/arms_scp096.vvd
 models/player/custom_player/eternity/arms/arms_scp096.dx90.vtx
-models/player/custom_player/eternity/arms/arms_scp966.mdl
-models/player/custom_player/eternity/arms/arms_scp966.vvd
-models/player/custom_player/eternity/arms/arms_scp966.dx90.vtx
 materials/models/eternity/overlays/cadet_en_fh.vtf
 materials/models/eternity/overlays/chaos_en_fh.vtf
 materials/models/eternity/overlays/commander_en_fh.vtf
