@@ -223,7 +223,7 @@
     "visor_nv"
     {
         "en"        "Nightvision googles"
-        "ru"        "Очки ночного видинья"
+        "ru"        "Очки ночного виденья"
     }
     "visor_nv_info"
     {

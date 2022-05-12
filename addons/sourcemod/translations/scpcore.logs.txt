@@ -83,4 +83,10 @@
         "en"        "Player {1} <{2}> decided to leave this cruel world"
         "ru"        "Игрок {1} <{2}> решил покинуть этот жестокий мир"
     }
+    "Log_Core_Death_By_Alpha_Warhead"
+    {
+        "#format"   "{1:s},{2:s}"
+        "en"        "Player {1} <{2}> dead by alpha warhead"
+        "ru"        "Игрок {1} <{2}> погиб при подрыве боеголовки"
+    }
 }
