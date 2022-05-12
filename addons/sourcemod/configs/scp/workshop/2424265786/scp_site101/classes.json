@@ -126,7 +126,7 @@
                     "skin":0
                 },
                 "overlay":"drbright",
-                "pos":{"vec":[-2751,-2967,0]},
+                "pos":{"vec":[-1281,-2370,0],"ang":[23,-179,0]},
                 "escape":{
                     "trigger":330025,
                     "team":"MTF",
@@ -140,7 +140,7 @@
                 "health":180,
                 "armor":50,
                 "items":["card_major_scientist"],
-                "weapons":[["weapon_healthshot", 2]],
+                "weapons":["weapon_healthshot"],
                 "model":{
                     "id":"scientist",
                     "bodygroups":{
@@ -166,7 +166,11 @@
             "Security": {
                 "percent":10,
                 "items":["card_guard"],
-                "weapons":["weapon_mp5sd","weapon_usp_silencer", "weapon_taser"],
+                "weapons":[
+                    ["weapon_mp7","weapon_mp5sd","weapon_mac10"],
+                    ["weapon_usp_silencer","weapon_cz75a"],
+                    "weapon_taser"
+                ],
                 "model":{
                     "id":"mtf",
                     "bodygroups":{
@@ -207,8 +211,17 @@
                 "speed":260,
                 "multipler":1.0,
                 "overlay":"commander",
-                "items":["card_mog_commander", "radio", "visor_nv"],
-                "weapons":["weapon_sg556", "weapon_deagle", "weapon_healthshot", "weapon_taser"],
+                "items":[
+                    "card_mog_commander",
+                    "radio",
+                    "visor_nv"
+                ],
+                "weapons":[
+                    ["weapon_sg556","weapon_m4a1_silencer","weapon_m4a1"],
+                    ["weapon_deagle","weapon_revolver"],
+                    "weapon_healthshot",
+                    "weapon_taser"
+                ],
                 "model":{
                     "id":"mtf",
                     "bodygroups":{
@@ -276,6 +289,9 @@
                 },
                 "overlay":"cadet",
                 "pos": [
+                    {"vec":[-10300,-5548,1712],"ang":[0,-19,0]},
+                    {"vec":[-10313,-6330,1712],"ang":[0,17,0]},
+                    {"vec":[-10244,-5951,1699],"ang":[-1,0,0]},
                     {"vec":[-10888,-5685,1699]},
                     {"vec":[-10888,-5763,1699]},
                     {"vec":[-10888,-5848,1699]},
@@ -306,10 +322,7 @@
                     {"vec":[-10795,-5560,1712]},
                     {"vec":[-10713,-5560,1712]},
                     {"vec":[-10599,-5560,1712]},
-                    {"vec":[-10853,-5560,1712]},
-                    {"vec":[-10795,-5560,1712]},
-                    {"vec":[-10713,-5560,1712]},
-                    {"vec":[-10599,-5560,1712]}
+                    {"vec":[-10853,-5560,1712]}
                 ]
             },
             "Sapper": {
@@ -341,7 +354,7 @@
                 "armor":500,
                 "helmet":true,
                 "items":["card_mog_lieutenant", "radio", "visor_nv"],
-                "weapons":["weapon_m4a1", "weapon_p250", ["weapon_healthshot", 5], "weapon_taser"],
+                "weapons":[{"51":"weapon_m4a1", "49":"weapon_m4a1_silencer"}, "weapon_p250", "weapon_healthshot", "weapon_taser"],
                 "model":{
                     "id":"mtf",
                     "bodygroups":{
@@ -356,7 +369,11 @@
                     "skin":4
                 },
                 "overlay":"lieutenant_medic",
-                "pos":{"vec":[-10800,-5950,1715]}
+                "pos":[
+                    {"vec":[-10800,-5950,1715]},
+                    {"vec":[-10427,-6137,1699],"ang":[1,11,0]},
+                    {"vec":[-10317,-5725,1699],"ang":[-1,-1,0]}
+                ]
             }
         }
     },
@@ -483,8 +500,15 @@
                 "health":180,
                 "armor":200,
                 "speed":234,
-                "items":["card_chaos"],
-                "weapons":["weapon_xm1014", "weapon_revolver", "weapon_shield", "weapon_hegrenade", "weapon_smokegrenade"],
+                "items":[
+                    "card_chaos"
+                ],
+                "weapons":[
+                    ["weapon_xm1014","weapon_mag7"],
+                    "weapon_revolver",
+                    "weapon_hegrenade",
+                    ["weapon_shield","weapon_smokegrenade"]
+                ],
                 "model":{
                     "id":"chaos",
                     "bodygroups":{
@@ -534,6 +558,7 @@
                 "percent":20,
                 "health":7800,
                 "model":"models/player/custom_player/eternity/scp_049.mdl",
+                "handsmodel":"models/player/custom_player/eternity/arms/arms_scp049.mdl",
                 "overlay":"scp-049",
                 "pos":{"vec":[-8455,975,2],"ang":[0,125,0]},
                 "doors":[501,504],
@@ -555,6 +580,7 @@
                 "health":20000,
                 "speed":130,
                 "model":"models/player/custom_player/eternity/scp096.mdl",
+                "handsmodel":"models/player/custom_player/eternity/arms/arms_scp096.mdl",
                 "overlay":"scp-096",
                 "pos":{"vec":[-13250, -2550, 0]},
                 "doors":[223,224],
@@ -567,7 +593,7 @@
                 "health":10000,
                 "speed":220,
                 "model":"models/player/custom_player/eternity/scp_106.mdl",
-                "handsmodel":"models/player/custom_player/eternity/arms_scp106.mdl",
+                "handsmodel":"models/player/custom_player/eternity/arms/arms_scp106.mdl",
                 "overlay":"scp-106",
                 "pos":{"vec":[-11110,520,-365]},
                 "comment":"Ded"
@@ -600,6 +626,7 @@
                 "health":4000,
                 "speed":250,
                 "multipler":1.2,
+                "handsmodel":"models/player/custom_player/eternity/arms/arms_scp966.mdl",
                 "overlay":"scp-996",
                 "doors":[893,894],
                 "comment":"ツ"
