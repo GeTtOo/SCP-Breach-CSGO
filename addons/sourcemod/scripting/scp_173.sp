@@ -116,6 +116,23 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
     return Plugin_Continue;
 }
 
+public bool SCP_Log_PlayerDeath(Player &vic, Player &atk, float damage, int damagetype)
+{
+    if (atk && atk.class.Is("173") && damagetype == DMG_CRUSH)
+    {
+        char vicname[32], vicauth[32], atkname[32], atkauth[32];
+        vic.GetName(vicname, sizeof(vicname));
+        vic.GetAuth(vicauth, sizeof(vicauth));
+
+        atk.GetName(atkname, sizeof(atkname));
+        atk.GetAuth(atkauth, sizeof(atkauth));
+
+        gamemode.log.Info("Игрок %s <%s> сломал шею игроку %s <%s>", atkname, atkauth, vicname, vicauth);
+    }
+
+    return true;
+}
+
 public void CheckVisualContact(Player ply) 
 {
     if (ply != null && ply.class != null && ply.IsAlive() && ply.class.Is("173")) 
