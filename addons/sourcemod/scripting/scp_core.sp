@@ -1584,6 +1584,18 @@ public void SpawnItemsOnMap()
         for (int v=0; v < rawDataArr.Length; v++) 
         {
             JSON_OBJECT data = view_as<JSON_OBJECT>(rawDataArr.GetObject(v));
+
+            if (data.IsArray)
+            {
+                data = view_as<JSON_OBJECT>(view_as<JSON_ARRAY>(data).GetObject(GetRandomInt(0, view_as<JSON_ARRAY>(data).Length - 1)));
+                
+                ents.Create(item)
+                .SetPos(data.GetVector("vec"), data.GetAngle("ang"))
+                .Spawn();
+                
+                continue;
+            }
+            
             StringMapSnapshot sdata = data.Snapshot();
 
             int random = GetRandomInt(1,100);
@@ -1603,11 +1615,8 @@ public void SpawnItemsOnMap()
                     if (count >= random) {
                         data = data.GetObject(strchance);
 
-                        Vector pos = data.GetVector("vec");
-                        Angle ang = data.GetAngle("ang");
-
                         ents.Create(item)
-                        .SetPos(pos, ang)
+                        .SetPos(data.GetVector("vec"), data.GetAngle("ang"))
                         .Spawn();
                         
                         delete sdata;
