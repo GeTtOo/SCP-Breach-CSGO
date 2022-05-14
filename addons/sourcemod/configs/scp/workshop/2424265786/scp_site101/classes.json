@@ -580,7 +580,7 @@
                 "health":20000,
                 "speed":130,
                 "model":"models/player/custom_player/eternity/scp096.mdl",
-                "handsmodel":"models/player/custom_player/eternity/arms/arms_scp096.mdl",
+                "handsmodel_":"models/player/custom_player/eternity/arms/arms_scp096.mdl",
                 "overlay":"scp-096",
                 "pos":{"vec":[-13250, -2550, 0]},
                 "doors":[223,224],
@@ -593,7 +593,7 @@
                 "health":10000,
                 "speed":220,
                 "model":"models/player/custom_player/eternity/scp_106.mdl",
-                "handsmodel":"models/player/custom_player/eternity/arms/arms_scp106.mdl",
+                "handsmodel_":"models/player/custom_player/eternity/arms/arms_scp106_v2.mdl",
                 "overlay":"scp-106",
                 "pos":{"vec":[-11110,520,-365]},
                 "comment":"Ded"

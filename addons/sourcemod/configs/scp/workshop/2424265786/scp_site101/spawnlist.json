@@ -22,7 +22,7 @@
     ],
     "weapon_p250":[
         {"chance":50,"vec":[-5816,-1622,37],"ang":[0,146,96],"comment":"Lite zone: Armory"},
-        {"chance":50,"vec":[-5848,-1633,40],"ang":[0,-90,0],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-6143,-1577,33],"ang":[1,-95,90],"comment":"Lite zone: Armory"},
         {"chance":50,"vec":[-5744,-6182,79],"ang":[0,-90,0],"comment":"Intercom"},
         {"chance":50,"vec":[-9429,2460,40],"ang":[0,180,0],"comment":"Heavy Zone: Armory"},
         {"chance":50,"vec":[-9429,2435,40],"ang":[0,180,0],"comment":"Heavy Zone: Armory"},
@@ -69,7 +69,10 @@
         {"chance":50,"vec":[-6116,-1440,0],"ang":[0,-42,0],"comment":"Lite zone: Armory"},
         {"chance":50,"vec":[-5762,-1624,37],"ang":[1,179,85],"comment":"Lite zone: Armory"},
         {"chance":50,"vec":[-5858,-1629,37],"ang":[1,133,85],"comment":"Lite zone: Armory"},
-        {"chance":50,"vec":[-5870,-1539,40],"ang":[0,-90,0],"comment":"Lite zone: Armory (joke)"}
+        [
+            {"vec":[-5866,-1570,37],"ang":[1,92,85],"comment":"Lite zone: Armory"},
+            {"vec":[-5870,-1539,40],"ang":[0,-90,0],"comment":"Lite zone: Armory (joke)"}
+        ]
     ],
     "weapon_ump45":[
     ],
@@ -360,9 +363,11 @@
         {"chance":60,"vec":[1322,-2501,104],"ang":[0,-180,0],"comment":"Lite zone: Server room"},
         {"chance":42,"vec":[-1928,-628,266],"ang":[360,338,90],"comment":"Lite zone: SCP-173"},
         {"chance":51,"vec":[-5469,-3216,0],"ang":[0,70,0],"comment":"Lite zone: SCP-457"},
-        {"chance":20,"vec":[-7590,-5983,239],"ang":[0,-135,0],"comment":"Nuclear Control room"},
-        {"chance":20,"vec":[-7904,-6140,238],"ang":[0,-125,0],"comment":"Nuclear Control room"},
-        {"chance":20,"vec":[-7949,-5847,236],"ang":[0,-175,0],"comment":"Nuclear Control room"},
+        {
+            "40":{"vec":[-7570,-6011,240],"ang":[0,154,90],"comment":"Nuclear Control room"},
+            "30":{"vec":[-7891,-6157,240],"ang":[0,210,90],"comment":"Nuclear Control room"},
+            "20":{"vec":[-7796,-5820,256],"ang":[354,255,92],"comment":"Nuclear Control room"}
+        },
         {"chance":20,"vec":[-7565,-5747,0],"ang":[0,135,0],"comment":"Nuke Reactor zone"},
         {"chance":20,"vec":[-8736,-5262,-4],"ang":[0,-65,0],"comment":"Nuke Reactor zone"},
         {"chance":60,"vec":[-8020,298,213],"ang":[0,90,0],"comment":"Heavy Zone: SCP-035"},
