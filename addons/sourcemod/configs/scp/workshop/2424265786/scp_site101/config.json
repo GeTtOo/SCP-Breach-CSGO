@@ -27,8 +27,6 @@
         "ast":1500,
         "autostart":true,
         "killpos":1690,
-        "sound":"*/scp/warhead_announcement.mp3",
-        "cancelsound":"*/scp/warhead_canceled.mp3",
         "buttons":{
             "ready":356001,
             "active":356023,
@@ -108,8 +106,8 @@
         "buttonid":946850,
         "localdistance":800,
         "sound": {
-            "start":"scp/other/intercom_start.mp3",
-            "stop":"scp/other/intercom_stop.mp3"
+            "start":"eternity/scp/other/intercom_start.mp3",
+            "stop":"eternity/scp/other/intercom_stop.mp3"
         }
     },
     "[SCP] 914": {
@@ -122,7 +120,7 @@
         "distance":[0, 425, -1],
         "sound": {
             "playerkill": [
-                "*/scp/914_player_rough.mp3"
+                "*/eternity/scp/914/player_rough.mp3"
             ]
         }
     },
@@ -142,9 +140,9 @@
         ],
         "sound": {
             "doorbroke":[
-                "*/scp/096/doorbroke1.mp3",
-                "*/scp/096/doorbroke2.mp3",
-                "*/scp/096/doorbroke3.mp3"
+                "*/eternity/scp/096/doorbroke1.mp3",
+                "*/eternity/scp/096/doorbroke2.mp3",
+                "*/eternity/scp/096/doorbroke3.mp3"
             ]
         }
     },
@@ -155,14 +153,14 @@
         "minhpscale":3500,
         "sound": {
             "neckbroke":[
-                "*/scp/173/neck1.mp3",
-                "*/scp/173/neck2.mp3",
-                "*/scp/173/neck3.mp3"
+                "*/eternity/scp/173/neck1.mp3",
+                "*/eternity/scp/173/neck2.mp3",
+                "*/eternity/scp/173/neck3.mp3"
             ],
             "death": [
-                "*/scp/173/death1.mp3",
-                "*/scp/173/death2.mp3",
-                "*/scp/173/death3.mp3"
+                "*/eternity/scp/173/death1.mp3",
+                "*/eternity/scp/173/death2.mp3",
+                "*/eternity/scp/173/death3.mp3"
             ]
         }
     },

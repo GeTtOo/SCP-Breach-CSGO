@@ -574,12 +574,21 @@ public int MenuHandler_Reinforce(Menu hMenu, MenuAction action, int client, int 
         {
             char path[128], patchcheck[128], langcode[3];
 
-            gamemode.mngr.GetServerLangInfo(langcode, sizeof(langcode));
-            Format(path, sizeof(path), "scp/other/%s_reinforced_%s.mp3", team, langcode);
-            Format(patchcheck, sizeof(patchcheck), "sound/scp/other/%s_reinforced_%s.mp3", team, langcode);
-            
-            if (FileExists(patchcheck, true))
-                gamemode.mngr.PlayNonCheckSoundToAll(path);
+            ArrayList players = player.GetAll();
+
+            for (int i=0; i < players.Length; i++)
+            {
+                Player ply = players.Get(i);
+
+                ply.GetLangInfo(langcode, sizeof(langcode));
+                Format(path, sizeof(path), "eternity/scp/other/%s/%s_reinforced.mp3", langcode, team);
+                Format(patchcheck, sizeof(patchcheck), "sound/%s", path);
+
+                if (FileExists(patchcheck, true))
+                    ply.PlayNonCheckSound(path);
+            }
+
+            delete players;
         }
 
         char adminname[32], adminauth[32];

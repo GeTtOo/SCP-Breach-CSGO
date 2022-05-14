@@ -128,9 +128,11 @@ public bool SCP_Log_PlayerDeath(Player &vic, Player &atk, float damage, int dama
         atk.GetAuth(atkauth, sizeof(atkauth));
 
         gamemode.log.Info("Игрок %s <%s> сломал шею игроку %s <%s>", atkname, atkauth, vicname, vicauth);
+
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 public void CheckVisualContact(Player ply) 

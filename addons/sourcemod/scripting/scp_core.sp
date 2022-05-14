@@ -621,7 +621,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                         if (idpad.HasProp("m_nSkin"))
                         {
                             idpad.SetProp("m_nSkin", (ply.lang == 22) ? 1 : 4); // 22 = ru lang code
-                            gamemode.mngr.PlayAmbient("*/scp/other/access_granted.mp3", idpad);
+                            gamemode.mngr.PlayAmbient("*/eternity/scp/other/access_granted.mp3", idpad);
                             gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
                         }
                     }
@@ -634,7 +634,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                         if (idpad.HasProp("m_nSkin"))
                         {
                             idpad.SetProp("m_nSkin", (ply.lang == 22) ? 2 : 5);
-                            gamemode.mngr.PlayAmbient("*/scp/other/access_denied.mp3", idpad);
+                            gamemode.mngr.PlayAmbient("*/eternity/scp/other/access_denied.mp3", idpad);
                             gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
                         }
 
@@ -720,7 +720,10 @@ public void OnTakeDamageAlivePost(int victim, int attacker, int inflictor, float
     if(IsClientExist(victim))
     {
         Player vic = player.GetByID(victim);
-        Player atk = player.GetByID(attacker);
+        Player atk = null;
+        
+        if(IsClientExist(attacker))
+            atk = player.GetByID(attacker);
 
         if (vic.health <= 0)
         {
@@ -757,6 +760,8 @@ public void OnTakeDamageAlivePost(int victim, int attacker, int inflictor, float
                 {
                     case DMG_BLAST:
                         gamemode.log.Info("%t", "Log_Core_Death_By_Alpha_Warhead",  vicname, vicauth);
+                    case DMG_RADIATION:
+                        gamemode.log.Info("%t", "Log_Core_Death_By_Radiation",  vicname, vicauth);
                     default:
                         gamemode.log.Info("%t", "Log_Core_Suicide",  vicname, vicauth);
                 }
@@ -1143,7 +1148,7 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int idx)
         
         if (!item) return;
 
-        ply.PlayNonCheckSound("scp/menu/select.mp3");
+        ply.PlayNonCheckSound("eternity/scp/menu/select.mp3");
 
         char class[32];
         item.GetClass(class, sizeof(class));
@@ -1256,7 +1261,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                         if (item.meta.GetString("usesound", path, sizeof(path)))
                             ply.PlayNonCheckSound(path);
                         else
-                            ply.PlayNonCheckSound("scp/menu/select.mp3");
+                            ply.PlayNonCheckSound("eternity/scp/menu/select.mp3");
 
                         char funcname[32];
                         item.meta.onuse.name(funcname, sizeof(funcname));
@@ -1273,7 +1278,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                     
                     if (item)
                     {
-                        ply.PlayNonCheckSound("scp/menu/select.mp3");
+                        ply.PlayNonCheckSound("eternity/scp/menu/select.mp3");
 
                         char class[64], classname[64];
                         item.GetClass(class, sizeof(class));
@@ -1307,7 +1312,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                         if (item.meta.GetString("dropsound", path, sizeof(path)))
                             ply.PlayNonCheckSound(path);
                         else
-                            ply.PlayNonCheckSound("scp/menu/select.mp3");
+                            ply.PlayNonCheckSound("eternity/scp/menu/select.mp3");
                     }
                 }
             }
@@ -1670,12 +1675,21 @@ public void CombatReinforcement()
         {
             char path[128], patchcheck[128], langcode[3];
 
-            gamemode.mngr.GetServerLangInfo(langcode, sizeof(langcode));
-            Format(path, sizeof(path), "scp/other/%s_reinforced_%s.mp3", teamname, langcode);
-            Format(patchcheck, sizeof(patchcheck), "sound/scp/other/%s_reinforced_%s.mp3", teamname, langcode);
-            
-            if (FileExists(patchcheck, true))
-                gamemode.mngr.PlayNonCheckSoundToAll(path);
+            ArrayList players = player.GetAll();
+
+            for (int i=0; i < players.Length; i++)
+            {
+                Player ply = players.Get(i);
+
+                ply.GetLangInfo(langcode, sizeof(langcode));
+                Format(path, sizeof(path), "eternity/scp/other/%s/%s_reinforced.mp3", langcode, teamname);
+                Format(patchcheck, sizeof(patchcheck), "sound/%s", path);
+
+                if (FileExists(patchcheck, true))
+                    ply.PlayNonCheckSound(path);
+            }
+
+            delete players;
         }
 
         delete teams;
@@ -2066,7 +2080,7 @@ public void SCP_OnInput(Player &ply, int buttons)
             ply.SetBool("ActionAvailable", false);
             ply.TimerSimple(1000, "ActionUnlock", ply);
 
-            ply.PlayNonCheckSound("scp/menu/select.mp3");
+            ply.PlayNonCheckSound("eternity/scp/menu/select.mp3");
 
             if (!ply.IsSCP)
                 InventoryDisplay(ply);

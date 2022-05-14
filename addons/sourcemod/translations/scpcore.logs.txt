@@ -89,4 +89,10 @@
         "en"        "Player {1} <{2}> dead by alpha warhead"
         "ru"        "Игрок {1} <{2}> погиб при подрыве боеголовки"
     }
+    "Log_Core_Death_By_Radiation"
+    {
+        "#format"   "{1:s},{2:s}"
+        "en"        "Player {1} <{2}> dead by radiation"
+        "ru"        "Игрок {1} <{2}> погиб от острой лучевой болезни"
+    }
 }

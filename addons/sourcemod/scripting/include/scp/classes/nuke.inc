@@ -108,10 +108,23 @@ methodmap NuclearWarhead < Base {
     }
 
     public void Activate() {
-        char sound[128];
-        gamemode.config.nuke.sound(sound, sizeof(sound));
+        char path[128], patchcheck[128], langcode[3];
 
-        gamemode.mngr.PlaySoundToAll(sound, SNDCHAN_ITEM);
+        ArrayList players = player.GetAll();
+
+        for (int i=0; i < players.Length; i++)
+        {
+            Player ply = players.Get(i);
+
+            ply.GetLangInfo(langcode, sizeof(langcode));
+            Format(path, sizeof(path), "*/eternity/scp/other/%s/warhead_start.mp3", langcode);
+            Format(patchcheck, sizeof(patchcheck), "sound/eternity/scp/other/%s/warhead_start.mp3", langcode);
+
+            if (FileExists(patchcheck, true))
+                ply.PlaySound(path, SNDCHAN_ITEM);
+        }
+
+        delete players;
 
         gamemode.timer.Create("SCP_ALPHA_WARHEAD_CALL_EXPLODE", gamemode.config.nuke.time * 1000, 1, "NukeExplode");
         gamemode.timer.Create("SCP_ALPHA_WARHEAD_DOOR_CONTROLLER", (gamemode.config.nuke.time - 10) * 1000, 1, "ClosingDoorBeforeNukeExplode");
@@ -160,12 +173,30 @@ methodmap NuclearWarhead < Base {
         gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_COUNTDOWN");
         gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_AUTO_COUNTDOWN");
 
-        char sound[128];
-        gamemode.config.nuke.sound(sound, sizeof(sound));
-        gamemode.mngr.StopSoundAll(sound, SNDCHAN_ITEM);
+        char path[128], patchcheck[128], langcode[3];
 
-        gamemode.config.nuke.cancelsound(sound, sizeof(sound));
-        gamemode.mngr.PlaySoundToAll(sound, SNDCHAN_ITEM);
+        ArrayList players = player.GetAll();
+
+        for (int i=0; i < players.Length; i++)
+        {
+            Player ply = players.Get(i);
+
+            ply.GetLangInfo(langcode, sizeof(langcode));
+            
+            Format(path, sizeof(path), "*/eternity/scp/other/%s/warhead_start.mp3", langcode);
+            Format(patchcheck, sizeof(patchcheck), "sound/eternity/scp/other/%s/warhead_start.mp3", langcode);
+
+            if (FileExists(patchcheck, true))
+                ply.StopSound(path, SNDCHAN_ITEM);
+
+            Format(path, sizeof(path), "*/eternity/scp/other/%s/warhead_canceled.mp3", langcode);
+            Format(patchcheck, sizeof(patchcheck), "sound/eternity/scp/other/%s/warhead_canceled.mp3", langcode);
+
+            if (FileExists(patchcheck, true))
+                ply.PlaySound(path, SNDCHAN_ITEM);
+        }
+
+        delete players;
 
         this.Update("Canceled");
     }

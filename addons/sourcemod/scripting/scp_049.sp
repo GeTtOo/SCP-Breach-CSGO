@@ -36,17 +36,17 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-char sounds[10][32] = {
-    { "*/scp/049/049_2.wav" },
-    { "*/scp/049/049_3.wav" }, 
-    { "*/scp/049/049_4.wav" },  
-    { "*/scp/049/049_5.wav" }, 
-    { "*/scp/049/049_6.wav" },
-    { "*/scp/049/049_7.wav" },
-    { "*/scp/049/049_8.wav" },
-    { "*/scp/049/049_alert_1.wav" },
-    { "*/scp/049/049_alert_2.wav" },
-    { "*/scp/049/049_alert_3.wav" }
+char sounds[10][64] = {
+    { "*/eternity/scp/049/1.wav" },
+    { "*/eternity/scp/049/2.wav" }, 
+    { "*/eternity/scp/049/3.wav" },  
+    { "*/eternity/scp/049/4.wav" }, 
+    { "*/eternity/scp/049/5.wav" },
+    { "*/eternity/scp/049/6.wav" },
+    { "*/eternity/scp/049/7.wav" },
+    { "*/eternity/scp/049/alert_1.wav" },
+    { "*/eternity/scp/049/alert_2.wav" },
+    { "*/eternity/scp/049/alert_3.wav" }
 };
 
 int soundstime[10] = {12,2,2,2,3,4,5,1,1,4};
