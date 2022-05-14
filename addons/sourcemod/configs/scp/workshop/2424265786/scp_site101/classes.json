@@ -567,6 +567,7 @@
             "049_2": {
                 "autospawn":false,
                 "health":4500,
+                "handsmodel":"models/player/custom_player/eternity/arms/arms_scp049-2.mdl",
                 "comment":"049-2"
             },
             "079": {
@@ -593,7 +594,7 @@
                 "health":10000,
                 "speed":220,
                 "model":"models/player/custom_player/eternity/scp_106.mdl",
-                "handsmodel_":"models/player/custom_player/eternity/arms/arms_scp106_v2.mdl",
+                "handsmodel":"models/player/custom_player/eternity/arms/arms_scp106.mdl",
                 "overlay":"scp-106",
                 "pos":{"vec":[-11110,520,-365]},
                 "comment":"Ded"
@@ -626,6 +627,7 @@
                 "health":4000,
                 "speed":250,
                 "multipler":1.2,
+                "model":"models/player/custom_player/eternity/scp966.mdl",
                 "handsmodel":"models/player/custom_player/eternity/arms/arms_scp966.mdl",
                 "overlay":"scp-996",
                 "doors":[893,894],

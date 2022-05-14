@@ -186,16 +186,12 @@
         {"chance":67,"vec":[-6744,-2031,0],"ang":[0,-23,0],"comment":"Heavy Zone: Cube"},
         {"chance":50,"vec":[-9549,2524,4],"ang":[0,5,0],"comment":"Heavy Zone: Armory"}, 
         {"chance":50,"vec":[-9543,2525,4],"ang":[0,5,0],"comment":"Heavy Zone: Armory"},
-        {"chance":90,"vec":[-11179,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
-        {"chance":90,"vec":[-11192,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
-        {"chance":90,"vec":[-11207,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
-        {"chance":90,"vec":[-11223,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
-        {"chance":90,"vec":[-11234,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
-        {"chance":90,"vec":[-11247,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
-        {"chance":90,"vec":[-11259,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
-        {"chance":90,"vec":[-11275,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
-        {"chance":90,"vec":[-11289,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"}, 
-        {"chance":90,"vec":[-11299,-3108,-1004],"ang":[0,-90,0],"comment":"Security Spawn"} 
+        {"chance":90,"vec":[-11185,-3118,-998],"ang":[90,180,-90],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-11195,-3118,-998],"ang":[90,180,-90],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-11205,-3118,-998],"ang":[90,180,-90],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-11215,-3118,-998],"ang":[90,180,-90],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-11225,-3118,-998],"ang":[90,180,-90],"comment":"Security Spawn"},
+        {"chance":90,"vec":[-11235,-3118,-998],"ang":[90,180,-90],"comment":"Security Spawn"}
     ],
     "500_panacea":[
         {"chance":50,"vec":[-6807,-1675,1],"ang":[0,-40,0],"comment":"Heavy Zone: Cube"},
