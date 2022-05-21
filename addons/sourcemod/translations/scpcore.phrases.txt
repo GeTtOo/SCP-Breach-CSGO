@@ -142,11 +142,6 @@
         "en"        "Select a point"
         "ru"        "Выберите точку:"
     }
-    "Give Item"
-    {
-        "en"        "Give item"
-        "ru"        "Выберите предмет"
-    }
     "Inventory"
     {
         "en"        "Inventory"
@@ -237,5 +232,35 @@
     {
         "en"        "Nuke"
         "ru"        "Альфа-боеголовка"
+    }
+    "Give Weapon"
+    {
+        "en"        "Give weapon"
+        "ru"        "Выдать оружие"
+    }
+    "Primary"
+    {
+        "en"        "Primary"
+        "ru"        "Основное"
+    }
+    "Secondary"
+    {
+        "en"        "Secondary"
+        "ru"        "Пистолеты"
+    }
+    "Melee"
+    {
+        "en"        "Melee"
+        "ru"        "Холодное"
+    }
+    "Grenades"
+    {
+        "en"        "Grenades"
+        "ru"        "Гранаты"
+    }
+    "Other"
+    {
+        "en"        "Other"
+        "ru"        "Остальное"
     }
 }

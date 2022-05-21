@@ -41,7 +41,8 @@ enum TypeAdminAction
     //MOVE_TO_SPEC,
     MOVE_TO_ADMIN_ZONE,
     ROUND_RESTART,
-    DESTROY_SITE
+    DESTROY_SITE,
+    GIVE_PLAYER_WEAPON
 }
 
 methodmap AdminAction < Base
@@ -225,13 +226,15 @@ public void DisplayAdminMenu(int client)
         FormatEx(buffer, sizeof(buffer), "%T", "Door access", client);
         hMenu.AddItem("item6", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(IGNORE_DOOR_ACCESS))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
         /*FormatEx(buffer, sizeof(buffer), "%T", "Move to spec", client);
-        hMenu.AddItem("item4", buffer, GetAdminFlag(GetUserAdmin(this.id), GetFlagFromConfig(MOVE_TO_SPEC))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);*/
+        hMenu.AddItem("item4", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(MOVE_TO_SPEC))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);*/
         FormatEx(buffer, sizeof(buffer), "%T", "Talk", client);
         hMenu.AddItem("item5", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(MOVE_TO_ADMIN_ZONE))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
         FormatEx(buffer, sizeof(buffer), "%T", "Restart", client);
         hMenu.AddItem("item8", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(ROUND_RESTART))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
         FormatEx(buffer, sizeof(buffer), "%T", "Explode", client);
         hMenu.AddItem("item9", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(DESTROY_SITE))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+        FormatEx(buffer, sizeof(buffer), "%T", "Give Weapon", client);
+        hMenu.AddItem("item10", buffer, GetAdminFlag(GetUserAdmin(client), GetFlagFromConfig(GIVE_PLAYER_ITEM))? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
 
         hMenu.Display(client, 30);
     }
@@ -370,6 +373,10 @@ public int MenuHandler_ScpAdminMenuTarget(Menu hMenu, MenuAction action, int cli
                 case GIVE_PLAYER_ITEM:
                 {
                     RenderGiveMenu(client);
+                }
+                case GIVE_PLAYER_WEAPON:
+                {
+                    RenderWeaponMenu(client);
                 }
                 default:
                 {
@@ -636,7 +643,10 @@ public int MenuHandler_GiveMenu(Menu hMenu, MenuAction action, int client, int i
             char itemclass[32];
             hMenu.GetItem(item, itemclass, sizeof(itemclass));
 
-            AdminMenu.Get(client).target.inv.Give(itemclass);
+            if(StrContains(itemclass, "weapon", true) == 0)
+                AdminMenu.Get(client).target.Give(itemclass);
+            else
+                AdminMenu.Get(client).target.inv.Give(itemclass);
 
             char adminname[32], adminauth[32], targetname[32], targetauth[32];
             AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));
@@ -646,6 +656,118 @@ public int MenuHandler_GiveMenu(Menu hMenu, MenuAction action, int client, int i
 
             gamemode.log.Admin("%t", "Log_Admin_GiveItem", adminname, adminauth, targetname, targetauth, itemclass);
         }
+    }
+}
+
+public void RenderWeaponMenu(int client)
+{
+    char buffer[64];
+    
+    Menu hMenu = new Menu(MenuHandler_WeaponList);
+    FormatEx(buffer, sizeof(buffer), "%T", "Give Weapon", client);
+    hMenu.SetTitle(buffer);
+
+    FormatEx(buffer, sizeof(buffer), "%T", "Primary", client);
+    hMenu.AddItem("item1", buffer, ITEMDRAW_DEFAULT);
+    FormatEx(buffer, sizeof(buffer), "%T", "Secondary", client);
+    hMenu.AddItem("item2", buffer, ITEMDRAW_DEFAULT);
+    FormatEx(buffer, sizeof(buffer), "%T", "Melee", client);
+    hMenu.AddItem("item3", buffer, ITEMDRAW_DEFAULT);
+    FormatEx(buffer, sizeof(buffer), "%T", "Grenades", client);
+    hMenu.AddItem("item4", buffer, ITEMDRAW_DEFAULT);
+    FormatEx(buffer, sizeof(buffer), "%T", "Other", client);
+    hMenu.AddItem("item5", buffer, ITEMDRAW_DEFAULT);
+
+    hMenu.Display(client, 30);
+}
+
+public int MenuHandler_WeaponList(Menu hMenu, MenuAction action, int client, int item)
+{
+    if (action == MenuAction_End)
+    {
+        delete hMenu;
+    }
+    else if (action == MenuAction_Select)
+    {
+        char buffer[64];
+        Menu hGiveMenu = new Menu(MenuHandler_GiveMenu);
+        FormatEx(buffer, sizeof(buffer), "%T", "Give Weapon", client);
+        hGiveMenu.SetTitle(buffer);
+        
+        switch(item)
+        {
+            case 0:
+            {
+                hGiveMenu.AddItem("weapon_nova", "weapon_nova", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_xm1014", "weapon_xm1014", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_sawedoff", "weapon_sawedoff", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_mag7", "weapon_mag7", ITEMDRAW_DEFAULT);
+
+                hGiveMenu.AddItem("weapon_m249", "weapon_m249", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_negev", "weapon_negev", ITEMDRAW_DEFAULT);
+                
+                hGiveMenu.AddItem("weapon_mac10", "weapon_mac10", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_mp5sd", "weapon_mp5sd", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_mp7", "weapon_mp7", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_mp9", "weapon_mp9", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_ump45", "weapon_ump45", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_p90", "weapon_p90", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_bizon", "weapon_bizon", ITEMDRAW_DEFAULT);
+                
+                hGiveMenu.AddItem("weapon_galilar", "weapon_galilar", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_famas", "weapon_famas", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_ak47", "weapon_ak47", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_m4a1", "weapon_m4a1", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_m4a1_silencer", "weapon_m4a1_silencer", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_aug", "weapon_aug", ITEMDRAW_DEFAULT);
+
+                hGiveMenu.AddItem("weapon_sg556", "weapon_sg556", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_ssg08", "weapon_ssg08", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_awp", "weapon_awp", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_g3sg1", "weapon_g3sg1", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_scar20", "weapon_scar20", ITEMDRAW_DEFAULT);
+            }
+            case 1:
+            {
+                hGiveMenu.AddItem("weapon_glock", "weapon_glock", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_usp_silencer", "weapon_usp_silencer", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_hkp2000", "weapon_hkp2000", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_fiveseven", "weapon_fiveseven", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_elite", "weapon_elite", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_p250", "weapon_p250", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_tec9", "weapon_tec9", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_cz75a", "weapon_cz75a", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_deagle", "weapon_deagle", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_revolver", "weapon_revolver", ITEMDRAW_DEFAULT);
+            }
+            case 2:
+            {
+                hGiveMenu.AddItem("weapon_hammer", "weapon_hammer", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_spanner", "weapon_spanner", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_axe", "weapon_axe", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_taser", "weapon_taser", ITEMDRAW_DEFAULT);
+            }
+            case 3:
+            {
+                hGiveMenu.AddItem("weapon_molotov", "weapon_molotov", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_incgrenade", "weapon_incgrenade", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_decoy", "weapon_decoy", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_flashbang", "weapon_flashbang", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_hegrenade", "weapon_hegrenade", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_smokegrenade", "weapon_smokegrenade", ITEMDRAW_DEFAULT);
+                
+                hGiveMenu.AddItem("weapon_tagrenade", "weapon_tagrenade", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_snowball", "weapon_snowball", ITEMDRAW_DEFAULT);
+            }
+            case 4:
+            {
+                hGiveMenu.AddItem("weapon_breachcharge", "weapon_breachcharge", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_healthshot", "weapon_healthshot", ITEMDRAW_DEFAULT);
+                hGiveMenu.AddItem("weapon_c4", "weapon_c4", ITEMDRAW_DEFAULT);
+            }
+        }
+
+        hGiveMenu.Display(client, 30);
     }
 }
 
