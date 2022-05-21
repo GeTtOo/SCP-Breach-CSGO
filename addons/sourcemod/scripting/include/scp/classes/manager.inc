@@ -205,7 +205,7 @@ methodmap Manager < Base {
             char lbuf[32];
             GlobalTeams.GetString(i, lbuf, sizeof(lbuf));
 
-            if (tpc[i] > 0 && !StrEqual(lbuf, "Dead")) {
+            if (tpc[i] > 0 && !(StrEqual(lbuf, "Dead") || StrEqual(lbuf, "None"))) {
                 teamAlive++;
                 buf = lbuf;
             }
