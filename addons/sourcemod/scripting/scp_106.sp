@@ -48,14 +48,14 @@ public void SCP_OnPlayerJoin(Player &ply) {
 
 public void SCP_OnPlayerClear(Player &ply) {
     SDKUnhook(ply.id, SDKHook_StartTouch, CheckSurface);
-    delete view_as<Vector>(ply.GetHandle("106_tp"));
+    delete view_as<Vector>(ply.GetHandle("106_tp_vec"));
     delete view_as<Vector>(ply.GetHandle("106_tp_ang"));
-    delete view_as<Vector>(ply.GetHandle("106_temp_pos"));
+    delete view_as<Vector>(ply.GetHandle("106_temp_vec"));
     delete view_as<Vector>(ply.GetHandle("106_temp_ang"));
-    ply.RemoveValue("106_tp");
+    ply.RemoveValue("106_tp_vec");
     ply.RemoveValue("106_tp_ang");
     ply.RemoveValue("106_tplock");
-    ply.RemoveValue("106_temp_pos");
+    ply.RemoveValue("106_temp_vec");
     ply.RemoveValue("106_temp_ang");
     ply.RemoveValue("106_inpd");
     ply.RemoveValue("106_tplock");
@@ -93,6 +93,21 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
                 if (vic.health < vic.class.health) ((vic.health + 2) >= vic.class.health) ? (vic.health = vic.class.health) : (vic.health += 2);
                 return Plugin_Handled;
             }
+            case DMG_CRUSH:
+            {
+                if (vic.GetBool("106_inpd"))
+                {
+                    vic.SetPos(gamemode.plconfig.GetVector("pocket"), new Angle(0.0, 0.0, 0.0));
+                    vic.SetHandle("106_tp_vec", gamemode.plconfig.GetArray("pocketout").GetVector(GetRandomInt(0, gamemode.plconfig.GetArray("pocketout").Length - 1)));
+                    vic.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
+                    SmoothTP(vic);
+                    vic.SetBool("106_inpd", false);
+                    
+                    return Plugin_Handled;
+                }
+
+                return Plugin_Continue;
+            }
             default:
             {
                 damage /= 20.0;
@@ -103,19 +118,24 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 
     if (vic.GetBool("106_inp") && damagetype == DMG_CRUSH)
     {
-        vic.SetPos(new Vector(-4306.0, 683.0, 2297.0), new Angle(0.0, 0.0, 0.0));
-        vic.SetHandle("106_tp", new Vector(-11110.0, 520.0, -435.0));
-        vic.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
-        SmoothTP(vic);
-        vic.RemoveValue("106_inp");
-        return Plugin_Handled;
+        if (GetRandomInt(1, 100) < gamemode.plconfig.GetInt("ecop", 25))
+        {
+            vic.SetPos(gamemode.plconfig.GetVector("pocket"), new Angle(0.0, 0.0, 0.0));
+            vic.SetHandle("106_tp_vec", gamemode.plconfig.GetArray("pocketout").GetVector(GetRandomInt(0, gamemode.plconfig.GetArray("pocketout").Length - 1)));
+            vic.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
+            SmoothTP(vic);
+            vic.RemoveValue("106_inp");
+            return Plugin_Handled;
+        }
+        
+        return Plugin_Continue;
     }
 
     if (!atk || !atk.class) return Plugin_Continue;
 
     if (atk.class.Is("106") && vic.IsClass("player"))
     {
-        vic.SetHandle("106_tp", new Vector(-4306.0, 683.0, 2297.0));
+        vic.SetHandle("106_tp_vec", gamemode.plconfig.GetVector("pocket"));
         vic.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
         SmoothTP(vic);
         vic.SetBool("106_inp", true);
@@ -199,11 +219,11 @@ public void DoorWalk(Player ply)
 
 public void SmoothTP(Player ply)
 {
-    if (ply.GetHandle("106_tp") && !ply.GetArrayList("106_stpin"))
+    if (ply.GetHandle("106_tp_vec") && !ply.GetArrayList("106_stpin"))
     {
         ArrayList smoothtp = new ArrayList();
 
-        for (int i=1; i < 70; i++)
+        for (int i=1; i < 65; i++)
         {
             Vector vec = ply.GetPos();
             vec.z -= i;
@@ -214,8 +234,13 @@ public void SmoothTP(Player ply)
 
         char timername[64];
         FormatEx(timername, sizeof(timername), "SCP-106-Smooth-Tp-%i", ply.id);
-        gamemode.timer.Create(timername, 10, 70, "HandlerSmoothTPIn", ply);
+        gamemode.timer.Create(timername, 25, 65, "HandlerSmoothTPIn", ply);
         
+        char sound[128];
+        JSON_ARRAY sarr = gamemode.plconfig.GetObject("sound").GetArray("portal");
+        sarr.GetString(GetRandomInt(0, sarr.Length - 1), sound, sizeof(sound));
+        gamemode.mngr.PlayAmbientOnPlayer(sound, ply);
+
         ply.SetBool("106_tplock", true);
     }
 }
@@ -238,11 +263,11 @@ public void HandlerSmoothTPIn(Player ply)
         gamemode.timer.RemoveByName(timername);
         ply.RemoveValue("106_stpin");
         
-        ply.SetPos(view_as<Vector>(ply.GetHandle("106_tp")).Clone(), view_as<Angle>(view_as<Angle>(ply.GetHandle("106_tp_ang")).Clone()));
+        ply.SetPos(view_as<Vector>(ply.GetHandle("106_tp_vec")).Clone(), view_as<Angle>(view_as<Angle>(ply.GetHandle("106_tp_ang")).Clone()));
 
         ArrayList smoothtp = new ArrayList();
 
-        for (int i=1; i < 70; i++)
+        for (int i=1; i < 65; i++)
         {
             Vector vec = ply.GetPos(); 
             vec.z += i;
@@ -252,7 +277,12 @@ public void HandlerSmoothTPIn(Player ply)
         ply.SetArrayList("106_stpout", smoothtp);
 
         FormatEx(timername, sizeof(timername), "SCP-106-Smooth-Tp-%i", ply.id);
-        gamemode.timer.Create(timername, 10, 70, "HandlerSmoothTPOut", ply);
+        gamemode.timer.Create(timername, 25, 65, "HandlerSmoothTPOut", ply);
+
+        char sound[128];
+        JSON_ARRAY sarr = gamemode.plconfig.GetObject("sound").GetArray("portal");
+        sarr.GetString(GetRandomInt(0, sarr.Length - 1), sound, sizeof(sound));
+        gamemode.mngr.PlayAmbientOnPlayer(sound, ply);
     }
 }
 
@@ -274,15 +304,15 @@ public void HandlerSmoothTPOut(Player ply)
         gamemode.timer.RemoveByName(timername);
         ply.RemoveValue("106_stpout");
         
-        if (ply.GetHandle("106_temp_pos"))
+        if (ply.GetHandle("106_temp_vec"))
         {
-            delete view_as<Vector>(ply.GetHandle("106_tp"));
+            delete view_as<Vector>(ply.GetHandle("106_tp_vec"));
             delete view_as<Angle>(ply.GetHandle("106_tp_ang"));
-            ply.RemoveValue("106_tp");
-            ply.SetHandle("106_tp", ply.GetHandle("106_temp_pos"));
+            ply.RemoveValue("106_tp_vec");
+            ply.SetHandle("106_tp_vec", ply.GetHandle("106_temp_vec"));
             ply.RemoveValue("106_tp_ang");
             ply.SetHandle("106_tp_ang", ply.GetHandle("106_temp_ang"));
-            ply.RemoveValue("106_temp_pos");
+            ply.RemoveValue("106_temp_vec");
             ply.RemoveValue("106_temp_ang");
         }
         
@@ -301,8 +331,8 @@ public void ActionsMenu(Player ply) {
     hndl.SetTitle("SCP-106 Actions");
 
     hndl.AddItem("1", "Set point", (!ply.GetBool("106_inpd")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
-    hndl.AddItem("2", "Move to point", (ply.GetHandle("106_tp") && !ply.GetBool("106_tplock")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
-    hndl.AddItem("3", "Move to a pocket dimension", (ply.GetHandle("106_tp") && !ply.GetBool("106_tplock") && !ply.GetBool("106_inpd")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+    hndl.AddItem("2", "Move to point", (ply.GetHandle("106_tp_vec") && !ply.GetBool("106_tplock")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+    hndl.AddItem("3", "Move to a pocket dimension", (ply.GetHandle("106_tp_vec") && !ply.GetBool("106_tplock") && !ply.GetBool("106_inpd")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
     
     hndl.Display(ply.id, 30);
 }
@@ -315,47 +345,64 @@ public int ActionsMenuHandler(Menu hMenu, MenuAction action, int client, int idx
         {
             Player ply = player.GetByID(client);
             
-            switch (idx)
-            {
-                case 0:
+            if (ply.GetPropEntId("m_hGroundEntity") == 0)
+                switch (idx)
                 {
-                    if (ply.GetPropEntId("m_hGroundEntity") == 0)
+                    case 0:
                     {
-                        if (ply.GetHandle("106_tp"))
+                        if (ply.GetHandle("106_tp_vec"))
                         {
-                            delete view_as<Vector>(ply.GetHandle("106_tp"));
+                            delete view_as<Vector>(ply.GetHandle("106_tp_vec"));
                             delete view_as<Angle>(ply.GetHandle("106_tp_ang"));
-                            ply.RemoveValue("106_tp");
+                            ply.RemoveValue("106_tp_vec");
                             ply.RemoveValue("106_tp_ang");
                         }
                         
-                        ply.SetHandle("106_tp", ply.GetPos() - new Vector(0.0, 0.0, 68.0));
+                        ply.SetHandle("106_tp_vec", ply.GetPos() - new Vector(0.0, 0.0, 64.0));
                         ply.SetHandle("106_tp_ang", ply.GetAng());
+                        
+                        /*Entity blob = new Entity();
+                        blob.Create("env_sprite_oriented");
+                        blob.SetKV("model", "materials/eternity/blob.vmt");
+                        blob.SetKV("classname", "env_sprite_oriented");
+                        blob.SetKV("rendercolor", "255 255 255");
+                        blob.SetKV("scale", "0.25");
+                        blob.SetKV("rendermode", "0");
+                        blob.SetKV("spawnflags", "1");
+
+                        blob.SetPos(ply.GetPos());
+                        blob.Spawn();
+                        blob.SetPos(_, new Angle(0.0, 180.0, 0.0));
+                        blob.Dispose();*/
+
+                        float pos[3];
+                        ply.GetPos().GetArrD(pos);
+
+                        TE_Start("BSP Decal");
+                        TE_WriteVector("m_vecOrigin", pos);
+                        TE_WriteNum("m_nEntity", 0);
+                        TE_WriteNum("m_nIndex", PrecacheDecal("eternity/blob"));
+                        TE_SendToAll();
+
+                        
                     }
-                }
-                case 1:
-                {
-                    if (ply.GetPropEntId("m_hGroundEntity") == 0)
+                    case 1:
                     {
                         SmoothTP(ply);
                         
                         ply.SetBool("106_inpd", false);
                     }
-                }
-                case 2:
-                {
-                    if (ply.GetPropEntId("m_hGroundEntity") == 0)
+                    case 2:
                     {
-                        ply.SetHandle("106_temp_pos", ply.GetHandle("106_tp"));
+                        ply.SetHandle("106_temp_vec", ply.GetHandle("106_tp_vec"));
                         ply.SetHandle("106_temp_ang", ply.GetHandle("106_tp_ang"));
-                        ply.SetHandle("106_tp", new Vector(-4306.0, 683.0, 2297.0));
+                        ply.SetHandle("106_tp_vec", gamemode.plconfig.GetVector("pocket"));
                         ply.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
                         SmoothTP(ply);
 
                         ply.SetBool("106_inpd", true);
                     }
                 }
-            }
         }
     }
 
