@@ -67,6 +67,11 @@ public bool OnPickUp(Player &ply, Entity &ent) {
         Vector oldpos = ply.GetPos();
         Angle oldang = ply.GetAng();
 
+        ArrayList bglist = ply.model.bglist;
+        char modelname[256];
+        ply.model.GetPath(modelname, sizeof(modelname));
+        int skin = ply.model.GetSkin();
+
         char team[32], class[32];
         gamemode.config.DefaultGlobalClass(team, sizeof(team));
         gamemode.config.DefaultClass(class, sizeof(class));
@@ -75,6 +80,10 @@ public bool OnPickUp(Player &ply, Entity &ent) {
         ply.class = gamemode.team(team).class(class);
         
         ply.UpdateClass();
+
+        ply.model.SetPath(modelname);
+        ply.model.bglist = bglist;
+        ply.model.SetSkin(skin);
 
         ply.SetPos(oldpos, oldang);
 
