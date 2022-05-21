@@ -83,6 +83,7 @@ public void SCP_OnCallAction(Player &ply)
     if (ply.class.Is("457") && !ply.GetBool("457_abilitycd"))
     {
         float abradius = float(gamemode.plconfig.GetInt("abradius", 250));
+        
         char filter[1][32] = {"player"};
         ArrayList players = ents.FindInBox(ply.GetPos() - new Vector(abradius, abradius, 400.0), ply.GetPos() + new Vector(abradius, abradius, 400.0), filter, sizeof(filter));
 
@@ -97,7 +98,7 @@ public void SCP_OnCallAction(Player &ply)
         delete players;
 
         ply.SetBool("457_abilitycd", true);
-        ply.progress.Start(gamemode.plconfig.GetInt("abcd", 15) * 1000, "AbilityUnlock");
+        ply.TimerSimple(gamemode.plconfig.GetInt("abcd", 15) * 1000, "AbilityUnlock", ply);
     }
     else if (ply.class.Is("457") && ply.GetBool("457_abilitycd"))
         ply.PrintWarning("%t", "Ability cooldown");
