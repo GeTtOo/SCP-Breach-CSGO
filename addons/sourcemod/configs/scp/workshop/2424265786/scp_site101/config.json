@@ -130,6 +130,13 @@
             "multi":true,
             "inpvs":true,
             "healing":2500
+        },
+        "sound": {
+            "steps":[
+                "*/eternity/scp/049/step1.mp3",
+                "*/eternity/scp/049/step2.mp3",
+                "*/eternity/scp/049/step3.mp3"
+            ]
         }
     },
     "[SCP] 096": {
@@ -143,6 +150,43 @@
                 "*/eternity/scp/096/doorbroke1.mp3",
                 "*/eternity/scp/096/doorbroke2.mp3",
                 "*/eternity/scp/096/doorbroke3.mp3"
+            ]
+        }
+    },
+    "[SCP] 106": {
+        "pocket":[-4306, 683, 2297],
+        "pocketout": [
+            [-11110, 520, -435],
+            [-9500, 2481, -64],
+            [-6056, -1535, -64],
+            [-7684, -183, -64],
+            [-7409, -2396, -64],
+            [-6223, -5512, -64]
+        ],
+        "ecop":25,
+        "sound": {
+            "portal":[
+                "*/eternity/scp/106/portal1.mp3",
+                "*/eternity/scp/106/portal2.mp3",
+                "*/eternity/scp/106/portal3.mp3"
+            ]
+        }
+    },
+    "[SCP] 966": {
+        "damage":7.0,
+        "abradius":250,
+        "abcd":20,
+        "abcsr":2.0,
+        "sound": {
+            "idle":[
+                "*/eternity/scp/966/idle1.mp3",
+                "*/eternity/scp/966/idle2.mp3",
+                "*/eternity/scp/966/idle3.mp3"
+            ],
+            "angry":[
+                "*/eternity/scp/966/angry1.mp3",
+                "*/eternity/scp/966/angry2.mp3",
+                "*/eternity/scp/966/angry3.mp3"
             ]
         }
     },

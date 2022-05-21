@@ -557,8 +557,9 @@
             "049": {
                 "percent":20,
                 "health":7800,
+                "speed":220,
                 "model":"models/player/custom_player/eternity/scp_049.mdl",
-                "handsmodel":"models/player/custom_player/eternity/arms/arms_scp049.mdl",
+                "handsmodel_":"models/player/custom_player/eternity/arms/arms_scp049.mdl",
                 "overlay":"scp-049",
                 "pos":{"vec":[-8455,975,2],"ang":[0,125,0]},
                 "doors":[501,504],
@@ -567,7 +568,7 @@
             "049_2": {
                 "autospawn":false,
                 "health":4500,
-                "handsmodel":"models/player/custom_player/eternity/arms/arms_scp049-2.mdl",
+                "handsmodel_":"models/player/custom_player/eternity/arms/arms_scp049-2.mdl",
                 "comment":"049-2"
             },
             "079": {
@@ -624,12 +625,17 @@
                 "comment":"Fire man"
             },
             "966": {
-                "health":4000,
+                "health":5000,
                 "speed":250,
                 "multipler":1.2,
                 "model":"models/player/custom_player/eternity/scp966.mdl",
                 "handsmodel":"models/player/custom_player/eternity/arms/arms_scp966.mdl",
                 "overlay":"scp-996",
+                "pos":[
+                    {"vec":[-5060,2630,0],"ang":[0,-180,0]},
+                    {"vec":[-5060,2530,0],"ang":[0,-180,0]},
+                    {"vec":[-5060,2730,0],"ang":[0,-180,0]}
+                ],
                 "doors":[893,894],
                 "comment":"ツ"
             }

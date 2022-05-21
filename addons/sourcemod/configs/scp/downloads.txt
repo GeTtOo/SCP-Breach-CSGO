@@ -452,9 +452,6 @@ materials/models/eternity/players/scp_049/scp-049_clothing_diffuse4.vmt
 materials/models/eternity/players/scp_049/scp-049_clothing_diffuse4.vtf
 materials/models/eternity/players/scp_049/scp-049_mask_diffuse5.vmt
 materials/models/eternity/players/scp_049/scp-049_mask_diffuse5.vtf
-materials/models/eternity/players/scp-049-2/scp-049_clothing_diffuse4.vmt
-materials/models/eternity/players/scp-049-2/scp-049_clothing_diffuse4.vtf
-materials/models/eternity/players/scp-049-2/scp-049_mask_diffuse5.vmt
 materials/models/eternity/players/scp-096/scp096.vmt
 materials/models/eternity/players/scp-096/scp096.vtf
 materials/models/eternity/players/scp-096/scp096_eyes.vmt
@@ -566,6 +563,8 @@ materials/models/eternity/props/scp-427_2/stone.vtf
 materials/models/eternity/props/scp-500/medicine_bottle_2_0.vmt
 materials/models/eternity/props/scp-500/medicine_bottle_2_0_n.vtf
 materials/models/eternity/props/scp-500/scp-500.vtf
+materials/eternity/blob.vmt
+materials/eternity/blob.vtf
 sound/eternity/scp/049/1.wav
 sound/eternity/scp/049/2.wav
 sound/eternity/scp/049/3.wav
@@ -576,6 +575,9 @@ sound/eternity/scp/049/7.wav
 sound/eternity/scp/049/alert_1.wav
 sound/eternity/scp/049/alert_2.wav
 sound/eternity/scp/049/alert_3.wav
+sound/eternity/scp/049/step1.mp3
+sound/eternity/scp/049/step2.mp3
+sound/eternity/scp/049/step3.mp3
 sound/eternity/scp/096/crying.mp3
 sound/eternity/scp/096/doorbroke1.mp3
 sound/eternity/scp/096/doorbroke2.mp3
@@ -583,6 +585,9 @@ sound/eternity/scp/096/doorbroke3.mp3
 sound/eternity/scp/096/rage.mp3
 sound/eternity/scp/096/rage_start.mp3
 sound/eternity/scp/096/tranquility.mp3
+sound/eternity/scp/106/portal1.mp3
+sound/eternity/scp/106/portal2.mp3
+sound/eternity/scp/106/portal3.mp3
 sound/eternity/scp/173/death1.mp3
 sound/eternity/scp/173/death2.mp3
 sound/eternity/scp/173/death3.mp3
@@ -592,6 +597,13 @@ sound/eternity/scp/173/neck3.mp3
 sound/eternity/scp/427/active.mp3
 sound/eternity/scp/427/transform.mp3
 sound/eternity/scp/914/player_rough.mp3
+sound/eternity/scp/966/idle1.mp3
+sound/eternity/scp/966/idle2.mp3
+sound/eternity/scp/966/idle3.mp3
+sound/eternity/scp/966/angry1.mp3
+sound/eternity/scp/966/angry2.mp3
+sound/eternity/scp/966/angry3.mp3
+sound/eternity/scp/966/attack.mp3
 sound/eternity/scp/menu/select.mp3
 sound/eternity/scp/other/en/mtf_reinforced.mp3
 sound/eternity/scp/other/en/warhead_canceled.mp3
