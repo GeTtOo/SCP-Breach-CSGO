@@ -1856,6 +1856,12 @@ public Action Command_Base(int client, const char[] command, int argc)
         if (StrEqual(arg2, "unlock", false))
             gamemode.mngr.RoundLock = false;
     }
+    if (StrEqual(arg1, "entscount", false))
+    {
+        int entscount = 0;
+        for (int i=0; i < 2048; i++) if (IsValidEntity(i)) entscount++;
+        PrintToConsole(ply.id, "%i/2048", entscount);
+    }
 
     return Plugin_Stop;
 }
@@ -2120,6 +2126,8 @@ public any NativeGameMode_Manager(Handle Plugin, int numArgs) { return view_as<M
 public any NativeGameMode_Nuke(Handle Plugin, int numArgs) { return view_as<NuclearWarhead>(view_as<JSON_OBJECT>(gamemode).GetObject("Nuke")); }
 
 public any NativeGameMode_Timers(Handle Plugin, int numArgs) { return view_as<Timers>(view_as<JSON_OBJECT>(gamemode).GetObject("Timers")); }
+
+public any NativeStatusEffect_GetList(Handle Plugin, int numArgs) { return statuseffect.GetArrayList("list"); }
 
 public any NativeGameMode_Logger(Handle Plugin, int numArgs) { return view_as<Logger>(view_as<JSON_OBJECT>(gamemode).GetObject("Logger")); }
 
@@ -2483,5 +2491,3 @@ public any NativePlayer_Inventory_FullClear(Handle Plugin, int numArgs) {
         item.Dispose();
     }
 }
-
-public any NativeStatusEffect_GetList(Handle Plugin, int numArgs) { return statuseffect.GetArrayList("list"); }
