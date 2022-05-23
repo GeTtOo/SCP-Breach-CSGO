@@ -42,6 +42,40 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
+public Action SoundHandler(int clients[MAXPLAYERS], int &numClients, char sample[PLATFORM_MAX_PATH], int &entity, int &channel, float &volume, int &level, int &pitch, int &flags, char soundEntry[PLATFORM_MAX_PATH], int& seed)
+{
+	if (0 < entity <= MaxClients)
+	{
+		if (StrContains(sample, "physics") != -1 || StrContains(sample, "footsteps") != -1)
+		{
+			Player ply = player.GetByID(entity);
+			
+			if (ply && ply.class && ply.class.Is("106"))
+			{
+				char sound[128];
+				JSON_ARRAY sarr = gamemode.plconfig.GetObject("sound").GetArray("steps");
+				sarr.GetString(GetRandomInt(0, sarr.Length - 1), sound, sizeof(sound));
+				gamemode.mngr.PlayAmbientOnPlayer(sound, ply);
+				
+				EmitSound(clients, numClients, sound, entity, channel, level, flags, volume, pitch);
+				
+				return Plugin_Stop;
+			}
+		}
+	}
+
+	return Plugin_Continue;
+}
+
+public void SCP_OnLoad()
+{
+	AddNormalSoundHook(SoundHandler);
+}
+
+public void SCP_OnUnload() {
+    RemoveNormalSoundHook(SoundHandler);
+}
+
 public void SCP_OnPlayerJoin(Player &ply) {
 
 }
@@ -133,7 +167,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 
     if (!atk || !atk.class) return Plugin_Continue;
 
-    if (atk.class.Is("106") && vic.IsClass("player"))
+    if (atk.class.Is("106") && vic.IsClass("player") && !vic.GetBool("106_inp"))
     {
         vic.SetHandle("106_tp_vec", gamemode.plconfig.GetVector("pocket"));
         vic.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
