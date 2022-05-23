@@ -244,6 +244,11 @@ public void OnGameFrame()
     statuseffect.Update();
 }
 
+public void OnRebuildAdminCache(AdminCachePart part)
+{
+    AdminMenu.UpdateCache();
+}
+
 public void OnClientPostAdminCheck(int id)
 {
     Player ply = player.Add(id);
@@ -2180,7 +2185,7 @@ public any NativeEntities_Create(Handle Plugin, int numArgs) {
         entity.meta = entdata;
         entity.Create();
         
-        if (entity.meta.onuse) entity.SetHook(SDKHook_Use, CB_EntUse);
+        entity.SetHook(SDKHook_Use, CB_EntUse);
         if (entity.meta.ontouch) entity.SetHook(SDKHook_TouchPost, CB_EntTouch);
     }
     else
@@ -2220,7 +2225,7 @@ public any NativeEntities_Remove(Handle Plugin, int numArgs) {
         Entity ent = entities.Get(idx, 1);
         if (ent.meta)
         {
-            if (ent.meta.onuse) ent.RemoveHook(SDKHook_Use, CB_EntUse);
+            ent.RemoveHook(SDKHook_Use, CB_EntUse);
             if (ent.meta.ontouch) ent.RemoveHook(SDKHook_TouchPost, CB_EntTouch);
         }
         ent.Remove();
@@ -2244,7 +2249,7 @@ public any NativeEntities_RemoveByID(Handle Plugin, int numArgs) {
         Entity ent = entities.Get(idx, 1);
         if (ent.meta)
         {
-            if (ent.meta.onuse) ent.RemoveHook(SDKHook_Use, CB_EntUse);
+            ent.RemoveHook(SDKHook_Use, CB_EntUse);
             if (ent.meta.ontouch) ent.RemoveHook(SDKHook_TouchPost, CB_EntTouch);
         }
         ent.Remove();
@@ -2465,7 +2470,7 @@ public any NativePlayer_Inventory_Drop(Handle Plugin, int numArgs) {
     .Spawn()
     .ReversePush(ply.EyePos() - new Vector(0.0, 0.0, 15.0), 250.0);
 
-    if (item.meta.onuse) item.SetHook(SDKHook_Use, CB_EntUse);
+    item.SetHook(SDKHook_Use, CB_EntUse);
     if (item.meta.ontouch) item.SetHook(SDKHook_TouchPost, CB_EntTouch);
 
     ents.IndexUpdate(item);

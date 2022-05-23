@@ -182,6 +182,34 @@ methodmap AdminMenuSingleton < Base
         this.GetArrayList("admins").Push(new AdminAction(ply));
     }
 
+    public bool IsReg(Player ply)
+    {
+        ArrayList list = this.GetArrayList("admins");
+        
+        bool ishave = false;
+        
+        for(int i = 0; i < list.Length; i++)
+            if(view_as<AdminAction>(list.Get(i)).admin == ply)
+                ishave = true;
+
+        return ishave;
+    }
+
+    public void UpdateCache()
+    {
+        if (ents && ents.GetArrayList("entities"))
+        {
+            ArrayList players = player.GetAll();
+
+            for (int i=0; i < players.Length; i++)
+            {
+                Player ply = players.Get(i);
+
+                if (GetAdminFlag(GetUserAdmin(ply.id), Admin_Generic) && !this.IsReg(ply)) this.Add(ply);
+            }
+        }
+    }
+
     public AdminAction Get(int client)
     {
         Player ply = player.GetByID(client);
@@ -194,8 +222,6 @@ methodmap AdminMenuSingleton < Base
                 return view_as<AdminAction>(list.Get(i));
             }
         }
-
-        delete list;
 
         return view_as<AdminAction>(null);
     }
