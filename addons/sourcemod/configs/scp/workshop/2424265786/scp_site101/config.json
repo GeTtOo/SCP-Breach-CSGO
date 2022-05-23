@@ -9,6 +9,9 @@
     "usablecards":true,
     "tsto":10,
     "psars": 30,
+    "sound": {
+        "menuselect":"eternity/scp/menu/select.mp3"
+    },
     "AdminRoom": [-4890,-6340,0],
     "reinforce":{
         "time":180,

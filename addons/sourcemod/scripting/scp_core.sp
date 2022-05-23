@@ -1153,7 +1153,9 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int idx)
         
         if (!item) return;
 
-        ply.PlayNonCheckSound("eternity/scp/menu/select.mp3");
+        char sound[256];
+        gamemode.config.GetObject("sound").GetString("menuselect", sound, sizeof(sound));
+        ply.PlayNonCheckSound(sound);
 
         char class[32];
         item.GetClass(class, sizeof(class));
@@ -1283,7 +1285,9 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                     
                     if (item)
                     {
-                        ply.PlayNonCheckSound("eternity/scp/menu/select.mp3");
+                        char sound[256];
+                        gamemode.config.GetObject("sound").GetString("menuselect", sound, sizeof(sound));
+                        ply.PlayNonCheckSound(sound);
 
                         char class[64], classname[64];
                         item.GetClass(class, sizeof(class));
@@ -1317,7 +1321,11 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                         if (item.meta.GetString("dropsound", path, sizeof(path)))
                             ply.PlayNonCheckSound(path);
                         else
-                            ply.PlayNonCheckSound("eternity/scp/menu/select.mp3");
+                        {
+                            char sound[256];
+                            gamemode.config.GetObject("sound").GetString("menuselect", sound, sizeof(sound));
+                            ply.PlayNonCheckSound(sound);
+                        }
                     }
                 }
             }
@@ -2100,7 +2108,9 @@ public void SCP_OnInput(Player &ply, int buttons)
             ply.SetBool("ActionAvailable", false);
             ply.TimerSimple(1000, "ActionUnlock", ply);
 
-            ply.PlayNonCheckSound("eternity/scp/menu/select.mp3");
+            char sound[256];
+            gamemode.config.GetObject("sound").GetString("menuselect", sound, sizeof(sound));
+            ply.PlayNonCheckSound(sound);
 
             if (!ply.IsSCP)
                 InventoryDisplay(ply);
