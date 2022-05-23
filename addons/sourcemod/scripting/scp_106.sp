@@ -81,18 +81,21 @@ public void SCP_OnPlayerJoin(Player &ply) {
 }
 
 public void SCP_OnPlayerClear(Player &ply) {
-    SDKUnhook(ply.id, SDKHook_StartTouch, CheckSurface);
-    delete view_as<Vector>(ply.GetHandle("106_tp_vec"));
-    delete view_as<Vector>(ply.GetHandle("106_tp_ang"));
-    delete view_as<Vector>(ply.GetHandle("106_temp_vec"));
-    delete view_as<Vector>(ply.GetHandle("106_temp_ang"));
-    ply.RemoveValue("106_tp_vec");
-    ply.RemoveValue("106_tp_ang");
-    ply.RemoveValue("106_tplock");
-    ply.RemoveValue("106_temp_vec");
-    ply.RemoveValue("106_temp_ang");
-    ply.RemoveValue("106_inpd");
-    ply.RemoveValue("106_tplock");
+    if (ply && ply.class && ply.class.Is("106"))
+    {
+        SDKUnhook(ply.id, SDKHook_StartTouch, CheckSurface);
+        delete ply.GetHandle("106_tp_vec");
+        delete ply.GetHandle("106_tp_ang");
+        delete ply.GetHandle("106_temp_vec");
+        delete ply.GetHandle("106_temp_ang");
+        ply.RemoveValue("106_tp_vec");
+        ply.RemoveValue("106_tp_ang");
+        ply.RemoveValue("106_tplock");
+        ply.RemoveValue("106_temp_vec");
+        ply.RemoveValue("106_temp_ang");
+        ply.RemoveValue("106_inpd");
+        ply.RemoveValue("106_tplock");
+    }
 }
 
 public void SCP_OnPlayerSpawn(Player &ply) {
@@ -150,7 +153,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
         }
     }
 
-    if (vic.GetBool("106_inp") && damagetype == DMG_CRUSH)
+    if (vic.GetBool("106_inpd") && damagetype == DMG_CRUSH)
     {
         if (GetRandomInt(1, 100) < gamemode.plconfig.GetInt("ecop", 25))
         {
@@ -158,7 +161,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
             vic.SetHandle("106_tp_vec", gamemode.plconfig.GetArray("pocketout").GetVector(GetRandomInt(0, gamemode.plconfig.GetArray("pocketout").Length - 1)));
             vic.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
             SmoothTP(vic);
-            vic.RemoveValue("106_inp");
+            vic.RemoveValue("106_inpd");
             return Plugin_Handled;
         }
         
@@ -167,12 +170,12 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 
     if (!atk || !atk.class) return Plugin_Continue;
 
-    if (atk.class.Is("106") && vic.IsClass("player") && !vic.GetBool("106_inp"))
+    if (atk.class.Is("106") && vic.IsClass("player") && !vic.GetBool("106_inpd"))
     {
         vic.SetHandle("106_tp_vec", gamemode.plconfig.GetVector("pocket"));
         vic.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
         SmoothTP(vic);
-        vic.SetBool("106_inp", true);
+        vic.SetBool("106_inpd", true);
         return Plugin_Handled;
     }
 
