@@ -169,6 +169,11 @@
                 "*/eternity/scp/106/portal1.mp3",
                 "*/eternity/scp/106/portal2.mp3",
                 "*/eternity/scp/106/portal3.mp3"
+            ],
+            "steps":[
+                "*/eternity/scp/106/step1.mp3",
+                "*/eternity/scp/106/step2.mp3",
+                "*/eternity/scp/106/step3.mp3"
             ]
         }
     },

@@ -593,7 +593,7 @@
                 "percent":30,
                 "autospawn":false,
                 "health":10000,
-                "speed":220,
+                "speed":180,
                 "model":"models/player/custom_player/eternity/scp_106.mdl",
                 "handsmodel":"models/player/custom_player/eternity/arms/arms_scp106.mdl",
                 "overlay":"scp-106",

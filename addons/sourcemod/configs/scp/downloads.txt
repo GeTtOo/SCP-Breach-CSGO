@@ -89,9 +89,6 @@ models/player/custom_player/eternity/scp966.vvd
 models/player/custom_player/eternity/arms/arms_scp049.dx90.vtx
 models/player/custom_player/eternity/arms/arms_scp049.mdl
 models/player/custom_player/eternity/arms/arms_scp049.vvd
-models/player/custom_player/eternity/arms/arms_scp096.dx90.vtx
-models/player/custom_player/eternity/arms/arms_scp096.mdl
-models/player/custom_player/eternity/arms/arms_scp096.vvd
 models/player/custom_player/eternity/arms/arms_scp106.dx90.vtx
 models/player/custom_player/eternity/arms/arms_scp106.mdl
 models/player/custom_player/eternity/arms/arms_scp106.vvd
@@ -588,6 +585,9 @@ sound/eternity/scp/096/tranquility.mp3
 sound/eternity/scp/106/portal1.mp3
 sound/eternity/scp/106/portal2.mp3
 sound/eternity/scp/106/portal3.mp3
+sound/eternity/scp/106/step1.mp3
+sound/eternity/scp/106/step2.mp3
+sound/eternity/scp/106/step3.mp3
 sound/eternity/scp/173/death1.mp3
 sound/eternity/scp/173/death2.mp3
 sound/eternity/scp/173/death3.mp3
