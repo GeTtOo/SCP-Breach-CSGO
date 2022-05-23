@@ -131,7 +131,7 @@ methodmap Player < Entity {
 
     public bool IsAlive() { return IsPlayerAlive(this.id); }
 
-    public bool IsAdmin() { return (GetUserAdmin(this.id) != INVALID_ADMIN_ID) ? true : false; }
+    public bool IsAdmin() { return GetAdminFlag(GetUserAdmin(this.id), Admin_Generic); }
 
     public bool InGame() { return IsClientInGame(this.id); }
 
