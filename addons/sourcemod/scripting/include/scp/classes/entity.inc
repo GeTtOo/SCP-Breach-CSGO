@@ -136,7 +136,7 @@ methodmap Entity < Base {
         return this;
     }
 
-    public bool IsValid() { return (IsValidEdict(this.id) && IsValidEntity(this.id) ? true : false); }
+    public bool IsValid() { return (this.id != 5000 && IsValidEdict(this.id) && IsValidEntity(this.id) ? true : false); }
 
     public Tmr TimerSimple(int delay, char[] funcname, any args = false) {
         char timername[64];
