@@ -9,7 +9,7 @@
 ### Свойства:  
 | Название       | Описание |
 | ------------- | ---------|
-| `EntityMeta meta` | Содержит ссылки на функции при происхождении, а так же внутренние параметры. |
+| `EntityMeta meta` | Содержит ссылки на функции при уникальные функции предмета, а так же внутренние параметры. |
 | `Mdl model` | Содержит ссылку на методы управления моделью объекта.  |
 | `int id` | Уникальный идентификатор сущности в игре. |
 | `bool spawned` | Содержит информацию о состоянии сущности в мире. |
@@ -29,9 +29,14 @@
 | `float GetPropFloat(char[] name, PropType type)` | Получает значение типа float. |
 | `int GetPropString(char[] name, char[] value, int max_size, PropType type)` | Получает значение типа string. |
 | `Entity GetPropEnt(char[] name, PropType type, int element)` | Получает значение типа Entity. |
+| `int GetPropEntId(char[] name, PropType type, int element)` | Получает идентификатор объекта. |
+| `Vector GetPropVector(char[] name, PropType type)` | Получает значение типа Vector. |
+| `Angle GetPropAngle(char[] name, PropType type)` | ППолучает значение типа Angle. |
 | `Entity Input(char[] input, Entity activator, Entity caller)` | Вызывает input у объекта. |
-| `void SetMoveType(MoveType type)` | Устанавливает MoveType (см. флаги SM). |
+| `bool IsValid()` | Проверка на валидность (работает только после спавна объекта). |
 | `void TimerSimple(int delay, char[] funcname, any args)` | Простой таймер привязанный к текущему объекту. |
+| `void SetMoveType(MoveType type)` | Устанавливает MoveType (см. флаги SM). |
+| `Entity Create(char[] entclass)` | Создаёт Entity в игровом мире. |
 | `Entity SetClass(char[] name)` | Устанавливает класс. |
 | `void GetClass(char[] name, int max_size)` | Получает класс. |
 | `bool IsClass(char[] equalClass)` | Выполняет проверку на класс. |
@@ -44,6 +49,6 @@
 | `Entity RemoveHook(SDKHookType type, SDKHookCB cb)` | Снимает хук с объекта. |
 | `Entity Spawn()` | Инициализирует объект в мире. |
 | `Entity Activate()` | Активирует объект. (Необходимо для некотрых стандартных игровых сущностей) |
-| `void Dispose()` | Деструктор объекта. (Необходим для вычистки данного объекта из памяти сервера) |
+| `void Dispose()` | Деструктор объекта. (Необходим для удаления данного объекта из памяти сервера) |
 | `void WorldRemove()` | Удаляет объект из мира. |
 | `void Remove()` | Удаляет объект из мира, а затем вызывает деструктор. |
