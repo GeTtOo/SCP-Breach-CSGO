@@ -43,10 +43,10 @@ public Plugin myinfo = {
 };
 
 public void SCP_RegisterMetaData() {
-    gamemode.meta.RegEntEvent(ON_PICKUP, "ent_id", "Function name", true); // @arg1 Player, @arg2 Entity, @arg3 disable pickup to inventory (def false).
-    gamemode.meta.RegEntEvent(ON_TOUCH, "ent_id", "Function name"); // @arg1 Entity, @arg2 Entity
-    gamemode.meta.RegEntEvent(ON_USE, "ent_id", "Function name"); // @arg1 Player, @arg2 Entity
-    gamemode.meta.RegEntEvent(ON_DROP, "ent_id", "Function name"); // @arg1 Player, @arg2 Entity
+    gamemode.meta.RegEntEvent(ON_PICKUP, "ent_class", "Function name"); // @arg1 Player, @arg2 Entity
+    gamemode.meta.RegEntEvent(ON_TOUCH, "ent_class", "Function name"); // @arg1 Entity, @arg2 Entity
+    gamemode.meta.RegEntEvent(ON_USE, "ent_class", "Function name"); // @arg1 Player, @arg2 Entity, @arg3 char[] sound
+    gamemode.meta.RegEntEvent(ON_DROP, "ent_class", "Function name"); // @arg1 Player, @arg2 Entity, @arg3 char[] sound
 }
 
 public void SCP_OnLoad() {
