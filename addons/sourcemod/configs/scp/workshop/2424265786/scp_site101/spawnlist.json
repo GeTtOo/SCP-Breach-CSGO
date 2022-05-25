@@ -100,9 +100,8 @@
     ],
     "weapon_ak47":[
         {"chance":7,"vec":[-10691,-269,-367],"ang":[0,108,0],"comment":"Heavy Zone: SCP-106"},
-        {"chance":90,"vec":[-11418,-2816,-978],"ang":[0,-90,0],"comment":"Security Spawn"},
-        {"chance":90,"vec":[-11394,-2816,-978],"ang":[0,-90,0],"comment":"Security Spawn"},
-        {"chance":90,"vec":[-11363,-2816,-978],"ang":[0,-90,0],"comment":"Security Spawn"}  
+        {"chance":100,"vec":[-11405,-2820,-976],"ang":[0,-140,80],"comment":"Security Spawn"},
+        {"chance":100,"vec":[-11372,-2820,-976],"ang":[0,-140,80],"comment":"Security Spawn"}
 
     ],
     "weapon_sg556":[

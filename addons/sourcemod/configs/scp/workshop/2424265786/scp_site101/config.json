@@ -7,36 +7,35 @@
     "DefaultClass":"D Class",
     "invsize": 5,
     "usablecards":true,
-    "tsto":10,
+    "showoverlaytime":10,
+    "winteamoverlay":"models/eternity/overlays/win_{name}_{lang}_fh",
     "psars": 30,
     "sound": {
-        "menuselect":"eternity/scp/menu/select.mp3"
-    },
-    "AdminRoom": [-4890,-6340,0],
-    "reinforce":{
-        "time":180,
-        "ratiodeadplayers":60
-    },
-    "meta": {
-        "models": [
-            {"id":"dclass","path":"models/player/custom_player/eternity/d_class.mdl","bginf":[0,7,4,1,0,0,1,0,1,0,0]},
-            {"id":"scientist","path":"models/player/custom_player/eternity/scientists.mdl","bginf":[1,6,4,0,0,0,0,0,0,0,0]},
-            {"id":"mtf","path":"models/player/custom_player/eternity/mog.mdl","bginf":[0,4,3,5,2,15,3,3,0,1,1]},
-            {"id":"chaos","path":"models/player/custom_player/eternity/chaos.mdl","bginf":[3,4,3,4,2,0,0,0,3,0,0]}
-        ]
+        "menuselect":"eternity/scp/menu/select.mp3",
+        "idpadag":"eternity/scp/other/{lang}/access_granted.mp3",
+        "idpadad":"eternity/scp/other/{lang}/access_denied.mp3"
     },
     "nuke": {
         "time":110,
         "ast":1500,
         "autostart":true,
         "killpos":1690,
+        "sound": {
+            "start":"eternity/scp/other/{lang}/warhead_start.mp3",
+            "stop":"eternity/scp/other/{lang}/warhead_canceled.mp3"
+        },
         "buttons":{
             "ready":356001,
             "active":356023,
             "cancel":356001
         },
-        "doors":[563,564],
+        "immunedoors":[563,564],
+        "opendoors":[563,564],
         "spawnlist":[]
+    },
+    "reinforce":{
+        "time":180,
+        "ratiodeadplayers":60
     },
     "teleport": {
         "D spawn":{"vec":[-2195,-4950,0],"ang":[0,-138,0]},
@@ -60,6 +59,7 @@
         "SCP-996":{"vec":[-5406,2626,4],"ang":[-2,-1,0]},
         "SCP-106-Cell":{"vec":[-4306,683,2385],"ang":[22,176,0]}
     },
+    "AdminRoom": [-4890,-6340,0],
     "AdminCommandsFlag": {
         "SHOW_PLAYER_CLASS": "Admin_Ban",
         "RESPAWN_PLAYER": "Admin_Ban",
@@ -70,6 +70,14 @@
         "MOVE_TO_ADMIN_ZONE": "Admin_Ban",
         "ROUND_RESTART": "Admin_Ban",
         "DESTROY_SITE": "Admin_Custom2"
+    },
+    "meta": {
+        "models": [
+            {"id":"dclass","path":"models/player/custom_player/eternity/d_class.mdl","bginf":[0,7,4,1,0,0,1,0,1,0,0]},
+            {"id":"scientist","path":"models/player/custom_player/eternity/scientists.mdl","bginf":[1,6,4,0,0,0,0,0,0,0,0]},
+            {"id":"mtf","path":"models/player/custom_player/eternity/mog.mdl","bginf":[0,4,3,5,2,15,3,3,0,1,1]},
+            {"id":"chaos","path":"models/player/custom_player/eternity/chaos.mdl","bginf":[3,4,3,4,2,0,0,0,3,0,0]}
+        ]
     },
     "[SCP] Sapper": {
         "bcmultipler":3,

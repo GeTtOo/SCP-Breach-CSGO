@@ -84,12 +84,16 @@ methodmap Config < JSON_OBJECT {
         public get() { return this.GetInt("invsize") - 1; } //Index started at 0
     }
 
-    property int tsto {
-        public get() { return this.GetInt("tsto"); }
+    property int showoverlaytime {
+        public get() { return this.GetInt("showoverlaytime"); }
     }
 
     property int psars {
         public get() { return this.GetInt("psars"); }
+    }
+
+    property JSON_OBJECT sound {
+        public get() { return this.GetObject("sound"); }
     }
 
     property JSON_OBJECT reinforce {

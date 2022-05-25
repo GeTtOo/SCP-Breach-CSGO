@@ -611,7 +611,9 @@ sound/eternity/scp/other/en/warhead_start.mp3
 sound/eternity/scp/other/ru/mtf_reinforced.mp3
 sound/eternity/scp/other/ru/warhead_canceled.mp3
 sound/eternity/scp/other/ru/warhead_start.mp3
-sound/eternity/scp/other/access_granted.mp3
-sound/eternity/scp/other/access_denied.mp3
+sound/eternity/scp/other/en/access_granted.mp3
+sound/eternity/scp/other/en/access_denied.mp3
+sound/eternity/scp/other/ru/access_granted.mp3
+sound/eternity/scp/other/ru/access_denied.mp3
 sound/eternity/scp/other/intercom_start.mp3
 sound/eternity/scp/other/intercom_stop.mp3

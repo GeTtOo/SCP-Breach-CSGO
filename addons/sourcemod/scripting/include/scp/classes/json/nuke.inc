@@ -31,6 +31,17 @@
 #pragma semicolon 1
 #pragma newdecls required
 
+methodmap NukeSounds < JSON_OBJECT {
+
+    public void start(char[] buffer, int max_size) {
+        this.GetString("start", buffer, max_size);
+    }
+
+    public void stop(char[] buffer, int max_size) {
+        this.GetString("stop", buffer, max_size);
+    }
+}
+
 methodmap NukeButtons < JSON_OBJECT {
 
     property int ready {
@@ -68,23 +79,23 @@ methodmap NukeConfig < JSON_OBJECT {
         public get() { return float(this.GetInt("killpos")); }
     }
 
+    property NukeSounds sound {
+        public get() { return view_as<NukeSounds>(this.GetObject("sound")); }
+    }
+
     property NukeButtons buttons {
         public get() { return view_as<NukeButtons>(this.GetObject("buttons")); }
     }
 
-    property JSON_ARRAY doors {
-        public get() { return view_as<JSON_ARRAY>(this.GetObject("doors")); }
+    property JSON_ARRAY immunedoors {
+        public get() { return view_as<JSON_ARRAY>(this.GetObject("immunedoors")); }
+    }
+
+    property JSON_ARRAY opendoors {
+        public get() { return view_as<JSON_ARRAY>(this.GetObject("opendoors")); }
     }
 
     property JSON_ARRAY spawnlist {
         public get() { return view_as<JSON_ARRAY>(this.GetObject("spawnlist")); }
-    }
-
-    public void sound(char[] buffer, int max_size) {
-        this.GetString("sound", buffer, max_size);
-    }
-
-    public void cancelsound(char[] buffer, int max_size) {
-        this.GetString("cancelsound", buffer, max_size);
     }
 }
