@@ -149,7 +149,7 @@ The number of items is indicated in the format `[["Item Name", quantity]]`
   ],
   "percent":20,
   "priority": true,
-  "overlay":"scientist",
+  "overlay":"models/eternity/overlays/scientist",
   "model":{
     	"id":"scientist",
     	"bodygroups":{
@@ -314,8 +314,8 @@ Both parameters support randomization.
     "nuke": {
         "time":110,
         "killpos":1690,
-        "sound":"*/scp/warhead_announcement.mp3",
-        "cancelsound":"*/scp/warhead_canceled.mp3",
+        "sound":"*/eternity/scp/warhead_announcement.mp3",
+        "cancelsound":"*/eternity/scp/warhead_canceled.mp3",
         "buttons":{
             "ready":356001,
             "active":356023,
@@ -363,11 +363,11 @@ Both parameters support randomization.
         "radius":2000,
         "blinktime":5,
         "sound": {
-            "neckbroke":"*/scp/173/neckbroke.mp3",
+            "neckbroke":"*/eternity/scp/173/neckbroke.mp3",
             "death": [
-                "*/scp/173/death1.mp3",
-                "*/scp/173/death2.mp3",
-                "*/scp/173/death3.mp3"
+                "*/eternity/scp/173/death1.mp3",
+                "*/eternity/scp/173/death2.mp3",
+                "*/eternity/scp/173/death3.mp3"
             ]
         }
     },
