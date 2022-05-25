@@ -22,7 +22,7 @@
 
 ------------------
 
-## События ядра
+## События ядра и примеры обработчиков
 
 | Событие       | Описание |
 | ------------- | ---------|
@@ -44,3 +44,94 @@
 | `void SCP_OnInput(Player &ply, int buttons)` | Аналог OnPlayerRunCmd  |
 | `void SCP_OnCallAction(Player &ply)` | Вызывается при открытии меню (клавиша TAB)  |
 | `bool SCP_Log_PlayerDeath(Player &vic, Player &atk, float damage, int damagetype, int inflictor)` | Вызывается при срабатывании какого либо события логгера. Для блокировки события необходимо вернуть false  |
+
+**SCP_RegisterMetaData**
+
+```js
+public void SCP_RegisterMetaData() {
+    gamemode.meta.RegEntEvent(ON_PICKUP, "ent_class", "Function name", true); // arg1 Player, arg2 Entity
+    gamemode.meta.RegEntEvent(ON_TOUCH, "ent_class", "Function name"); // arg1 Entity, arg2 Entity
+    gamemode.meta.RegEntEvent(ON_USE, "ent_class", "Function name"); // arg1 Player, arg2 Entity
+    gamemode.meta.RegEntEvent(ON_DROP, "ent_class", "Function name"); // arg1 Player, arg2 Entity
+}
+```
+
+**SCP_OnLoad**
+
+```sp
+public void SCP_OnLoad() {
+    
+}
+```
+
+**SCP_OnUnload**
+
+```sp
+public void SCP_OnUnload() {
+    
+}
+```
+
+**SCP_OnPlayerJoin**
+
+```sp
+public void SCP_OnPlayerJoin(Player &ply) {
+    
+}
+```
+
+**SCP_OnPlayerLeave**
+
+```sp
+public void SCP_OnPlayerLeave(Player &ply) {
+    
+}
+```
+
+**SCP_OnPlayerClear**
+
+```sp
+public void SCP_OnPlayerClear(Player &ply) {
+    
+}
+```
+
+**SCP_OnPlayerSpawn**
+
+```sp
+public void SCP_OnPlayerSpawn(Player &ply) {
+    
+}
+```
+
+**OnPlayerTakeWeapon**
+
+```sp
+public void OnPlayerTakeWeapon(Player &ply, Entity &ent) {
+    
+}
+```
+
+**SCP_OnPlayerSwitchWeapon**
+
+```sp
+public void SCP_OnPlayerSwitchWeapon(Player &ply, Entity &ent) {
+    
+}
+```
+
+**SCP_OnTakeDamage**
+
+```sp
+public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype, int &inflictor) {
+    
+}
+```
+
+**SCP_OnPlayerDeath**
+
+```sp
+public void SCP_OnPlayerDeath(Player &vic, Player &atk) {
+
+}
+```
