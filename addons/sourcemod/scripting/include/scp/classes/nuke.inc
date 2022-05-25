@@ -108,26 +108,12 @@ methodmap NuclearWarhead < Base {
     }
 
     public void Activate() {
-        char path[128], patchcheck[128], langcode[3];
-
-        ArrayList players = player.GetAll();
-
-        for (int i=0; i < players.Length; i++)
-        {
-            Player ply = players.Get(i);
-
-            ply.GetLangInfo(langcode, sizeof(langcode));
-            Format(path, sizeof(path), "*/eternity/scp/other/%s/warhead_start.mp3", langcode);
-            Format(patchcheck, sizeof(patchcheck), "sound/eternity/scp/other/%s/warhead_start.mp3", langcode);
-
-            if (FileExists(patchcheck, true))
-                ply.PlaySound(path, SNDCHAN_ITEM);
-        }
-
-        delete players;
-
         gamemode.timer.Create("SCP_ALPHA_WARHEAD_CALL_EXPLODE", gamemode.config.nuke.time * 1000, 1, "NukeExplode");
         gamemode.timer.Create("SCP_ALPHA_WARHEAD_DOOR_CONTROLLER", (gamemode.config.nuke.time - 10) * 1000, 1, "ClosingDoorBeforeNukeExplode");
+
+        char path[256];
+        gamemode.config.nuke.sound.start(path, sizeof(path));
+        gamemode.mngr.PlayTranslatedSoundToAll(path);
 
         int ent;
         
@@ -138,14 +124,14 @@ methodmap NuclearWarhead < Base {
             
             if(StrContains(name, "DoorGate", false) == -1)
             {
+                if (gamemode.config.nuke.immunedoors.IndexOf(ent) != -1) continue;
+
                 AcceptEntityInput(ent, "Open");
             }
-
-            for (int i=0; i < gamemode.config.nuke.doors.Length; i++)
-            {
-                AcceptEntityInput(gamemode.config.nuke.doors.GetInt(i), "Open");
-            }
         }
+
+        for (int i=0; i < gamemode.config.nuke.opendoors.Length; i++)
+            AcceptEntityInput(gamemode.config.nuke.opendoors.GetInt(i), "Open");
 
         this.detonationtime = GetGameTime() + float(gamemode.config.nuke.time);
 
@@ -173,30 +159,9 @@ methodmap NuclearWarhead < Base {
         gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_COUNTDOWN");
         gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_AUTO_COUNTDOWN");
 
-        char path[128], patchcheck[128], langcode[3];
-
-        ArrayList players = player.GetAll();
-
-        for (int i=0; i < players.Length; i++)
-        {
-            Player ply = players.Get(i);
-
-            ply.GetLangInfo(langcode, sizeof(langcode));
-            
-            Format(path, sizeof(path), "*/eternity/scp/other/%s/warhead_start.mp3", langcode);
-            Format(patchcheck, sizeof(patchcheck), "sound/eternity/scp/other/%s/warhead_start.mp3", langcode);
-
-            if (FileExists(patchcheck, true))
-                ply.StopSound(path, SNDCHAN_ITEM);
-
-            Format(path, sizeof(path), "*/eternity/scp/other/%s/warhead_canceled.mp3", langcode);
-            Format(patchcheck, sizeof(patchcheck), "sound/eternity/scp/other/%s/warhead_canceled.mp3", langcode);
-
-            if (FileExists(patchcheck, true))
-                ply.PlaySound(path, SNDCHAN_ITEM);
-        }
-
-        delete players;
+        char path[256];
+        gamemode.config.nuke.sound.stop(path, sizeof(path));
+        gamemode.mngr.PlayTranslatedSoundToAll(path);
 
         this.Update("Canceled");
     }

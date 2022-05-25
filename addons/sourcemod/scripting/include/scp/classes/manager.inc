@@ -75,6 +75,15 @@ methodmap Manager < Base {
         EmitSoundToAll(path, _, channel);
     }
 
+    public void PlayTranslatedSoundToAll(char[] metapath)
+    {
+        ArrayList players = player.GetAll();
+
+        for (int i=0; i < players.Length; i++) view_as<Player>(players.Get(i)).PlayTranslatedSound(metapath);
+
+        delete players;
+    }
+
     public void PlayNonCheckSoundToAll(char[] path) {
         ArrayList players = player.GetAll();
 
@@ -84,6 +93,15 @@ methodmap Manager < Base {
 
             ply.PlayNonCheckSound(path);
         }
+
+        delete players;
+    }
+
+    public void PlayTranslatedNonCheckSoundToAll(char[] metapath)
+    {
+        ArrayList players = player.GetAll();
+
+        for (int i=0; i < players.Length; i++) view_as<Player>(players.Get(i)).PlayTranslatedNonCheckSound(metapath);
 
         delete players;
     }
@@ -106,6 +124,23 @@ methodmap Manager < Base {
         Vector vec = ent.GetPos();
         vec.GetArr(vecarr);
         delete vec;
+        EmitAmbientSound(path, vecarr, ent.id);
+    }
+
+    public void PlayTranslatedAmbient(char[] metapath, char[] langcode, Entity ent) {
+        float vecarr[3];
+        Vector vec = ent.GetPos();
+        vec.GetArr(vecarr);
+        delete vec;
+
+        char path[256], patchcheck[256];
+
+        Utils.TransformPath(metapath, path, langcode);
+
+        FormatEx(patchcheck, sizeof(patchcheck), "sound/%s", path);
+        if (!FileExists(patchcheck, true)) Utils.TransformPath(metapath, path);
+
+        Format(path, sizeof(path), "*/%s", path);
         EmitAmbientSound(path, vecarr, ent.id);
     }
 
@@ -237,8 +272,8 @@ methodmap Manager < Base {
         {
             PrintToChatAll(" \x07[SCP] \x01%t", "Team Win", winteam);
 
-            char overlay[128];
-            Format(overlay, sizeof(overlay), "win_%s", winteam);
+            char winteamoverlay[256];
+            gamemode.config.GetString("winteamoverlay", winteamoverlay, sizeof(winteamoverlay));
             
             Player ply;
             ArrayList players = player.GetAll();
@@ -246,7 +281,18 @@ methodmap Manager < Base {
             for(int i = 0; i < players.Length; i++)
             {
                 ply = players.Get(i);
-                ply.ShowOverlay(overlay);
+
+                char path[256], patchcheck[256], langcode[3];
+                
+                ply.GetLangInfo(langcode, sizeof(langcode));
+                Utils.TransformPath(winteamoverlay, path, langcode, winteam);
+
+                FormatEx(patchcheck, sizeof(patchcheck), "materials/%s.vmt", path);
+                if (!FileExists(patchcheck, true)) Utils.TransformPath(winteamoverlay, path, _, winteam);
+                
+                char overlay[256];
+                Format(overlay, sizeof(overlay), "r_screenoverlay %s", path);
+                ply.ExecCommand(overlay);
             }
 
             delete players;

@@ -157,18 +157,26 @@ public void OnPluginStart()
 //                                Events
 //
 //////////////////////////////////////////////////////////////////////////////
-bool fixCache = false;
+bool modloaded = false;
 
 public void OnMapStart()
 {
+    char mapName[128];
+    GetCurrentMap(mapName, sizeof(mapName));
+
+    if (StrContains(mapName, "scp") != -1)
+        modloaded = true;
+    else
+    {
+        LogMessage("This mod required scp_* map");
+        return;
+    }
+
     ents = new EntitySingleton();
     player = new ClientSingleton();
     worldtext = new WorldTextSingleton();
     statuseffect = new StatusEffectSingleton();
     AdminMenu = new AdminMenuSingleton();
-
-    char mapName[128];
-    GetCurrentMap(mapName, sizeof(mapName));
     
     gamemode = new GameMode();
     
@@ -201,17 +209,13 @@ public void OnMapStart()
     Call_StartForward(OnLoadGM);
     Call_Finish();
 
-    // ¯\_(ツ)_/¯
-    if (!fixCache) {
-        ForceChangeLevel(mapName, "Fix sound cached");
-        fixCache = true;
-    }
-
     gamemode.log.Info("%t", "Log_Core_MapStart", mapName);
 }
 
 public void OnMapEnd()
 {
+    if (!modloaded) return;
+
     RemoveCommandListener(Command_Base, "gm");
     RemoveCommandListener(Command_Ents, "ents");
 
@@ -240,6 +244,8 @@ public void OnMapEnd()
 
 public void OnGameFrame()
 {
+    if (!modloaded) return;
+    
     gamemode.timer.Update();
     statuseffect.Update();
 }
@@ -383,11 +389,11 @@ public void PlayerSpawn(Player ply)
         
         if (ply.class.HasKey("overlay"))
         {
-            char name[32];
-            ply.class.overlay(name, sizeof(name));
-            ply.ShowOverlay(name);
+            char path[256];
+            ply.class.overlay(path, sizeof(path));
+            ply.ShowOverlay(path);
         
-            ply.TimerSimple(gamemode.config.tsto * 1000, "PlyHideOverlay", ply);
+            ply.TimerSimple(gamemode.config.showoverlaytime * 1000, "PlyHideOverlay", ply);
         }
 
         gamemode.log.Debug("Player %L spawned | Team/Class: (%s - %s)", ply.id, team, class);
@@ -586,6 +592,10 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
     if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsClientInSpec(activator))
     {
         Player ply = player.GetByID(activator);
+
+        char langcode[3];
+        ply.GetLangInfo(langcode, sizeof(langcode));
+
         int doorId = GetEntProp(caller, Prop_Data, "m_iHammerID");
 
         if (gamemode.config.debug)
@@ -625,12 +635,13 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                     {
                         if (idpad.HasProp("m_nSkin"))
                         {
-                            idpad.SetProp("m_nSkin", (ply.lang == 22) ? 1 : 4); // 22 = ru lang code
-                            gamemode.mngr.PlayAmbient("*/eternity/scp/other/access_granted.mp3", idpad);
+                            idpad.SetProp("m_nSkin", (StrEqual(langcode, "ru")) ? 1 : 4); // 22 = ru lang code
+                            char sound[256];
+                            gamemode.config.sound.GetString("idpadag", sound, sizeof(sound));
+                            gamemode.mngr.PlayTranslatedAmbient(sound, langcode, idpad);
                             gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
                         }
                     }
-                    idpad.Dispose();
                 }
                 else
                 {
@@ -638,8 +649,10 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                     {
                         if (idpad.HasProp("m_nSkin"))
                         {
-                            idpad.SetProp("m_nSkin", (ply.lang == 22) ? 2 : 5);
-                            gamemode.mngr.PlayAmbient("*/eternity/scp/other/access_denied.mp3", idpad);
+                            idpad.SetProp("m_nSkin", (StrEqual(langcode, "ru")) ? 2 : 5);
+                            char sound[256];
+                            gamemode.config.sound.GetString("idpadad", sound, sizeof(sound));
+                            gamemode.mngr.PlayTranslatedAmbient(sound, langcode, idpad);
                             gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
                         }
 
@@ -654,6 +667,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                     idpad.Dispose();
                     return Plugin_Stop;
                 }
+                idpad.Dispose();
             }
         }
 
@@ -1154,7 +1168,7 @@ public int InventoryHandler(Menu hMenu, MenuAction action, int client, int idx)
         if (!item) return;
 
         char sound[256];
-        gamemode.config.GetObject("sound").GetString("menuselect", sound, sizeof(sound));
+        gamemode.config.sound.GetString("menuselect", sound, sizeof(sound));
         ply.PlayNonCheckSound(sound);
 
         char class[32];
@@ -1264,11 +1278,14 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                     
                     if (item)
                     {
-                        char path[128];
-                        if (item.meta.GetString("usesound", path, sizeof(path)))
-                            ply.PlayNonCheckSound(path);
+                        char sound[128];
+                        if (item.meta.GetString("usesound", sound, sizeof(sound)))
+                            ply.PlayNonCheckSound(sound);
                         else
-                            ply.PlayNonCheckSound("eternity/scp/menu/select.mp3");
+                        {
+                            gamemode.config.sound.GetString("menuselect", sound, sizeof(sound));
+                            ply.PlayNonCheckSound(sound);
+                        }
 
                         char funcname[32];
                         item.meta.onuse.name(funcname, sizeof(funcname));
@@ -1286,7 +1303,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                     if (item)
                     {
                         char sound[256];
-                        gamemode.config.GetObject("sound").GetString("menuselect", sound, sizeof(sound));
+                        gamemode.config.sound.GetString("menuselect", sound, sizeof(sound));
                         ply.PlayNonCheckSound(sound);
 
                         char class[64], classname[64];
@@ -1323,7 +1340,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                         else
                         {
                             char sound[256];
-                            gamemode.config.GetObject("sound").GetString("menuselect", sound, sizeof(sound));
+                            gamemode.config.sound.GetString("menuselect", sound, sizeof(sound));
                             ply.PlayNonCheckSound(sound);
                         }
                     }
@@ -1548,7 +1565,7 @@ public void EscapeController(Player ply, int doorID)
                 ply.class.overlay(name, sizeof(name));
                 ply.ShowOverlay(name);
             
-                ply.TimerSimple(gamemode.config.tsto * 1000, "PlyHideOverlay", ply);
+                ply.TimerSimple(gamemode.config.showoverlaytime * 1000, "PlyHideOverlay", ply);
             }
 
             gamemode.mngr.GameCheck();
@@ -2109,7 +2126,7 @@ public void SCP_OnInput(Player &ply, int buttons)
             ply.TimerSimple(1000, "ActionUnlock", ply);
 
             char sound[256];
-            gamemode.config.GetObject("sound").GetString("menuselect", sound, sizeof(sound));
+            gamemode.config.sound.GetString("menuselect", sound, sizeof(sound));
             ply.PlayNonCheckSound(sound);
 
             if (!ply.IsSCP)

@@ -164,20 +164,22 @@ methodmap Player < Entity {
         PrintCenterText(this.id, "%s", formattedText);
     }
 
-    public void ShowOverlay(char[] name) {
-        char overlay[128], langcode[3];
+    public void ShowOverlay(char[] metapath) {
+        char path[256], patchcheck[256], langcode[3];
+                
         this.GetLangInfo(langcode, sizeof(langcode));
-        Format(overlay, sizeof(overlay), "r_screenoverlay models/eternity/overlays/%s_%s_fh", name, langcode);
+        Utils.TransformPath(metapath, path, langcode);
+
+        FormatEx(patchcheck, sizeof(patchcheck), "materials/%s.vmt", path);
+        if (!FileExists(patchcheck, true)) Utils.TransformPath(metapath, path);
+        
+        char overlay[272];
+        Format(overlay, sizeof(overlay), "r_screenoverlay %s", path);
         this.ExecCommand(overlay);
     }
 
     public void HideOverlay() {
-        char langcode[3];
-        this.GetLangInfo(langcode, sizeof(langcode));
-        if (!this.IsSCP && this.IsAlive())
-            this.ExecCommand("r_screenoverlay models/eternity/overlays/inventory_%s_fh", langcode);
-        else
-            this.ExecCommand("r_screenoverlay none");
+        this.ExecCommand("r_screenoverlay none");
     }
 
     public void SetListen(Player ply, bool islisten)
@@ -197,10 +199,40 @@ methodmap Player < Entity {
         EmitSound(clients, sizeof(clients), path, (entity == 0) ? this.id : entity, channel, level);
     }
 
+    public void PlayTranslatedSound(char[] metapath)
+    {
+        char path[256], patchcheck[256], langcode[3];
+
+        this.GetLangInfo(langcode, sizeof(langcode));
+        Utils.TransformPath(metapath, path, langcode);
+
+        FormatEx(patchcheck, sizeof(patchcheck), "sound/%s", path);
+        if (!FileExists(patchcheck, true)) Utils.TransformPath(metapath, path);
+
+        Format(path, sizeof(path), "*/%s", path);
+
+        this.PlaySound(path, SNDCHAN_ITEM);
+    }
+
     public void PlayNonCheckSound(char[] path) {
         char soundcommand[256];
         FormatEx(soundcommand, sizeof(soundcommand), "playgamesound %s", path);
         this.ExecCommand(soundcommand);
+    }
+
+    public void PlayTranslatedNonCheckSound(char[] metapath)
+    {
+        char path[256], patchcheck[256], langcode[3];
+
+        this.GetLangInfo(langcode, sizeof(langcode));
+        Utils.TransformPath(metapath, path, langcode);
+
+        FormatEx(patchcheck, sizeof(patchcheck), "sound/%s", path);
+        if (!FileExists(patchcheck, true)) Utils.TransformPath(metapath, path);
+
+        Format(path, sizeof(path), "%s", path);
+
+        this.PlayNonCheckSound(path);
     }
 
     public void StopSound(char[] path, int channel = 1) {
