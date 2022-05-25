@@ -43,6 +43,7 @@ public Plugin myinfo = {
 };
 
 public void SCP_OnLoad() {
+    PrecacheModel("models/props/coop_autumn/autumn_flashlight/autumn_flashlight.mdl");
     PrecacheSound("items/flashlight1.wav");
 }
 
