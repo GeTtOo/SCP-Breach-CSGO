@@ -71,4 +71,11 @@ methodmap Utils < StringMap {
         GetCurrentMap(mapname, sizeof(mapname));
         return Utils.ReadMapConfig(mapname, filename);
     }
+
+    public static void TransformPath(char[] metapath, char[] outpath, char[] lang = "en", char[] name = "")
+    {   
+        strcopy(outpath, 256, metapath);
+        ReplaceString(outpath, 256, "{lang}", lang);
+        ReplaceString(outpath, 256, "{name}", name);
+    }
 }
