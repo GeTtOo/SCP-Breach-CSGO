@@ -36,64 +36,76 @@
 #pragma newdecls required
 
 public Plugin myinfo = {
-    name = "[SCP] Discord logger",
+    name = "[SCP] Discord Logger",
     author = "GeTtOo, Andrey::Dono",
-    description = "Discord logger",
+    description = "Discord logger for SCP Breach modification",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-JSONObject point;
-
-public void SCP_OnLoad() {
-    point = new JSONObject();
-    point.SetString("username", "SCP Breach Log");
-}
-
-public void SCP_OnUnload() {
-    delete point;
-}
-
-public void SCP_OnLog(LogType type, const char[] timestring, const char[] formatMessage)
+public void SCP_OnLog(LogType type, Player &admin, const char[] logtext)
 {
-    char normal[256] = "https://discord.com/api/webhooks/962365953386090536/Yr6RDFAsNA-pg0SaIfb0FrYoIH4ZNUmXWL3sftT--3bTgJf4auPDMfjHygDJMOW4QlT_";
-    char admin[256] = "https://discord.com/api/webhooks/977635645725999156/yWms0E12KAnE-BelrUdAhPt9YIRpqCTIlUX-FRlFuhJQHRs_PjZILy3o-NVId7MjSbf0";
-    
-    char buffer[256];
-
-    switch (type)
+    char strtype[32];
+    switch(type)
     {
-        case ERROR:
-        {
-            FormatEx(buffer, sizeof(buffer), "```md\n[%s][ERROR] %s```", timestring, formatMessage);
-            point.SetString("content", buffer);
-            view_as<HTTPRequest>(new HTTPRequest(admin)).Post(point, OnReceived);
-        }
-        case Warning:
-        {
-            FormatEx(buffer, sizeof(buffer), "```md\n[%s][Warning] %s```", timestring, formatMessage);
-            point.SetString("content", buffer);
-            view_as<HTTPRequest>(new HTTPRequest(admin)).Post(point, OnReceived);
-        }
-        case Info:
-        {
-            FormatEx(buffer, sizeof(buffer), "```md\n[%s][Info] %s```", timestring, formatMessage);
-            point.SetString("content", buffer);
-            view_as<HTTPRequest>(new HTTPRequest(normal)).Post(point, OnReceived);
-        }
-        case Admin:
-        {
-            FormatEx(buffer, sizeof(buffer), "```md\n[%s][Admin] %s```", timestring, formatMessage);
-            point.SetString("content", buffer);
-            view_as<HTTPRequest>(new HTTPRequest(admin)).Post(point, OnReceived);
-        }
-        case Debug:
-        {
-            FormatEx(buffer, sizeof(buffer), "```md\n[%s][Debug] %s```", timestring, formatMessage);
-            point.SetString("content", buffer);
-            view_as<HTTPRequest>(new HTTPRequest(admin)).Post(point, OnReceived);
-        }
+        case ERROR:     { strtype = "error";   }
+        case Warning:   { strtype = "warning"; }
+        case Info:      { strtype = "info";    }
+        case Admin:     { strtype = "admin";   }
+        case Debug:     { strtype = "debug";   }
     }
+    
+    if (!gamemode.plconfig.HasKey(strtype)) return;
+    
+    JSON_OBJECT config = gamemode.plconfig.GetObject(strtype);
+
+    JSONObject point = new JSONObject();
+
+    char username[64];
+    config.GetString("username", username, sizeof(username));
+    point.SetString("username", username);
+    
+    JSONArray embeds = new JSONArray();
+    JSONObject log = new JSONObject();
+
+    if (type != Admin)
+    {
+        char title[64];
+        config.GetString("title", title, sizeof(title));
+        log.SetString("title", title);
+    }
+    else
+    {
+        char name[32], steamid[32], title[128];
+        config.GetString("title", title, sizeof(title));
+        admin.GetName(name, sizeof(name));
+        admin.GetAuth(steamid, sizeof(steamid));
+        ReplaceString(title, sizeof(title), "{name}", name);
+        ReplaceString(title, sizeof(title), "{steamid}", steamid);
+        log.SetString("title", title);
+    }
+
+    log.SetInt("color", config.GetInt("color"));
+    log.SetString("description", logtext);
+    
+    JSONObject logfooter = new JSONObject();
+
+    char timestring[32];
+    FormatTime(timestring, sizeof(timestring), "%H:%M:%S-%d.%m.%Y");
+    logfooter.SetString("text", timestring);
+
+    log.Set("footer", logfooter);
+    embeds.Push(log);
+    point.Set("embeds", embeds);
+
+    char hookurl[256];
+    config.GetString("hookurl", hookurl, sizeof(hookurl));
+    view_as<HTTPRequest>(new HTTPRequest(hookurl)).Post(point, OnReceived);
+
+    delete logfooter;
+    delete log;
+    delete embeds;
+    delete point;
 }
 
 public void OnReceived(HTTPResponse resp, any val)
