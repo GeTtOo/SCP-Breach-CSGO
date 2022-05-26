@@ -1,0 +1,32 @@
+{
+    "info": {
+        "username":"SCP Breach Log",
+        "title":":mega:  Информационный  :mega:",
+        "color":65535,
+        "hookurl":"Your hook"
+    },
+    "admin": {
+        "username":"SCP Breach Log",
+        "title":":bell:  {name} <{steamid}>  :bell:",
+        "color":65280,
+        "hookurl":"Your hook"
+    },
+    "warning": {
+        "username":"SCP Breach Log",
+        "title":":warning: Warning :warning:",
+        "color":16776960,
+        "hookurl":"Your hook"
+    },
+    "error": {
+        "username":"SCP Breach Log",
+        "title":":loudspeaker:  Error  :loudspeaker:",
+        "color":16711680,
+        "hookurl":"Your hook"
+    },
+    "debug": {
+        "username":"SCP Breach Log",
+        "title":":loud_sound:  Debug  :loud_sound:",
+        "color":8388736,
+        "hookurl":"Your hook"
+    }
+}

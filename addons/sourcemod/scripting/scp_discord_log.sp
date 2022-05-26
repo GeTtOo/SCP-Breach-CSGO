@@ -43,6 +43,16 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
+JSON_OBJECT config;
+
+public void SCP_OnLoad() {
+    config = Utils.ReadCurMapConfig("discord");
+}
+
+public void SCP_OnUnload() {
+    delete config;
+}
+
 public void SCP_OnLog(LogType type, Player &admin, const char[] logtext)
 {
     char strtype[32];
@@ -55,14 +65,14 @@ public void SCP_OnLog(LogType type, Player &admin, const char[] logtext)
         case Debug:     { strtype = "debug";   }
     }
     
-    if (!gamemode.plconfig.HasKey(strtype)) return;
-    
-    JSON_OBJECT config = gamemode.plconfig.GetObject(strtype);
+    if (!config.HasKey(strtype)) return;
+
+    JSON_OBJECT tconfig = config.GetObject(strtype);
 
     JSONObject point = new JSONObject();
 
     char username[64];
-    config.GetString("username", username, sizeof(username));
+    tconfig.GetString("username", username, sizeof(username));
     point.SetString("username", username);
     
     JSONArray embeds = new JSONArray();
@@ -71,13 +81,13 @@ public void SCP_OnLog(LogType type, Player &admin, const char[] logtext)
     if (type != Admin)
     {
         char title[64];
-        config.GetString("title", title, sizeof(title));
+        tconfig.GetString("title", title, sizeof(title));
         log.SetString("title", title);
     }
     else
     {
         char name[32], steamid[32], title[128];
-        config.GetString("title", title, sizeof(title));
+        tconfig.GetString("title", title, sizeof(title));
         admin.GetName(name, sizeof(name));
         admin.GetAuth(steamid, sizeof(steamid));
         ReplaceString(title, sizeof(title), "{name}", name);
@@ -85,7 +95,7 @@ public void SCP_OnLog(LogType type, Player &admin, const char[] logtext)
         log.SetString("title", title);
     }
 
-    log.SetInt("color", config.GetInt("color"));
+    log.SetInt("color", tconfig.GetInt("color"));
     log.SetString("description", logtext);
     
     JSONObject logfooter = new JSONObject();
@@ -99,7 +109,7 @@ public void SCP_OnLog(LogType type, Player &admin, const char[] logtext)
     point.Set("embeds", embeds);
 
     char hookurl[256];
-    config.GetString("hookurl", hookurl, sizeof(hookurl));
+    tconfig.GetString("hookurl", hookurl, sizeof(hookurl));
     view_as<HTTPRequest>(new HTTPRequest(hookurl)).Post(point, OnReceived);
 
     delete logfooter;
