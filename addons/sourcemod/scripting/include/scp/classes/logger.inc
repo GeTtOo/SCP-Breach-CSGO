@@ -47,7 +47,7 @@ methodmap Logger < Base
     public Logger(char[] fwname, int mode, int loglevel, bool debugmode)
     {
         Logger logger = view_as<Logger>(new Base());
-        logger.SetHandle("fw", CreateGlobalForward(fwname, ET_Event, Param_Cell, Param_String, Param_String));
+        logger.SetHandle("fw", CreateGlobalForward(fwname, ET_Event, Param_Cell, Param_CellByRef, Param_String));
         logger.SetInt("mode", mode);
         logger.SetInt("loglevel", loglevel);
         logger.SetBool("debug", debugmode);
@@ -70,28 +70,32 @@ methodmap Logger < Base
         public get() { return this.GetBool("debug"); }
     }
 
-    public void SendMessageToConsole(const char[] timestring, const char[] type, const char[] formatMessage)
+    public void SendMessageToConsole(const char[] type, const char[] formatMessage)
     {
+        char timestring[10];
+        FormatTime(timestring, 10, "%H:%M:%S");
         PrintToServer("[%s][%s] %s", timestring, type, formatMessage);
     }
     
     public void SendMessageToFile(const char[] type, const char[] formatMessage)
     {
-        LogToFileEx("addons/sourcemod/logs/SCP.log", "[%s] %s", type, formatMessage);
+        char timestring[10];
+        FormatTime(timestring, 10, "%H:%M:%S");
+        LogToFileEx("addons/sourcemod/logs/SCP.log", "[%s][%s] %s", timestring, type, formatMessage);
     }
 
-    public void SendMessageToForward(LogType type, const char[] timestring, const char[] formatMessage) // Base user, Base admin
+    public void SendMessageToForward(LogType type, Base admin, const char[] formatMessage) // Base user, Base admin
     {
         Call_StartForward(this.fw);
         Call_PushCell(type);
-        Call_PushString(timestring);
+        Call_PushCellRef(admin);
         Call_PushString(formatMessage);
         //Call_PushCellRef(user);
         //Call_PushCellRef(admin);
         Call_Finish();
     }
 
-    public void SendMessage(LogType type, const char[] text) //const char[] logid, Base user, Base admin
+    public void SendMessage(LogType type, const char[] text, Base admin = null) //const char[] logid, Base user, Base admin
     {
         if (this.loglevel >= view_as<int>(type))
         {
@@ -134,14 +138,11 @@ methodmap Logger < Base
                 default:        { strtype = "Unknown"; }
             }
 
-            char timestring[10];
-            FormatTime(timestring, 10, "%H:%M:%S");
-
             switch(this.mode)
             {
                 case 1:
                 {
-                    this.SendMessageToConsole(timestring, strtype, text);
+                    this.SendMessageToConsole(strtype, text);
                 }
                 case 2:
                 {
@@ -149,13 +150,13 @@ methodmap Logger < Base
                 }
                 case 3:
                 {
-                    this.SendMessageToForward(type, timestring, text);
+                    this.SendMessageToForward(type, admin, text);
                 }
                 default:
                 {
-                    this.SendMessageToConsole(timestring, strtype, text);
+                    this.SendMessageToConsole(strtype, text);
                     //this.SendMessageToFile(type, text);
-                    this.SendMessageToForward(type, timestring, text);
+                    this.SendMessageToForward(type, admin, text);
                 }
             }
         }
@@ -185,12 +186,12 @@ methodmap Logger < Base
         this.SendMessage(Info, text);
     }
 
-    public void Admin(const char[] format, any ...)
+    public void Admin(Base admin, const char[] format, any ...)
     {
         int len = strlen(format) + 255;
         char[] text = new char[len];
-        VFormat(text, len, format, 3);
-        this.SendMessage(Admin, text);
+        VFormat(text, len, format, 4);
+        this.SendMessage(Admin, text, admin);
     }
     
     public void Debug(const char[] format, any ...)
