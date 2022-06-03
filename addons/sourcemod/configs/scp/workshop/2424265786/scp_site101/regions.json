@@ -33,5 +33,8 @@
     {"radius":100,"pos":[-5947,-6360,0],"ltag":"intercom"},
     {"radius":100,"pos":[-7434,-7084,-1],"ltag":"gate-b"},
     {"radius":100,"pos":[-10603,-6093,0],"ltag":"gate-a"},
-    {"radius":100,"pos":[-4238,-5587,0],"ltag":"storage-room"}
+    {"radius":100,"pos":[-4238,-5587,0],"ltag":"storage-room"},
+    {"radius":400,"pos":[2354,3961,1813],"ltag":"tutorial"},
+    {"radius":100,"pos":[-7552,-4150,1856],"ltag":"train-station"},
+    {"radius":100,"pos":[-6805,3601,0],"ltag":"shelter"}
 ]

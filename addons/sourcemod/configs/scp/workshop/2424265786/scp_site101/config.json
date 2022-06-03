@@ -7,8 +7,8 @@
     "DefaultClass":"D Class",
     "invsize": 5,
     "usablecards":true,
-    "showoverlaytime":10,
-    "winteamoverlay":"models/eternity/overlays/win_{name}_{lang}_fh",
+    "showoverlaytime":7,
+    "winteamoverlay":"eternity/overlays/win_{name}_{lang}_fh",
     "psars": 30,
     "sound": {
         "menuselect":"eternity/scp/menu/select.mp3",
@@ -29,8 +29,8 @@
             "active":356023,
             "cancel":356001
         },
-        "immunedoors":[563,564],
-        "opendoors":[563,564],
+        "immunedoors":[657,788],
+        "opendoors":[657,788],
         "spawnlist":[]
     },
     "reinforce":{
@@ -38,6 +38,8 @@
         "ratiodeadplayers":60
     },
     "teleport": {
+        "Tutorial room":{"vec":[1930,3962,1677],"ang":[-1,0,0]},
+        "Train station":{"vec":[-7299,-4495,1876],"ang":[4,131,0]},
         "D spawn":{"vec":[-2195,-4950,0],"ang":[0,-138,0]},
         "MTF spawn":{"vec":[-10739,-5920,1712],"ang":[0,0,0]},
         "Chaos spawn":{"vec":[-7128,-5693,1712],"ang":[0,-135,0]},
@@ -78,6 +80,13 @@
             {"id":"mtf","path":"models/player/custom_player/eternity/mog.mdl","bginf":[0,4,3,5,2,15,3,3,0,1,1]},
             {"id":"chaos","path":"models/player/custom_player/eternity/chaos.mdl","bginf":[3,4,3,4,2,0,0,0,3,0,0]}
         ]
+    },
+    "[SCP] Tutorial": {
+        "positions": {
+            "ru":{"vec":[2341,4350,1677],"ang":[0,90,0]},
+            "en":{"vec":[2735,3962,1677],"ang":[0,0,0]},
+            "cn":{"vec":[2347,3571,1677],"ang":[0,-90,0]}
+        }
     },
     "[SCP] Sapper": {
         "bcmultipler":3,
@@ -165,6 +174,7 @@
         }
     },
     "[SCP] 106": {
+        "cell":{"vec":[-11192,280,-245],"ang":[17,-43,0]},
         "pocket":[-4306, 683, 2297],
         "pocketout": [
             [-11110, 520, -435],

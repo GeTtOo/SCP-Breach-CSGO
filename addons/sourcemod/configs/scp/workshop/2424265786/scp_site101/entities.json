@@ -83,11 +83,13 @@
     "963_amulet_bright": {
         "model":"models/eternity/props/scp/scp_427_2.mdl",
         "mass":2.5,
+        "bodygroup":0,
         "spawnflags":4352
     },
     "963_amulet": {
-        "model":"models/eternity/props/scp/scp_963_2.mdl",
+        "model":"models/eternity/props/scp/scp_427_2.mdl",
         "mass":2.5,
+        "bodygroup":1,
         "spawnflags":4352
     },
     "427_amulet": {
@@ -123,5 +125,22 @@
         "model":"models/eternity/props/radio.mdl",
         "mass":2.0,
         "remote":true
+    },
+    "navigator": {
+        "model":"models/weapons/w_eq_tablet_dropped.mdl",
+        "mass":2.0
+    },
+    "medkit" : {
+        "model":"models/eternity/props/medbag_german.mdl",
+        "mass":2.0,
+        "amount":10
+    },
+    "defibrillator" : {
+        "model":"models/eternity/props/lifepak_german.mdl",
+        "mass":2.0
+    },
+    "turret" : {
+        "model":"models/eternity/props/dronegun_box.mdl",
+        "mass":40.0
     }
 }

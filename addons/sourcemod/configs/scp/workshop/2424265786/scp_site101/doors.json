@@ -19,6 +19,11 @@
         "access":9,
         "scp":false
     },
+    "1189004": {
+        "location":"Gate Shelter",
+        "access":9,
+        "scp":false
+    },
     "311385": {
         "location":"Nuke Door Down 1",
         "access":10,

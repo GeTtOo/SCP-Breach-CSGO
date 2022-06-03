@@ -16,7 +16,7 @@
                     },
                     "skin":0
                 },
-                "overlay":"models/eternity/overlays/dclass_{lang}_fh",
+                "overlay":"eternity/overlays/dclass_{lang}_fh",
                 "pos":[
                     {"vec":[-2951,-6729,0],"ang":[0,0,0]},
                     {"vec":[-2910,-6680,0],"ang":[0,0,0]},
@@ -98,7 +98,7 @@
                     },
                     "skin":0
                 },
-                "overlay":"models/eternity/overlays/scientist_{lang}_fh",
+                "overlay":"eternity/overlays/scientist_{lang}_fh",
                 "pos":[
                     {"vec":[-2751,-2967,0]},
                     {"vec":[-7776,-2569,0]},
@@ -125,7 +125,7 @@
                     },
                     "skin":0
                 },
-                "overlay":"models/eternity/overlays/drbright_{lang}_fh",
+                "overlay":"eternity/overlays/drbright_{lang}_fh",
                 "pos":{"vec":[-1281,-2370,0],"ang":[23,-179,0]},
                 "escape":{
                     "trigger":330025,
@@ -150,7 +150,7 @@
                     },
                     "skin":0
                 },
-                "overlay":"models/eternity/overlays/medic_{lang}_fh",
+                "overlay":"eternity/overlays/medic_{lang}_fh",
                 "pos":[
                     {"vec":[-6602,-7230,0],"ang":[0,90,0]},
                     {"vec":[-6992,-7271,0],"ang":[0,90,0]},
@@ -182,7 +182,7 @@
                     },
                     "skin":6
                 },
-                "overlay":"models/eternity/overlays/guard_{lang}_fh",
+                "overlay":"eternity/overlays/guard_{lang}_fh",
                 "pos":[
                     {"vec":[-10369,-2740,-1008],"ang":[3,90,0]},
                     {"vec":[-11804,-2769,-1008],"ang":[2,90,0]},
@@ -210,11 +210,12 @@
                 "helmet":true,
                 "speed":260,
                 "multipler":1.0,
-                "overlay":"models/eternity/overlays/commander_{lang}_fh",
+                "overlay":"eternity/overlays/commander_{lang}_fh",
                 "items":[
                     "card_mog_commander",
                     "radio",
-                    "visor_nv"
+                    "visor_nv",
+                    "navigator"
                 ],
                 "weapons":[
                     ["weapon_sg556","weapon_m4a1_silencer","weapon_m4a1"],
@@ -243,7 +244,7 @@
                 "health":100,
                 "armor":200,
                 "helmet":true,
-                "items":["card_mog_lieutenant", "radio", "visor_nv"],
+                "items":["card_mog_lieutenant", "radio", "visor_nv","navigator"],
                 "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer", "weapon_taser"],
                 "model":{
                     "id":"mtf",
@@ -260,7 +261,7 @@
                     },
                     "skin":0
                 },
-                "overlay":"models/eternity/overlays/lieutenant_{lang}_fh",
+                "overlay":"eternity/overlays/lieutenant_{lang}_fh",
                 "pos":[
                     {"vec":[-10505,-6066,1736],"ang":[4,-131,0]},
                     {"vec":[-10557,-6127,1736],"ang":[4,-131,0]},
@@ -272,7 +273,7 @@
                 "health":100,
                 "armor":150,
                 "helmet":true,
-                "items":["card_senior_guard", "radio"],
+                "items":["card_senior_guard", "radio","navigator"],
                 "weapons":["weapon_mp7", "weapon_p250", "weapon_taser"],
                 "model":{
                     "id":"mtf",
@@ -287,7 +288,7 @@
                     },
                     "skin":0
                 },
-                "overlay":"models/eternity/overlays/cadet_{lang}_fh",
+                "overlay":"eternity/overlays/cadet_{lang}_fh",
                 "pos": [
                     {"vec":[-10300,-5548,1712],"ang":[0,-19,0]},
                     {"vec":[-10313,-6330,1712],"ang":[0,17,0]},
@@ -330,7 +331,7 @@
                 "health":250,
                 "armor":500,
                 "helmet":true,
-                "items":["card_mog_lieutenant", "radio", "visor_nv"],
+                "items":["card_mog_lieutenant", "radio", "visor_nv","navigator"],
                 "weapons":["weapon_m249", "weapon_fiveseven", "weapon_healthshot", "weapon_hegrenade", "weapon_breachcharge", "weapon_taser"],
                 "model":{
                     "id":"mtf",
@@ -345,7 +346,7 @@
                     },
                     "skin":0
                 },
-                "overlay":"models/eternity/overlays/lieutenant_{lang}_fh",
+                "overlay":"eternity/overlays/lieutenant_{lang}_fh",
                 "pos":{"vec":[-10800,-5950,1715]}
             },
             "Lieutenant-Medic": {
@@ -353,8 +354,8 @@
                 "health":250,
                 "armor":500,
                 "helmet":true,
-                "items":["card_mog_lieutenant", "radio", "visor_nv"],
-                "weapons":[{"51":"weapon_m4a1", "49":"weapon_m4a1_silencer"}, "weapon_p250", "weapon_healthshot", "weapon_taser"],
+                "items":["card_mog_lieutenant", "radio", "visor_nv","navigator"],
+                "weapons":[["weapon_m4a1", "weapon_m4a1_silencer"], "weapon_p250", "weapon_healthshot", "weapon_taser"],
                 "model":{
                     "id":"mtf",
                     "bodygroups":{
@@ -368,7 +369,7 @@
                     },
                     "skin":4
                 },
-                "overlay":"models/eternity/overlays/lieutenant_medic_{lang}_fh",
+                "overlay":"eternity/overlays/lieutenant_medic_{lang}_fh",
                 "pos":[
                     {"vec":[-10800,-5950,1715]},
                     {"vec":[-10427,-6137,1699],"ang":[1,11,0]},
@@ -400,7 +401,7 @@
                         "legs":[2,3]
                     }
                 },
-                "overlay":"models/eternity/overlays/chaos_{lang}_fh",
+                "overlay":"eternity/overlays/chaos_{lang}_fh",
                 "pos":[
                     {"vec":[-7142,-5761,1776],"ang":[0,180,0]},
                     {"vec":[-7143,-5836,1776],"ang":[0,180,0]},
@@ -438,7 +439,7 @@
                     },
                     "skin":0
                 },
-                "overlay":"models/eternity/overlays/chaos_{lang}_fh",
+                "overlay":"eternity/overlays/chaos_{lang}_fh",
                 "pos":[
                     {"vec":[-7443,-6167,1776],"ang":[0,180,0]},
                     {"vec":[-7447,-6066,1776],"ang":[0,180,0]},
@@ -476,7 +477,7 @@
                     },
                     "skin":0
                 },
-                "overlay":"models/eternity/overlays/chaos_{lang}_fh",
+                "overlay":"eternity/overlays/chaos_{lang}_fh",
                 "pos":[
                     {"vec":[-7233,-6424,1776],"ang":[0,180,0]},
                     {"vec":[-7297,-6422,1776],"ang":[0,180,0]},
@@ -521,7 +522,7 @@
                     },
                     "skin":0
                 },
-                "overlay":"models/eternity/overlays/chaos_{lang}_fh",
+                "overlay":"eternity/overlays/chaos_{lang}_fh",
                 "pos":[
                     {"vec":[-7448,-5462,1776],"ang":[0,180,0]},
                     {"vec":[-7447,-5537,1776],"ang":[0,180,0]},
@@ -551,7 +552,7 @@
                 "autospawn":false,
                 "health":12000,
                 "weapons":[["weapon_axe", 3]],
-                "overlay":"models/eternity/overlays/scp-035_{lang}_fh",
+                "overlay":"eternity/overlays/scp-035_{lang}_fh",
                 "comment":"035"
             },
             "049": {
@@ -560,9 +561,9 @@
                 "speed":220,
                 "model":"models/player/custom_player/eternity/scp_049.mdl",
                 "handsmodel_":"models/player/custom_player/eternity/arms/arms_scp049.mdl",
-                "overlay":"models/eternity/overlays/scp-049_{lang}_fh",
+                "overlay":"eternity/overlays/scp-049_{lang}_fh",
                 "pos":{"vec":[-8455,975,2],"ang":[0,125,0]},
-                "doors":[501,504],
+                "doors":[635,896],
                 "comment":"The Doctor ʕ•ᴥ•ʔ"
             },
             "049_2": {
@@ -575,7 +576,7 @@
                 "autospawn":false,
                 "comment":"AI computer",
                 "fists":false,
-                "overlay":"models/eternity/overlays/scp-079_{lang}_fh"
+                "overlay":"eternity/overlays/scp-079_{lang}_fh"
             },
             "096": {
                 "percent":20,
@@ -583,9 +584,9 @@
                 "speed":130,
                 "model":"models/player/custom_player/eternity/scp096.mdl",
                 "handsmodel_":"models/player/custom_player/eternity/arms/arms_scp096.mdl",
-                "overlay":"models/eternity/overlays/scp-096_{lang}_fh",
+                "overlay":"eternity/overlays/scp-096_{lang}_fh",
                 "pos":{"vec":[-13250, -2550, 0]},
-                "doors":[223,224],
+                "doors":[269,487],
                 "doorsdelay":25,
                 "comment":"096"
             },
@@ -596,7 +597,7 @@
                 "speed":180,
                 "model":"models/player/custom_player/eternity/scp_106.mdl",
                 "handsmodel":"models/player/custom_player/eternity/arms/arms_scp106.mdl",
-                "overlay":"models/eternity/overlays/scp-106_{lang}_fh",
+                "overlay":"eternity/overlays/scp-106_{lang}_fh",
                 "pos":{"vec":[-11110,520,-365]},
                 "comment":"Ded"
             },
@@ -607,9 +608,9 @@
                 "multipler":2.1,
                 "model":"models/player/custom_player/eternity/173.mdl",
                 "fists":false,
-                "overlay":"models/eternity/overlays/scp-173_{lang}_fh",
+                "overlay":"eternity/overlays/scp-173_{lang}_fh",
                 "pos":{"vec":[-1800,-900,0],"ang":[0,270,0]},
-                "doors":[506,507],
+                "doors":[327,654],
                 "doorsdelay":15,
                 "comment":"173"
             },
@@ -619,9 +620,9 @@
                 "speed":240,
                 "multipler":0.9,
                 "model":"models/player/custom_player/eternity/scp_457.mdl",
-                "overlay":"models/eternity/overlays/scp-457_{lang}_fh",
+                "overlay":"eternity/overlays/scp-457_{lang}_fh",
                 "pos":{"vec":[-5200,-3030,2],"ang":[0,180,0]},
-                "doors":[840],
+                "doors":[682],
                 "comment":"Fire man"
             },
             "966": {
@@ -630,13 +631,13 @@
                 "multipler":1.2,
                 "model":"models/player/custom_player/eternity/scp966.mdl",
                 "handsmodel":"models/player/custom_player/eternity/arms/arms_scp966.mdl",
-                "overlay":"models/eternity/overlays/scp-966_{lang}_fh",
+                "overlay":"eternity/overlays/scp-966_{lang}_fh",
                 "pos":[
                     {"vec":[-5060,2630,0],"ang":[0,-180,0]},
                     {"vec":[-5060,2530,0],"ang":[0,-180,0]},
                     {"vec":[-5060,2730,0],"ang":[0,-180,0]}
                 ],
-                "doors":[893,894],
+                "doors":[138,486],
                 "comment":"ツ"
             }
         }
