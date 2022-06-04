@@ -324,7 +324,7 @@ public void Butchering(Player ply) {
     JSON_ARRAY soundarr = gamemode.plconfig.GetObject("sound").GetArray("playerkill");
     soundarr.GetString(GetRandomInt(0, soundarr.Length - 1), sound, sizeof(sound));
     
-    ply.PlaySound(sound);
+    ply.PlayAmbient(sound);
 
     ply.TakeDamage(_, 100000.0, DMG_SLASH);
 }
