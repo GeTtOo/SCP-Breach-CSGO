@@ -72,9 +72,8 @@ public Action SoundHandler(int clients[MAXPLAYERS], int &numClients, char sample
 				char sound[128];
 				JSON_ARRAY sarr = gamemode.plconfig.GetObject("sound").GetArray("steps");
 				sarr.GetString(GetRandomInt(0, sarr.Length - 1), sound, sizeof(sound));
-				gamemode.mngr.PlayAmbientOnPlayer(sound, ply);
-				
-				EmitSound(clients, numClients, sound, entity, channel, level, flags, volume, pitch);
+				ply.PlayAmbient(sound);
+				//EmitSound(clients, numClients, sound, entity, channel, level, flags, volume, pitch);
 				
 				return Plugin_Stop;
 			}
@@ -250,7 +249,7 @@ public void SCP_OnCallAction(Player &ply)
 		GetClientAbsOrigin(ply.id, pos);
 
 		int rnd = GetRandomInt(0, 9);
-		EmitAmbientSound(sounds[rnd], pos, ply.id);
+		ply.PlayAmbient(sounds[rnd]);
 		ply.TimerSimple(soundstime[rnd] * 1000, "AllowMusicPlay", ply);
 	}
 }
