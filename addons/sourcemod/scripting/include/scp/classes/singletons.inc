@@ -188,7 +188,7 @@ methodmap EntitySingleton < Base {
     }
 
     public ArrayList FindInPVS(Player ply, int distance = 100, int fov = 90, char filter[1][32] = {"player"}) {
-        return this.FindInCone(ply.EyePos(), ply.GetAng().Forward(ply.EyePos(), float(distance)), fov, filter, sizeof(filter));
+        return this.FindInCone(ply.EyePos(), ply.GetAng().GetForwardVectorScaled(ply.EyePos(), float(distance)), fov, filter, sizeof(filter));
     }
 
     public void Dispose() {
@@ -223,8 +223,7 @@ methodmap ClientSingleton < Base {
             if (id <= MaxClients && id > 0 && IsClientInGame(id))
             {
                 Player ply = entities.Get(i, 1);
-                if (ply != null)
-                    players.Push(ply);
+                if (ply) players.Push(ply);
             }
         }
         return players;
@@ -260,9 +259,7 @@ methodmap ClientSingleton < Base {
         ArrayList sortedPlayers = new ArrayList();
         ArrayList players = this.GetAll();
         for (int i=0; i < players.Length; i++) {
-            Player ply = players.Get(i);
-            if (ply.IsAlive())
-                sortedPlayers.Push(ply);
+            sortedPlayers.Push(players.Get(i));
         }
 
         delete players;
