@@ -128,7 +128,7 @@ public bool Logic(Player &ply, Entity &ent)
         ent.SetBool("used", true);
     }
 
-    return true;
+    return false;
 }
 
 public void ExecDelay(Base data)
@@ -150,10 +150,10 @@ public void ExecDelay(Base data)
     ent.SetHook(SDKHook_SetTransmit, TransmitHandler);
     
     SetVariantString("!activator");
-    ent.Input("SetParent", ply, ent);
+    ent.Input("SetParent", ply.id, ent.id);
 
     SetVariantString("facemask");
-    ent.Input("SetParentAttachment", ent, ent);
+    ent.Input("SetParentAttachment", ent.id, ent.id);
 
     ent.SetPos(_, new Angle(0.0, 180.0, 90.0)); // ent.SetPos(_, ply.GetAng());
 }
