@@ -99,7 +99,7 @@ public void SCP_OnPlayerDeath(Player &ply)
         char sound[128];
         JSON_ARRAY ds = gamemode.plconfig.GetObject("sound").GetArray("death");
         ds.GetString(GetRandomInt(0, ds.Length - 1), sound, sizeof(sound));
-        gamemode.mngr.PlayAmbientOnPlayer(sound, ply);
+        ply.PlayAmbient(sound);
     }
 }
 
@@ -118,7 +118,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 
 public bool SCP_Log_PlayerDeath(Player &vic, Player &atk, float damage, int damagetype)
 {
-    if (atk && atk.class.Is("173") && damagetype == DMG_CRUSH)
+    if (atk && atk.class && atk.class.Is("173") && damagetype == DMG_CRUSH)
     {
         char vicname[32], vicauth[32], atkname[32], atkauth[32];
         vic.GetName(vicname, sizeof(vicname));
@@ -229,7 +229,7 @@ public void KillInPVS(Player ply, int radius)
                 char sound[128];
                 JSON_ARRAY nbs = gamemode.plconfig.GetObject("sound").GetArray("neckbroke");
                 nbs.GetString(GetRandomInt(0, nbs.Length - 1), sound, sizeof(sound));
-                gamemode.mngr.PlayAmbientOnPlayer(sound, vic);
+                vic.PlayAmbient(sound);
 
                 vic.TakeDamage(ply, 4500.0, DMG_CRUSH);
             }
@@ -312,7 +312,7 @@ public void RenderHologram(Player ply)
 
             if (GetVectorDistance(posarr, endposarr) >= blinkdistance)
             {
-                Vector endpos = ply.GetAng().Forward(ply.EyePos(), blinkdistance);
+                Vector endpos = ply.GetAng().GetForwardVectorScaled(ply.EyePos(), blinkdistance);
                 endpos.GetArrD(endposarr);
             }
 
