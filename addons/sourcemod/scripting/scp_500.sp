@@ -52,12 +52,12 @@ public void SCP_OnLoad()
     LoadTranslations("scpcore.phrases");
 }
 
-public void OnUse(Player &ply) {
+public void OnUse(Player &ply, InvItem &ent) {
     ply.se.Remove("Injure");
     ply.se.Remove("Radiation");
     ply.se.Remove("Metamarphose");
     ply.health = ply.class.health;
-    ply.inv.Remove("500_panacea");
+    ply.inv.Remove(ent);
     ply.PrintNotify("Вы излечились");
 }
 
@@ -90,8 +90,8 @@ public bool OnPickUp(Player &ply, Entity &ent) {
         ent.WorldRemove();
         ents.IndexUpdate(ent);
 
-        return true;
+        return false;
     }
 
-    return false;
+    return true;
 }
