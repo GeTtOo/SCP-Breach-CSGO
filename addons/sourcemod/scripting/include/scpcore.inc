@@ -72,15 +72,21 @@ forward void SCP_OnLoad();
 
 forward void SCP_OnUnload();
 
+forward void SCP_OnRoundStart();
+
+forward void SCP_OnRoundEnd();
+
 forward void SCP_OnPlayerJoin(Player &ply);
 
 forward void SCP_OnPlayerLeave(Player &ply);
 
+forward void SCP_PrePlayerSpawn(Player &ply);
+
 forward void SCP_OnPlayerSpawn(Player &ply);
 
-forward void SCP_OnPlayerReset(Player &ply);
-
 forward void SCP_OnPlayerClear(Player &ply);
+
+forward void SCP_OnPlayerSetupOverlay(Player &ply);
 
 forward void SCP_OnPlayerTakeWeapon(Player &ply, Entity &ent);
 
@@ -93,10 +99,6 @@ forward void SCP_OnPlayerDeath(Player &vic, Player &atk);
 forward EscapeInfo SCP_OnPlayerEscape(Player &ply, EscapeInfo &data);
 
 forward void SCP_OnButtonPressed(Player &ply, int doorId);
-
-forward void SCP_OnRoundStart();
-
-forward void SCP_OnRoundEnd();
 
 forward void SCP_OnInput(Player &ply, int buttons);
 

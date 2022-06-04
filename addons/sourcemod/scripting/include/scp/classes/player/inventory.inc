@@ -123,23 +123,7 @@ methodmap Inventory < Base {
         return false;
     }
 
-    public bool Remove(char[] entname) {
-        ArrayList inv = this.GetArrayList("inventory");
-        char entclass[32];
-
-        for (int i=0; i < inv.Length; i++) {
-            Entity item = inv.Get(i);
-            item.GetClass(entclass, sizeof(entclass));
-            delete item;
-
-            if (StrEqual(entclass, entname)) {
-                inv.Erase(i);
-                return true;
-            }
-        }
-        
-        return false;
-    }
+    public native bool Remove(InvItem item);
 
     public InvItem Get(int index = 0) {
         if (this.GetArrayList("inventory").Length > index)
@@ -163,7 +147,9 @@ methodmap Inventory < Base {
         return null;
     }
 
-    public native InvItem Drop(int index = 0);
+    public native InvItem Drop(InvItem item);
+
+    public native InvItem DropByIdx(int index = 0);
 
     public native void DropAll();
 
