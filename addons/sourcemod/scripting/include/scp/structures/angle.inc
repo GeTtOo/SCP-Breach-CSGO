@@ -62,7 +62,7 @@ methodmap Angle < Vector {
         return new Vector(vecarr[0], vecarr[1], vecarr[2]);
     }
 
-    public Vector Forward(Vector startpos, float scale) {
+    public Vector GetForwardVectorScaled(Vector startpos, float scale) {
         float startposarr[3], angarr[3], forwardarr[3], endposarr[3];
         startpos.GetArr(startposarr);
         this.GetArr(angarr);
@@ -76,7 +76,7 @@ methodmap Angle < Vector {
         return new Vector(endposarr[0], endposarr[1], endposarr[2]);
     }
 
-    public Vector Right(Vector startpos, float scale) {
+    public Vector GetRightVectorScaled(Vector startpos, float scale) {
         float startposarr[3], angarr[3], rightarr[3], endposarr[3];
         startpos.GetArr(startposarr);
         this.GetArr(angarr);
@@ -90,7 +90,7 @@ methodmap Angle < Vector {
         return new Vector(endposarr[0], endposarr[1], endposarr[2]);
     }
 
-    public Vector Up(Vector startpos, float scale) {
+    public Vector GetUpVectorScaled(Vector startpos, float scale) {
         float startposarr[3], angarr[3], uparr[3], endposarr[3];
         startpos.GetArr(startposarr);
         this.GetArr(angarr);

@@ -183,7 +183,7 @@ methodmap NuclearWarhead < Base {
 
             display.SetProp("m_nSkin", (gamemode.lang == 22) ? 0 : 2);
             
-            Vector dp = (display.GetAng() - new Angle(10.0,90.0,0.0)).Up((display.GetAng() - new Angle(10.0,90.0,0.0)).Right((display.GetAng() - new Angle(10.0,90.0,0.0)).Forward(display.GetPos(), -8.0), -37.5), -17.0);
+            Vector dp = (display.GetAng() - new Angle(10.0,90.0,0.0)).GetUpVectorScaled((display.GetAng() - new Angle(10.0,90.0,0.0)).GetRightVectorScaled((display.GetAng() - new Angle(10.0,90.0,0.0)).GetForwardVectorScaled(display.GetPos(), -8.0), -37.5), -17.0);
             Angle da = display.GetAng() - new Angle(10.0,90.0,0.0);
 
             worldtext.Create(dp, da, NukeMonitor).SetSize(15).SetColor(new Colour(190,0,20));

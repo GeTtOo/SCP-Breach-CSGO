@@ -151,7 +151,7 @@ methodmap IntercomController < Base {
         for (int i=0; i < this.monitors.Length; i++) {
             Entity display = this.monitors.Get(i);
             
-            Vector dp = (display.GetAng() - new Angle(0.0,180.0,0.0)).Up((display.GetAng() - new Angle(0.0,180.0,0.0)).Right((display.GetAng() - new Angle(0.0,180.0,0.0)).Forward(display.GetPos(), 0.0), -13.5), -5.0);
+            Vector dp = (display.GetAng() - new Angle(0.0,180.0,0.0)).GetUpVectorScaled((display.GetAng() - new Angle(0.0,180.0,0.0)).GetRightVectorScaled((display.GetAng() - new Angle(0.0,180.0,0.0)).GetForwardVectorScaled(display.GetPos(), 0.0), -13.5), -5.0);
             Angle da = display.GetAng() - new Angle(0.0,180.0,0.0);
 
             worldtext.Create(dp, da, this.wtid).SetSize(8).SetColor(new Colour(126,190,42));
