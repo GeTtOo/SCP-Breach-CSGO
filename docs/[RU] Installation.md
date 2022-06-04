@@ -32,6 +32,7 @@ mp_playercashawards 0
 mp_teamcashawards 0
 mp_force_pick_time 0
 mp_force_assigm_teams 1
+ammo_item_limit_healthshot 1
 ```
 
 ## Перевод

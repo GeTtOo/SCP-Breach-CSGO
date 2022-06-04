@@ -149,7 +149,7 @@ The number of items is indicated in the format `[["Item Name", quantity]]`
   ],
   "percent":20,
   "priority": true,
-  "overlay":"models/eternity/overlays/scientist",
+  "overlay":"eternity/overlays/scientist",
   "model":{
     	"id":"scientist",
     	"bodygroups":{
