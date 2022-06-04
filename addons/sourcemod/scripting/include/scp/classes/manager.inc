@@ -43,14 +43,18 @@ methodmap Manager < Base {
     property int serverlang {
         public get() { return GetServerLanguage(); }
     }
-
-    property int CollisionGroup {
-        public set(int value) { this.SetInt("collisiongroup", value); }
-        public get() { return this.GetInt("collisiongroup"); }
-    }
     
     property bool IsWarmup {
         public get() { return (GameRules_GetProp("m_bWarmupPeriod")) ? true : false; }
+    }
+
+    property int rst {
+        public set(int val) { this.SetInt("rst", val); }
+        public get() { return this.GetInt("rst"); }
+    }
+
+    property int RoundTime {
+        public get() { return GetTime() - this.rst; }
     }
 
     property bool RoundComplete {
@@ -66,10 +70,6 @@ methodmap Manager < Base {
     public void CheckLimitEntities() { if (ents.list.Length > 500) ents.SpawnedClear(); }
 
     public void GetServerLangInfo(char[] name, int max_size) { GetLanguageInfo(this.serverlang, name, max_size); }
-
-    public void SetCollisionGroup(int entity, int group) {
-        SetEntData(entity, this.CollisionGroup, group, 4, true);
-    }
 
     public void PlaySoundToAll(char[] path, int channel) {
         EmitSoundToAll(path, _, channel);
@@ -142,14 +142,6 @@ methodmap Manager < Base {
 
         Format(path, sizeof(path), "*/%s", path);
         EmitAmbientSound(path, vecarr, ent.id);
-    }
-
-    public void PlayAmbientOnPlayer(char[] path, Player ply) {
-        float vecarr[3];
-        Vector vec = ply.EyePos();
-        vec.GetArr(vecarr);
-        delete vec;
-        EmitAmbientSound(path, vecarr, ply.id);
     }
 
     public void Fade(int entid, int duration, int holdtime, Colour clr, int bits = 0x0001)
@@ -302,7 +294,7 @@ methodmap Manager < Base {
     }
 
     public void GameCheck() {
-        if (this.RoundLock || this.RoundComplete) return;
+        if (this.RoundLock || this.RoundComplete || player.InGame() == 1) return;
         
         if(player.Alive() != 0 && player.InGame() != 0)
         {
