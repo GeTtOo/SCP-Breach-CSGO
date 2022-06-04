@@ -563,7 +563,7 @@
                 "handsmodel_":"models/player/custom_player/eternity/arms/arms_scp049.mdl",
                 "overlay":"eternity/overlays/scp-049_{lang}_fh",
                 "pos":{"vec":[-8455,975,2],"ang":[0,125,0]},
-                "doors":[635,896],
+                "doors":[684,863],
                 "comment":"The Doctor ʕ•ᴥ•ʔ"
             },
             "049_2": {
@@ -586,7 +586,7 @@
                 "handsmodel_":"models/player/custom_player/eternity/arms/arms_scp096.mdl",
                 "overlay":"eternity/overlays/scp-096_{lang}_fh",
                 "pos":{"vec":[-13250, -2550, 0]},
-                "doors":[269,487],
+                "doors":[501,962],
                 "doorsdelay":25,
                 "comment":"096"
             },
@@ -610,7 +610,7 @@
                 "fists":false,
                 "overlay":"eternity/overlays/scp-173_{lang}_fh",
                 "pos":{"vec":[-1800,-900,0],"ang":[0,270,0]},
-                "doors":[327,654],
+                "doors":[756,951],
                 "doorsdelay":15,
                 "comment":"173"
             },
@@ -622,7 +622,7 @@
                 "model":"models/player/custom_player/eternity/scp_457.mdl",
                 "overlay":"eternity/overlays/scp-457_{lang}_fh",
                 "pos":{"vec":[-5200,-3030,2],"ang":[0,180,0]},
-                "doors":[682],
+                "doors":[318],
                 "comment":"Fire man"
             },
             "966": {
@@ -637,7 +637,7 @@
                     {"vec":[-5060,2530,0],"ang":[0,-180,0]},
                     {"vec":[-5060,2730,0],"ang":[0,-180,0]}
                 ],
-                "doors":[138,486],
+                "doors":[149,500],
                 "comment":"ツ"
             }
         }
