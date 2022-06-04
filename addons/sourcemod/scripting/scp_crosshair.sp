@@ -46,9 +46,9 @@ public void SCP_OnPlayerSwitchWeapon(Player &ply, Entity &ent)
 {
     if (!ply.IsSCP && !ply.GetHandle("fct"))
         if (ent.IsClass("weapon_fists") || ent.IsClass("weapon_ssg08") || ent.IsClass("weapon_awp") || ent.IsClass("weapon_scar20") || ent.IsClass("weapon_g3sg1"))
-            ply.ShowOverlay("models/eternity/overlays/fists_{lang}_fh");
+            ply.ShowOverlay("eternity/overlays/fists_{lang}_fh");
         else
-            if (!ply.IsSCP && ply.IsAlive()) ply.ShowOverlay("models/eternity/overlays/inventory_{lang}_fh");
+            if (!ply.IsSCP && ply.IsAlive()) ply.ShowOverlay("eternity/overlays/inventory_{lang}_fh");
 }
 
 public void SCP_OnPlayerSpawn(Player &ply)
@@ -66,8 +66,8 @@ public void ShowCrosshair(Player ply)
         ply.GetCurWeapon(weapon, sizeof(weapon));
 
         if (!ply.IsSCP && (StrEqual(weapon, "weapon_fists") || StrEqual(weapon, "weapon_ssg08") || StrEqual(weapon, "weapon_awp") || StrEqual(weapon, "weapon_scar20") || StrEqual(weapon, "weapon_g3sg1")))
-            ply.ShowOverlay("models/eternity/overlays/fists_{lang}_fh");
+            ply.ShowOverlay("eternity/overlays/fists_{lang}_fh");
         else
-            ply.ShowOverlay("models/eternity/overlays/inventory_{lang}_fh");
+            ply.ShowOverlay("eternity/overlays/inventory_{lang}_fh");
     }
 }
