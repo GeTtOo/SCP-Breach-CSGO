@@ -150,7 +150,7 @@ public void SCP_OnInput(Player &ply, int buttons) {
         char sound[128];
         JSON_ARRAY sndarr = gamemode.plconfig.GetObject("sound").GetArray("breaking");
         sndarr.GetString(GetRandomInt(0, sndarr.Length - 1), sound, sizeof(sound));
-        gamemode.mngr.PlayAmbientOnPlayer(sound, ply);
+        ply.PlayAmbient(sound);
 
         ply.SetBool("hc_bcd", true);
         ply.TimerSimple(gamemode.plconfig.GetInt("breakingcd", 5) * 1000, "BCD", ply);
@@ -182,7 +182,7 @@ public void HcBreak(Player ply) {
         char sound[128];
         JSON_ARRAY sndarr = gamemode.plconfig.GetObject("sound").GetArray("breaked");
         sndarr.GetString(GetRandomInt(0, sndarr.Length - 1), sound, sizeof(sound));
-        gamemode.mngr.PlayAmbientOnPlayer(sound, ply);
+        ply.PlayAmbient(sound);
     }
     else
     {
