@@ -551,7 +551,7 @@
             "035": {
                 "autospawn":false,
                 "health":12000,
-                "weapons":[["weapon_axe", 3]],
+                "weapons":["weapon_axe", "weapon_axe", "weapon_axe"],
                 "overlay":"eternity/overlays/scp-035_{lang}_fh",
                 "comment":"035"
             },
