@@ -32,6 +32,8 @@
 /*------------------------------------------------Player storage system-------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
+#include <clientprefs>
+
 methodmap PlayerStorage < Base {
 
     public PlayerStorage(Base ply) {
@@ -39,43 +41,30 @@ methodmap PlayerStorage < Base {
 
         storage.SetHandle("player", ply);
         
-        char steamid[32];
-        GetClientAuthId(ply.GetInt("id"), AuthId_Steam2, steamid, sizeof(steamid), true);
-        storage.SetString("steamid", steamid);
-        
         return storage;
     }
 
-    property JSON_OBJECT store {
-        public set(JSON_OBJECT data) { this.SetHandle("store", data); }
-        public get() { return view_as<JSON_OBJECT>(this.GetHandle("store")); }
+    public bool SetString(char[] index, char[] val)
+    {
+        char plname[64];
+        GetPluginInfo(GetMyHandle(), PlInfo_Name, plname, sizeof(plname));
+        Cookie cookie = new Cookie(index, plname, CookieAccess_Protected);
+        cookie.Set(this.GetBase("player").GetInt("id"), val);
+        delete cookie;
     }
+    public bool SetInt(char[] index, int val) { char buf[32]; IntToString(val, buf, sizeof(buf)); this.SetString(index, buf); }
+    public bool SetFloat(char[] index, float val) { char buf[32]; FloatToString(val, buf, sizeof(buf)); this.SetString(index, buf); }
+    public bool SetBool(char[] index, bool val) { char buf[32]; IntToString(val, buf, sizeof(buf)); this.SetString(index, buf); }
 
-    public void LoadOrCreate() {
-        char path[256], steamid[32];
-
-        this.GetString("steamid", steamid, sizeof(steamid));
-        Format(path, sizeof(path), "data/scp/player/%s.json", steamid);
-        
-        this.store = Utils.JSONRead(path);
+    public bool GetString(char[] index, char[] val, int max_size)
+    {
+        char plname[64];
+        GetPluginInfo(GetMyHandle(), PlInfo_Name, plname, sizeof(plname));
+        Cookie cookie = new Cookie(index, plname, CookieAccess_Protected);
+        cookie.Get(this.GetBase("player").GetInt("id"), val, max_size);
+        delete cookie;
     }
-
-    public void Save() {
-        char path[256], steamid[32];
-
-        this.GetString("steamid", steamid, sizeof(steamid));
-        Format(path, sizeof(path), "data/scp/player/%s.json", steamid);
-        
-        Utils.JSONWrite(path, this.store);
-    }
-
-    public bool SetInt(char[] index, int val) { this.store.SetInt(index, val); }
-    public bool SetFloat(char[] index, float val) { this.store.SetFloat(index, val); }
-    public bool SetBool(char[] index, bool val) { this.store.SetBool(index, val); }
-
-    public int GetInt(char[] index, int defval = 0) { return this.store.GetInt(index, defval); }
-    public float GetFloat(char[] index, float defval = 0.0) { return this.store.GetFloat(index, defval); }
-    public bool GetBool(char[] index, bool defval = false) { return this.store.GetBool(index, defval); }
-
-    public bool RemoveValue(char[] index) { return this.store.Remove(index); }
+    public int GetInt(char[] index, int defval = 0) { char buf[32]; this.GetString(index, buf, sizeof(buf)); return StringToInt(buf); }
+    public float GetFloat(char[] index, float defval = 0.0) { char buf[32]; this.GetString(index, buf, sizeof(buf)); return StringToFloat(buf); }
+    public bool GetBool(char[] index, bool defval = false) { char buf[32]; this.GetString(index, buf, sizeof(buf)); return view_as<bool>(StringToInt(buf)); }
 }
