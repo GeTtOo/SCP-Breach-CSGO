@@ -165,4 +165,19 @@
         "en"    "Intercom"
         "ru"    "Интерком"
     }
+    "tutorial"
+    {
+        "en"    "Tutorial"
+        "ru"    "Туториал"
+    }
+    "train-station"
+    {
+        "en"    "Train station"
+        "ru"    "Зона ожидания поезда"
+    }
+    "shelter"
+    {
+        "en"    "Shelter"
+        "ru"    "Убежище"
+    }
 }

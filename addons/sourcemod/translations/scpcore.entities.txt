@@ -240,4 +240,44 @@
         "en"        "A portable radio station allows you to communicate at a long distance."
         "ru"        "Переносная радиостанция позволяет общаться на дальнем расстоянии."
     }
+    "navigator"
+    {
+        "en"        "Radar"
+        "ru"        "Навигатор"
+    }
+    "navigator_info"
+    {
+        "en"        "The S-Nav navigator allow you to see map of the complex."
+        "ru"        "Навигатор S-Nav позволяет увидеть карту комплекса."
+    }
+    "medkit"
+    {
+        "en"        "Medkit"
+        "ru"        "Аптечка"
+    }
+    "medkit_info"
+    {
+        "en"        "Standart medkit."
+        "ru"        "Обычная полевая аптечка."
+    }
+    "defibrillator"
+    {
+        "en"        "Defibrillator"
+        "ru"        "Дефибриллятор"
+    }
+    "defibrillator_info"
+    {
+        "en"        "Can revive people."
+        "ru"        "Может спасть чью-то жизнь."
+    }
+    "turret"
+    {
+        "en"        "Turret"
+        "ru"        "Турель"
+    }
+    "turret_info"
+    {
+        "en"        "Auto turret."
+        "ru"        "Автоматическая турель."
+    }
 }

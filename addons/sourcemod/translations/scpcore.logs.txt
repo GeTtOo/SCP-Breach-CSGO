@@ -14,51 +14,53 @@
     }
     "Log_Admin_ShowClass"
     {
-        "#format"   "{1:s},{2:s}"
-        "en"        "Admin {1} <{2}> has viewed the teams of the players"
-        "ru"        "Администратор {1} <{2}> просмотрел классы и команды игроков"
+        "en"        "Viewed the teams of the players"
+        "ru"        "Просмотрел команды и классы игроков"
     }
     "Log_Admin_PlayerTeleport"
     {
-        "#format"   "{1:s},{2:s},{3:s},{4:s}"
-        "en"        "{1} <{2}> teleported player {3} <{4}>"
-        "ru"        "{1} <{2}> телепортировал игрока {3} <{4}>"
+        "#format"   "{1:s},{2:s}"
+        "en"        "Teleported player {1} <{2}>"
+        "ru"        "Телепортировал игрока {1} <{2}>"
     }
     "Log_Admin_RoundRestart"
     {
-        "#format"   "{1:s},{2:s}"
-        "en"        "{1} <{2}> restarted the round"
-        "ru"        "{1} <{2}> перезапустил раунд"
+        "en"        "Restarted the round"
+        "ru"        "Перезапустил раунд"
     }
     "Log_Admin_NukeActivation"
     {
-        "#format"   "{1:s},{2:s}"
-        "en"        "{1} <{2}> launched the destruction of the Alpha warhead"
-        "ru"        "{1} <{2}> запустил уничтожение Альфа-боеголовки"
+        "en"        "Launched the destruction of the Alpha warhead"
+        "ru"        "Запустил уничтожение Альфа-боеголовки"
     }
     "Log_Admin_Respawn"
     {
         "#format"   "{1:s},{2:s},{3:s},{4:s}"
-        "en"        "{1} <{2}> revived player {3} <{4}>"
-        "ru"        "{1} <{2}> возродил игрока {3} <{4}>"
+        "en"        "Revived player {1} <{2}> on team {3} - {4}"
+        "ru"        "Возродил игрока {1} <{2}> за команду {3} - {4}"
     }
     "Log_Admin_PlayerTeleportObject"
     {
-        "#format"   "{1:s},{2:s},{3:s},{4:s},{5:s}"
-        "en"        "{1} <{2}> teleported player {3} <{4}> to point {5}"
-        "ru"        "{1} <{2}> телепортировал игрока {3} <{4}> на точку {5}"
+        "#format"   "{1:s},{2:s},{3:s}"
+        "en"        "Teleported player {1} <{2}> to point {3}"
+        "ru"        "Телепортировал игрока {1} <{2}> на точку {3}"
+    }
+    "Log_Admin_MoveToAdminZone"
+    {
+        "#format"   "{1:s},{2:s}"
+        "en"        "Teleport {1} <{2}> to admin room"
+        "ru"        "Проводит беседу с игроком {1} <{2}> в комнате администраторов"
     }
     "Log_Admin_GiveItem"
     {
-        "#format"   "{1:s},{2:s},{3:s},{4:s},{5:s}"
-        "en"        "{1} <{2}> gave item {5} to player {3} <{4}>"
-        "ru"        "{1} <{2}> выдал предмет {5} игроку {3} <{4}>"
+        "#format"   "{1:s},{2:s},{3:s}"
+        "en"        "Gave item {3} to player {1} <{2}>"
+        "ru"        "Выдал предмет {3} игроку {1} <{2}>"
     }
     "Log_Admin_Reinforce"
     {
-        "#format"   "{1:s},{2:s}"
-        "en"        "{1} <{2}> called for reinforcements "
-        "ru"        "{1} <{2}> вызвал подкрепление"
+        "en"        "Called for reinforcements "
+        "ru"        "Вызвал подкрепление"
     }
     "Log_Core_RoundStart"
     {
