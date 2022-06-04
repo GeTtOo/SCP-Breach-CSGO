@@ -48,7 +48,7 @@ public void SCP_OnLoad()
 }
 
 public void SCP_OnPlayerSpawn(Player &ply) {
-    if (ply && ply.class && ply.class.Is("966"))
+    if (ply.class.Is("966"))
     {
         ply.SetHook(SDKHook_SetTransmit, TransmitHandler);
     
@@ -69,7 +69,7 @@ public void SCP_OnPlayerSpawn(Player &ply) {
 }
 
 public void SCP_OnPlayerClear(Player &ply) {
-    if (ply && ply.class && ply.class.Is("966"))
+    if (ply.class && ply.class.Is("966"))
     {
         ply.RemoveHook(SDKHook_SetTransmit, TransmitHandler);
 
@@ -82,13 +82,18 @@ public void SCP_OnPlayerClear(Player &ply) {
     }
 }
 
+public void SCP_OnPlayerSetupOverlay(Player &ply) {
+    if (ply.class.Is("966"))
+        ply.ShowOverlay("eternity/overlays/vignette_effect");
+}
+
 public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype, int &inflictor) {
     if (atk == null || atk.class == null) return Plugin_Continue;
 
     if(atk.class.Is("966"))
     {
         damage = gamemode.plconfig.GetFloat("damage", 10.0);
-        gamemode.mngr.PlayAmbientOnPlayer("*/eternity/scp/966/attack.mp3", atk);
+        atk.PlayAmbient("*/eternity/scp/966/attack.mp3");
         
         return Plugin_Changed;
     }
@@ -162,5 +167,5 @@ public void SoundEffect(Player ply)
     
     delete players;
 
-    gamemode.mngr.PlayAmbientOnPlayer(soundname, ply);
+    ply.PlayAmbient(soundname);
 }
