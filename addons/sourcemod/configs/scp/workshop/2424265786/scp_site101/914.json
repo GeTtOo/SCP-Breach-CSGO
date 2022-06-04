@@ -464,7 +464,12 @@
                 ["flashlight", 10, 80]
             ],
             "flashlight": [
-                ["radio", 10, 80]
+                ["radio", 10, 80],
+                ["visor_nv", 10, 80]
+            ],
+            "visor_nv": [
+                ["radio", 10, 80],
+                ["flashlight", 10, 80]
             ],
             "iron_ingot": [
                 ["plastic", 10, 80]
@@ -677,7 +682,8 @@
                 ["weapon_hegrenade", 20, 60]
             ],
             "flashlight": [
-                ["weapon_tagrenade", 20, 50]
+                ["weapon_tagrenade", 20, 50],
+                ["navigator", 10, 25]
             ],
             "iron_ingot": {
                 "40":["weapon_hegrenade", 10, 80],
@@ -892,21 +898,27 @@
                 ["weapon_tec9", 50, 50]
             ],
             "flashlight": [
-                ["weapon_hkp2000", 50, 50]
+                ["visor_nv", 10, 95]
+            ],
+            "visor_nv": [
+                ["radio", 10, 90],
+                ["navigator", 10, 40]
             ],
             "iron_ingot": {
-                "40":["weapon_axe", 40, 70],
-                "30":["weapon_breachcharge", 40, 70],
+                "30":["weapon_axe", 40, 70],
+                "25":["navigator", 25, 80],
+                "15":["weapon_breachcharge", 40, 70],
                 "19":["weapon_tec9", 40, 70],
                 "10":["weapon_mp5sd", 40, 70],
                 "1":["weapon_awp", 30, 70]
             },
             "plastic": {
+                "35":["card_senior_guard", 40, 70],
+                "25":["navigator", 25, 80],
                 "20":["weapon_taser", 50, 50],
-                "19":["weapon_tagrenade", 50, 70],
-                "2":["card_o5", 30, 70],
-                "29":["card_zone_manager", 50, 70],
-                "30":["card_senior_guard", 40, 70]
+                "15":["weapon_tagrenade", 50, 70],
+                "3":["card_zone_manager", 50, 70],
+                "2":["card_o5", 30, 70]
             },
             "268_cap": [
                 ["weapon_awp", 50, 50]
