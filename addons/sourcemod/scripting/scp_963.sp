@@ -62,10 +62,10 @@ public bool OnPickup(Player &ply, InvItem &item)
         item.WorldRemove();
         ents.IndexUpdate(item);
         
-        return true;
+        return false;
     }
 
-    return false;
+    return true;
 }
 
 public void OnTouch(Entity &ent1, Entity &ent2)
@@ -148,16 +148,7 @@ public void SCP_OnPlayerDeath(Player &vic, Player &atk) {
     }
 }
 
-public void SCP_OnPlayerReset(Player &ply) {
-    if (ply.GetBool("reincarnation"))
-    {
-        ply.RemoveValue("reincarnation");
-        ply.RemoveValue("soulpos");
-        ply.RemoveValue("soulang");
-    }
-}
-
-public void SCP_OnPlayerLeave(Player &ply) {
+public void SCP_OnPlayerClear(Player &ply) {
     if (ply.GetBool("reincarnation"))
     {
         ply.RemoveValue("reincarnation");
