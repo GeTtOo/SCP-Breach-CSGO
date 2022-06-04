@@ -48,8 +48,23 @@ public void SCP_OnPlayerJoin(Player &ply)
 }
 
 public void SCP_OnPlayerSpawn(Player &ply) {
-    if (ply.class != null && ply.class.Is("096")) {
+    if (ply.class.Is("096")) {
 
+        char uid[32];
+        FormatEx(uid, sizeof(uid), "ply_%i", ply.id);
+        ply.SetKV("targetname", uid);
+
+        Entity ambient = new Entity();
+        ambient.Create("ambient_generic");
+        ambient.SetKV("message", "eternity/scp/096/crying.mp3");
+        ambient.SetKV("SourceEntityName", uid);
+        ambient.SetKV("radius", "1200");
+        ambient.SetKV("health", "1000");
+        ambient.SetPos(ply.EyePos());
+        ambient.Spawn();
+        ambient.Activate();
+
+        ply.SetHandle("096_ambient_cry", ambient);
         ply.SetBool("096_IsRage", false);
         ply.SetBool("096_cooldown", false);
 
@@ -68,8 +83,9 @@ public void SCP_OnPlayerSpawn(Player &ply) {
 
 public void SCP_OnPlayerClear(Player &ply)
 {
-    if (ply != null && ply.class != null && ply.class.Is("096")) {
-        
+    if (ply.class && ply.class.Is("096")) {
+        view_as<Entity>(ply.GetHandle("096_ambient_cry")).Input("StopSound").Remove();
+        ply.RemoveValue("096_ambient_cry");
         ply.RemoveValue("096_IsRage");
         ply.RemoveValue("096_cooldown");
         ply.RemoveValue("096_candmg");
@@ -192,7 +208,8 @@ public void CheckVisualContact(Player ply)
                 gamemode.timer.RemoveByName(timername);
                 
                 ply.TimerSimple(5500, "Rage", ply);
-                gamemode.mngr.PlayAmbientOnPlayer("*/eternity/scp/096/rage_start.mp3", ply);
+                view_as<Entity>(ply.GetHandle("096_ambient_cry")).Input("StopSound");
+                ply.PlayAmbient("*/eternity/scp/096/rage_start.mp3");
                 ply.SetBool("096_IsRage", true);
             }
         }
@@ -210,7 +227,7 @@ public void Rage(Player ply) {
     ply.speed = 260.0;
     ply.multipler = 2.5;
 
-    gamemode.mngr.PlayAmbientOnPlayer("*/eternity/scp/096/rage.mp3", ply);
+    ply.PlayAmbient("*/eternity/scp/096/rage.mp3");
 
     ply.TimerSimple(10500, "Tranquility", ply);
 }
@@ -223,7 +240,7 @@ public void Tranquility(Player ply) {
         ply.SetBool("096_cooldown", true);
         ply.SetBool("096_candmg", false);
 
-        gamemode.mngr.PlayAmbientOnPlayer("*/eternity/scp/096/tranquility.mp3", ply);
+        ply.PlayAmbient("*/eternity/scp/096/tranquility.mp3");
 
         ply.TimerSimple(25000, "CooldownReset", ply);
         ply.TimerSimple(5900, "StartCrying", ply);
@@ -239,7 +256,7 @@ public void StartCrying(Player ply) {
 }
 
 public void Crying(Player ply) {
-    gamemode.mngr.PlayAmbientOnPlayer("*/eternity/scp/096/crying.mp3", ply);
+    view_as<Entity>(ply.GetHandle("096_ambient_cry")).Input("StopSound").Input("PlaySound");
 }
 
 public void CooldownReset(Player ply) {
