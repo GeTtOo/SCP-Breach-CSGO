@@ -131,8 +131,8 @@ methodmap Entity < Base {
         return new Angle(pos[0], pos[1], pos[2]);
     }
 
-    public Entity Input(char[] input, Entity activator = null, Entity caller = null) {
-        AcceptEntityInput(this.id, input, (activator) ? activator.id : -1, (caller) ? caller.id : -1);
+    public Entity Input(char[] input, int activator = -1, int caller = -1) {
+        AcceptEntityInput(this.id, input, activator, caller);
         return this;
     }
 
@@ -140,11 +140,13 @@ methodmap Entity < Base {
 
     public Tmr TimerSimple(int delay, char[] funcname, any args = false) {
         char timername[64];
-        FormatEx(timername, sizeof(timername), "ent-%i|time-%i|seed-%i", this.id, GetTime(), GetRandomInt(1, 1000));
+        FormatEx(timername, sizeof(timername), "ent-%i|time-%i|seed-%i", this.id, GetTime(), GetRandomInt(1, 1000000));
         return gamemode.timer.Create(timername, delay, 1, funcname, args);
     }
 
-    public void SetMoveType(MoveType type) { SetEntityMoveType(this.id, type); }
+    public Entity SetCollisionGroup(int val) { SetEntData(this.id, gamemode.collisiongroup, val, 4, true); return this; }
+
+    public Entity SetMoveType(MoveType type) { SetEntityMoveType(this.id, type); return this; }
 
     public Entity Create(char[] entclass = "prop_physics_override") {
 
@@ -259,6 +261,7 @@ methodmap Entity < Base {
     }
 
     public void Remove() {
+        this.SetBool("removing", true);
         RemoveEntity(this.id);
         this.Dispose();
     }
