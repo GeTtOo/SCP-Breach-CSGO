@@ -51,6 +51,9 @@ public void SCP_RegisterMetaData() {
     gamemode.meta.RegisterStatusEffect("Heal", 1.5);
     gamemode.meta.RegStatusEffectEvent(INIT, "Heal", "Heal_Init");
     gamemode.meta.RegStatusEffectEvent(UPDATE, "Heal", "Heal_Update");
+
+    gamemode.meta.RegEntEvent(ON_PICKUP, "medkit", "MedkitUse");
+    gamemode.meta.RegEntEvent(ON_USE, "medkit", "MedkitDeploy");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -65,10 +68,10 @@ public void Heal_Init(Player ply) {
 
 public void Heal_Update(Player ply) {
     if (ply.health < ply.class.health)
-        if (ply.health + (ply.class.health * 5 / 100) > ply.class.health)
+        if (ply.health + (ply.class.health * 8 / 100) > ply.class.health)
             ply.health = ply.class.health;
         else
-            ply.health += ply.class.health * 5 / 100;
+            ply.health += ply.class.health * 8 / 100;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -167,6 +170,68 @@ public void HealthShotTimer(Player ply)
                 ply.health += ply.class.health * 25 / 100;
         }
 
-        ply.se.Create("Heal", 7);
+        ply.se.Create("Heal", 5);
     }
+}
+
+public bool MedkitUse(Player &ply, Entity &ent)
+{
+    if (ent.GetBool("active") && ent.GetInt("amount") > 0)
+    {
+        ply.Give("weapon_healthshot");
+        int count = ent.GetInt("amount") - 1;
+        ent.SetInt("amount", count);
+
+        char countstr[12];
+        WorldText info = view_as<WorldText>(ent.GetHandle("wtinfo"));
+        FormatEx(countstr, sizeof(countstr), "count:%i", count);
+        info.SetText(countstr);
+
+        if (ent.GetInt("amount") == 0)
+        {
+            ents.Remove(info);
+            ents.Remove(ent);
+        }
+        
+        return false;
+    }
+
+    return true;
+}
+
+public void MedkitDeploy(Player &ply, InvItem &ent)
+{
+    ply.inv.Drop(ent);
+
+    ent.TimerSimple(2000, "MedkitInit", ent);
+}
+
+public void MedkitInit(Entity ent)
+{   
+    Vector pos = ent.GetPos();
+    
+    ent.meta.spawnflags = 4364; // Add motion disabled flag
+    ents.Remove(ent);
+    
+    ent = ents.Create("medkit");
+    ent.meta.spawnflags = 4356; // Flags original value restore
+    ent.SetPos(pos - new Vector(0.0,0.0,5.0), new Angle(90.0,0.0,0.0));
+    ent.Spawn();
+    
+    ent.SetBool("active", true);
+    ent.SetInt("amount", ent.meta.GetInt("amount"));
+
+    char medkitname[32];
+    FormatEx(medkitname, sizeof(medkitname), "medkit-%i", ent.id);
+    ent.SetKV("targetname", medkitname);
+
+    WorldText info = worldtext.Create(ent.GetPos() + new Vector(1.5,8.5,6.2), ent.GetAng() - new Angle(0.0,270.0,0.0));
+    info.SetColor(new Colour(218,18,26));
+    info.SetText(" Full");
+    info.SetSize(3);
+    
+    SetVariantString(medkitname);
+    info.Input("SetParent", ent.id);
+    
+    ent.SetHandle("wtinfo", info);
 }
