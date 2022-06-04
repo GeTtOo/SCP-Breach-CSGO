@@ -93,6 +93,11 @@ methodmap Player < Entity {
         public get() { return this.GetBool("fullaccess", false); }
     }
 
+    property bool ready {
+        public set(bool val) { this.SetBool("ready", val); }
+        public get() { return this.GetBool("ready", true); }
+    }
+
     property bool FirstSpawn {
         public set(bool val) { this.SetBool("firstspawn", val); }
         public get() { return this.GetBool("firstspawn", true); }
@@ -233,6 +238,15 @@ methodmap Player < Entity {
         Format(path, sizeof(path), "%s", path);
 
         this.PlayNonCheckSound(path);
+    }
+
+    public void PlayAmbient(char[] path)
+    {
+        float vecarr[3];
+        Vector vec = this.EyePos();
+        vec.GetArr(vecarr);
+        delete vec;
+        EmitAmbientSound(path, vecarr, this.id);
     }
 
     public void StopSound(char[] path, int channel = 1) {
