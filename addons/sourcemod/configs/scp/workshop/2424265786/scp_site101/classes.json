@@ -579,7 +579,7 @@
                 "overlay":"eternity/overlays/scp-079_{lang}_fh"
             },
             "096": {
-                "percent":20,
+                "percent":10,
                 "health":20000,
                 "speed":130,
                 "model":"models/player/custom_player/eternity/scp096.mdl",
@@ -591,9 +591,8 @@
                 "comment":"096"
             },
             "106": {
-                "percent":30,
-                "autospawn":false,
-                "health":10000,
+                "percent":20,
+                "health":35000,
                 "speed":180,
                 "model":"models/player/custom_player/eternity/scp_106.mdl",
                 "handsmodel":"models/player/custom_player/eternity/arms/arms_scp106.mdl",
@@ -626,6 +625,7 @@
                 "comment":"Fire man"
             },
             "966": {
+                "percent":20,
                 "health":5000,
                 "speed":250,
                 "multipler":1.2,

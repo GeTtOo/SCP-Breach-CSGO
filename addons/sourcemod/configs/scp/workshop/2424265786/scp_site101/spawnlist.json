@@ -318,10 +318,13 @@
     ],
     "card_senior_guard":[
     ],
+    "card_mog_commander":[
+        {"chance":100,"vec":[-11346,-3032,-978],"ang":[90,165,0]}
+    ],
     "card_mog_lieutenant":[
     ],
     "card_chaos":[
-        {"chance":35,"vec":[-7877,-5836,1762],"ang":[0,-180,0],"comment":"Upstairs Chaos zone"}  
+        {"chance":35,"vec":[-7877,-5836,1762],"ang":[0,-180,0],"comment":"Upstairs Chaos zone"}
     ],
     "flashlight":[
         {"chance":30,"vec":[-2096,-5954,24],"ang":[0,0,0],"comment":"Lite zone: Bathroom"}, 
