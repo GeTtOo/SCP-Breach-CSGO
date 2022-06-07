@@ -155,6 +155,8 @@ methodmap IntercomController < Base {
             Angle da = display.GetAng() - new Angle(0.0,180.0,0.0);
 
             worldtext.Create(dp, da, this.wtid).SetSize(8).SetColor(new Colour(126,190,42));
+            delete dp;
+            delete da;
         }
         
         gamemode.log.Debug("All displays successfully initialized");
@@ -167,10 +169,17 @@ methodmap IntercomController < Base {
         this.monitors.Clear();
     }
 
+    public void Clear() {
+        for (int i=0; i < this.monitors.Length; i++) view_as<Entity>(this.monitors.Get(i)).Dispose();
+        this.monitors.Clear();
+    }
+
     public void Dispose() {
         gamemode.timer.RemoveByName("Intercom_transmission_active");
         gamemode.timer.RemoveByName("Intercom_cd_release");
         gamemode.timer.RemoveByName("Intercom_cd_countdown");
+        for (int i=0; i < this.monitors.Length; i++) view_as<Entity>(this.monitors.Get(i)).Dispose();
+        this.monitors.Clear();
         delete this.monitors;
         delete this;
     }
@@ -219,6 +228,11 @@ public void SCP_OnRoundStart() {
 
     Intercom.DisplayInit();
     Intercom.Ready();
+}
+
+public void SCP_OnRoundEnd() {
+    gamemode.timer.RemoveByName("AdvancedVoice");
+    Intercom.Clear();
 }
 
 public void SCP_OnButtonPressed(Player &ply, int doorid) {
