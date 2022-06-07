@@ -115,11 +115,7 @@ methodmap StatusEffectSingleton < Base {
         return false;
     }
 
-    public void Create(Handle ply, char[] name, int time)
-    {
-        if (!this.IsHave(ply, name))
-            this.list.Push(new StatusEffect(ply, name, time));
-    }
+    public native StatusEffect Create(Handle ply, char[] name, int time);
 
     public StatusEffect Get(Handle ply, char[] name)
     {
@@ -201,6 +197,7 @@ methodmap StatusEffectSingleton < Base {
 
     public void ClearAll()
     {
+        for (int i=0; i < this.list.Length; i++) view_as<StatusEffect>(this.list.Get(i)).Dispose();
         this.list.Clear();
     }
 
@@ -260,5 +257,11 @@ methodmap StatusEffectSingleton < Base {
                 }
             }
         }
+    }
+
+    public void Dispose() {
+        this.ClearAll();
+        delete this.GetArrayList("list");
+        this.RemoveValue("list");
     }
 }

@@ -76,6 +76,8 @@ forward void SCP_OnRoundStart();
 
 forward void SCP_OnRoundEnd();
 
+forward void SCP_OnAlphaWarhead(AlphaWarhead status);
+
 forward void SCP_OnPlayerJoin(Player &ply);
 
 forward void SCP_OnPlayerLeave(Player &ply);

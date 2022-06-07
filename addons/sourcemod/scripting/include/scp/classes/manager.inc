@@ -408,4 +408,10 @@ methodmap Manager < Base {
 
         ply.PrintNotify(fullinfo);
     }
+
+    public void Dispose()
+    {
+        delete this.GetArrayList("escapezones");
+        delete this;
+    }
 }

@@ -95,4 +95,8 @@ methodmap ProgressBar < Base {
         
         this.active = false;
     }
+
+    public void Dispose() {
+        delete this;
+    }
 }

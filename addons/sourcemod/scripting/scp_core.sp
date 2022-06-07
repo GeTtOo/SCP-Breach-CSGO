@@ -40,6 +40,8 @@
 
 Handle OnLoadGM;
 Handle OnUnloadGM;
+Handle OnRoundStartForward;
+Handle OnRoundEndForward;
 Handle OnClientJoinForward;
 Handle OnClientLeaveForward;
 Handle PreClientSpawnForward;
@@ -52,8 +54,6 @@ Handle OnTakeDamageForward;
 Handle OnPlayerDeathForward;
 Handle OnPlayerEscapeForward;
 Handle OnButtonPressedForward;
-Handle OnRoundStartForward;
-Handle OnRoundEndForward;
 Handle OnInputForward;
 Handle OnCallActionForward;
 Handle RegMetaForward;
@@ -75,6 +75,7 @@ public Plugin myinfo = {
 
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 {
+    CreateNative("GameMode.collisiongroup.get", NativeGameMode_CollisionGroup);
     CreateNative("GameMode.GetTeamList", NativeGameMode_TeamList);
     CreateNative("GameMode.team", NativeGameMode_GetTeam);
     CreateNative("GameMode.config.get", NativeGameMode_Config);
@@ -83,6 +84,10 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("GameMode.nuke.get", NativeGameMode_Nuke);
     CreateNative("GameMode.timer.get", NativeGameMode_Timers);
     CreateNative("GameMode.log.get", NativeGameMode_Logger);
+
+    CreateNative("Timers.HideCreate", NativeTimers_HideCreate);
+
+    CreateNative("StatusEffectSingleton.Create", NativeStatusEffects_Create);
 
     CreateNative("EntitySingleton.list.get", NativeEntities_GetList);
     CreateNative("EntitySingleton.Create", NativeEntities_Create);
@@ -116,6 +121,8 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
 
     OnLoadGM = CreateGlobalForward("SCP_OnLoad", ET_Event);
     OnUnloadGM = CreateGlobalForward("SCP_OnUnload", ET_Event);
+    OnRoundStartForward = CreateGlobalForward("SCP_OnRoundStart", ET_Event);
+    OnRoundEndForward = CreateGlobalForward("SCP_OnRoundEnd", ET_Event);
     OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_CellByRef);
     OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_CellByRef);
     PreClientSpawnForward = CreateGlobalForward("SCP_PrePlayerSpawn", ET_Event, Param_CellByRef);
@@ -128,8 +135,6 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     OnPlayerDeathForward = CreateGlobalForward("SCP_OnPlayerDeath", ET_Event, Param_CellByRef, Param_CellByRef);
     OnPlayerEscapeForward = CreateGlobalForward("SCP_OnPlayerEscape", ET_Event, Param_CellByRef, Param_CellByRef);
     OnButtonPressedForward = CreateGlobalForward("SCP_OnButtonPressed", ET_Event, Param_CellByRef, Param_Cell);
-    OnRoundStartForward = CreateGlobalForward("SCP_OnRoundStart", ET_Event);
-    OnRoundEndForward = CreateGlobalForward("SCP_OnRoundEnd", ET_Event);
     OnInputForward = CreateGlobalForward("SCP_OnInput", ET_Event, Param_CellByRef, Param_Cell);
     OnCallActionForward = CreateGlobalForward("SCP_OnCallAction", ET_Event, Param_CellByRef);
     RegMetaForward = CreateGlobalForward("SCP_RegisterMetaData", ET_Event);
@@ -233,15 +238,15 @@ public void OnMapEnd()
     
     Call_StartForward(OnUnloadGM);
     Call_Finish();
-    
-    gamemode.timer.ClearAll();
-    statuseffect.ClearAll();
 
     ents.Dispose();
     player.Dispose();
+    AdminMenu.Dispose();
     worldtext.Dispose();
     statuseffect.Dispose();
-    AdminMenu.Dispose();
+    gamemode.mngr.Dispose();
+    gamemode.nuke.Dispose();
+    gamemode.log.Dispose();
     gamemode.Dispose();
 }
 
@@ -327,6 +332,7 @@ public void OnClientDisconnect(int id)
 
         if (ply.ragdoll)
         {
+            delete ply.ragdoll.meta;
             ents.Remove(ply.ragdoll);
             ply.ragdoll = null;
         }
@@ -367,6 +373,7 @@ public void PlayerSpawn(Player ply)
     {
         if (ply.ragdoll) //Fix check if valid
         {
+            delete ply.ragdoll.meta;
             ents.Remove(ply.ragdoll);
             ply.ragdoll = null;
         }
@@ -540,9 +547,6 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         Call_StartForward(OnRoundStartForward);
         Call_Finish();
     }
-    else
-        if (gamemode.config.debug)
-            ServerCommand("mp_warmup_end");
 }
 
 public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
@@ -577,6 +581,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
             
             if (ply.ragdoll)
             {
+                delete ply.ragdoll.meta;
                 ents.Remove(ply.ragdoll);
                 ply.ragdoll = null;
             }
@@ -585,9 +590,9 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
         delete players;
 
         ents.Clear();
-        statuseffect.ClearAll();
         gamemode.mngr.RoundComplete = false;
         gamemode.nuke.Reset();
+        statuseffect.ClearAll();
         gamemode.timer.ClearAll();
 
         Call_StartForward(OnRoundEndForward);
@@ -2186,6 +2191,8 @@ public void ActionUnlock(Player ply) { ply.SetBool("ActionAvailable", true); }
 //
 //////////////////////////////////////////////////////////////////////////////
 
+public any NativeGameMode_CollisionGroup(Handle Plugin, int numArgs) { return gamemode.GetInt("collisiongroup"); }
+
 public any NativeGameMode_Config(Handle Plugin, int numArgs) { return view_as<Config>(view_as<JSON_OBJECT>(gamemode).GetObject("Config")); }
 
 public any NativeGameMode_Meta(Handle Plugin, int numArgs) { return view_as<Meta>(view_as<JSON_OBJECT>(gamemode).GetObject("Meta")); }
@@ -2221,6 +2228,28 @@ public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
     char name[32];
     GetNativeString(2, name, sizeof(name));
     return view_as<Teams>(view_as<JSON_OBJECT>(gamemode).GetObject("Teams")).get(name);
+}
+
+public any NativeTimers_HideCreate(Handle Plugin, int numArgs) {
+    char timername[64], funcname[64];
+    GetNativeString(3, timername, sizeof(timername));
+    GetNativeString(6, funcname, sizeof(funcname));
+
+    Tmr timer = new Tmr(GetNativeCell(2), timername, GetNativeCell(4), GetNativeCell(5), funcname, GetNativeCell(7));
+    timer.active = true;
+    gamemode.timer.GetArrayList("timers").Push(timer);
+    return timer;
+}
+
+public any NativeStatusEffects_Create(Handle Plugin, int numArgs) {
+    Player ply = GetNativeCell(2);
+    char sename[64];
+    GetNativeString(3, sename, sizeof(sename));
+
+    StatusEffect se = new StatusEffect(ply, sename, GetNativeCell(4));
+    
+    if (!statuseffect.IsHave(ply, sename)) statuseffect.list.Push(se);
+    return se;
 }
 
 public any NativeEntities_GetList(Handle Plugin, int numArgs) { return ents.GetArrayList("entities"); }

@@ -156,7 +156,7 @@ methodmap GameMode < Base {
 
     property int collisiongroup {
         public set(int value) { this.SetInt("collisiongroup", value); }
-        public get() { return this.GetInt("collisiongroup"); }
+        public native get();
     }
 
     property Meta meta {

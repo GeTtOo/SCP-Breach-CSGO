@@ -158,4 +158,11 @@ methodmap Inventory < Base {
     }
 
     public native void FullClear();
+
+    public void Dispose()
+    {
+        this.FullClear();
+        delete this.GetArrayList("inventory");
+        delete this;
+    }
 }

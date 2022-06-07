@@ -32,12 +32,25 @@
 /*-----------------------------------------------Nuclear warhead manager------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
+enum AlphaWarhead {
+    Disabled = 0,
+    Ready,
+    Activated,
+    Canceled,
+    Nuked
+}
+
 methodmap NuclearWarhead < Base {
 
     public NuclearWarhead() {
         NuclearWarhead controller = view_as<NuclearWarhead>(new Base());
+        controller.SetHandle("fw", CreateGlobalForward("SCP_OnAlphaWarhead", ET_Event, Param_Cell));
         controller.CreateArrayList("monitors");
         return controller;
+    }
+
+    property Handle fw {
+        public get() { return this.GetHandle("fw"); }
     }
 
     property ArrayList monitors {
@@ -99,11 +112,19 @@ methodmap NuclearWarhead < Base {
         {
             this.ready = true;
             this.Update(" Ready");
+
+            Call_StartForward(this.fw);
+            Call_PushCell(Ready);
+            Call_Finish();
         }
         else
         {
             this.ready = false;
-            this.Update("");
+            this.Update("Disabled");
+
+            Call_StartForward(this.fw);
+            Call_PushCell(Disabled);
+            Call_Finish();
         }
     }
 
@@ -147,6 +168,10 @@ methodmap NuclearWarhead < Base {
             
             display.SetProp("m_nSkin", (gamemode.lang == 22) ? 1 : 3);
         }
+
+        Call_StartForward(this.fw);
+        Call_PushCell(Activated);
+        Call_Finish();
     }
 
     public void Cancel() {
@@ -164,6 +189,10 @@ methodmap NuclearWarhead < Base {
         gamemode.mngr.PlayTranslatedSoundToAll(path);
 
         this.Update("Canceled");
+
+        Call_StartForward(this.fw);
+        Call_PushCell(Canceled);
+        Call_Finish();
     }
 
     public void AddCounterToDisplay() {
@@ -201,6 +230,10 @@ methodmap NuclearWarhead < Base {
         }
         
         this.AddCounterToDisplay();
+
+        Call_StartForward(this.fw);
+        Call_PushCell(Disabled);
+        Call_Finish();
     }
     
     public void Controller(int btnId) {
@@ -224,7 +257,18 @@ methodmap NuclearWarhead < Base {
         this.block = false;
         this.resumetime = 0.0;
         this.detonationtime = 0.0;
+        for (int i=0; i < this.monitors.Length; i++) view_as<Entity>(this.monitors.Get(i)).Dispose();
         this.monitors.Clear();
+    }
+
+    public void Dispose()
+    {
+        delete this.fw;
+        
+        for (int i=0; i < this.monitors.Length; i++) view_as<Entity>(this.monitors.Get(i)).Dispose();
+        this.monitors.Clear();
+        delete this.monitors;
+        delete this;
     }
 }
 
@@ -294,6 +338,10 @@ public void NukeExplode() {
     gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_AUTO_COUNTDOWN");
 
     gamemode.nuke.Update("Site destroyed", 8);
+
+    Call_StartForward(gamemode.nuke.fw);
+    Call_PushCell(Nuked);
+    Call_Finish();
 
     //gamemode.mngr.EndGame("nuke");
 }

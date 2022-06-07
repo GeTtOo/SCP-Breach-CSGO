@@ -68,4 +68,9 @@ methodmap StatusEffectList < Base {
     {
         statuseffect.ClearAllOnPlayer(this.ply);
     }
+
+    public void Dispose()
+    {
+        delete this;
+    }
 }

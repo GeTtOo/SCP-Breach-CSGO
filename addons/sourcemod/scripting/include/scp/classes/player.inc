@@ -517,10 +517,9 @@ methodmap Player < Entity {
     }
 
     public void Dispose() {
-        this.RemoveValue("ragdoll");
-        this.RemoveValue("inventory");
-        this.RemoveValue("progress");
-        this.RemoveValue("se");
+        this.inv.Dispose();
+        this.progress.Dispose();
+        this.se.Dispose();
         this.model.Dispose();
         delete this;
     }

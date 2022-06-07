@@ -240,4 +240,10 @@ methodmap Logger < Base
         VFormat(text, len, format, 4);
         this.SendMessage(logid, text, null, null);
     }*/
+
+    public void Dispose()
+    {
+        delete this.fw;
+        delete this;
+    }
 }

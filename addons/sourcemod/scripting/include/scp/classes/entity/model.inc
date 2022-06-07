@@ -106,8 +106,7 @@ methodmap Mdl < Base {
     public Mdl SetRenderColor(Colour clr) { SetEntityRenderColor(this.entid, clr.r, clr.g, clr.b, clr.a); delete clr; return this; }
 
     public void Dispose() {
-        this.RemoveValue("bglist");
-        //delete this.bglist;
+        delete this.bglist;
         delete this;
     }
 }

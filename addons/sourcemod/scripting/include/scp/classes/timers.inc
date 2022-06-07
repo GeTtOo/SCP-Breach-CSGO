@@ -82,6 +82,11 @@ methodmap Tmr < Base {
         public set(bool val) { this.SetBool("active", val); }
         public get() { return this.GetBool("active"); }
     }
+
+    public void Dispose()
+    {
+        delete this;
+    }
 }
 
 methodmap Timers < Base {
@@ -92,11 +97,10 @@ methodmap Timers < Base {
         return self;
     }
 
+    public native Tmr HideCreate(Handle ph, char[] name, float delay, int repeations, char[] funcname, any args);
+
     public Tmr Create(char[] name, int delay, int repeations, char[] funcname, any args = false) {
-        Tmr timer = new Tmr(GetMyHandle(), name, (float(delay) / float(1000)), repeations, funcname, args);
-        timer.active = true;
-        this.GetArrayList("timers").Push(timer);
-        return timer;
+        return this.HideCreate(GetMyHandle(), name, (float(delay) / float(1000)), repeations, funcname, args);
     }
 
     public bool IsAlive(Tmr timer) { return (this.GetArrayList("timers").FindValue(timer) != -1) ? true : false; }
@@ -144,6 +148,7 @@ methodmap Timers < Base {
     }
 
     public void ClearAll() {
+        for (int i=0; i < this.GetArrayList("timers").Length; i++) view_as<Tmr>(this.GetArrayList("timers").Get(i)).Dispose();
         this.GetArrayList("timers").Clear();
     }
 
