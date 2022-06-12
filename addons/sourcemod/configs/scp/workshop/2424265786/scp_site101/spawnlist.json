@@ -37,7 +37,7 @@
 
     ],
     "weapon_cz75a":[
-        {"chance":75,"vec":[-5372,2763,36],"ang":[0,-90,0],"comment":"Heavy Zone: SCP-996"} 
+        {"chance":75,"vec":[-5372,2763,36],"ang":[0,-90,0],"comment":"Heavy Zone: SCP-966"} 
 
     ],
     "weapon_deagle":[
@@ -45,7 +45,8 @@
         {"chance":60,"vec":[-8368,1170,29],"ang":[0,-90,0],"comment":"Heavy Zone: SCP-049"}  
     ],
     "weapon_revolver":[ 
-        {"chance":20,"vec":[-12462,-2416,36],"ang":[0,-98,0],"comment":"Heavy Zone: SCP-996"}
+        {"chance":20,"vec":[-12462,-2416,36],"ang":[0,-98,0],"comment":"Heavy Zone: SCP-966"},
+        {"chance":100,"vec":[-655,-4858,29],"ang":[0,90,0],"comment":"Heavy Zone: SCP-179"} 
     ],
     "weapon_mag7":[
 
@@ -132,7 +133,10 @@
         {"chance":50,"vec":[-9566,2229,22],"ang":[0,90,0],"comment":"Heavy Zone: Armory"},
         {"chance":90,"vec":[-10945,-3109,-1004],"ang":[0,-90,0],"comment":"Security Spawn"},
         {"chance":90,"vec":[-10961,-3109,-1004],"ang":[0,-90,0],"comment":"Security Spawn"},
-        {"chance":90,"vec":[-10981,-3109,-1004],"ang":[0,-90,0],"comment":"Security Spawn"} 
+        {"chance":90,"vec":[-10981,-3109,-1004],"ang":[0,-90,0],"comment":"Security Spawn"},
+        {"chance":60,"vec":[-2291,-2680,108],"ang":[0,-90,0],"comment":"Lite zone: Office"},
+        {"chance":60,"vec":[-1809,-1940,0],"ang":[0,45,0],"comment":"Lite zone: Rest Room "},
+        {"chance":60,"vec":[-1224,-2197,0],"ang":[0,0,0],"comment":"Lite zone: Rest Room "}
     ],
     "weapon_hegrenade":[ 
         {"chance":25,"vec":[921,-2500,0],"ang":[0,0,0],"comment":"Lite zone: Server room"},
@@ -191,7 +195,8 @@
         {"chance":90,"vec":[-11205,-3118,-998],"ang":[90,180,-90],"comment":"Security Spawn"},
         {"chance":90,"vec":[-11215,-3118,-998],"ang":[90,180,-90],"comment":"Security Spawn"},
         {"chance":90,"vec":[-11225,-3118,-998],"ang":[90,180,-90],"comment":"Security Spawn"},
-        {"chance":90,"vec":[-11235,-3118,-998],"ang":[90,180,-90],"comment":"Security Spawn"}
+        {"chance":90,"vec":[-11235,-3118,-998],"ang":[90,180,-90],"comment":"Security Spawn"},
+        {"chance":60,"vec":[-2016,-1934,48],"ang":[0,-90,0],"comment":"Lite zone: Rest room "} 
     ],
     "500_panacea":[
         {"chance":50,"vec":[-6807,-1675,1],"ang":[0,-40,0],"comment":"Heavy Zone: Cube"},
@@ -213,23 +218,29 @@
             "27":{"vec":[-1666,-488,224],"ang":[0,-145,0],"comment":"Lite zone: SCP-173"},
             "26":{"vec":[-8012,376,184],"ang":[0,-90,0],"comment":"Heavy Zone: SCP-035"},
             "24":{"vec":[-6697,-1796,1],"ang":[0,-40,0],"comment":"Heavy Zone: Cube"},
-            "23":{"vec":[-5182,2627,1],"ang":[0,-175,0],"comment":"Heavy Zone: SCP-996"}
+            "23":{"vec":[-5182,2627,1],"ang":[0,-175,0],"comment":"Heavy Zone: SCP-966"}
         }
     ],
     "weapon_axe":[
         {"chance":20,"vec":[487,-1065,30],"ang":[0,90,0],"comment":"Lite zone: Toilet"},
         {"chance":45,"vec":[-2013,-2058,30],"ang":[0,90,0],"comment":"Lite zone: Rest room "},
         {"chance":45,"vec":[-6498,-7429,1],"ang":[8,-141,90],"comment":"Medblock"},
-        {"chance":45,"vec":[-6989,-7435,37],"ang":[0,175,0],"comment":"Medblock"}
+        {"chance":45,"vec":[-6989,-7435,37],"ang":[0,175,0],"comment":"Medblock"},
+        {"chance":60,"vec":[987,-3371,0],"ang":[0,180,0],"comment":"Lite zone: Cube under construction"} 
     ],
     "weapon_hammer":[
         {"chance":70,"vec":[228,-3782,0],"ang":[0,55,0],"comment":"Lite zone: Cube under construction"},
-        {"chance":50,"vec":[3009,-1732,64],"ang":[0,-45,0] ,"comment":"Lite zone: SCP-914"}
+        {"chance":50,"vec":[3009,-1732,64],"ang":[0,-45,0],"comment":"Lite zone: SCP-914"},
+        {"chance":60,"vec":[-2564,-6062,40],"ang":[0,90,0],"comment":"Lite zone: D-Class Cell"},
+        {"chance":60,"vec":[-1908,-2393,0],"ang":[0,90,0],"comment":"Lite zone: Rest Room "},
+        {"chance":60,"vec":[489,-3626,1],"ang":[0,180,0],"comment":"Lite zone: Cube under construction"}
     ],
     "weapon_spanner":[
         {"chance":45,"vec":[-1871,-5961,0],"ang":[0,91,0],"comment":"Lite zone: Bathroom"},
         {"chance":70,"vec":[913,-3336,9],"ang":[87,143,31],"comment":"Lite zone: Cube under construction"},
-        {"chance":50,"vec":[3801,-2700,79],"ang":[0,173,0],"comment":"Lite zone: SCP-914"} 
+        {"chance":50,"vec":[3801,-2700,79],"ang":[0,173,0],"comment":"Lite zone: SCP-914"},
+        {"chance":60,"vec":[-1607,-939,0],"ang":[0,-155,0],"comment":"Lite zone: SCP-173"},
+        {"chance":60,"vec":[352,-3713,0],"ang":[0,-149,0],"comment":"Lite zone: Cube under construction"}
     ],
     "weapon_breachcharge":[ 
         {"chance":50,"vec":[-5981,-1439,22],"ang":[0,-90,0],"comment":"Lite zone: Armory"},
@@ -257,8 +268,11 @@
         {"chance":40,"vec":[-4017,-5330,104],"ang":[0,-130,0],"comment":"Lite zone: Storage"},
         {"chance":40,"vec":[-4089,-5332,104],"ang":[0,-150,0],"comment":"Lite zone: Storage"},
         {"chance":40,"vec":[-4444,-5822,79],"ang":[0,-170,0],"comment":"Lite zone: Storage"},
-        {"chance":40,"vec":[-3956,-5952,0],"ang":[0,125,0],"comment":"Lite zone: Storage"},
-        {"chance":40,"vec":[-4069,-5605,0],"ang":[0,150,0],"comment":"Lite zone: Storage"}
+        {"chance":40,"vec":[-3956,-5952,0],"ang":[0,125,0],"comment":"Lite zone: Storage"}, 
+        {"chance":40,"vec":[-4069,-5605,0],"ang":[0,150,0],"comment":"Lite zone: Storage"},
+        {"chance":30,"vec":[-1474,-2050,30],"ang":[0,180,0],"comment":"Lite zone: Rest Room"},
+        {"chance":30,"vec":[-1474,-2070,30],"ang":[0,180,0],"comment":"Lite zone: Rest Room"},
+        {"chance":30,"vec":[-1474,-2090,30],"ang":[0,180,0],"comment":"Lite zone: Rest Room"}
     ],
     "iron_ingot":[
         {"chance":62,"vec":[-3386,-1238,104],"ang":[0,-176,0],"comment":"Lite zone: Storage #173"},
@@ -285,7 +299,17 @@
         {"chance":100,"vec":[-2015,-775,0],"ang":[0,-10,0],"comment":"Lite zone: SCP-173"},
         {"chance":75,"vec":[-2987,-1085,0],"ang":[0,-120,0],"comment":"Lite zone: Storage #173"},
         {"chance":95,"vec":[-6002,-4156,0],"ang":[0,-90,0],"comment":"Lite zone: Vent room"},
-        {"chance":40,"vec":[-6048,-5351,0],"ang":[0,-111,0],"comment":"Lite zone: Office Gate"}   
+        {"chance":40,"vec":[-6048,-5351,0],"ang":[0,-111,0],"comment":"Lite zone: Office Gate"},
+        {"chance":60,"vec":[-1841,-5702,24],"ang":[0,180,0] ,"comment":"Lite zone: Bathroom"},
+        {"chance":60,"vec":[-2766,-2830,32],"ang":[0,45,0],"comment":"Lite zone: Office "},
+        {"chance":60,"vec":[-2202,-2959,0],"ang":[0,145,0],"comment":"Lite zone: Office "},
+        {"chance":60,"vec":[-2263,-2680,108],"ang":[0,-90,0],"comment":"Lite zone: Office "}, 
+        {"chance":60,"vec":[-2356,-2680,108],"ang":[0,-90,0],"comment":"Lite zone: Office "},
+        {"chance":30,"vec":[-1824,-2325,22],"ang":[0,90,0],"comment":"Lite zone: Rest Room "},
+        {"chance":30,"vec":[-1936,-2055,30],"ang":[0,0,0],"comment":"Lite zone: Rest Room "},
+        {"chance":30,"vec":[-2036,-2518,79],"ang":[0,90,0],"comment":"Lite zone: Rest Room "},
+        {"chance":60,"vec":[1007,-3691,0],"ang":[0,90,0],"comment":"Lite zone: Cube under construction"},
+        {"chance":60,"vec":[670,-3631,1],"ang":[0,147,0],"comment":"Lite zone: Cube under construction"} 
     ],
     "card_scientist":[
         {"chance":35,"vec":[-2110,-6738,259],"ang":[0,90,0],"comment":"Lite zone: D-Class Cell"},
@@ -300,7 +324,8 @@
         {"chance":37,"vec":[-1250,-2507,27],"ang":[0,180,0],"comment":"Lite zone: Rest room "},
         {"chance":37,"vec":[-2035,-2517,79],"ang":[0,180,0],"comment":"Lite zone: Rest room "},
         {"chance":60,"vec":[-2056,-506,253],"ang":[359,235,359],"comment":"Lite zone: SCP-173"},
-        {"chance":51,"vec":[-5479,-2907,0],"ang":[0,-18,0],"comment":"Lite zone: SCP-457"}
+        {"chance":51,"vec":[-5479,-2907,0],"ang":[0,-18,0],"comment":"Lite zone: SCP-457"},
+        {"chance":60,"vec":[-2681,-2903,55],"ang":[0,-90,0],"comment":"Lite zone: Office "}
     ],
     "card_major_scientist":[
         {"chance":25,"vec":[2692,-2374,272],"ang":[0,90,0],"comment":"Lite zone: Cube under construction"}
@@ -340,7 +365,7 @@
         {"chance":30,"vec":[-5897,-3611,0],"ang":[0,90,0],"comment":"Lite zone: Vent room"},
         {"chance":30,"vec":[-6571,-1362,0],"ang":[0,-120,0],"comment":"Heavy Zone: Cube"},
         {"chance":30,"vec":[-7007,-1924,0],"ang":[0,0,0],"comment":"Heavy Zone: Cube"},
-        {"chance":30,"vec":[-5394,2761,36],"ang":[0,-90,0],"comment":"Heavy Zone: SCP-996"},
+        {"chance":30,"vec":[-5394,2761,36],"ang":[0,-90,0],"comment":"Heavy Zone: SCP-966"},
         {"chance":60,"vec":[-8766,1239,36],"ang":[0,-135,0],"comment":"Heavy Zone: SCP-049"},
         {"chance":30,"vec":[-10875,444,-367],"ang":[0,-125,0],"comment":"Heavy Zone: SCP-106"},
         {"chance":5,"vec":[-11498,-304,-367],"ang":[0,-63,0],"comment":"Heavy Zone: SCP-106"},
@@ -348,10 +373,17 @@
         {"chance":35,"vec":[-9310,-5841,1712],"ang":[0,180,0],"comment":"Gate A"},
         {"chance":30,"vec":[-10484,-2450,-975],"ang":[0,-59,0],"comment":"Security Spawn"},
         {"chance":30,"vec":[-10403,-2894,-967],"ang":[0,148,0],"comment":"Security Spawn"},
-        {"chance":30,"vec":[-10208,-2599,-990],"ang":[0,97,0],"comment":"Security Spawn"}  
+        {"chance":30,"vec":[-10208,-2599,-990],"ang":[0,97,0],"comment":"Security Spawn"},
+        {"chance":60,"vec":[-2729,-2696,32],"ang":[0,-90,0],"comment":"Lite zone: Office"}
     ],
     "visor_nv":[
-        {"chance":75,"vec":[-6774,-7032,38],"ang":[0,294,0],"comment":"Medic Spawn"}
+        {"chance":75,"vec":[-6774,-7032,38],"ang":[0,294,0],"comment":"Medic Spawn"},
+        {"chance":60,"vec":[-2394,-6058,40],"ang":[0,90,0],"comment":"Lite zone: D-Class Cell."},
+        {"chance":60,"vec":[-2673,-3268,55],"ang":[0,90,0],"comment":"Lite zone: Office"},
+        {"chance":60,"vec":[-7535,-4834,1881],"ang":[0,180,0],"comment":"Train Station"},
+        {"chance":40,"vec":[-1539,-2333,18],"ang":[0,180,0],"comment":"Lite zone: Rest Room"},
+        {"chance":100,"vec":[-547,-4807,0],"ang":[0,145,0],"comment":"Lite zone: SCP-179"} 
+
     ],
     "radio":[
         {"chance":40,"vec":[-1905,-6183,263],"ang":[0,-90,0],"comment":"Lite zone: D-Class Cell."},
@@ -370,13 +402,17 @@
         {"chance":20,"vec":[-8736,-5262,-4],"ang":[0,-65,0],"comment":"Nuke Reactor zone"},
         {"chance":60,"vec":[-8020,298,213],"ang":[0,90,0],"comment":"Heavy Zone: SCP-035"},
         {"chance":10,"vec":[-10543,-65,29],"ang":[0,90,0],"comment":"Heavy Zone: SCP-106"},
-        {"chance":20,"vec":[-12497,-2419,36],"ang":[0,-120,0],"comment":"Heavy Zone: SCP-996"},
+        {"chance":20,"vec":[-12497,-2419,36],"ang":[0,-120,0],"comment":"Heavy Zone: SCP-966"},
         {"chance":30,"vec":[-10985,-6621,48],"ang":[0,0,0],"comment":"Heavy Zone: Garage"},
         {"chance":30,"vec":[-10275,-6618,48],"ang":[0,0,0],"comment":"Heavy Zone: Garage"},
         {"chance":35,"vec":[-7696,-6026,1764],"ang":[1,58,90],"comment":"Upstairs Chaos zone"},
         {"chance":30,"vec":[-11627,-2499,-973],"ang":[0,-180,0],"comment":"Security Spawn"},
         {"chance":30,"vec":[-11979,-2672,-973],"ang":[0,-104,0],"comment":"Security Spawn"},
-        {"chance":30,"vec":[-11624,-2820,-973],"ang":[0,-71,0],"comment":"Security Spawn"} 
+        {"chance":30,"vec":[-11624,-2820,-973],"ang":[0,-71,0],"comment":"Security Spawn"},
+        {"chance":60,"vec":[-2742,-3041,32],"ang":[0,90,0],"comment":"Lite zone: Office"},
+        {"chance":60,"vec":[-2327,-2680,108],"ang":[0,-90,0],"comment":"Lite zone: Office"},
+        {"chance":40,"vec":[-1463,-2378,18],"ang":[0,0,0],"comment":"Lite zone: Rest Room"},
+        {"chance":40,"vec":[-1502,-2282,0],"ang":[0,-90,0],"comment":"Lite zone: Rest Room"}
     ],
     "navigator":[
         [
@@ -384,8 +420,30 @@
             {"vec":[-2211,-2873,40],"ang":[360,70,360],"comment":"Lite zone: Office"},
             {"vec":[-2775,-3480,33],"ang":[360,74,360],"comment":"Lite zone: Office"},
             {"vec":[-1325,-2426,24],"ang":[2,140,359],"comment":"Lite zone: Rest room"},
-            {"vec":[-1793,-2386,19],"ang":[359,115,1],"comment":"Lite zone: Rest room"}
+            {"vec":[-1793,-2386,19],"ang":[359,115,1],"comment":"Lite zone: Rest room"} 
         ],
-        {"chance":45,"vec":[2743,-2367,272],"ang":[1,74,0],"comment":"Lite zone: SCP-914"}
+        {"chance":45,"vec":[2743,-2367,272],"ang":[1,74,0],"comment":"Lite zone: SCP-914"},
+        {"chance":45,"vec":[-2153,-6597,54],"ang":[0,-180,0],"comment":"Lite zone: D-Class Cell"},
+        {"chance":60,"vec":[-7529,-4166,1881],"ang":[0,180,0],"comment":"Train Station"},
+        {"chance":100,"vec":[-513,-4625,96],"ang":[0,180,0],"comment":"Lite zone: SCP-179"},
+        {"chance":50,"vec":[-11720,-2448,-984],"ang":[0,0,0],"comment":"Security Spawn"} 
+    ],
+    "medkit":[
+        {"chance":60,"vec":[-1911,-6652,223],"ang":[0,-180,0],"comment":"Lite zone: D-Class Cell"},
+        {"chance":60,"vec":[-2669,-3344,55],"ang":[0,0,0],"comment":"Lite zone: Office"},
+        {"chance":30,"vec":[-1853,-1928,79],"ang":[0,-90,0],"comment":"Lite zone: Rest Room"},
+        {"chance":100,"vec":[-512,-4663,96],"ang":[0,-180,0],"comment":"Lite zone: SCP-179"},
+        {"chance":80,"vec":[-11350,-2912,-928],"ang":[0,90,0],"comment":"Security Spawn"},
+        {"chance":80,"vec":[-11400,-2912,-928],"ang":[0,90,0],"comment":"Security Spawn"},
+        {"chance":80,"vec":[-11450,-2912,-928],"ang":[0,90,0],"comment":"Security Spawn"} 
+    ],
+    "defibrillator":[
+        {"chance":30,"vec":[-1916,-1934,79],"ang":[0,-90,0],"comment":"Lite zone: Rest Room"} 
+    ],
+    "turret":[
+        {"chance":30,"vec":[-6039,-1522,0],"ang":[10,-92,0],"comment":"Lite zone: Armory"},
+        {"chance":30,"vec":[-9313,2490,0],"ang":[0,90,0],"comment":"Heavy zone: Armory"},
+        {"chance":30,"vec":[-10921,-2799,-1008],"ang":[0,90,0],"comment":"Security Spawn"},
+        {"chance":30,"vec":[-11106,-3019,-1008],"ang":[0,180,0],"comment":"Security Spawn"}
     ]
 }
