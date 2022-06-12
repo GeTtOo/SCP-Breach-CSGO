@@ -7,8 +7,8 @@
     }
     "card_o5_info"
     {
-        "en"        "Employee access card."
-        "ru"        "Карта доступа сотрудника."
+        "en"        "Employee access card"
+        "ru"        "Карта доступа сотрудника"
     }
     "card_facility_manager"
     {
@@ -17,8 +17,8 @@
     }
     "card_facility_manager_info"
     {
-        "en"        "Employee access card."
-        "ru"        "Карта доступа сотрудника."
+        "en"        "Employee access card"
+        "ru"        "Карта доступа сотрудника"
     }
     "card_containment_engineer"
     {
@@ -27,8 +27,8 @@
     }
     "card_containment_engineer_info"
     {
-        "en"        "Employee access card."
-        "ru"        "Карта доступа сотрудника."
+        "en"        "Employee access card"
+        "ru"        "Карта доступа сотрудника"
     }
     "card_mog_commander"
     {
@@ -37,8 +37,8 @@
     }
     "card_mog_commander_info"
     {
-        "en"        "Employee access card."
-        "ru"        "Карта доступа сотрудника."
+        "en"        "Employee access card"
+        "ru"        "Карта доступа сотрудника"
     }
     "card_mog_lieutenant"
     {
@@ -47,8 +47,8 @@
     }
     "card_mog_lieutenant_info"
     {
-        "en"        "Employee access card."
-        "ru"        "Карта доступа сотрудника."
+        "en"        "Employee access card"
+        "ru"        "Карта доступа сотрудника"
     }
     "card_guard"
     {
@@ -57,8 +57,8 @@
     }
     "card_guard_info"
     {
-        "en"        "Employee access card."
-        "ru"        "Карта доступа сотрудника."
+        "en"        "Employee access card"
+        "ru"        "Карта доступа сотрудника"
     }
     "card_senior_guard"
     {
@@ -67,8 +67,8 @@
     }
     "card_senior_guard_info"
     {
-        "en"        "Employee access card."
-        "ru"        "Карта доступа сотрудника."
+        "en"        "Employee access card"
+        "ru"        "Карта доступа сотрудника"
     }
     "card_zone_manager"
     {
@@ -77,8 +77,8 @@
     }
     "card_zone_manager_info"
     {
-        "en"        "Employee access card."
-        "ru"        "Карта доступа сотрудника."
+        "en"        "Employee access card"
+        "ru"        "Карта доступа сотрудника"
     }
     "card_major_scientist"
     {
@@ -87,8 +87,8 @@
     }
     "card_major_scientist_info"
     {
-        "en"        "Employee access card."
-        "ru"        "Карта доступа сотрудника."
+        "en"        "Employee access card"
+        "ru"        "Карта доступа сотрудника"
     }
     "card_scientist"
     {
@@ -97,8 +97,8 @@
     }
     "card_scientist_info"
     {
-        "en"        "Employee access card."
-        "ru"        "Карта доступа сотрудника."
+        "en"        "Employee access card"
+        "ru"        "Карта доступа сотрудника"
     }
     "card_janitor"
     {
@@ -107,8 +107,8 @@
     }
     "card_janitor_info"
     {
-        "en"        "Employee access card."
-        "ru"        "Карта доступа сотрудника."
+        "en"        "Employee access card"
+        "ru"        "Карта доступа сотрудника"
     }
     "card_chaos"
     {
@@ -117,8 +117,8 @@
     }
     "card_chaos_info"
     {
-        "en"        "Tool for hacking reading devices."
-        "ru"        "Устройство для взлома устройств считывания."
+        "en"        "Tool for hacking reading devices"
+        "ru"        "Устройство для взлома устройств считывания"
     }
     "iron_ingot"
     {
@@ -127,8 +127,8 @@
     }
     "iron_ingot_info"
     {
-        "en"        "Just a steel ingot used in production."
-        "ru"        "Обычный стальной слиток, используемый в производстве."
+        "en"        "Just a steel ingot used in production"
+        "ru"        "Обычный стальной слиток, используемый в производстве"
     }
     "plastic"
     {
@@ -137,8 +137,8 @@
     }
     "plastic_info"
     {
-        "en"        "It looks like a coil made of ordinary plastic.<br>Upon closer examination, the foundation's scientists found up to ten previously unknown polymer bonds in this copolymer.<br>In terms of strength, it is not inferior to modern aviation alloys.<br>Coupled with the minimum weight, this material makes it one of the most promising in the construction of cameras for some SCP objects."
-        "ru"        "На вид катушка из обыкновенного пластика.<br>При более же детальном рассмотрении, учёные фонда обнаружили до десяти неизвестных ранее полимерных связей в данном сополимере.<br>По прочности не уступает современным авиационным сплавам.<br>Вкупе с минимальным весом, делает данный материал одним из самых перспективных при строительстве камер некоторым SCP объектам."
+        "en"        "It looks like a coil made of ordinary plastic<br>Upon closer examination, the foundation's scientists found up to ten previously unknown polymer bonds in this copolymer<br>In terms of strength, it is not inferior to modern aviation alloys<br>Coupled with the minimum weight, this material makes it one of the most promising in the construction of cameras for some SCP objects"
+        "ru"        "На вид катушка из обыкновенного пластика<br>При более же детальном рассмотрении, учёные фонда обнаружили до десяти неизвестных ранее полимерных связей в данном сополимере<br>По прочности не уступает современным авиационным сплавам<br>Вкупе с минимальным весом, делает данный материал одним из самых перспективных при строительстве камер некоторым SCP объектам"
     }
     "500_panacea"
     {
@@ -147,18 +147,18 @@
     }
     "500_panacea_info"
     {
-        "en"        "Panacea. Cures all diseases."
+        "en"        "Panacea Cures all diseases"
         "ru"        "Снимает ряд негативных эффектов:<br>Кровотечение<br>Метамарфоза<br>Обращение в SCP-049-2<br>Острая лучевая болезнь<br>Зомби вирус<br><br>А так же полностью восстанавливает здоровье игроку"
     }
     "963_amulet_bright"
     {
-        "en"        "Amulet Dr.Bright"
-        "ru"        "Амулет Др. Брайта"
+        "en"        "Amulet Dr. Bright"
+        "ru"        "Амулет доктора Брайта"
     }
     "963_amulet_bright_info"
     {
-        "en"        "Dr. Bright's amulet with his mind."
-        "ru"        "Амулет Доктора Брайта с его сознанием."
+        "en"        "Dr Bright's amulet with his mind"
+        "ru"        "Амулет Доктора Брайта с его сознанием"
     }
     "963_amulet"
     {
@@ -167,8 +167,8 @@
     }
     "963_amulet_info"
     {
-        "en"        "An ornate amulet.<br>Able to pass a soul."
-        "ru"        "Богато украшенный амулет.<br>Способен переносить душу."
+        "en"        "An ornate amulet<br>Able to pass a soul"
+        "ru"        "Богато украшенный амулет<br>Способен переносить душу"
     }
     "005_picklock"
     {
@@ -177,8 +177,8 @@
     }
     "005_picklock_info"
     {
-        "en"        "Decorated antique key.<br>Unlocks any doors."
-        "ru"        "Украшенный старинный ключ.<br>Отпирает любые двери."
+        "en"        "Decorated antique key<br>Unlocks any doors"
+        "ru"        "Украшенный старинный ключ<br>Отпирает любые двери"
     }
     "427_amulet"
     {
@@ -187,8 +187,8 @@
     }
     "427_amulet_info"
     {
-        "en"        "A small, decorated amulet.<br>When pointing at biotissue, it regenerates them."
-        "ru"        "Небольшой, украшенный резьбой, амулет.<br>Регенерирует био-ткань при наведении на неё."
+        "en"        "A small, decorated amulet<br>When pointing at biotissue, it regenerates them"
+        "ru"        "Небольшой, украшенный резьбой, амулет<br>Регенерирует био-ткань при наведении на неё"
     }
     "268_cap"
     {
@@ -197,8 +197,8 @@
     }
     "268_cap_info"
     {
-        "en"        "It is a headgear made of wool.<br>After putting it on, the person becomes invisible."
-        "ru"        "Представляет собой головной убор из шерсти.<br>После надевания, человек становится незаметным."
+        "en"        "It is a headgear made of wool<br>After putting it on, the person becomes invisible"
+        "ru"        "Представляет собой головной убор из шерсти<br>После надевания, человек становится незаметным"
     }
     "035_mask"
     {
@@ -207,8 +207,8 @@
     }
     "035_mask_info"
     {
-        "en"        "It looks like a white porcelain mask of a comedian or a tragedian.<br>A viscous dark liquid oozes out of the holes."
-        "ru"        "Имеет вид белой фарфоровой маски комедианта или трагика.<br>Из отверстий сочится вязкая тёмная жидкость."
+        "en"        "It looks like a white porcelain mask of a comedian or a tragedian<br>A viscous dark liquid oozes out of the holes"
+        "ru"        "Имеет вид белой фарфоровой маски комедианта или трагика<br>Из отверстий сочится вязкая тёмная жидкость"
     }
     "flashlight"
     {
@@ -218,7 +218,7 @@
     "flashlight_info"
     {
         "en"        "Unremarkable flashlight<br>Russian Army Series - 'RA-802 Officer'"
-        "ru"        "Ничем не примечательный фонарик<br>Серия Армия России - 'RA-802 Офицерский'"
+        "ru"        "Ничем непримечательный фонарик<br>Серия Армия России - 'RA-802 Офицерский'"
     }
     "visor_nv"
     {
@@ -227,8 +227,8 @@
     }
     "visor_nv_info"
     {
-        "en"        "Night vision device is included in the standard equipment of MOG."
-        "ru"        "Прибор ночного виденья, входит в стандартную экипировку МОГ."
+        "en"        "Night vision device is included in the standard equipment of MOG"
+        "ru"        "Прибор ночного виденья, входит в стандартную экипировку МОГ"
     }
     "radio"
     {
@@ -237,8 +237,8 @@
     }
     "radio_info"
     {
-        "en"        "A portable radio station allows you to communicate at a long distance."
-        "ru"        "Переносная радиостанция позволяет общаться на дальнем расстоянии."
+        "en"        "A portable radio station allows you to communicate at a long distance"
+        "ru"        "Переносная радиостанция позволяет общаться на дальнем расстоянии"
     }
     "navigator"
     {
@@ -247,8 +247,8 @@
     }
     "navigator_info"
     {
-        "en"        "The S-Nav navigator allow you to see map of the complex."
-        "ru"        "Навигатор S-Nav позволяет увидеть карту комплекса."
+        "en"        "The S-Nav navigator allow you to see map of the complex"
+        "ru"        "Навигатор S-Nav позволяет увидеть карту комплекса"
     }
     "medkit"
     {
@@ -257,8 +257,8 @@
     }
     "medkit_info"
     {
-        "en"        "Standart medkit."
-        "ru"        "Обычная полевая аптечка."
+        "en"        "Standart medkit"
+        "ru"        "Обычная полевая аптечка"
     }
     "defibrillator"
     {
@@ -267,8 +267,8 @@
     }
     "defibrillator_info"
     {
-        "en"        "Can revive people."
-        "ru"        "Может спасть чью-то жизнь."
+        "en"        "Can revive people"
+        "ru"        "Может спасти чью-то жизнь"
     }
     "turret"
     {
@@ -277,7 +277,7 @@
     }
     "turret_info"
     {
-        "en"        "Auto turret."
-        "ru"        "Автоматическая турель."
+        "en"        "Dumb automatic turret, shoots at everything that moves"
+        "ru"        "Бестолковая автоматическая турель, стреляет во всё, что движется"
     }
 }
