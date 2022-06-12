@@ -22,7 +22,7 @@
     ],
     "weapon_p250":[
         {"chance":50,"vec":[-5816,-1622,37],"ang":[0,146,96],"comment":"Lite zone: Armory"},
-        {"chance":50,"vec":[-6143,-1577,33],"ang":[1,-95,90],"comment":"Lite zone: Armory"},
+        {"chance":50,"vec":[-6148,-1577,33],"ang":[1,-95,90],"comment":"Lite zone: Armory"},
         {"chance":50,"vec":[-5744,-6182,79],"ang":[0,-90,0],"comment":"Intercom"},
         {"chance":50,"vec":[-9429,2460,40],"ang":[0,180,0],"comment":"Heavy Zone: Armory"},
         {"chance":50,"vec":[-9429,2435,40],"ang":[0,180,0],"comment":"Heavy Zone: Armory"},
@@ -51,6 +51,7 @@
 
     ],
     "weapon_sawedoff":[
+        {"chance":90,"vec":[-6148,-1510,33],"ang":[0,-90,90],"comment":"Lite zone: Armory"}
     ],
     "weapon_nova":[
 
@@ -70,7 +71,7 @@
         {"chance":50,"vec":[-5762,-1624,37],"ang":[1,179,85],"comment":"Lite zone: Armory"},
         {"chance":50,"vec":[-5858,-1629,37],"ang":[1,133,85],"comment":"Lite zone: Armory"},
         [
-            {"vec":[-5866,-1570,37],"ang":[1,92,85],"comment":"Lite zone: Armory"},
+            {"vec":[-5866,-1570,37],"ang":[1,-90,85],"comment":"Lite zone: Armory"},
             {"vec":[-5870,-1539,40],"ang":[0,-90,0],"comment":"Lite zone: Armory (joke)"}
         ]
     ],
@@ -228,7 +229,6 @@
     "weapon_spanner":[
         {"chance":45,"vec":[-1871,-5961,0],"ang":[0,91,0],"comment":"Lite zone: Bathroom"},
         {"chance":70,"vec":[913,-3336,9],"ang":[87,143,31],"comment":"Lite zone: Cube under construction"},
-        {"chance":70,"vec":[899,-3342,11],"ang":[0,-160,0],"comment":"Lite zone: Cube under construction"},
         {"chance":50,"vec":[3801,-2700,79],"ang":[0,173,0],"comment":"Lite zone: SCP-914"} 
     ],
     "weapon_breachcharge":[ 
@@ -290,7 +290,6 @@
     "card_scientist":[
         {"chance":35,"vec":[-2110,-6738,259],"ang":[0,90,0],"comment":"Lite zone: D-Class Cell"},
         {"chance":25,"vec":[631,-3440,43],"ang":[0,-45,0],"comment":"Lite zone: Cube under construction"},
-        {"chance":25,"vec":[2692,-2374,272],"ang":[0,90,0],"comment":"Lite zone: Cube under construction"},
         {"chance":30,"vec":[2691,-2367,272],"ang":[0,90,0],"comment":"Lite zone: SCP-914"},
         {"chance":18,"vec":[-2219,-2864,40],"ang":[0,-15,0],"comment":"Lite zone: Office "},
         {"chance":18,"vec":[-2344,-3485,55],"ang":[0,90,0],"comment":"Lite zone: Office "},
@@ -304,6 +303,7 @@
         {"chance":51,"vec":[-5479,-2907,0],"ang":[0,-18,0],"comment":"Lite zone: SCP-457"}
     ],
     "card_major_scientist":[
+        {"chance":25,"vec":[2692,-2374,272],"ang":[0,90,0],"comment":"Lite zone: Cube under construction"}
     ],
     "card_zone_manager":[
     ],
