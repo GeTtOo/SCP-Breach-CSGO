@@ -32,6 +32,9 @@ mp_playercashawards 0
 mp_teamcashawards 0
 mp_force_pick_time 0
 mp_force_assigm_teams 1
+mp_radar_showall 1
+mp_drop_knife_enable 1
+sv_shield_hitpoints 12500
 ammo_item_limit_healthshot 1
 ```
 
@@ -40,7 +43,7 @@ ammo_item_limit_healthshot 1
 Настройка файла локализации берется из Sourcemod. В случае отсутствия необходимого языка, будет использоваться английский. Это относится как к файлам перевода, так и к моделям и надписям на них.  
 
 ## Дополнительные плагины
-[Discord API Core](https://github.com/CrazyHackGUT/Discord) - для отправления логов в Discord (необязательно)  
+[RIPEXT](https://github.com/ErikMinekus/sm-ripext/releases) - необходимо для работы плагина SCP_Discord_Log
 [Fix-Pickup-Shield](https://github.com/theelsaud/Fix-Pickup-Shield) - для подбирания щитов (рекомендуется)  
 [Always Weapon Skins](https://forums.alliedmods.net/showthread.php?t=237114) - для сохранения скинов игроков (необязательно)  
 
@@ -52,7 +55,7 @@ ammo_item_limit_healthshot 1
 Автоматически устанавливается на всех моделях `models/eternity/map/monitor.mdl`.  
 
 - **Таймер интеркома**  
-Автоматически устанавливается на всех моделях `models/props/coop_autumn/surveillance_monitor/surveillance_monitor_32.mdl`.  
+Автоматически устанавливается на всех моделях `models/props/coop_autumn/surveillance_monitor/surveillance_monitor_32.mdl`. 
 
 - **Вход в комплекс**  
 После уничтожения комплекса, двери, в чьем имени есть подстрока «DoorGate», будут закрыты и заблокированы.  
