@@ -43,7 +43,7 @@ ammo_item_limit_healthshot 1
 Настройка файла локализации берется из Sourcemod. В случае отсутствия необходимого языка, будет использоваться английский. Это относится как к файлам перевода, так и к моделям и надписям на них.  
 
 ## Дополнительные плагины
-[RIPEXT](https://github.com/ErikMinekus/sm-ripext/releases) - необходимо для работы плагина SCP_Discord_Log
+[RIPEXT](https://github.com/ErikMinekus/sm-ripext/releases) - необходимо для работы плагина SCP_Discord_Log  
 [Fix-Pickup-Shield](https://github.com/theelsaud/Fix-Pickup-Shield) - для подбирания щитов (рекомендуется)  
 [Always Weapon Skins](https://forums.alliedmods.net/showthread.php?t=237114) - для сохранения скинов игроков (необязательно)  
 
