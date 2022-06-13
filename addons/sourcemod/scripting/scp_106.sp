@@ -55,9 +55,8 @@ public Action SoundHandler(int clients[MAXPLAYERS], int &numClients, char sample
 				char sound[128];
 				JSON_ARRAY sarr = gamemode.plconfig.GetObject("sound").GetArray("steps");
 				sarr.GetString(GetRandomInt(0, sarr.Length - 1), sound, sizeof(sound));
-				gamemode.mngr.PlayAmbientOnPlayer(sound, ply);
-				
-				EmitSound(clients, numClients, sound, entity, channel, level, flags, volume, pitch);
+				ply.PlayAmbient(sound);
+				//EmitSound(clients, numClients, sound, entity, channel, level, flags, volume, pitch);
 				
 				return Plugin_Stop;
 			}
@@ -67,57 +66,35 @@ public Action SoundHandler(int clients[MAXPLAYERS], int &numClients, char sample
 	return Plugin_Continue;
 }
 
-public void SCP_OnLoad()
-{
-	AddNormalSoundHook(SoundHandler);
+public void SCP_OnLoad() {
+    AddNormalSoundHook(SoundHandler);
+    HookEntityOutput("trigger_hurt", "OnStartTouch", OnTriggerActivated);
 }
 
 public void SCP_OnUnload() {
     RemoveNormalSoundHook(SoundHandler);
 }
 
-public void SCP_OnPlayerJoin(Player &ply) {
-
+public void SCP_OnPlayerSpawn(Player &ply) {
+    if (ply.class.Is("106")) SDKHook(ply.id, SDKHook_StartTouch, CheckSurface);
 }
 
 public void SCP_OnPlayerClear(Player &ply) {
-    if (ply && ply.class && ply.class.Is("106"))
+    if (ply.class && ply.class.Is("106"))
     {
         SDKUnhook(ply.id, SDKHook_StartTouch, CheckSurface);
+        if (ply.GetHandle("106_tmrpdfo")) gamemode.timer.Remove(view_as<Tmr>(ply.GetHandle("106_tmrpdfo")));
         delete ply.GetHandle("106_tp_vec");
         delete ply.GetHandle("106_tp_ang");
-        delete ply.GetHandle("106_temp_vec");
-        delete ply.GetHandle("106_temp_ang");
         ply.RemoveValue("106_tp_vec");
         ply.RemoveValue("106_tp_ang");
         ply.RemoveValue("106_tplock");
-        ply.RemoveValue("106_temp_vec");
-        ply.RemoveValue("106_temp_ang");
         ply.RemoveValue("106_inpd");
-        ply.RemoveValue("106_tplock");
+        ply.RemoveValue("106_lock");
+        ply.RemoveValue("106_tmrpdfo");
     }
-}
-
-public void SCP_OnPlayerSpawn(Player &ply) {
-    if (ply && ply.class && ply.class.Is("106"))
-    {
-        SDKHook(ply.id, SDKHook_StartTouch, CheckSurface);
-    }
-}
-
-public void Scp_OnRoundEnd()
-{
-    ArrayList players = player.GetAll();
-
-    for (int i=0; i < players.Length; i++)
-    {
-        Player ply = players.Get(i);
-        
-        if (ply && ply.class && ply.class.Is("106"))
-            SDKUnhook(ply.id, SDKHook_StartTouch, CheckSurface);
-    }
-
-    delete players;
+    
+    if (ply.class && !ply.IsSCP) ply.RemoveValue("106_inpd");
 }
 
 public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype, int &inflictor) {
@@ -132,22 +109,30 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
             }
             case DMG_CRUSH:
             {
-                if (vic.GetBool("106_inpd"))
+                if (vic.GetBool("106_inpd") && !vic.GetBool("106_tplock"))
                 {
                     vic.SetPos(gamemode.plconfig.GetVector("pocket"), new Angle(0.0, 0.0, 0.0));
-                    vic.SetHandle("106_tp_vec", gamemode.plconfig.GetArray("pocketout").GetVector(GetRandomInt(0, gamemode.plconfig.GetArray("pocketout").Length - 1)));
-                    vic.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
-                    SmoothTP(vic);
+                    int idposrnd = GetRandomInt(0, gamemode.plconfig.GetObject("pocketout").GetArray("scp").Length - 1);
+                    Vector vec = view_as<JSON_OBJECT>(gamemode.plconfig.GetObject("pocketout").GetArray("scp").GetObject(idposrnd)).GetVector("vec");
+                    Angle ang = view_as<JSON_OBJECT>(gamemode.plconfig.GetObject("pocketout").GetArray("scp").GetObject(idposrnd)).GetAngle("ang");
+                    SCP_106_TeleportToPos(vic, vec - new Vector(0.0, 0.0, 64.0), ang);
                     vic.SetBool("106_inpd", false);
                     
+                    if (vic.GetHandle("106_tmrpdfo")) gamemode.timer.Remove(view_as<Tmr>(vic.GetHandle("106_tmrpdfo")));
+
                     return Plugin_Handled;
                 }
+                else if (damage > 25000.0) damage = 1000.0;
 
-                return Plugin_Continue;
+                return Plugin_Changed;
             }
             default:
             {
-                damage /= 20.0;
+                if (!gamemode.nuke.IsNuked)
+                    damage /= 7.5;
+                else
+                    damage /= 1.5;
+
                 return Plugin_Changed;
             }
         }
@@ -158,10 +143,11 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
         if (GetRandomInt(1, 100) < gamemode.plconfig.GetInt("ecop", 25))
         {
             vic.SetPos(gamemode.plconfig.GetVector("pocket"), new Angle(0.0, 0.0, 0.0));
-            vic.SetHandle("106_tp_vec", gamemode.plconfig.GetArray("pocketout").GetVector(GetRandomInt(0, gamemode.plconfig.GetArray("pocketout").Length - 1)));
-            vic.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
-            SmoothTP(vic);
-            vic.RemoveValue("106_inpd");
+            int idposrnd = GetRandomInt(0, gamemode.plconfig.GetObject("pocketout").GetArray("people").Length - 1);
+            Vector vec = view_as<JSON_OBJECT>(gamemode.plconfig.GetObject("pocketout").GetArray("people").GetObject(idposrnd)).GetVector("vec");
+            Angle ang = view_as<JSON_OBJECT>(gamemode.plconfig.GetObject("pocketout").GetArray("people").GetObject(idposrnd)).GetAngle("ang");
+            SCP_106_TeleportToPos(vic, vec - new Vector(0.0, 0.0, 64.0), ang);
+            vic.SetBool("106_inpd", false);
             return Plugin_Handled;
         }
         
@@ -172,9 +158,8 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 
     if (atk.class.Is("106") && vic.IsClass("player") && !vic.GetBool("106_inpd"))
     {
-        vic.SetHandle("106_tp_vec", gamemode.plconfig.GetVector("pocket"));
-        vic.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
-        SmoothTP(vic);
+        SCP_106_TeleportToPos(vic, gamemode.plconfig.GetVector("pocket"), new Angle(0.0, 0.0, 0.0));
+        SpawnBlob(vic);
         vic.SetBool("106_inpd", true);
         return Plugin_Handled;
     }
@@ -182,15 +167,44 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
     return Plugin_Continue;
 }
 
-public void CheckSurface(int client, int entity) {
+public Action OnTriggerActivated(const char[] output, int caller, int activator, float delay)
+{
+    char triggername[32];
+    GetEntPropString(caller, Prop_Data, "m_iName", triggername, sizeof(triggername));
 
+    if (StrEqual(triggername, "scp_106_trigger") && !player.GetByID(activator).IsSCP)
+    {
+        ArrayList players = player.GetAll();
+    
+        for (int i=0; i < player.Length; i++)
+        {
+            Player ply = players.Get(i);
+
+            if (ply && ply.class && ply.class.Is("106") && !ply.GetBool("106_lock"))
+            {
+                ply.TimerSimple(10000, "SCP_106_Locking", ply);
+            }
+        }
+
+        delete players;
+
+        return Plugin_Continue;
+    }
+    else
+    {
+        return Plugin_Handled;
+    }
+}
+
+public void CheckSurface(int client, int entity)
+{
     char className[32];
     GetEntityClassname(entity, className, sizeof(className));
     
     if (StrEqual(className, "prop_dynamic"))
     {
         int doorid = GetEntPropEnt(entity, Prop_Data, "m_hMoveParent");
-        Entity door = (doorid != -1) ? new Entity(doorid) : null;
+        Entity door = (doorid != -1 && !DoorIsBlock(doorid)) ? new Entity(doorid) : null;
 
         if (door && (door.IsClass("func_door") || door.IsClass("prop_door_rotating"))) // door.IsClass("func_door_rotating")
         {
@@ -217,7 +231,7 @@ public void CheckSurface(int client, int entity) {
 
                 Vector target = ply.GetPos() - doorforward.Clone() * doorforward.DotProduct(ply.GetPos() - door.GetPos());
 
-                for (float i=0.1; i < 2.4; i+=0.1) smoothtp.Push(ply.GetPos().Lerp(target.Clone(), i));
+                for (float i=0.1; i <= 2.2; i+=0.1) smoothtp.Push(ply.GetPos().Lerp(target.Clone(), i));
 
                 delete target;
 
@@ -238,7 +252,7 @@ public void DoorWalk(Player ply)
 {
     ArrayList list = ply.GetArrayList("106_sdw");
 
-    if (list && list.Length > 1)
+    if (list && list.Length > 0)
     {
         Vector vec = list.Get(0);
         ply.SetPos(vec);
@@ -254,105 +268,73 @@ public void DoorWalk(Player ply)
     }
 }
 
-public void SmoothTP(Player ply)
+public void SCP_106_TeleportToPos(Player ply, Vector vec, Angle ang)
 {
-    if (ply.GetHandle("106_tp_vec") && !ply.GetArrayList("106_stpin"))
+    ply.SetBool("106_tplock", true);
+    
+    int height = 65;
+
+    ArrayList pointsin = new ArrayList();
+    ArrayList pointsout = new ArrayList();
+
+    for (int i=1; i <= 65; i++)
     {
-        ArrayList smoothtp = new ArrayList();
+        Vector vin = ply.GetPos();
+        vin.z -= i;
+        pointsin.Push(vin);
 
-        for (int i=1; i < 65; i++)
-        {
-            Vector vec = ply.GetPos();
-            vec.z -= i;
-            smoothtp.Push(vec);
-        }
+        Vector vout = vec.Clone();
+        vout.z += i;
+        pointsout.Push(vout);
+    }
+    
+    delete vec;
 
-        ply.SetArrayList("106_stpin", smoothtp);
+    char timername[64];
 
-        char timername[64];
-        FormatEx(timername, sizeof(timername), "SCP-106-Smooth-Tp-%i", ply.id);
-        gamemode.timer.Create(timername, 25, 65, "HandlerSmoothTPIn", ply);
-        
+    Base data = new Base();
+    data.SetHandle("player", ply);
+    data.SetArrayList("points", pointsin);
+    data.SetArrayList("pointsout", pointsout);
+    data.SetInt("pointslen", height);
+    data.SetHandle("angle", ang);
+    data.SetBool("fs", true);
+
+    FormatEx(timername, sizeof(timername), "SCP-106-Teleport-%i", ply.id);
+    gamemode.timer.Create(timername, 25, height * 2, "SCP_106_TeleportHandler", data);
+}
+
+public void SCP_106_TeleportHandler(Base data)
+{
+    Player ply = view_as<Player>(data.GetHandle("player"));
+    ArrayList points = data.GetArrayList("points");
+    int plen = data.GetInt("pointslen");
+
+    if (points.Length == plen)
+    {
         char sound[128];
         JSON_ARRAY sarr = gamemode.plconfig.GetObject("sound").GetArray("portal");
         sarr.GetString(GetRandomInt(0, sarr.Length - 1), sound, sizeof(sound));
-        gamemode.mngr.PlayAmbientOnPlayer(sound, ply);
-
-        ply.SetBool("106_tplock", true);
+        ply.PlayAmbient(sound);
     }
-}
 
-public void HandlerSmoothTPIn(Player ply)
-{
-    ArrayList list = ply.GetArrayList("106_stpin");
+    if (points.Length == plen && !data.GetBool("fs"))
+        ply.SetPos(_, view_as<Angle>(data.GetHandle("angle")));
 
-    if (list && list.Length > 1)
+    ply.SetPos(points.Get(0));
+    points.Erase(0);
+
+    if (points.Length == 0 && data.GetBool("fs"))
     {
-        Vector vec = list.Get(0);
-        ply.SetPos(vec);
-        list.Erase(0);
+        delete points;
+        data.SetArrayList("points", data.GetArrayList("pointsout"));
+        data.SetBool("fs", false);
     }
-    else
+
+    if (points && points.Length == 0 && !data.GetBool("fs"))
     {
-        delete list;
-        char timername[64];
-        FormatEx(timername, sizeof(timername), "SCP-106-Smooth-Tp-%i", ply.id);
-        gamemode.timer.RemoveByName(timername);
-        ply.RemoveValue("106_stpin");
-        
-        ply.SetPos(view_as<Vector>(ply.GetHandle("106_tp_vec")).Clone(), view_as<Angle>(view_as<Angle>(ply.GetHandle("106_tp_ang")).Clone()));
-
-        ArrayList smoothtp = new ArrayList();
-
-        for (int i=1; i < 65; i++)
-        {
-            Vector vec = ply.GetPos(); 
-            vec.z += i;
-            smoothtp.Push(vec);
-        }
-
-        ply.SetArrayList("106_stpout", smoothtp);
-
-        FormatEx(timername, sizeof(timername), "SCP-106-Smooth-Tp-%i", ply.id);
-        gamemode.timer.Create(timername, 25, 65, "HandlerSmoothTPOut", ply);
-
-        char sound[128];
-        JSON_ARRAY sarr = gamemode.plconfig.GetObject("sound").GetArray("portal");
-        sarr.GetString(GetRandomInt(0, sarr.Length - 1), sound, sizeof(sound));
-        gamemode.mngr.PlayAmbientOnPlayer(sound, ply);
-    }
-}
-
-public void HandlerSmoothTPOut(Player ply)
-{
-    ArrayList list = ply.GetArrayList("106_stpout");
-
-    if (list && list.Length > 1)
-    {
-        Vector vec = list.Get(0);
-        ply.SetPos(vec.Clone());
-        list.Erase(0);
-    }
-    else
-    {
-        delete list;
-        char timername[64];
-        FormatEx(timername, sizeof(timername), "SCP-106-Smooth-Tp-%i", ply.id);
-        gamemode.timer.RemoveByName(timername);
-        ply.RemoveValue("106_stpout");
-        
-        if (ply.GetHandle("106_temp_vec"))
-        {
-            delete view_as<Vector>(ply.GetHandle("106_tp_vec"));
-            delete view_as<Angle>(ply.GetHandle("106_tp_ang"));
-            ply.RemoveValue("106_tp_vec");
-            ply.SetHandle("106_tp_vec", ply.GetHandle("106_temp_vec"));
-            ply.RemoveValue("106_tp_ang");
-            ply.SetHandle("106_tp_ang", ply.GetHandle("106_temp_ang"));
-            ply.RemoveValue("106_temp_vec");
-            ply.RemoveValue("106_temp_ang");
-        }
-        
+        delete points;
+        delete data;
         ply.SetBool("106_tplock", false);
     }
 }
@@ -362,14 +344,94 @@ public void SCP_OnCallAction(Player &ply) {
         ActionsMenu(ply);
 }
 
+public void SCP_OnAlphaWarhead(AlphaWarhead status) {
+    if (status == Nuked)
+    {
+        ArrayList players = player.GetAll();
+
+        for (int i=0; i < players.Length; i++)
+        {
+            Player ply = players.Get(i);
+
+            if (ply && ply.class && ply.class.Is("106"))
+            {
+                delete ply.GetHandle("106_tp_vec");
+                delete ply.GetHandle("106_tp_ang");
+                ply.RemoveValue("106_tp_vec");
+                ply.RemoveValue("106_tp_ang");
+
+                if (ply.GetBool("106_inpd"))
+                {
+                    if (ply.GetHandle("106_tmrpdfo")) gamemode.timer.Remove(view_as<Tmr>(ply.GetHandle("106_tmrpdfo")));
+                    ply.RemoveValue("106_tmrpdfo");
+
+                    SCP_106_TeleportToPos(ply, gamemode.plconfig.GetObject("foan").GetVector("vec") - new Vector(0.0, 0.0, 64.0), gamemode.plconfig.GetObject("foan").GetAngle("ang"));
+                    ply.SetBool("106_inpd", false);
+                }
+            }
+        }
+
+        delete players;
+    }
+}
+
+public void SpawnBlob(Player ply)
+{
+    /*Entity blob = new Entity();
+    blob.Create("env_sprite_oriented");
+    blob.SetKV("model", "materials/eternity/blob.vmt");
+    blob.SetKV("classname", "env_sprite_oriented");
+    blob.SetKV("rendercolor", "255 255 255");
+    blob.SetKV("scale", "0.25");
+    blob.SetKV("rendermode", "0");
+    blob.SetKV("spawnflags", "1");
+
+    blob.SetPos(ply.GetPos());
+    blob.Spawn();
+    blob.SetPos(_, new Angle(0.0, 180.0, 0.0));
+    blob.Dispose();*/
+    
+    float pos[3];
+    ply.GetPos().GetArrD(pos);
+
+    TE_Start("BSP Decal");
+    TE_WriteVector("m_vecOrigin", pos);
+    TE_WriteNum("m_nEntity", 0);
+    TE_WriteNum("m_nIndex", PrecacheDecal("eternity/blob"));
+    TE_SendToAll();
+}
+
+public void ForcedTpFromPD(Player ply)
+{
+    SCP_106_TeleportToPos(ply, view_as<Vector>(ply.GetHandle("106_tp_vec")).Clone(), view_as<Angle>(view_as<Angle>(ply.GetHandle("106_tp_ang")).Clone()));
+    ply.SetBool("106_inpd", false);
+}
+
+public void SCP_106_Locking(Player ply)
+{
+    SCP_106_TeleportToPos(ply, gamemode.plconfig.GetObject("cell").GetVector("vec")- new Vector(0.0,0.0,64.0), gamemode.plconfig.GetObject("cell").GetAngle("ang"));
+    ply.SetBool("106_lock", true);
+}
+
+public bool DoorIsBlock(int doorid)
+{
+    JSON_ARRAY blockdoors = gamemode.plconfig.GetArray("blockdoors");
+    
+    for (int i=0; i < blockdoors.Length; i++)
+        if (blockdoors.GetInt(i) == doorid)
+            return true;
+
+    return false;
+}
+
 public void ActionsMenu(Player ply) {
     Menu hndl = new Menu(ActionsMenuHandler);
 
     hndl.SetTitle("SCP-106 Actions");
 
-    hndl.AddItem("1", "Set point", (!ply.GetBool("106_inpd")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+    hndl.AddItem("1", "Set point", (!ply.GetBool("106_tplock") && !ply.GetBool("106_inpd")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
     hndl.AddItem("2", "Move to point", (ply.GetHandle("106_tp_vec") && !ply.GetBool("106_tplock")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
-    hndl.AddItem("3", "Move to a pocket dimension", (ply.GetHandle("106_tp_vec") && !ply.GetBool("106_tplock") && !ply.GetBool("106_inpd")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+    hndl.AddItem("3", "Move to a pocket dimension", (ply.GetHandle("106_tp_vec") && !ply.GetBool("106_tplock") && !ply.GetBool("106_inpd") && !gamemode.nuke.IsNuked) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
     
     hndl.Display(ply.id, 30);
 }
@@ -387,57 +449,32 @@ public int ActionsMenuHandler(Menu hMenu, MenuAction action, int client, int idx
                 {
                     case 0:
                     {
-                        if (ply.GetHandle("106_tp_vec"))
-                        {
-                            delete view_as<Vector>(ply.GetHandle("106_tp_vec"));
-                            delete view_as<Angle>(ply.GetHandle("106_tp_ang"));
-                            ply.RemoveValue("106_tp_vec");
-                            ply.RemoveValue("106_tp_ang");
-                        }
+                        delete ply.GetHandle("106_tp_vec");
+                        delete ply.GetHandle("106_tp_ang");
                         
                         ply.SetHandle("106_tp_vec", ply.GetPos() - new Vector(0.0, 0.0, 64.0));
                         ply.SetHandle("106_tp_ang", ply.GetAng());
-                        
-                        /*Entity blob = new Entity();
-                        blob.Create("env_sprite_oriented");
-                        blob.SetKV("model", "materials/eternity/blob.vmt");
-                        blob.SetKV("classname", "env_sprite_oriented");
-                        blob.SetKV("rendercolor", "255 255 255");
-                        blob.SetKV("scale", "0.25");
-                        blob.SetKV("rendermode", "0");
-                        blob.SetKV("spawnflags", "1");
 
-                        blob.SetPos(ply.GetPos());
-                        blob.Spawn();
-                        blob.SetPos(_, new Angle(0.0, 180.0, 0.0));
-                        blob.Dispose();*/
-
-                        float pos[3];
-                        ply.GetPos().GetArrD(pos);
-
-                        TE_Start("BSP Decal");
-                        TE_WriteVector("m_vecOrigin", pos);
-                        TE_WriteNum("m_nEntity", 0);
-                        TE_WriteNum("m_nIndex", PrecacheDecal("eternity/blob"));
-                        TE_SendToAll();
-
-                        
+                        SpawnBlob(ply);
                     }
                     case 1:
                     {
-                        SmoothTP(ply);
-                        
+                        SCP_106_TeleportToPos(ply, view_as<Vector>(ply.GetHandle("106_tp_vec")).Clone(), view_as<Angle>(view_as<Angle>(ply.GetHandle("106_tp_ang")).Clone()));
+                        if (!ply.GetBool("106_inpd"))
+                            SpawnBlob(ply);
+                        else
+                            if (ply.GetHandle("106_tmrpdfo")) gamemode.timer.Remove(view_as<Tmr>(ply.GetHandle("106_tmrpdfo")));
+
                         ply.SetBool("106_inpd", false);
                     }
                     case 2:
                     {
-                        ply.SetHandle("106_temp_vec", ply.GetHandle("106_tp_vec"));
-                        ply.SetHandle("106_temp_ang", ply.GetHandle("106_tp_ang"));
-                        ply.SetHandle("106_tp_vec", gamemode.plconfig.GetVector("pocket"));
-                        ply.SetHandle("106_tp_ang", new Angle(0.0, 0.0, 0.0));
-                        SmoothTP(ply);
-
+                        SCP_106_TeleportToPos(ply, gamemode.plconfig.GetVector("pocket"), new Angle(0.0, 0.0, 0.0));
+                        if (!ply.GetBool("106_inpd")) SpawnBlob(ply);
                         ply.SetBool("106_inpd", true);
+                        
+                        if (gamemode.plconfig.GetInt("tfop") > 0)
+                            ply.SetHandle("106_tmrpdfo", ply.TimerSimple(gamemode.plconfig.GetInt("tfop") * 1000, "ForcedTpFromPD", ply));
                     }
                 }
         }
