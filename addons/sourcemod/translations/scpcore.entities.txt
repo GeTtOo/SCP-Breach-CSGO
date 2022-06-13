@@ -4,280 +4,392 @@
     {
         "en"        "O5 card"
         "ru"        "Карта О5"
+        "chi"       "地圖 關於五"
+        "zho"       "地图 关于五"
     }
     "card_o5_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
+        "chi"       "員工門禁卡"
+        "zho"       "员工门禁卡"
     }
     "card_facility_manager"
     {
         "en"        "Facility manager card"
         "ru"        "Карта директора"
+        "chi"       "設施經理卡"
+        "zho"       "设施经理卡"
     }
     "card_facility_manager_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
+        "chi"       "員工門禁卡"
+        "zho"       "员工门禁卡"
     }
     "card_containment_engineer"
     {
         "en"        "Containment engineer card"
         "ru"        "Карта инженера по содержанию"
+        "chi"       "遏制工程師卡"
+        "zho"       "遏制工程师卡"
     }
     "card_containment_engineer_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
+        "chi"       "員工門禁卡"
+        "zho"       "员工门禁卡"
     }
     "card_mog_commander"
     {
         "en"        "MOG commander card"
         "ru"        "Карта командира МОГ"
+        "chi"       "莫格指揮官卡"
+        "zho"       "莫格指挥官卡"
     }
     "card_mog_commander_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
+        "chi"       "員工門禁卡"
+        "zho"       "员工门禁卡"
     }
     "card_mog_lieutenant"
     {
         "en"        "MOG lieutenant card"
         "ru"        "Карта лейтенанта МОГ"
+        "chi"       "莫格中尉卡"
+        "zho"       "莫格中尉卡"
     }
     "card_mog_lieutenant_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
+        "chi"       "員工門禁卡"
+        "zho"       "员工门禁卡"
     }
     "card_guard"
     {
         "en"        "Guard card"
         "ru"        "Карта охранника"
+        "chi"       "警衛卡"
+        "zho"       "警卫卡"
     }
     "card_guard_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
+        "chi"       "員工門禁卡"
+        "zho"       "员工门禁卡"
     }
     "card_senior_guard"
     {
         "en"        "Senior guard card"
         "ru"        "Карта кадета МОГ"
+        "chi"       "高級警衛卡"
+        "zho"       "高级警卫卡"
     }
     "card_senior_guard_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
+        "chi"       "員工門禁卡"
+        "zho"       "员工门禁卡"
     }
     "card_zone_manager"
     {
         "en"        "Zone manager card"
         "ru"        "Карта менеджера зоны"
+        "chi"       "區域經理卡"
+        "zho"       "区域经理卡"
     }
     "card_zone_manager_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
+        "chi"       "員工門禁卡"
+        "zho"       "员工门禁卡"
     }
     "card_major_scientist"
     {
         "en"        "Major scientist card"
         "ru"        "Карта старшего учёного"
+        "chi"       "主要科學家卡"
+        "zho"       "主要科学家卡"
     }
     "card_major_scientist_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
+        "chi"       "員工門禁卡"
+        "zho"       "员工门禁卡"
     }
     "card_scientist"
     {
         "en"        "Scientist card"
         "ru"        "Карта учёного"
+        "chi"       "科學家卡"
+        "zho"       "科学家卡"
     }
     "card_scientist_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
+        "chi"       "員工門禁卡"
+        "zho"       "员工门禁卡"
     }
     "card_janitor"
     {
         "en"        "Janitor card"
         "ru"        "Карта уборщика"
+        "chi"       "看門人卡"
+        "zho"       "看门人卡"
     }
     "card_janitor_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
+        "chi"       "員工門禁卡"
+        "zho"       "员工门禁卡"
     }
     "card_chaos"
     {
         "en"        "Chaos card"
         "ru"        "Карта повстанца Хаоса"
+        "chi"       "混沌卡"
+        "zho"       "混沌卡"
     }
     "card_chaos_info"
     {
         "en"        "Tool for hacking reading devices"
         "ru"        "Устройство для взлома устройств считывания"
+        "chi"       "破解閱讀設備的工具"
+        "zho"       "破解阅读设备的工具"
     }
     "iron_ingot"
     {
         "en"        "Steel ingot"
         "ru"        "Стальной слиток"
+        "chi"       "鋼錠"
+        "zho"       "钢锭"
     }
     "iron_ingot_info"
     {
         "en"        "Just a steel ingot used in production"
         "ru"        "Обычный стальной слиток, используемый в производстве"
+        "chi"       "只是生產中使用的鋼錠"
+        "zho"       "只是生产中使用的钢锭"
     }
     "plastic"
     {
         "en"        "Plastic"
         "ru"        "Пластик"
+        "chi"       "塑料"
+        "zho"       "塑料"
     }
     "plastic_info"
     {
         "en"        "It looks like a coil made of ordinary plastic<br>Upon closer examination, the foundation's scientists found up to ten previously unknown polymer bonds in this copolymer<br>In terms of strength, it is not inferior to modern aviation alloys<br>Coupled with the minimum weight, this material makes it one of the most promising in the construction of cameras for some SCP objects"
         "ru"        "На вид катушка из обыкновенного пластика<br>При более же детальном рассмотрении, учёные фонда обнаружили до десяти неизвестных ранее полимерных связей в данном сополимере<br>По прочности не уступает современным авиационным сплавам<br>Вкупе с минимальным весом, делает данный материал одним из самых перспективных при строительстве камер некоторым SCP объектам"
+        "chi"       "它看起來像一個普通塑料製成的線圈<br>經過仔細檢查，該基金會的科學家在這種共聚物中發現了多達十個以前未知的聚合物鍵<br>在強度上不遜於現代航空合金<br>再加上最輕的重量，這種材料使其成為為某些 SCP 對象建造相機的最有前途的材料之一"
+        "zho"       "它看起来像一个普通塑料制成的线圈<br>經過仔細檢查，該基金會的科學家在這種共聚物中發現了多達十個以前未知的聚合物鍵<br>在强度上不逊于现代航空合金<br>再加上最轻的重量，这种材料使其成为为某些 SCP 对象建造相机的最有前途的材料之一"
     }
     "500_panacea"
     {
         "en"        "SCP-500 Panacea"
         "ru"        "SCP-500 Панацея"
+        "chi"       "SCP-500 靈丹妙藥"
+        "zho"       "SCP-500 灵丹妙药"
     }
     "500_panacea_info"
     {
         "en"        "Panacea Cures all diseases"
         "ru"        "Снимает ряд негативных эффектов:<br>Кровотечение<br>Метамарфоза<br>Обращение в SCP-049-2<br>Острая лучевая болезнь<br>Зомби вирус<br><br>А так же полностью восстанавливает здоровье игроку"
+        "chi"       "靈丹妙藥治百病"
+        "zho"       "灵丹妙药治百病"
     }
     "963_amulet_bright"
     {
         "en"        "Amulet Dr. Bright"
         "ru"        "Амулет доктора Брайта"
+        "chi"       "護身符 Bright 博士"
+        "zho"       "护身符 Bright 博士"
     }
     "963_amulet_bright_info"
     {
         "en"        "Dr Bright's amulet with his mind"
         "ru"        "Амулет Доктора Брайта с его сознанием"
+        "chi"       "Bright博士的護身符與他的思想"
+        "zho"       "Bright博士的护身符与他的思想"
     }
     "963_amulet"
     {
         "en"        "SCP-963 Immortality"
         "ru"        "SCP-963 Бессмертие"
+        "chi"       "SCP-963 不朽"
+        "zho"       "SCP-963 不朽"
     }
     "963_amulet_info"
     {
         "en"        "An ornate amulet<br>Able to pass a soul"
         "ru"        "Богато украшенный амулет<br>Способен переносить душу"
+        "chi"       "華麗的護身符<br>能夠傳遞靈魂"
+        "zho"       "华丽的护身符<br>能够传递灵魂"
     }
     "005_picklock"
     {
         "en"        "SCP-005 Picklock"
         "ru"        "SCP-005 Отмычка"
+        "chi"       "SCP-005 撬鎖
+        "zho"       "SCP-005 撬锁"
     }
     "005_picklock_info"
     {
         "en"        "Decorated antique key<br>Unlocks any doors"
         "ru"        "Украшенный старинный ключ<br>Отпирает любые двери"
+        "chi"       "裝飾古董鑰匙<br>解鎖任何門"
+        "zho"       "装饰古董钥匙<br>解锁任何门"
     }
     "427_amulet"
     {
         "en"        "SCP-427 Lovecraftian locket"
         "ru"        "SCP-427 Лавкрафтовский амулет"
+        "chi"       "SCP-427 洛夫克拉夫特式挂墜盒"
+        "zho"       "SCP-427 洛夫克拉夫特式挂坠盒"
     }
     "427_amulet_info"
     {
         "en"        "A small, decorated amulet<br>When pointing at biotissue, it regenerates them"
         "ru"        "Небольшой, украшенный резьбой, амулет<br>Регенерирует био-ткань при наведении на неё"
+        "chi"       "一個小的裝飾護身符<br>當指向生物組織時，它會再生它們"
+        "zho"       "一个小的装饰护身符<br>当指向生物组织时，它会再生它们"
     }
     "268_cap"
     {
         "en"        "SCP-268 Cap"
         "ru"        "SCP-268 Кепка"
+        "chi"       "SCP-268 帽子"
+        "zho"       "SCP-268 帽子"
     }
     "268_cap_info"
     {
         "en"        "It is a headgear made of wool<br>After putting it on, the person becomes invisible"
         "ru"        "Представляет собой головной убор из шерсти<br>После надевания, человек становится незаметным"
+        "chi"       "是羊毛做的頭飾<br>戴上後人就看不見了"
+        "zho"       "是羊毛做的头饰<br>戴上后人就看不见了"
     }
     "035_mask"
     {
         "en"        "SCP-035 Mask"
         "ru"        "SCP-035 Маска"
+        "chi"       "SCP-035 面具"
+        "zho"       "SCP-035 面具"
     }
     "035_mask_info"
     {
         "en"        "It looks like a white porcelain mask of a comedian or a tragedian<br>A viscous dark liquid oozes out of the holes"
         "ru"        "Имеет вид белой фарфоровой маски комедианта или трагика<br>Из отверстий сочится вязкая тёмная жидкость"
+        "chi"       "它看起來像喜劇演員或悲劇演員的白瓷面具<br>粘稠的黑色液體從孔中滲出"
+        "zho"       "它看起来像喜剧演员或悲剧演员的白瓷面具<br>粘稠的黑色液体从孔中渗出"
     }
     "flashlight"
     {
         "en"        "Flashlight"
         "ru"        "Фонарик"
+        "chi"       "手電筒"
+        "zho"       "手电筒"
     }
     "flashlight_info"
     {
         "en"        "Unremarkable flashlight<br>Russian Army Series - 'RA-802 Officer'"
         "ru"        "Ничем непримечательный фонарик<br>Серия Армия России - 'RA-802 Офицерский'"
+        "chi"       "起眼的手電筒<br>俄羅斯陸軍系列 - “RA-802 軍官”"
+        "zho"       "不起眼的手电筒<br>俄罗斯陆军系列 - 'RA-802 军官'"
     }
     "visor_nv"
     {
         "en"        "Nightvision googles"
         "ru"        "Очки ночного виденья"
+        "chi"       "夜視鏡"
+        "zho"       "夜视镜"
     }
     "visor_nv_info"
     {
         "en"        "Night vision device is included in the standard equipment of MOG"
         "ru"        "Прибор ночного виденья, входит в стандартную экипировку МОГ"
+        "chi"       "夜視儀包含在 MOG 的標准設備中"
+        "zho"       "夜視儀包含在 MOG 的標准設備中"
     }
     "radio"
     {
         "en"        "Radio"
         "ru"        "Рация"
+        "chi"       "收音機"
+        "zho"       "收音机"
     }
     "radio_info"
     {
         "en"        "A portable radio station allows you to communicate at a long distance"
         "ru"        "Переносная радиостанция позволяет общаться на дальнем расстоянии"
+        "chi"       "便攜式無線電台可讓您進行遠距離通信"
+        "zho"       "便携式无线电台可让您进行远距离通信"
     }
     "navigator"
     {
         "en"        "Radar"
         "ru"        "Навигатор"
+        "chi"       "雷達"
+        "zho"       "雷达"
     }
     "navigator_info"
     {
         "en"        "The S-Nav navigator allow you to see map of the complex"
         "ru"        "Навигатор S-Nav позволяет увидеть карту комплекса"
+        "chi"       "S-Nav 導航器可讓您查看綜合體的地圖"
+        "zho"       "S-Nav 导航器可让您查看综合体的地图"
     }
     "medkit"
     {
         "en"        "Medkit"
         "ru"        "Аптечка"
+        "chi"       "醫療包"
+        "zho"       "医疗包"
     }
     "medkit_info"
     {
         "en"        "Standart medkit"
         "ru"        "Обычная полевая аптечка"
+        "chi"       "標準醫療包"
+        "zho"       "标准医疗包"
     }
     "defibrillator"
     {
         "en"        "Defibrillator"
         "ru"        "Дефибриллятор"
+        "chi"       "除顫器"
+        "zho"       "除颤器"
     }
     "defibrillator_info"
     {
         "en"        "Can revive people"
         "ru"        "Может спасти чью-то жизнь"
+        "chi"       "可以復活人"
+        "zho"       "可以复活人"
     }
     "turret"
     {
         "en"        "Turret"
         "ru"        "Турель"
+        "chi"       "砲塔"
+        "zho"       "炮塔"
     }
     "turret_info"
     {
         "en"        "Dumb automatic turret, shoots at everything that moves"
         "ru"        "Бестолковая автоматическая турель, стреляет во всё, что движется"
+        "chi"       "愚蠢的自動砲塔，射擊所有移動的東西"
+        "zho"       "愚蠢的自动炮塔，射击所有移动的东西"
     }
 }
