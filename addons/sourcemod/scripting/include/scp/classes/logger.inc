@@ -49,7 +49,6 @@ methodmap Logger < Base
         Logger logger = view_as<Logger>(new Base());
         logger.SetHandle("fw", CreateGlobalForward(fwname, ET_Event, Param_Cell, Param_CellByRef, Param_String));
         logger.SetInt("mode", mode);
-        logger.SetInt("loglevel", loglevel);
         logger.SetBool("debug", debugmode);
         return logger;
     }
@@ -60,10 +59,6 @@ methodmap Logger < Base
 
     property int mode {
         public get() { return this.GetInt("mode"); }
-    }
-
-    property int loglevel {
-        public get() { return this.GetInt("loglevel"); }
     }
 
     property bool debug {
@@ -79,9 +74,7 @@ methodmap Logger < Base
     
     public void SendMessageToFile(const char[] type, const char[] formatMessage)
     {
-        char timestring[10];
-        FormatTime(timestring, 10, "%H:%M:%S");
-        LogToFileEx("addons/sourcemod/logs/SCP.log", "[%s][%s] %s", timestring, type, formatMessage);
+        LogToFileEx("addons/sourcemod/logs/SCP.log", "[%s] %s", type, formatMessage);
     }
 
     public void SendMessageToForward(LogType type, Base admin, const char[] formatMessage) // Base user, Base admin
@@ -90,74 +83,42 @@ methodmap Logger < Base
         Call_PushCell(type);
         Call_PushCellRef(admin);
         Call_PushString(formatMessage);
-        //Call_PushCellRef(user);
-        //Call_PushCellRef(admin);
         Call_Finish();
     }
 
     public void SendMessage(LogType type, const char[] text, Base admin = null) //const char[] logid, Base user, Base admin
     {
-        if (this.loglevel >= view_as<int>(type))
+        char strtype[32];
+    
+        switch(type)
         {
-            
-            /*char buffer[1024], username[64], usersid[64], adminname[64], adminsid[64];
-        
-            if (user && admin)
-            {
-                FormatEx(buffer, sizeof(buffer), "%t", logid, adminname, adminsid, username, usersid);
-            }
-            else if (user)
-            {
-                FormatEx(buffer, sizeof(buffer), "%t", logid, username, usersid);
-            }
-            else if (admin)
-            {
-                FormatEx(buffer, sizeof(buffer), "%t", logid, adminname, adminsid);
-            }
-            else
-            {
-                FormatEx(buffer, sizeof(buffer), "%t", logid);
-            }*/
+            case ERROR:     { strtype = "ERROR";   }
+            case Warning:   { strtype = "Warning"; }
+            case Info:      { strtype = "Info";    }
+            case Admin:     { strtype = "Admin";   }
+            case Debug:     { strtype = "Debug";   }
+            default:        { strtype = "Unknown"; }
+        }
 
-            /*int len = strlen(format) + 4096;
-            char[] text = new char[len];
-            VFormat(text, len, format, 3);
-            char pname[64];
-            GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
-            Format(text, len, "%s | %s", pname, text);*/
-
-            char strtype[32];
-        
-            switch(type)
+        switch(this.mode)
+        {
+            case 1:
             {
-                case ERROR:     { strtype = "ERROR";   }
-                case Warning:   { strtype = "Warning"; }
-                case Info:      { strtype = "Info";    }
-                case Admin:     { strtype = "Admin";   }
-                case Debug:     { strtype = "Debug";   }
-                default:        { strtype = "Unknown"; }
+                this.SendMessageToConsole(strtype, text);
             }
-
-            switch(this.mode)
+            case 2:
             {
-                case 1:
-                {
-                    this.SendMessageToConsole(strtype, text);
-                }
-                case 2:
-                {
-                    this.SendMessageToFile(strtype, text);
-                }
-                case 3:
-                {
-                    this.SendMessageToForward(type, admin, text);
-                }
-                default:
-                {
-                    this.SendMessageToConsole(strtype, text);
-                    //this.SendMessageToFile(type, text);
-                    this.SendMessageToForward(type, admin, text);
-                }
+                this.SendMessageToFile(strtype, text);
+            }
+            case 3:
+            {
+                this.SendMessageToForward(type, admin, text);
+            }
+            default:
+            {
+                this.SendMessageToConsole(strtype, text);
+                //this.SendMessageToFile(type, text);
+                this.SendMessageToForward(type, admin, text);
             }
         }
     }
@@ -207,39 +168,6 @@ methodmap Logger < Base
             this.SendMessage(Debug, text);
         }
     }
-
-    /*public void Error(const char[] logid, Base user = null, Base admin = null)
-    {
-        this.SendMessage(ERROR, logid, user, admin);
-    }
-
-    public void Warning(const char[] logid, Base user = null, Base admin = null)
-    {
-        this.SendMessage(Warning, logid, user, admin);
-    }
-
-    public void Info(const char[] logid, Base user = null, Base admin = null)
-    {
-        this.SendMessage(Info, logid, user, admin);
-    }
-
-    public void Admin(const char[] logid, Base user = null, Base admin = null)
-    {
-        this.SendMessage(Admin, logid, user, admin);
-    }
-
-    public void Debug(const char[] logid, Base user = null, Base admin = null)
-    {
-        if (this.debug) this.SendMessage(Debug, logid, user, admin);
-    }
-
-    public void Custom(LogType logid = Info, const char[] format, any ...)
-    {
-        int len = strlen(format) + 255;
-        char[] text = new char[len];
-        VFormat(text, len, format, 4);
-        this.SendMessage(logid, text, null, null);
-    }*/
 
     public void Dispose()
     {
