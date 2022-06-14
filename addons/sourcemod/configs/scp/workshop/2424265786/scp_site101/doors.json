@@ -21,7 +21,7 @@
     },
     "1189004": {
         "location":"Gate Shelter",
-        "access":9,
+        "access":7,
         "scp":false
     },
     "311385": {
@@ -126,6 +126,11 @@
     },
     "490772": {
         "location":"SCP-096",
+        "access":3,
+        "scp":false
+    },
+    "312323": {
+        "location":"SCP-106",
         "access":3,
         "scp":false
     },

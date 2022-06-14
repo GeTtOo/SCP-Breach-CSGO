@@ -2,6 +2,7 @@
     "Staff": {
         "percent":75,
         "priority":true,
+        "winoverlay":"eternity/overlays/win_staff_{lang}_fh",
         "classes": {
             "D Class": {
                 "percent":60,
@@ -139,7 +140,7 @@
                 "percent":10,
                 "health":180,
                 "armor":50,
-                "items":["card_major_scientist"],
+                "items":["card_major_scientist", "medkit", "defibrillator"],
                 "weapons":["weapon_healthshot"],
                 "model":{
                     "id":"scientist",
@@ -200,12 +201,14 @@
         "percent":0,
         "priority":false,
         "reinforce":true,
+        "reinforcesound":"eternity/scp/reinforce/{lang}/mtf.mp3",
+        "winoverlay":"eternity/overlays/win_mtf_{lang}_fh",
         "classes": {
             "Commander": {
                 "percent":10,
                 "priority":true,
                 "escape":false,
-                "health":100,
+                "health":150,
                 "armor":250,
                 "helmet":true,
                 "speed":260,
@@ -352,9 +355,9 @@
             "Lieutenant-Medic": {
                 "percent":0,
                 "health":250,
-                "armor":500,
+                "armor":250,
                 "helmet":true,
-                "items":["card_mog_lieutenant", "radio", "visor_nv","navigator"],
+                "items":[{"70":"card_mog_lieutenant","30":"card_o5"}, "radio", "visor_nv", "medkit", "defibrillator"],
                 "weapons":[["weapon_m4a1", "weapon_m4a1_silencer"], "weapon_p250", "weapon_healthshot", "weapon_taser"],
                 "model":{
                     "id":"mtf",
@@ -382,6 +385,7 @@
         "percent":10,
         "priority":false,
         "reinforce":true,
+        "winoverlay":"eternity/overlays/win_chaos_{lang}_fh",
         "classes": {
             "Delta": {
                 "percent":10,
@@ -547,6 +551,7 @@
         "percent":15,
         "priority":true,
         "randompick":true,
+        "winoverlay":"eternity/overlays/win_scp_{lang}_fh",
         "classes": {
             "035": {
                 "autospawn":false,
@@ -592,7 +597,7 @@
             },
             "106": {
                 "percent":20,
-                "health":35000,
+                "health":32000,
                 "speed":180,
                 "model":"models/player/custom_player/eternity/scp_106.mdl",
                 "handsmodel":"models/player/custom_player/eternity/arms/arms_scp106.mdl",

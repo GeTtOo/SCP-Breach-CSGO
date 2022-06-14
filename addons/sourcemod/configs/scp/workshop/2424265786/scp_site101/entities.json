@@ -115,7 +115,10 @@
     },
     "flashlight": {
         "model":"models/props/coop_autumn/autumn_flashlight/autumn_flashlight.mdl",
-        "mass":2.0
+        "mass":2.0,
+        "sound": {
+            "use":"items/flashlight1.wav"
+        }
     },
     "visor_nv": {
         "model":"models/eternity/props/visor_nv.mdl",

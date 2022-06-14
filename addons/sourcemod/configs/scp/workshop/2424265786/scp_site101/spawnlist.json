@@ -9,7 +9,7 @@
         {"chance":10,"vec":[-293,-994,30],"ang":[0,90,0],"comment":"Lite zone: Toilet"}
     ],
     "weapon_fiveseven":[
-        {"chance":15,"vec":[-5846,-7180,44],"ang":[-51,81,-91],"comment":"Medic Spawn"}
+        {"chance":35,"vec":[-5846,-7180,44],"ang":[-51,81,-91],"comment":"Medic Spawn"}
     ],
     "weapon_glock":[
         {"chance":35,"vec":[-2117,-6577,259],"ang":[0,-90,0],"comment":"Lite Zone: D-Class Cell"},

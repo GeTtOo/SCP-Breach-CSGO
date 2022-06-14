@@ -2,7 +2,7 @@
     "decsription": [
         "Recipe template <itemname> [chance critical failed craft] [chance successful craft].",
         "Recipe player template [chance get status].",
-        "Player status effect list: regeneration, speed, berserk, death."
+        "Player status effect list: Metamarphose, Heal, Speed, Injure, Butchering."
     ],
     "recipes": {
         "rough": {
@@ -421,8 +421,7 @@
             "player": {
                 "40":["Injure", 10, 100],
                 "30":["Butchering", 1, 100],
-                "20":["Speed", 10, 100],
-                "10":["Regeneration", 10, 100]
+                "20":["Speed", 10, 100]
             },
             "card_o5": [
                 ["card_facility_manager", 50, 80]
@@ -856,7 +855,7 @@
         },
         "very_fine": {
             "player": [
-                ["Metamarphose", 75, 50]
+                ["Metamarphose", 75, 20]
             ],
             "card_o5": [
                 ["005_picklock", 70, 20]

@@ -627,14 +627,14 @@ sound/eternity/scp/966/angry1.mp3
 sound/eternity/scp/966/angry2.mp3
 sound/eternity/scp/966/angry3.mp3
 sound/eternity/scp/966/attack.mp3
-sound/eternity/scp/menu/select.mp3
-sound/eternity/scp/other/en/mtf_reinforced.mp3
+sound/eternity/scp/other/inventory_select.mp3
 sound/eternity/scp/other/en/warhead_canceled.mp3
 sound/eternity/scp/other/en/warhead_start.mp3
 sound/eternity/scp/other/en/access_granted.mp3
 sound/eternity/scp/other/en/access_denied.mp3
-sound/eternity/scp/other/ru/mtf_reinforced.mp3
 sound/eternity/scp/other/ru/warhead_canceled.mp3
 sound/eternity/scp/other/ru/warhead_start.mp3
 sound/eternity/scp/other/intercom_start.mp3
 sound/eternity/scp/other/intercom_stop.mp3
+sound/eternity/scp/reinforce/en/mtf.mp3
+sound/eternity/scp/reinforce/ru/mtf.mp3

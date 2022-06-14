@@ -1,17 +1,15 @@
 {
     "ff":true,
     "debug":false,
-    "logmode":0,
-    "loglevel":4,
+    "logmode":2,
     "DefaultGlobalClass":"Staff",
     "DefaultClass":"D Class",
-    "invsize": 5,
+    "invsize": 6,
     "usablecards":true,
     "showoverlaytime":7,
-    "winteamoverlay":"eternity/overlays/win_{name}_{lang}_fh",
     "psars": 30,
     "sound": {
-        "menuselect":"eternity/scp/menu/select.mp3",
+        "menuselect":"eternity/scp/other/inventory_select.mp3",
         "idpadag":"eternity/scp/other/{lang}/access_granted.mp3",
         "idpadad":"eternity/scp/other/{lang}/access_denied.mp3"
     },
@@ -29,12 +27,11 @@
             "active":356023,
             "cancel":356001
         },
-        "immunedoors":[657,788],
-        "opendoors":[749,835],
+        "immunedoors":[200,1096],
         "spawnlist":[]
     },
     "reinforce":{
-        "time":180,
+        "time":300,
         "ratiodeadplayers":60
     },
     "teleport": {
@@ -85,7 +82,7 @@
         "positions": {
             "ru":{"vec":[2341,4350,1677],"ang":[0,90,0]},
             "en":{"vec":[2735,3962,1677],"ang":[0,0,0]},
-            "cn":{"vec":[2347,3571,1677],"ang":[0,-90,0]}
+            "zho":{"vec":[2347,3571,1677],"ang":[0,-90,0]}
         }
     },
     "[SCP] Sapper": {
@@ -190,9 +187,10 @@
                 {"vec":[-11527,726,-367],"ang":[0,-45,0]}
             ]
         },
-        "tfop":0,
-        "foan":{"vec":[-7351,-4148,1872],"ang":[0,-179,0]},
-        "ecop":25,
+        "pocketviponly":true,
+        "timeforcedpocketexit":0,
+        "exitposafternuke":{"vec":[-7351,-4148,1872],"ang":[0,-179,0]},
+        "escapechanceofpocket":25,
         "blockdoors":[452,454,749,835],
         "sound": {
             "portal":[
@@ -208,7 +206,7 @@
         }
     },
     "[SCP] 966": {
-        "damage":7.0,
+        "damage":10.0,
         "abradius":250,
         "abcd":20,
         "abcsr":2.0,
