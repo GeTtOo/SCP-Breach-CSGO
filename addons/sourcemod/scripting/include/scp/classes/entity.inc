@@ -61,13 +61,13 @@ methodmap Entity < Base {
     }
 
     property Mdl model {
-        public set(Mdl value) { this.SetValue("model", value); }
-        public get() { Mdl value; return this.GetValue("model", value) ? value : null; }
+        public set(Mdl value) { this.SetHandle("model", value); }
+        public get() { return view_as<Mdl>(this.GetHandle("model")); }
     }
 
     property EntityMeta meta {
-        public set(EntityMeta value) { this.SetValue("entmeta", value); }
-        public get() { EntityMeta meta; return this.GetValue("entmeta", meta) ? meta : null; }
+        public set(EntityMeta value) { this.SetHandle("entmeta", value); }
+        public get() { return view_as<EntityMeta>(this.GetHandle("entmeta")); }
     }
 
     public Entity SetKV(char[] name, char[] value) {
