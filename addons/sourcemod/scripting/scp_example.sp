@@ -57,6 +57,18 @@ public void SCP_OnUnload() {
     
 }
 
+public void SCP_OnRoundStart() {
+
+}
+
+public void SCP_OnRoundEnd() {
+
+}
+
+public void SCP_OnAlphaWarhead(AlphaWarhead status) {
+    
+}
+
 public void SCP_OnPlayerJoin(Player &ply) {
     
 }
@@ -69,7 +81,15 @@ public void SCP_OnPlayerClear(Player &ply) {
     
 }
 
+public void SCP_PrePlayerSpawn(Player &ply) {
+    
+}
+
 public void SCP_OnPlayerSpawn(Player &ply) {
+    
+}
+
+public void SCP_PostPlayerSpawn(Player &ply) {
     
 }
 
@@ -91,18 +111,6 @@ public void SCP_OnPlayerDeath(Player &vic, Player &atk) {
 
 public EscapeInfo SCP_OnPlayerEscape(Player &ply, EscapeInfo &data) {
     
-}
-
-public void SCP_OnPlayerReset(Player &ply) {
-
-}
-
-public void SCP_OnRoundStart() {
-
-}
-
-public void SCP_OnRoundEnd() {
-
 }
 
 public void SCP_OnInput(Player &ply, int buttons) {
