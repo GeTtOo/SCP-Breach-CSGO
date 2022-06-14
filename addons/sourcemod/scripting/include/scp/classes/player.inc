@@ -299,9 +299,14 @@ methodmap Player < Entity {
         ragdoll.meta.spawnflags = 4;
 
         ragdoll.Create("prop_ragdoll");
-        ragdoll.SetBool("IsSCP", this.IsSCP);
         ragdoll.Spawn();
         ragdoll.SetPos(this.GetPos(), this.GetAng());
+
+        ragdoll.SetBool("IsSCP", this.IsSCP);
+        char team[32];
+        this.Team(team, sizeof(team));
+        ragdoll.SetString("team", team);
+        ragdoll.SetHandle("class", this.class);
 
         return ragdoll;
     }
@@ -359,7 +364,7 @@ methodmap Player < Entity {
                     {
                         char itemname[32];
                         view_as<JSON_ARRAY>(items).GetString(GetRandomInt(0, view_as<JSON_ARRAY>(items).Length - 1), itemname, sizeof(itemname));
-                        this.Give(itemname);
+                        this.inv.Give(itemname);
                         continue;
                     }
                     
@@ -386,10 +391,7 @@ methodmap Player < Entity {
             }
         }
 
-        if (this.class.fists)
-        {
-            EquipPlayerWeapon(this.id, this.Give("weapon_fists").id);
-        }
+        if (this.class.fists) EquipPlayerWeapon(this.id, this.Give("weapon_fists").id);
 
         if (this.class.weapons)
             for (int i=0; i < this.class.weapons.Length; i++) {
