@@ -47,6 +47,10 @@ public void SCP_RegisterMetaData() {
     gamemode.meta.RegEntEvent(ON_DROP, "visor_nv", "OnDrop");
 }
 
+public void SCP_OnPlayerSpawn(Player &ply) {
+    ply.SetProp("m_bNightVisionOn", 0);
+}
+
 public void OnUse(Player &ply, InvItem &item) {
     if(item.GetBool("active"))
         item.SetBool("active", false);
