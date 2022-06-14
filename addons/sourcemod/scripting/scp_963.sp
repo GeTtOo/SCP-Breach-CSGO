@@ -126,17 +126,11 @@ public void SCP_OnPlayerSpawn(Player &ply)
 {
     if (ply.GetBool("reincarnation"))
     {
-        ply.RemoveValue("reincarnation");
-        ply.TimerSimple(1, "SetPos", ply);
+        ply.SetPos(view_as<Vector>(ply.GetBase("soulpos")), view_as<Angle>(ply.GetBase("soulang")));
+
+        ply.RemoveValue("soulpos");
+        ply.RemoveValue("soulang");
     }
-}
-
-public void SetPos(Player ply)
-{
-    ply.SetPos(view_as<Vector>(ply.GetBase("soulpos")), view_as<Angle>(ply.GetBase("soulang")));
-
-    ply.RemoveValue("soulpos");
-    ply.RemoveValue("soulang");
 }
 
 public void SCP_OnPlayerDeath(Player &vic, Player &atk) {
