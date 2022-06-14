@@ -48,7 +48,7 @@ public void SCP_OnLoad() {
 }
 
 public void SCP_RegisterMetaData() {
-    gamemode.meta.RegEntEvent(ON_USE, "flashlight", "OnUse", "items/flashlight1.wav");
+    gamemode.meta.RegEntEvent(ON_USE, "flashlight", "OnUse");
     gamemode.meta.RegEntEvent(ON_DROP, "flashlight", "OnDrop");
 }
 
