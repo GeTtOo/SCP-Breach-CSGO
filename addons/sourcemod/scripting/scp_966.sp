@@ -53,24 +53,28 @@ public void SCP_OnPlayerSpawn(Player &ply) {
         ply.SetHook(SDKHook_SetTransmit, TransmitHandler);
     
         char timername[64];
-            
         Format(timername, sizeof(timername), "SCP-966-SoundEffect-%i", ply.id);
         gamemode.timer.Create(timername, 5000, 0, "SoundEffect", ply);
 
-        if (player.Alive() >= 15)
+        /*if (player.Alive() >= 15)
         {
             Player second = player.GetRandom();
             
             second.Team("SCP");
             second.class = gamemode.team("SCP").class("966");
             ply.SetupBaseStats();
-        }
+        }*/
     }
+}
+
+public void SCP_PostPlayerSpawn(Player &ply) {
+    if (ply.class.Is("966")) ply.SetProp("m_iHideHUD", 0);
 }
 
 public void SCP_OnPlayerClear(Player &ply) {
     if (ply.class && ply.class.Is("966"))
     {
+        ply.SetProp("m_iHideHUD", 1<<12);
         ply.RemoveHook(SDKHook_SetTransmit, TransmitHandler);
 
         char timername[64];
