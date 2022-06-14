@@ -109,7 +109,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
     {
         //damage = damage / 50.0;
         if (vic.health >= gamemode.plconfig.GetInt("minhpscale", 4000))
-            vic.multipler = float(vic.class.health) / (float(vic.health) / vic.class.multipler);
+            vic.multipler = float(vic.class.health) / float(vic.health) * vic.class.multipler;
         //return Plugin_Changed;
     }
 
