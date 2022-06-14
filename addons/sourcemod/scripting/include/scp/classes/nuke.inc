@@ -143,16 +143,10 @@ methodmap NuclearWarhead < Base {
             char name[16];
             GetEntPropString(ent, Prop_Data, "m_iName", name, sizeof(name));
             
-            if(StrContains(name, "DoorGate", false) == -1)
-            {
-                if (gamemode.config.nuke.immunedoors.IndexOf(ent) != -1) continue;
-
-                AcceptEntityInput(ent, "Open");
-            }
+            if (gamemode.config.nuke.immunedoors.IndexOf(ent) != -1) continue;
+            
+            AcceptEntityInput(ent, "Open");
         }
-
-        for (int i=0; i < gamemode.config.nuke.opendoors.Length; i++)
-            AcceptEntityInput(gamemode.config.nuke.opendoors.GetInt(i), "Open");
 
         this.detonationtime = GetGameTime() + float(gamemode.config.nuke.time);
 
@@ -338,6 +332,9 @@ public void NukeExplode() {
     gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_AUTO_COUNTDOWN");
 
     gamemode.nuke.Update("Site destroyed", 8);
+
+    PrintToChatAll(" \x07[SCP] \x01%t", "Site destroyed");
+    gamemode.log.Info("%t", "Site destroyed");
 
     Call_StartForward(gamemode.nuke.fw);
     Call_PushCell(Nuked);
