@@ -202,27 +202,30 @@ methodmap Manager < Base {
     public bool CheckTeamStatus(char[] buffer, int max_size) {
         ArrayList GlobalTeams = new ArrayList(32);
         ArrayList players = player.GetAll();
-        int tpc[64];
+        int tpc[64], pr = 0;
 
         for (int i=0; i < players.Length; i++)
         {
             Player ply = players.Get(i);
             
             if (!ply || !ply.class) continue;
+            
+            if (ply.ready) pr++;
 
             char plyTeamName[32];
             ply.Team(plyTeamName, sizeof(plyTeamName));
 
+            if (StrEqual(plyTeamName, "Dead") || StrEqual(plyTeamName, "None")) continue;
+
             int idt = GlobalTeams.FindString(plyTeamName);
 
-            if (idt == -1) {
+            if (idt == -1)
+            {
                 idt = GlobalTeams.PushString(plyTeamName);
                 tpc[idt] = 1;
             }
             else
-            {
                 tpc[idt]++;
-            }
         }
 
         int teamAlive = 0;
@@ -232,30 +235,30 @@ methodmap Manager < Base {
             char lbuf[32];
             GlobalTeams.GetString(i, lbuf, sizeof(lbuf));
 
-            if (tpc[i] > 0 && !(StrEqual(lbuf, "Dead") || StrEqual(lbuf, "None"))) {
+            if (tpc[i] > 0) {
                 teamAlive++;
                 buf = lbuf;
             }
         }
+
+        if (pr == 1) teamAlive = 0;
+
+        delete GlobalTeams;
+        delete players;
 
         if (teamAlive == 1) {
             Format(buffer, max_size, buf);
             return true;
         }
 
-        delete GlobalTeams;
-        delete players;
-
         return false;
     }
 
     public void EndGame(char[] winteam) {
-        gamemode.mngr.RoundComplete = true;
+        this.RoundComplete = true;
         
-        if (StrEqual(winteam, "nuke"))
-            PrintToChatAll(" \x07[SCP] \x01%t", "Site destroy");
-        else if(StrEqual(winteam, "nobody"))
-            PrintToChatAll(" \x07[SCP] \x01%t", "Site destroy");
+        if(StrEqual(winteam, "nobody"))
+            PrintToChatAll(" \x07[SCP] \x01%t", "No One Lives");
         else if(StrEqual(winteam, "restart"))
             PrintToChatAll(" \x07[SCP] \x01%t", "Round restart");
         else if(StrEqual(winteam, "restartbyadmin"))
@@ -264,8 +267,8 @@ methodmap Manager < Base {
         {
             PrintToChatAll(" \x07[SCP] \x01%t", "Team Win", winteam);
 
-            char winteamoverlay[256];
-            gamemode.config.GetString("winteamoverlay", winteamoverlay, sizeof(winteamoverlay));
+            char winoverlay[256];
+            gamemode.team(winteam).GetString("winoverlay", winoverlay, sizeof(winoverlay));
             
             Player ply;
             ArrayList players = player.GetAll();
@@ -277,10 +280,10 @@ methodmap Manager < Base {
                 char path[256], patchcheck[256], langcode[3];
                 
                 ply.GetLangInfo(langcode, sizeof(langcode));
-                Utils.TransformPath(winteamoverlay, path, langcode, winteam);
+                Utils.TransformPath(winoverlay, path, langcode);
 
                 FormatEx(patchcheck, sizeof(patchcheck), "materials/%s.vmt", path);
-                if (!FileExists(patchcheck, true)) Utils.TransformPath(winteamoverlay, path, _, winteam);
+                if (!FileExists(patchcheck, true)) Utils.TransformPath(winoverlay, path);
                 
                 char overlay[256];
                 Format(overlay, sizeof(overlay), "r_screenoverlay %s", path);
@@ -294,19 +297,15 @@ methodmap Manager < Base {
     }
 
     public void GameCheck() {
-        if (this.RoundLock || this.RoundComplete || player.InGame() == 1) return;
+        if (this.RoundLock || this.RoundComplete) return;
         
-        if(player.Alive() != 0 && player.InGame() != 0)
+        if(player.InGame() > 0 && player.Alive() > 0)
         {
-            char winTeam[32];
-            if (gamemode.mngr.CheckTeamStatus(winTeam, sizeof(winTeam)))
-                this.EndGame(winTeam);
+            char winteam[32];
+            if (this.CheckTeamStatus(winteam, sizeof(winteam)))
+                this.EndGame(winteam);
         }
-        else if (player.InGame() == 0)
-        {
-            this.EndGame("nobody");
-        }
-        else if (player.InGame() > 1 && player.Alive() == 0)
+        else if (player.InGame() > 0 && player.Alive() == 0)
         {
             this.EndGame("nobody");
         }
@@ -370,6 +369,24 @@ methodmap Manager < Base {
             ply.Spawn();
 
             status = true;
+        }
+
+        if (status)
+        {
+            char metapath[128], path[128], patchcheck[128], langcode[3];
+
+            gamemode.team(teamName).GetString("reinforcesound", metapath, sizeof(metapath));
+            
+            for (int i=0; i < players.Length; i++)
+            {
+                Player ply = players.Get(i);
+
+                ply.GetLangInfo(langcode, sizeof(langcode));
+                Utils.TransformPath(metapath, path, langcode);
+                Format(patchcheck, sizeof(patchcheck), "sound/%s", path);
+
+                if (FileExists(patchcheck, true)) ply.PlayNonCheckSound(path);
+            }
         }
 
         delete players;
