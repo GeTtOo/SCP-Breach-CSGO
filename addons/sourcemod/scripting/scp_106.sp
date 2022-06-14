@@ -140,7 +140,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 
     if (vic.GetBool("106_inpd") && damagetype == DMG_CRUSH)
     {
-        if (GetRandomInt(1, 100) < gamemode.plconfig.GetInt("ecop", 25))
+        if (GetRandomInt(1, 100) < gamemode.plconfig.GetInt("escapechanceofpocket", 25))
         {
             vic.SetPos(gamemode.plconfig.GetVector("pocket"), new Angle(0.0, 0.0, 0.0));
             int idposrnd = GetRandomInt(0, gamemode.plconfig.GetObject("pocketout").GetArray("people").Length - 1);
@@ -158,6 +158,12 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 
     if (atk.class.Is("106") && vic.IsClass("player") && !vic.GetBool("106_inpd"))
     {
+        if (gamemode.nuke.IsNuked)
+        {
+            damage = 5000.0;
+            return Plugin_Changed;
+        }
+        
         SCP_106_TeleportToPos(vic, gamemode.plconfig.GetVector("pocket"), new Angle(0.0, 0.0, 0.0));
         SpawnBlob(vic);
         vic.SetBool("106_inpd", true);
@@ -183,6 +189,7 @@ public Action OnTriggerActivated(const char[] output, int caller, int activator,
             if (ply && ply.class && ply.class.Is("106") && !ply.GetBool("106_lock"))
             {
                 ply.TimerSimple(10000, "SCP_106_Locking", ply);
+                ply.SetBool("106_lock", true);
             }
         }
 
@@ -365,7 +372,7 @@ public void SCP_OnAlphaWarhead(AlphaWarhead status) {
                     if (ply.GetHandle("106_tmrpdfo")) gamemode.timer.Remove(view_as<Tmr>(ply.GetHandle("106_tmrpdfo")));
                     ply.RemoveValue("106_tmrpdfo");
 
-                    SCP_106_TeleportToPos(ply, gamemode.plconfig.GetObject("foan").GetVector("vec") - new Vector(0.0, 0.0, 64.0), gamemode.plconfig.GetObject("foan").GetAngle("ang"));
+                    SCP_106_TeleportToPos(ply, gamemode.plconfig.GetObject("exitposafternuke").GetVector("vec") - new Vector(0.0, 0.0, 64.0), gamemode.plconfig.GetObject("exitposafternuke").GetAngle("ang"));
                     ply.SetBool("106_inpd", false);
                 }
             }
@@ -410,7 +417,6 @@ public void ForcedTpFromPD(Player ply)
 public void SCP_106_Locking(Player ply)
 {
     SCP_106_TeleportToPos(ply, gamemode.plconfig.GetObject("cell").GetVector("vec")- new Vector(0.0,0.0,64.0), gamemode.plconfig.GetObject("cell").GetAngle("ang"));
-    ply.SetBool("106_lock", true);
 }
 
 public bool DoorIsBlock(int doorid)
@@ -429,9 +435,10 @@ public void ActionsMenu(Player ply) {
 
     hndl.SetTitle("SCP-106 Actions");
 
-    hndl.AddItem("1", "Set point", (!ply.GetBool("106_tplock") && !ply.GetBool("106_inpd")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
-    hndl.AddItem("2", "Move to point", (ply.GetHandle("106_tp_vec") && !ply.GetBool("106_tplock")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
-    hndl.AddItem("3", "Move to a pocket dimension", (ply.GetHandle("106_tp_vec") && !ply.GetBool("106_tplock") && !ply.GetBool("106_inpd") && !gamemode.nuke.IsNuked) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+    hndl.AddItem("1", "Set point", (!ply.GetBool("106_lock") && !ply.GetBool("106_tplock") && !ply.GetBool("106_inpd")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+    hndl.AddItem("2", "Move to point", (ply.GetHandle("106_tp_vec") && !ply.GetBool("106_lock") && !ply.GetBool("106_tplock")) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
+    if (gamemode.plconfig.GetInt("timeforcedpocketexit") >= 0 && (!gamemode.plconfig.GetBool("pocketviponly") || (gamemode.plconfig.GetBool("pocketviponly") && ply.GetBool("IsVIP"))))
+        hndl.AddItem("3", "Move to a pocket dimension", (ply.GetHandle("106_tp_vec") && !ply.GetBool("106_lock") && !ply.GetBool("106_tplock") && !ply.GetBool("106_inpd") && !gamemode.nuke.IsNuked) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED);
     
     hndl.Display(ply.id, 30);
 }
@@ -473,8 +480,8 @@ public int ActionsMenuHandler(Menu hMenu, MenuAction action, int client, int idx
                         if (!ply.GetBool("106_inpd")) SpawnBlob(ply);
                         ply.SetBool("106_inpd", true);
                         
-                        if (gamemode.plconfig.GetInt("tfop") > 0)
-                            ply.SetHandle("106_tmrpdfo", ply.TimerSimple(gamemode.plconfig.GetInt("tfop") * 1000, "ForcedTpFromPD", ply));
+                        if (gamemode.plconfig.GetInt("timeforcedpocketexit") > 0)
+                            ply.SetHandle("106_tmrpdfo", ply.TimerSimple(gamemode.plconfig.GetInt("timeforcedpocketexit") * 1000, "ForcedTpFromPD", ply));
                     }
                 }
         }
