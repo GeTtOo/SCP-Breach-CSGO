@@ -6,10 +6,15 @@
         "en"        "Your class {1} - {2}"
         "ru"        "Ваш класс {1} - {2}"
     }
-    "Site destroy"
+    "No One Lives"
     {
-        "en"        "The complex is destroyed! No survivors were found..."
-        "ru"        "Комплекс уничтожен! Выживших не обнаружено..."
+        "en"        "No survivors were found..."
+        "ru"        "Выживших не обнаружено..."
+    }
+    "Site destroyed"
+    {
+        "en"        "The complex is destroyed!"
+        "ru"        "Комплекс уничтожен!"
     }
     "Team Win"
     {
