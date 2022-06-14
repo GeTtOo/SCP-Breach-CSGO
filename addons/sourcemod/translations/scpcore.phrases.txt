@@ -5,272 +5,380 @@
         "#format"   "{1:s},{2:s}"
         "en"        "Your class {1} - {2}"
         "ru"        "Ваш класс {1} - {2}"
+        "chi"       "您的課程 {1} - {2}"
+        "zho"       "您的课程 {1} - {2}"
     }
     "No One Lives"
     {
         "en"        "No survivors were found..."
         "ru"        "Выживших не обнаружено..."
+        "chi"       "沒有找到倖存者..."
+        "zho"       "没有找到幸存者..."
     }
     "Site destroyed"
     {
         "en"        "The complex is destroyed!"
         "ru"        "Комплекс уничтожен!"
+        "chi"       "綜合體被摧毀！"
+        "zho"       "综合体被摧毁！"
     }
     "Team Win"
     {
         "#format"   "{1:s}"
         "en"        "{1} won!"
         "ru"        "{1} победили!"
+        "chi"       "{1} 贏了！"
+        "zho"       "{1} 赢了！"
     }
     "Spectator"
     {
         "en"        "Spectator"
         "ru"        "Наблюдатель"
+        "chi"       "觀眾"
+        "zho"       "观众"
     }
     "Dead"
     {
         "en"        "Dead"
         "ru"        "Мертв"
+        "chi"       "死的"
+        "zho"       "死的"
     }
     "Door access"
     {
         "en"        "Ignoring access cards"
         "ru"        "Игнорирование карт доступа"
+        "chi"       "忽略門禁卡"
+        "zho"       "忽略门禁卡"
     }
     "ID pad not found"
     {
         "en"        "ID pad not found"
         "ru"        "Считывающее устройство не обнаружено"
+        "chi"       "找不到身份證"
+        "zho"       "找不到身份证"
     }
     "Enable"
     {
         "en"        "enabled"
         "ru"        "включено"
+        "chi"       "啟用"
+        "zho"       "启用"
     }
     "Disable"
     {
         "en"        "disabled"
         "ru"        "отключено"
+        "chi"       "禁用"
+        "zho"       "禁用"
     }
     "Player unavailable"
     {
         "en"        "The player is disconnected/dead/in the spectators"
         "ru"        "Игрок вышел/умер/находиться в наблюдателях"
+        "chi"       "玩家斷開連接/死亡/在觀眾中"
+        "zho"       "玩家断开连接/死亡/在观众中"
     }
     "Admin menu title"
     {
         "en"        "Admin menu"
         "ru"        "Меню администратора"
+        "chi"       "管理菜單"
+        "zho"       "管理菜单"
     }
     "Show class"
     {
         "en"        "View Player classes"
         "ru"        "Просмотреть классы игроков"
+        "chi"       "查看播放器類"
+        "zho"       "查看播放器类"
     }
     "Respawn"
     {
         "en"        "Respawn the player"
         "ru"        "Возродить игрока"
+        "chi"       "重生玩家"
+        "zho"       "重生玩家"
     }
     "Teleport"
     {
         "en"        "Teleport the player"
         "ru"        "Телепортировать игрока"
+        "chi"       "傳送玩家"
+        "zho"       "传送玩家"
     }
     "Reinforce"
     {
         "en"        "Team reinforcement"
         "ru"        "Вызвать подкрепление"
+        "chi"       "團隊強化"
+        "zho"       "团队强化"
     }
     "Move to spec"
     {
         "en"        "Move to spectators"
         "ru"        "Переместить в наблюдатели"
+        "chi"       "轉移到觀眾"
+        "zho"       "转移到观众"
     }
     "Talk"
     {
         "en"        "Conduct a conversation with player"
         "ru"        "Провести беседу с игроком"
+        "chi"       "與玩家進行對話"
+        "zho"       "与玩家进行对话"
     }
     "Give item"
     {
         "en"        "Give item"
         "ru"        "Выдать предмет"
+        "chi"       "給項目"
+        "zho"       "给项目"
     }
     "Restart"
     {
         "en"        "Restart round"
         "ru"        "Перезапустить раунд"
+        "chi"       "重新開始回合"
+        "zho"       "重新开始回合"
     }
     "Explode"
     {
         "en"        "Exlpode the complex"
         "ru"        "Взорвать комплекс"
+        "chi"       "爆炸複雜"
+        "zho"       "爆炸复杂"
     }
     "Round restart"
     {
         "en"        "Round was restarted"
         "ru"        "Раунд перезапущен"
+        "chi"       "回合重新開始"
+        "zho"       "回合重新开始"
     }
     "Round restart by admin"
     {
         "en"        "Round was restarted by the administrator"
         "ru"        "Раунд перезапущен администратором"
+        "chi"       "回合被管理員重新啟動"
+        "zho"       "回合被管理员重新启动"
     }
     "Select target"
     {
         "en"        "Select a player"
         "ru"        "Выберите игрока:"
+        "chi"       "選擇一名球員"
+        "zho"       "选择一名球员"
     }
     "Target unavailable"
     {
         "en"        "The player is no longer available"
         "ru"        "Игрок больше не доступен"
+        "chi"       "播放器不再可用"
+        "zho"       "播放器不再可用"
     }
     "Cant find"
     {
         "en"        "Unable to find the player"
         "ru"        "Невозможно найти игрока"
+        "chi"       "找不到播放器"
+        "zho"       "找不到播放器"
     }
     "Select team"
     {
         "en"        "Select a team"
         "ru"        "Выберите команду:"
+        "chi"       "選擇一個團隊"
+        "zho"       "选择一个团队"
     }
     "Select class"
     {
         "en"        "Select a class"
         "ru"        "Выберите класс:"
+        "chi"       "選擇一個班級"
+        "zho"       "选择一个班级"
     }
     "Select point"
     {
         "en"        "Select a point"
         "ru"        "Выберите точку:"
+        "chi"       "選擇一個點"
+        "zho"       "选择一个点"
     }
     "Give Item"
     {
         "en"        "Give item"
         "ru"        "Выберите предмет"
+        "chi"       "給項目"
+        "zho"       "给项目"
     }
     "Inventory"
     {
         "en"        "Inventory"
         "ru"        "Инвентарь"
+        "chi"       "存貨"
+        "zho"       "存货"
     }
     "Inventory full"
     {
         "en"        "Your inventory is full"
         "ru"        "Ваш инвентарь переполнен"
+        "chi"       "您的庫存已滿"
+        "zho"       "您的库存已满"
     }
     "Inventory empty"
     {
         "en"        "Your inventory is empty"
         "ru"        "Ваш инвентарь пуст"
+        "chi"       "您的庫存是空的"
+        "zho"       "您的库存是空的"
     }
     "Inventory Use"
     {
         "en"        "Use"
         "ru"        "Использовать"
+        "chi"       "利用"
+        "zho"       "利用"
     }
     "Inventory Info"
     {
         "en"        "Info"
         "ru"        "Информация"
+        "chi"       "信息"
+        "zho"       "信息"
     }
     "Inventory Drop"
     {
         "en"        "Drop"
         "ru"        "Выбросить"
+        "chi"       "降低"
+        "zho"       "降低"
     }
     "Ability cooldown"
     {
         "en"        "Ability cooldown"
         "ru"        "Способность перезаряжается"
+        "chi"       "技能冷卻"
+        "zho"       "技能冷却"
     }
     "Door access denied"
     {
         "#format"   "{1:s}"
         "en"        "That door needed level access: ({1})"
         "ru"        "Необходимый уровень доступа: {1}"
+        "chi"       "那扇門需要級別訪問：({1})"
+        "zho"       "那扇门需要级别访问：({1})"
     }
     "AccessLevel_1"
     {
         "en"        "Containment Chamber Tier 1"
         "ru"        "Камеры содержания, уровень 1"
+        "chi"       "收容間 1 級"
+        "zho"       "收容间 1 级"
     }
     "AccessLevel_2"
     {
         "en"        "Containment Chamber Tier 2"
         "ru"        "Камеры содержания, уровень 2"
+        "chi"       "收容間第 2 層"
+        "zho"       "收容间第 2 层"
     }
     "AccessLevel_3"
     {
         "en"        "Containment Chamber Tier 3"
         "ru"        "Камеры содержания, уровень 3"
+        "chi"       "收容間第 3 層"
+        "zho"       "收容间第 3 层"
     }
     "AccessLevel_4"
     {
         "en"        "Armory Tier 1"
         "ru"        "Оружейные, уровень 1"
+        "chi"       "軍械庫 1 級"
+        "zho"       "军械库 1 级"
     }
     "AccessLevel_5"
     {
         "en"        "Armory Tier 2"
         "ru"        "Оружейные, уровень 2"
+        "chi"       "軍械庫第 2 層"
+        "zho"       "军械库第 2 层"
     }
     "AccessLevel_6"
     {
         "en"        "Armory Tier 3"
         "ru"        "Оружейные, уровень 3"
+        "chi"       "軍械庫第 3 層"
+        "zho"       "军械库第 3 层"
     }
     "AccessLevel_7"
     {
         "en"        "Checkpoints"
         "ru"        "Контрольно-пропускные пункты"
+        "chi"       "檢查站"
+        "zho"       "检查站"
     }
     "AccessLevel_8"
     {
         "en"        "Intercom"
         "ru"        "Внутренняя связь"
+        "chi"       "對講機"
+        "zho"       "对讲机"
     }
     "AccessLevel_9"
     {
         "en"        "Exit"
         "ru"        "Выходы"
+        "chi"       "出口"
+        "zho"       "出口"
     }
     "AccessLevel_10"
     {
         "en"        "Nuke"
         "ru"        "Альфа-боеголовка"
+        "chi"       "核彈"
+        "zho"       "核弹"
     }
     "Give Weapon"
     {
         "en"        "Give weapon"
         "ru"        "Выдать оружие"
+        "chi"       "給武器"
+        "zho"       "给武器"
     }
     "Primary"
     {
         "en"        "Primary"
         "ru"        "Основное"
+        "chi"       "基本的"
+        "zho"       "基本的"
     }
     "Secondary"
     {
         "en"        "Secondary"
         "ru"        "Пистолеты"
+        "chi"       "中學"
+        "zho"       "中学"
     }
     "Melee"
     {
         "en"        "Melee"
         "ru"        "Холодное"
+        "chi"       "近戰"
+        "zho"       "近战"
     }
     "Grenades"
     {
         "en"        "Grenades"
         "ru"        "Гранаты"
+        "chi"       "手榴彈"
+        "zho"       "手榴弹"
     }
     "Other"
     {
         "en"        "Other"
         "ru"        "Остальное"
+        "chi"       "其他"
+        "zho"       "其他"
     }
 }

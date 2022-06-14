@@ -5,96 +5,130 @@
         "#format"   "{1:s}"
         "en"        "Player <{1}> joined"
         "ru"        "Игрок <{1}> подключился к серверу"
+        "chi"       "玩家 <{1}> 加入"
+        "zho"       "玩家 <{1}> 加入"
     }
     "Log_PlayerDisconnected"
     {
         "#format"   "{1:s}"
         "en"        "Player <{1}> disconnected"
         "ru"        "Игрок <{1}> покинул сервер"
+        "chi"       "播放器 <{1}> 已斷開連接"
+        "zho"       "播放器 <{1}> 已断开连接"
     }
     "Log_Admin_ShowClass"
     {
         "en"        "Viewed the teams of the players"
         "ru"        "Просмотрел команды и классы игроков"
+        "chi"       "查看了球員的球隊"
+        "zho"       "查看了球员的球队"
     }
     "Log_Admin_PlayerTeleport"
     {
         "#format"   "{1:s},{2:s}"
         "en"        "Teleported player {1} <{2}>"
         "ru"        "Телепортировал игрока {1} <{2}>"
+        "chi"       "傳送的玩家 {1} <{2}>"
+        "zho"       "传送的玩家 {1} <{2}>"
     }
     "Log_Admin_RoundRestart"
     {
         "en"        "Restarted the round"
         "ru"        "Перезапустил раунд"
+        "chi"       "重新開始回合"
+        "zho"       "重新开始回合"
     }
     "Log_Admin_NukeActivation"
     {
         "en"        "Launched the destruction of the Alpha warhead"
         "ru"        "Запустил уничтожение Альфа-боеголовки"
+        "chi"       "啟動了Alpha彈頭的破壞"
+        "zho"       "启动了Alpha弹头的破坏"
     }
     "Log_Admin_Respawn"
     {
         "#format"   "{1:s},{2:s},{3:s},{4:s}"
         "en"        "Revived player {1} <{2}> on team {3} - {4}"
         "ru"        "Возродил игрока {1} <{2}> за команду {3} - {4}"
+        "chi"       "復活的球員 {1} <{2}> 在團隊中 {3} - {4}"
+        "zho"       "复活的玩家 {1} <{2}> 在团队中 {3} - {4}"
     }
     "Log_Admin_PlayerTeleportObject"
     {
         "#format"   "{1:s},{2:s},{3:s}"
         "en"        "Teleported player {1} <{2}> to point {3}"
         "ru"        "Телепортировал игрока {1} <{2}> на точку {3}"
+        "chi"       "將玩家 {1} <{2}> 傳送到點 {3}"
+        "zho"       "将玩家 {1} <{2}> 传送到点 {3}"
     }
     "Log_Admin_MoveToAdminZone"
     {
         "#format"   "{1:s},{2:s}"
         "en"        "Teleport {1} <{2}> to admin room"
         "ru"        "Проводит беседу с игроком {1} <{2}> в комнате администраторов"
+        "chi"       "將 {1} <{2}> 傳送到管理室"
+        "zho"       "将 {1} <{2}> 传送到管理室"
     }
     "Log_Admin_GiveItem"
     {
         "#format"   "{1:s},{2:s},{3:s}"
         "en"        "Gave item {3} to player {1} <{2}>"
         "ru"        "Выдал предмет {3} игроку {1} <{2}>"
+        "chi"       "將物品 {3} 交給玩家 {1} <{2}>"
+        "zho"       "将物品 {3} 交给玩家 {1} <{2}>"
     }
     "Log_Admin_Reinforce"
     {
-        "en"        "Called for reinforcements "
+        "en"        "Called for reinforcements"
         "ru"        "Вызвал подкрепление"
+        "chi"       "要求增援"
+        "zho"       "要求增援"
     }
     "Log_Core_RoundStart"
     {
         "en"        "Round start"
         "ru"        "Раунд начался"
+        "chi"       "回合開始"
+        "zho"       "回合开始"
     }
     "Log_Core_MapStart"
     {
         "#format"   "{1:s}"
         "en"        "Map {1} start"
         "ru"        "Карта {1} запустилась"
+        "chi"       "地圖 {1} 開始"
+        "zho"       "地图 {1} 开始"
     }
     "Log_Core_PlayerDead"
     {
         "#format"   "{1:s},{2:s},{3:s},{4:s}"
         "en"        "Player {1} <{2}> was killed by {3} <{4}>"
         "ru"        "Игрок {1} <{2}> был убит игроком {3} <{4}>"
+        "chi"       "玩家 {1} <{2}> 被 {3} <{4}> 殺死"
+        "zho"       "玩家 {1} <{2}> 被 {3} <{4}> 杀死"
     }
     "Log_Core_Suicide"
     {
         "#format"   "{1:s},{2:s}"
         "en"        "Player {1} <{2}> decided to leave this cruel world"
         "ru"        "Игрок {1} <{2}> решил покинуть этот жестокий мир"
+        "chi"       "玩家 {1} <{2}> 決定離開這個殘酷的世界"
+        "zho"       "玩家 {1} <{2}> 决定离开这个残酷的世界"
     }
     "Log_Core_Death_By_Alpha_Warhead"
     {
         "#format"   "{1:s},{2:s}"
         "en"        "Player {1} <{2}> dead by alpha warhead"
         "ru"        "Игрок {1} <{2}> погиб при подрыве боеголовки"
+        "chi"       "玩家 {1} <{2}> 死於 alpha 彈頭"
+        "zho"       "玩家 {1} <{2}> 死于 alpha 弹头"
     }
     "Log_Core_Death_By_Radiation"
     {
         "#format"   "{1:s},{2:s}"
         "en"        "Player {1} <{2}> dead by radiation"
         "ru"        "Игрок {1} <{2}> погиб от острой лучевой болезни"
+        "chi"       "玩家 {1} <{2}> 死於輻射"
+        "zho"       "玩家 {1} <{2}> 死于辐射"
     }
 }

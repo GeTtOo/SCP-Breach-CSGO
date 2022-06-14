@@ -5,6 +5,7 @@
         "en"        "You're trying to free yourself"
         "ru"        "Ты пытаешься освободиться от наручников"
         "chi"       "你想摆脱手铐吗"
+        "zho"       "你想摆脱手铐吗"
     }
 
     "Handcuff breaked"
@@ -12,6 +13,7 @@
         "en"        "You are free"
         "ru"        "У тебя получилось освободиться"
         "chi"       "你设法获得自由了吗"
+        "zho"       "你设法获得自由了吗"
     }
     
     "Handcuff breaking failed"
@@ -19,5 +21,6 @@
         "en"        "You didn't get to release"
         "ru"        "У тебя не получилось освободиться"
         "chi"       "你没有设法获得自由"
+        "zho"       "你没有设法获得自由"
     }
 }
