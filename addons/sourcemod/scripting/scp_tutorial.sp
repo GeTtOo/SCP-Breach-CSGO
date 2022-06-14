@@ -84,9 +84,9 @@ public void SCP_PrePlayerSpawn(Player &ply) {
         ply.SetPropFloat("m_flNextDecalTime", 2.0);
         ply.Team("None");
         ply.class = tutorial;
-        ply.SetupBaseStats();
+        //ply.SetupBaseStats();
         
-        ply.TimerSimple(150, "TeleportToTutorialRoom", ply);
+        ply.TimerSimple(250, "TeleportToTutorialRoom", ply);
         
         PlayAmbientTheme(ply);
         if (!ply.GetHandle("tutor_sound")) ply.SetHandle("tutor_sound", ply.TimerSimple(180000, "PlayAmbientTheme", ply));
@@ -132,15 +132,15 @@ public void TeleportToTutorialRoom(Player ply)
 {
     char lang[3];
     ply.GetLangInfo(lang, sizeof(lang));
+
+    JSON_OBJECT pos = gamemode.plconfig.GetObject("positions").GetObject("en");
+    
     if (gamemode.plconfig.GetObject("positions").HasKey(lang))
-    {
-        JSON_OBJECT pos = gamemode.plconfig.GetObject("positions").GetObject(lang);
-        
-        ply.SetPos(pos.GetVector("vec"), pos.GetAngle("ang"));
-        
-        ply.model.SetRenderMode(RENDER_TRANSCOLOR);
-        ply.model.SetRenderColor(new Colour(255, 255, 255, 100));
-    }
+        pos = gamemode.plconfig.GetObject("positions").GetObject(lang);
+
+    ply.SetPos(pos.GetVector("vec"), pos.GetAngle("ang"));
+    ply.model.SetRenderMode(RENDER_TRANSCOLOR);
+    ply.model.SetRenderColor(new Colour(255, 255, 255, 100));
 }
 
 public Action Command_Kill(int client, const char[] command, int argc)
