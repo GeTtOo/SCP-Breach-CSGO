@@ -28,34 +28,11 @@
  *
  **/
 
-methodmap List < StringMap {
-
-    public List() { return view_as<List>(CreateTrie()); }
-
-    public bool Set(char[] idx, any value) { return this.SetValue(idx, value); }
-    public any Get(char[] idx) { any value; return this.GetValue(idx, value) ? value : false; }
-
-    public ArrayList GetKeys() {
-        ArrayList list = new ArrayList(32);
-        StringMapSnapshot snap = this.Snapshot();
-
-        int keylength;
-        for (int i=0; i < snap.Length; i++) {
-            keylength = snap.KeyBufferSize(i);
-            char[] keyname = new char[keylength];
-            snap.GetKey(i, keyname, keylength);
-            list.PushString(keyname);
-        }
-
-        delete snap;
-        return list;
-    }
-}
-
 methodmap Base < StringMap {
     
     public Base() { return view_as<Base>(CreateTrie()); }
     
+    public bool CreateBase(char[] index) { return this.SetValue(index, new Base()); }
     public bool SetBase(char[] index, Base val) { return this.SetValue(index, val); }
     public bool SetHandle(char[] index, Handle val) { return this.SetValue(index, val); }
     public bool SetInt(char[] index, int val) { return this.SetValue(index, val); }
@@ -63,8 +40,6 @@ methodmap Base < StringMap {
     public bool SetBool(char[] index, bool val) { return this.SetValue(index, val); }
     public bool SetVector(char[] index, Base val) { return this.SetValue(index, val); }
     public bool SetAngle(char[] index, Base val) { return this.SetValue(index, val); }
-    public bool SetList(char[] index, List val) { return this.SetValue(index, val); }
-    public bool CreateList(char[] index) { return this.SetValue(index, new List()); }
     public bool SetArrayList(char[] index, ArrayList val) { return this.SetValue(index, val); }
     public bool CreateArrayList(char[] index, int blocksize = 1, int size = 0) { return this.SetValue(index, new ArrayList(blocksize, size)); }
 
@@ -75,7 +50,6 @@ methodmap Base < StringMap {
     public bool GetBool(char[] index, bool defval = false) { bool val; return this.GetValue(index, val) ? val : defval; }
     public Base GetVector(char[] index, Base defval = null) { Base val; return this.GetValue(index, val) ? val : defval; }
     public Base GetAngle(char[] index, Base defval = null) { Base val; return this.GetValue(index, val) ? val : defval; }
-    public List GetList(char[] index) { List list; return this.GetValue(index, list) ? list : null; }
     public ArrayList GetArrayList(char[] index) { ArrayList list; return this.GetValue(index, list) ? list : null; }
 
     public bool RemoveValue(char[] index) { return this.Remove(index); }
@@ -84,18 +58,23 @@ methodmap Base < StringMap {
         public get() { return GetTrieSize(this); }
     }
 
-    public void Dispose() {
+    public ArrayList GetKeys() {
+        ArrayList list = new ArrayList(32);
         StringMapSnapshot snap = this.Snapshot();
 
-        int kl = 0;
+        int keylen;
         for (int i=0; i < snap.Length; i++) {
-            kl = snap.KeyBufferSize(i);
-            char[] key = new char[kl];
-            snap.GetKey(i, key, kl);
-            delete this.GetBase(key);
+            keylen = snap.KeyBufferSize(i);
+            char[] keyname = new char[keylen];
+            snap.GetKey(i, keyname, keylen);
+            list.PushString(keyname);
         }
 
         delete snap;
+        return list;
+    }
+
+    public void Dispose() {
         delete this;
     }
 }
