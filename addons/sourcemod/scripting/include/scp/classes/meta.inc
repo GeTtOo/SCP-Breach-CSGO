@@ -97,10 +97,26 @@ methodmap OnDropMeta < Base {
     public void name(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("name", buffer) : this.GetString("name", buffer, max_size); }
 }
 
+methodmap ItemSoundMeta < Base {
+
+    public ItemSoundMeta() {
+        return view_as<ItemSoundMeta>(new Base());
+    }
+
+    public bool touch(char[] buffer, int max_size = 0) { return (max_size == 0) ? this.SetString("touch", buffer) : this.GetString("touch", buffer, max_size); }
+
+    public bool pickup(char[] buffer, int max_size = 0) { return (max_size == 0) ? this.SetString("pickup", buffer) : this.GetString("pickup", buffer, max_size); }
+
+    public bool use(char[] buffer, int max_size = 0) { return (max_size == 0) ? this.SetString("use", buffer) : this.GetString("use", buffer, max_size); }
+
+    public bool drop(char[] buffer, int max_size = 0) { return (max_size == 0) ? this.SetString("drop", buffer) : this.GetString("drop", buffer, max_size); }
+}
+
 methodmap EntityMeta < Base {
 
     public EntityMeta() {
-        return view_as<EntityMeta>(new Base());
+        EntityMeta meta = view_as<EntityMeta>(new Base());
+        return meta;
     }
     
     property float mass {
@@ -158,9 +174,27 @@ methodmap EntityMeta < Base {
         public get() { OnDropMeta val; return this.GetValue("ondrop", val) ? val : null; }
     }
 
+    property ItemSoundMeta sound {
+        public set(ItemSoundMeta val) { this.SetValue("sound", val); }
+        public get() { ItemSoundMeta val; return this.GetValue("sound", val) ? val : null; }
+    }
+
     public void name(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("name", buffer) : this.GetString("name", buffer, max_size); }
 
     public void model(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("model", buffer) : this.GetString("model", buffer, max_size); }
+    
+    public void Dispose() {
+        if (this.ontouch) delete this.ontouch.hndl;
+        delete this.ontouch;
+        if (this.onpickup) delete this.onpickup.hndl;
+        delete this.onpickup;
+        if (this.onuse) delete this.onuse.hndl;
+        delete this.onuse;
+        if (this.ondrop) delete this.ondrop.hndl;
+        delete this.ondrop;
+        delete this.sound;
+        delete this;
+    }
 }
 
 methodmap ModelMeta < Base {
@@ -207,6 +241,11 @@ methodmap ModelMeta < Base {
         }
 
         return id;
+    }
+
+    public void Dispose() {
+        delete this.bg;
+        delete this;
     }
 }
 
@@ -283,24 +322,36 @@ methodmap StatusEffectMeta < Base {
     }
 
     public void name(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("name", buffer) : this.GetString("name", buffer, max_size); }
+
+    public void Dispose() {
+        if (this.init) delete this.init.hndl;
+        delete this.init;
+        if (this.update) delete this.update.hndl;
+        delete this.update;
+        if (this.end) delete this.end.hndl;
+        delete this.end;
+        delete this;
+    }
 }
 
 methodmap Meta < Base {
 
     public Meta() {
         Meta meta = view_as<Meta>(new Base());
-        meta.CreateList("entities");
-        meta.CreateList("models");
-        meta.CreateList("statuseffects");
+        meta.CreateBase("entities");
+        meta.CreateBase("models");
+        meta.CreateBase("statuseffects");
         return meta;
     }
 
-    public void RegisterEntity(char[] entclass, EntityMeta entmeta) { this.GetList("entities").Set(entclass, entmeta); }
+    public void RegisterEntity(char[] entclass, EntityMeta entmeta) { this.GetBase("entities").SetHandle(entclass, entmeta); }
 
-    public EntityMeta GetEntity(char[] entclass) { return this.GetList("entities").Get(entclass); }
+    public EntityMeta GetEntity(char[] entclass) { return view_as<EntityMeta>(this.GetBase("entities").GetHandle(entclass)); }
 
     public void RegEntEvent(InventoryEvents eid, char[] entclass, char[] funcname, char[] sound = "") {
         EntityMeta entdata = this.GetEntity(entclass);
+
+        if (strlen(sound) > 0 && !entdata.GetHandle("sound")) entdata.sound = new ItemSoundMeta();
         
         switch (eid) {
             case ON_TOUCH: {
@@ -308,12 +359,16 @@ methodmap Meta < Base {
 
                 entdata.ontouch.hndl = GetMyHandle();
                 entdata.ontouch.name(funcname);
+
+                if (strlen(sound) > 0) entdata.sound.touch(sound);
             }
             case ON_PICKUP: {
                 entdata.onpickup = new OnPickupMeta();
 
                 entdata.onpickup.hndl = GetMyHandle();
                 entdata.onpickup.name(funcname);
+
+                if (strlen(sound) > 0) entdata.sound.pickup(sound);
             }
             case ON_USE: {
                 entdata.onuse = new OnUseMeta();
@@ -321,7 +376,7 @@ methodmap Meta < Base {
                 entdata.onuse.hndl = GetMyHandle();
                 entdata.onuse.name(funcname);
 
-                if (strlen(sound) > 0) entdata.SetString("usesound", sound);
+                if (strlen(sound) > 0) entdata.sound.use(sound);
             }
             case ON_DROP: {
                 entdata.ondrop = new OnDropMeta();
@@ -329,18 +384,18 @@ methodmap Meta < Base {
                 entdata.ondrop.hndl = GetMyHandle();
                 entdata.ondrop.name(funcname);
 
-                if (strlen(sound) > 0) entdata.SetString("usesound", sound);
+                if (strlen(sound) > 0) entdata.sound.drop(sound);
             }
         }
     }
 
-    public void RegisterModel(char[] modelid, ModelMeta mdlmeta) { this.GetList("models").Set(modelid, mdlmeta); }
+    public void RegisterModel(char[] modelid, ModelMeta mdlmeta) { this.GetBase("models").SetHandle(modelid, mdlmeta); }
 
-    public ModelMeta GetModel(char[] modelid) { return this.GetList("models").Get(modelid); }
+    public ModelMeta GetModel(char[] modelid) { return view_as<ModelMeta>(this.GetBase("models").GetHandle(modelid)); }
 
-    public void RegisterStatusEffect(char[] sen, float rate = 1.0, StatusEffectMeta sem = null) { this.GetList("statuseffects").Set(sen, (sem) ? sem : new StatusEffectMeta(sen, rate)); }
+    public void RegisterStatusEffect(char[] sen, float rate = 1.0, StatusEffectMeta sem = null) { this.GetBase("statuseffects").SetHandle(sen, (sem) ? sem : new StatusEffectMeta(sen, rate)); }
 
-    public StatusEffectMeta GetStatusEffect(char[] sen) { return this.GetList("statuseffects").Get(sen); }
+    public StatusEffectMeta GetStatusEffect(char[] sen) { return view_as<StatusEffectMeta>(this.GetBase("statuseffects").GetHandle(sen)); }
 
     public void RegStatusEffectEvent(StatusEffectEvents eid, char[] sen, char[] funcname) {
         StatusEffectMeta sem = this.GetStatusEffect(sen);
@@ -365,5 +420,41 @@ methodmap Meta < Base {
                 sem.end.name(funcname);
             }
         }
+    }
+
+    public void Dispose()
+    {
+        ArrayList entskeys = this.GetBase("entities").GetKeys();
+        ArrayList modelskeys = this.GetBase("models").GetKeys();
+        ArrayList sekeys = this.GetBase("statuseffects").GetKeys();
+
+        char keyname[64];
+        for (int i=0; i < entskeys.Length; i++)
+        {
+            entskeys.GetString(i, keyname, sizeof(keyname));
+            view_as<EntityMeta>(this.GetBase("entities").GetHandle(keyname)).Dispose();
+        }
+
+        for (int i=0; i < modelskeys.Length; i++)
+        {
+            modelskeys.GetString(i, keyname, sizeof(keyname));
+            view_as<EntityMeta>(this.GetBase("models").GetHandle(keyname)).Dispose();
+        }
+
+        for (int i=0; i < sekeys.Length; i++)
+        {
+            sekeys.GetString(i, keyname, sizeof(keyname));
+            view_as<EntityMeta>(this.GetBase("statuseffects").GetHandle(keyname)).Dispose();
+        }
+
+        delete entskeys;
+        delete modelskeys;
+        delete sekeys;
+
+        this.GetBase("entities").Dispose();
+        this.GetBase("models").Dispose();
+        this.GetBase("statuseffects").Dispose();
+
+        delete this;
     }
 }

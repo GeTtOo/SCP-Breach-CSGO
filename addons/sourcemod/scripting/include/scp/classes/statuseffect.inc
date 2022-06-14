@@ -117,6 +117,8 @@ methodmap StatusEffectSingleton < Base {
 
     public native StatusEffect Create(Handle ply, char[] name, int time);
 
+    public native bool RemoveByIndex(int idx);
+
     public StatusEffect Get(Handle ply, char[] name)
     {
         for (int i=0; i < this.list.Length; i ++)
@@ -135,65 +137,9 @@ methodmap StatusEffectSingleton < Base {
         return null;
     }
 
-    public bool Remove(Handle ply, char[] name)
-    {
-        for (int i=0; i < this.list.Length; i ++)
-        {
-            StatusEffect se = this.list.Get(i);
-            
-            char sen[64];
-            se.name(sen, sizeof(sen));
+    public native bool Remove(Handle ply, char[] name);
 
-            if (se.ply == ply && StrEqual(name, sen))
-            {
-                char funcname[64];
-                
-                se.meta.name(funcname, sizeof(funcname));
-                Format(funcname, sizeof(funcname), "%s_ForceEnd", funcname);
-
-                if (se.meta.end && GetFunctionByName(se.meta.end.hndl, funcname) != INVALID_FUNCTION)
-                {
-                    Call_StartFunction(se.meta.end.hndl, GetFunctionByName(se.meta.end.hndl, funcname));
-                    Call_PushCell(se.ply);
-                    Call_Finish();
-                }
-
-                this.list.Erase(i);
-                delete se;
-                i--;
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public void ClearAllOnPlayer(Handle ply)
-    {
-        for (int i=0; i < this.list.Length; i ++)
-        {
-            StatusEffect se = this.list.Get(i);
-
-            if (se.ply == ply)
-            {
-                char funcname[64];
-                
-                se.meta.name(funcname, sizeof(funcname));
-                Format(funcname, sizeof(funcname), "%s_ForceEnd", funcname);
-
-                if (se.meta.end && GetFunctionByName(se.meta.end.hndl, funcname) != INVALID_FUNCTION)
-                {
-                    Call_StartFunction(se.meta.end.hndl, GetFunctionByName(se.meta.end.hndl, funcname));
-                    Call_PushCell(se.ply);
-                    Call_Finish();
-                }
-
-                this.list.Erase(i);
-                delete se;
-                i--;
-            }
-        }
-    }
+    public native void ClearAllOnPlayer(Handle ply);
 
     public void ClearAll()
     {
@@ -249,6 +195,8 @@ methodmap StatusEffectSingleton < Base {
                             Call_PushCell(se.ply);
                             Call_Finish();
                         }
+                        
+                        if (!se) continue;
                         
                         char name[64];
                         se.name(name, sizeof(name));
