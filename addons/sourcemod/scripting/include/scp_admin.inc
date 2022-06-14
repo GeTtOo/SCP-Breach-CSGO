@@ -608,26 +608,7 @@ public int MenuHandler_Reinforce(Menu hMenu, MenuAction action, int client, int 
         char team[32];
         hMenu.GetItem(item, team, sizeof(team));
 
-        if (gamemode.mngr.CombatReinforcement(team))
-        {
-            char path[128], patchcheck[128], langcode[3];
-
-            ArrayList players = player.GetAll();
-
-            for (int i=0; i < players.Length; i++)
-            {
-                Player ply = players.Get(i);
-
-                ply.GetLangInfo(langcode, sizeof(langcode));
-                Format(path, sizeof(path), "eternity/scp/other/%s/%s_reinforced.mp3", langcode, team);
-                Format(patchcheck, sizeof(patchcheck), "sound/%s", path);
-
-                if (FileExists(patchcheck, true))
-                    ply.PlayNonCheckSound(path);
-            }
-
-            delete players;
-        }
+        gamemode.mngr.CombatReinforcement(team);
 
         char adminname[32], adminauth[32];
         AdminMenu.Get(client).admin.GetName(adminname, sizeof(adminname));
@@ -645,7 +626,7 @@ public void RenderGiveMenu(int client)
     FormatEx(buffer, sizeof(buffer), "%T", "Give Item", client);
     hMenu.SetTitle(buffer);
 
-    ArrayList entlist = gamemode.meta.GetList("entities").GetKeys();
+    ArrayList entlist = gamemode.meta.GetBase("entities").GetKeys();
 
     for(int i = 0; i < entlist.Length; i++)
     {
