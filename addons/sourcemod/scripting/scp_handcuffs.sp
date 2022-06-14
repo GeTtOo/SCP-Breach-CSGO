@@ -90,7 +90,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
         vic.DropWeapons();
         vic.inv.DropAll();
 
-        vic.ShowOverlay("arrested");
+        vic.ShowOverlay("eternity/overlays/arrested_{lang}_fh");
 
         return Plugin_Changed;
     }
