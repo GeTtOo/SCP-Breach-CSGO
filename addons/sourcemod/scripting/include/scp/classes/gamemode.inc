@@ -199,9 +199,6 @@ methodmap GameMode < Base {
         view_as<Config>(this.GetHandle("Config")).Dispose();
         this.RemoveValue("Config");
 
-        view_as<Meta>(this.GetHandle("Meta")).Dispose();
-        this.RemoveValue("Meta");
-
         view_as<Timers>(this.GetHandle("Timers")).Dispose();
         this.RemoveValue("Timers");
 
