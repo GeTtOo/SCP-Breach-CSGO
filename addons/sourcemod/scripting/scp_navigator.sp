@@ -43,22 +43,42 @@ public Plugin myinfo = {
 };
 
 public void SCP_RegisterMetaData() {
-    gamemode.meta.RegEntEvent(ON_PICKUP, "navigator", "OnPickup"); // @arg1 Player, @arg2 Entity
+    gamemode.meta.RegEntEvent(ON_USE, "navigator", "OnUse"); // @arg1 Player, @arg2 Entity
     gamemode.meta.RegEntEvent(ON_DROP, "navigator", "OnDrop"); // @arg1 Player, @arg2 Entity, @arg3 char[] sound
 }
 
-public bool OnPickup(Player &ply, InvItem &item)
+public void SCP_OnCallAction(Player &ply)
 {
-    ply.SetProp("m_iHideHUD", 0);
-    return true;
+    if (ply.GetHandle("nav_active"))
+    {
+        NavDisable(ply);
+    }
+}
+
+public void OnUse(Player &ply, InvItem &item)
+{
+    if (!ply.GetHandle("nav_active"))
+    {
+        ply.SetHandle("nav_active", ply.TimerSimple(gamemode.plconfig.GetInt("showtime", 7) * 1000, "NavDisable", ply));
+        ply.SetProp("m_iHideHUD", 0);
+    }
+    else
+    {
+        NavDisable(ply);
+    }
 }
 
 public void OnDrop(Player &ply, InvItem &item)
 {
-    ply.TimerSimple(100, "RemoveRadar", ply);
+    if (!ply.GetHandle("nav_active"))
+    {
+        NavDisable(ply);
+    }
 }
 
-public void RemoveRadar(Player ply)
+public void NavDisable(Player ply)
 {
-    if (!ply.inv.Have("navigator")) ply.SetProp("m_iHideHUD", 1<<12);
+    gamemode.timer.Remove(view_as<Tmr>(ply.GetHandle("nav_active")));
+    ply.RemoveValue("nav_active");
+    ply.SetProp("m_iHideHUD", 1<<12);
 }
