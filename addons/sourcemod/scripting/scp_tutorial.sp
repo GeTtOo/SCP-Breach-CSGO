@@ -210,6 +210,7 @@ public Action Command_Tutorial(int client, const char[] command, int argc)
 
     if (StrEqual(arg1, "!trs") || StrEqual(arg1, "/trs"))
     {
+        ply.ready = false;
         ply.store.SetBool("tutorial", false);
         ply.Kill();
         PrintToChat(ply.id, " \x07[SCP]\x05 Туториал сброшен!", ply.id);
