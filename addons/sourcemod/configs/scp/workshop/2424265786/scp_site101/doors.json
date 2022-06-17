@@ -129,9 +129,10 @@
         "access":3,
         "scp":false
     },
-    "312323": {
+    "1432989": {
         "location":"SCP-106",
         "access":3,
+        "checkwhenuse":true,
         "scp":false
     },
     "863713": {

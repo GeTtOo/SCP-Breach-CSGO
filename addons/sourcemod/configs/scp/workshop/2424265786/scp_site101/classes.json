@@ -247,7 +247,7 @@
                 "health":100,
                 "armor":200,
                 "helmet":true,
-                "items":["card_mog_lieutenant", "radio", "visor_nv","navigator"],
+                "items":["card_mog_lieutenant", "radio", "visor_nv"],
                 "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer", "weapon_taser"],
                 "model":{
                     "id":"mtf",
@@ -276,7 +276,7 @@
                 "health":100,
                 "armor":150,
                 "helmet":true,
-                "items":["card_senior_guard", "radio","navigator"],
+                "items":["card_senior_guard", "radio"],
                 "weapons":["weapon_mp7", "weapon_p250", "weapon_taser"],
                 "model":{
                     "id":"mtf",
@@ -334,7 +334,7 @@
                 "health":250,
                 "armor":500,
                 "helmet":true,
-                "items":["card_mog_lieutenant", "radio", "visor_nv","navigator"],
+                "items":["card_mog_lieutenant", "radio", "visor_nv"],
                 "weapons":["weapon_m249", "weapon_fiveseven", "weapon_healthshot", "weapon_hegrenade", "weapon_breachcharge", "weapon_taser"],
                 "model":{
                     "id":"mtf",
@@ -568,7 +568,7 @@
                 "handsmodel_":"models/player/custom_player/eternity/arms/arms_scp049.mdl",
                 "overlay":"eternity/overlays/scp-049_{lang}_fh",
                 "pos":{"vec":[-8455,975,2],"ang":[0,125,0]},
-                "doors":[684,863],
+                "doors":[455,761],
                 "comment":"The Doctor ʕ•ᴥ•ʔ"
             },
             "049_2": {
@@ -591,7 +591,7 @@
                 "handsmodel_":"models/player/custom_player/eternity/arms/arms_scp096.mdl",
                 "overlay":"eternity/overlays/scp-096_{lang}_fh",
                 "pos":{"vec":[-13250, -2550, 0]},
-                "doors":[501,962],
+                "doors":[279,1028],
                 "doorsdelay":25,
                 "comment":"096"
             },
@@ -614,7 +614,7 @@
                 "fists":false,
                 "overlay":"eternity/overlays/scp-173_{lang}_fh",
                 "pos":{"vec":[-1800,-900,0],"ang":[0,270,0]},
-                "doors":[756,951],
+                "doors":[307,889],
                 "doorsdelay":15,
                 "comment":"173"
             },
@@ -626,7 +626,7 @@
                 "model":"models/player/custom_player/eternity/scp_457.mdl",
                 "overlay":"eternity/overlays/scp-457_{lang}_fh",
                 "pos":{"vec":[-5200,-3030,2],"ang":[0,180,0]},
-                "doors":[318],
+                "doors":[755],
                 "comment":"Fire man"
             },
             "966": {
@@ -642,7 +642,7 @@
                     {"vec":[-5060,2530,0],"ang":[0,-180,0]},
                     {"vec":[-5060,2730,0],"ang":[0,-180,0]}
                 ],
-                "doors":[149,500],
+                "doors":[479,1029],
                 "comment":"ツ"
             }
         }

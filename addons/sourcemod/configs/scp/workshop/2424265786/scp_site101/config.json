@@ -1,7 +1,7 @@
 {
     "ff":true,
     "debug":false,
-    "logmode":2,
+    "logmode":3,
     "DefaultGlobalClass":"Staff",
     "DefaultClass":"D Class",
     "invsize": 6,
@@ -27,7 +27,7 @@
             "active":356023,
             "cancel":356001
         },
-        "immunedoors":[200,1096],
+        "immunedoors":[108,533],
         "spawnlist":[]
     },
     "reinforce":{
@@ -35,7 +35,7 @@
         "ratiodeadplayers":60
     },
     "teleport": {
-        "Tutorial room":{"vec":[1930,3962,1677],"ang":[-1,0,0]},
+        "Tutorial room":{"vec":[1930,3962,2735],"ang":[-1,0,0]},
         "Train station":{"vec":[-7299,-4495,1876],"ang":[4,131,0]},
         "D spawn":{"vec":[-2195,-4950,0],"ang":[0,-138,0]},
         "MTF spawn":{"vec":[-10739,-5920,1712],"ang":[0,0,0]},
@@ -56,7 +56,7 @@
         "SCP-457":{"vec":[-5440,-3092,21],"ang":[1,-1,0]},
         "SCP-914":{"vec":[3100,-2231,0],"ang":[0,0,0]},
         "SCP-996":{"vec":[-5406,2626,4],"ang":[-2,-1,0]},
-        "SCP-106-Cell":{"vec":[-4306,683,2385],"ang":[22,176,0]}
+        "SCP-106-Cell":{"vec":[-4306,683,2784],"ang":[22,176,0]}
     },
     "AdminRoom": [-4890,-6340,0],
     "AdminCommandsFlag": {
@@ -80,9 +80,9 @@
     },
     "[SCP] Tutorial": {
         "positions": {
-            "ru":{"vec":[2341,4350,1677],"ang":[0,90,0]},
-            "en":{"vec":[2735,3962,1677],"ang":[0,0,0]},
-            "zho":{"vec":[2347,3571,1677],"ang":[0,-90,0]}
+            "ru":{"vec":[2341,4350,2735],"ang":[0,90,0]},
+            "en":{"vec":[2735,3962,2735],"ang":[0,0,0]},
+            "zho":{"vec":[2347,3571,2735],"ang":[0,-90,0]}
         }
     },
     "[SCP] Sapper": {
@@ -172,7 +172,7 @@
     },
     "[SCP] 106": {
         "cell":{"vec":[-11192,280,-245],"ang":[17,-43,0]},
-        "pocket":[-4306, 683, 2297],
+        "pocket":[-4306, 683, 2784],
         "pocketout": {
             "people": [
                 {"vec":[-11278,-2771,-1008],"ang":[0,-95,0]},
@@ -226,7 +226,7 @@
     "[SCP] 173": {
         "radius":2000,
         "blinktime":5,
-        "blinkrange":580,
+        "blinkrange":480,
         "minhpscale":3500,
         "sound": {
             "neckbroke":[

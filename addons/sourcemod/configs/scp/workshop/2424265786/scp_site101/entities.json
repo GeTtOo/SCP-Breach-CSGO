@@ -136,7 +136,7 @@
     "medkit" : {
         "model":"models/eternity/props/medbag_german.mdl",
         "mass":2.0,
-        "amount":10
+        "amount":3
     },
     "defibrillator" : {
         "model":"models/eternity/props/lifepak_german.mdl",
