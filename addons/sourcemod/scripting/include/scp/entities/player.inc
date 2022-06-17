@@ -343,7 +343,7 @@ methodmap Player < Entity {
         if (pos)
         {
             this.SetPos(pos.GetVector("vec"), pos.GetAngle("ang"));
-            pos.SetInt("lock", true);
+            pos.SetBool("lock", true);
             this.SetBase("spawnpos", view_as<Base>(pos));
         }
 

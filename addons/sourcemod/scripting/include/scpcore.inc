@@ -54,9 +54,9 @@ GameMode gamemode;
 #include "scp\classes\statuseffect"
 StatusEffectSingleton statuseffect;
 
-#include "scp\classes\entity"
-#include "scp\classes\player"
-#include "scp\classes\worldtext"
+#include "scp\entities\entity"
+#include "scp\entities\player"
+#include "scp\entities\worldtext"
 #include "scp\classes\singletons"
 
 ClientSingleton player;

@@ -46,8 +46,12 @@ methodmap Door < JSON_OBJECT {
         public get() { return this.GetInt("access"); }
     }
 
+    property bool checkwhenuse {
+        public get() { return this.GetBool("checkwhenuse", false); }
+    }
+
     property bool scp {
-        public get() { return this.GetBool("scp"); }
+        public get() { return this.GetBool("scp", false); }
     }
 }
 

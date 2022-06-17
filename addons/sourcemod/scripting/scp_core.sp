@@ -323,8 +323,7 @@ public void OnClientDisconnect(int id)
         ply.Team("None");
         ply.class = null;
 
-        Base pos = ply.GetBase("spawnpos");
-        if (pos) pos.SetBool("lock", false);
+        if (ply.GetBase("spawnpos")) ply.GetBase("spawnpos").SetBool("lock", false);
 
         if (ply.ragdoll)
         {
@@ -341,7 +340,7 @@ public Action OnPlayerSpawn(int client)
 {
     Player ply = player.GetByID(client);
 
-    if (ply && !ply.GetHandle("rsptmr") && GetClientTeam(client) > 1)
+    if (IsClientExist(client) && ply && !ply.GetHandle("rsptmr") && GetClientTeam(client) > 1)
     {
         if (!gamemode.mngr.IsWarmup)
         {
@@ -361,11 +360,13 @@ public Action OnPlayerSpawn(int client)
 
 public void PlayerSpawn(Player ply)
 {
-    if(ply && (ply.class || !ply.ready) && IsClientExist(ply.id))
+    if(ply && (ply.class || !ply.ready))
     {
         Call_StartForward(PreClientSpawnForward);
         Call_PushCellRef(ply);
         Call_Finish();
+
+        if (!ply.class) return;
         
         if (ply.ragdoll) //Fix check if valid
         {
@@ -577,8 +578,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
             
             ply.RestrictWeapons();
 
-            Base pos = ply.GetBase("spawnpos");
-            if (pos) pos.SetBool("lock", false);
+            if (ply.GetBase("spawnpos")) ply.GetBase("spawnpos").SetBool("lock", false);
             
             if (ply.ragdoll)
             {
@@ -617,77 +617,66 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
         if (gamemode.config.debug)
             PrintToChat(ply.id, " \x07[SCP Admin] \x01Door/Button id: (%i)", doorId);
 
-        StringMapSnapshot doorsSnapshot = gamemode.config.doors.GetAll();
-        int doorKeyLen;
-
-        for (int i = 0; i < doorsSnapshot.Length; i++)
+        char doorKey[10];
+        IntToString(doorId, doorKey, sizeof(doorKey));
+        
+        if (gamemode.config.doors.HasKey(doorKey))
         {
-            doorKeyLen = doorsSnapshot.KeyBufferSize(i);
-            char[] doorKey = new char[doorKeyLen];
-            doorsSnapshot.GetKey(i, doorKey, doorKeyLen);
-            
-            if (json_is_meta_key(doorKey))
-                continue;
-
-            // ¯\_(ツ)_/¯
             Door door = gamemode.config.doors.Get(doorKey);
 
-            if (doorId == StringToInt(doorKey))
+            int entid = GetEntPropEnt(caller, Prop_Data, "m_hMoveChild");
+            Entity idpad = (entid != -1) ? new Entity(entid) : new Entity(caller);
+            
+            if (gamemode.mngr.IsWarmup)
             {
-                int entid = GetEntPropEnt(caller, Prop_Data, "m_hMoveChild");
-                Entity idpad = (entid != -1) ? new Entity(entid) : new Entity(caller);
-                
-                if (gamemode.mngr.IsWarmup)
-                {
-                    return Plugin_Continue;
-                }
-                else if(ply.fullaccess)
-                {
-                    return Plugin_Continue;
-                }
-                else if ((gamemode.config.usablecards && ply.Check("dooraccess", door.access)) || (!gamemode.config.usablecards && ply.inv.Check("access", door.access)) || (ply.IsSCP && door.scp)) // old check = ply.inv.Check("access", door.access)
-                {
-                    if (idpad)
-                    {
-                        if (idpad.HasProp("m_nSkin"))
-                        {
-                            idpad.SetProp("m_nSkin", (StrEqual(langcode, "ru")) ? 1 : 4); // 22 = ru lang code
-                            char sound[256];
-                            gamemode.config.sound.GetString("idpadag", sound, sizeof(sound));
-                            gamemode.mngr.PlayTranslatedAmbient(sound, langcode, idpad);
-                            gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
-                        }
-                    }
-                }
-                else
-                {
-                    if (idpad)
-                    {
-                        if (idpad.HasProp("m_nSkin"))
-                        {
-                            idpad.SetProp("m_nSkin", (StrEqual(langcode, "ru")) ? 2 : 5);
-                            char sound[256];
-                            gamemode.config.sound.GetString("idpadad", sound, sizeof(sound));
-                            gamemode.mngr.PlayTranslatedAmbient(sound, langcode, idpad);
-                            gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
-                        }
-
-                        if (!ply.IsSCP)
-                        {
-                            char dn[15], aln[128];
-                            FormatEx(dn, sizeof(dn), "AccessLevel_%i", door.access);
-                            FormatEx(aln, sizeof(aln), "%t", dn);
-                            ply.PrintWarning("%t", "Door access denied", aln);
-                        }
-                    }
-                    idpad.Dispose();
-                    return Plugin_Stop;
-                }
-                idpad.Dispose();
+                return Plugin_Continue;
             }
-        }
+            else if(ply.fullaccess)
+            {
+                return Plugin_Continue;
+            }
+            else if ((door.checkwhenuse && ply.inv.Check("access", door.access)) || (gamemode.config.usablecards && ply.Check("dooraccess", door.access)) || (!gamemode.config.usablecards && ply.inv.Check("access", door.access)) || (ply.IsSCP && door.scp)) // old check = ply.inv.Check("access", door.access)
+            {
+                if (idpad)
+                {
+                    if (idpad.HasProp("m_nSkin"))
+                    {
+                        idpad.SetProp("m_nSkin", (StrEqual(langcode, "ru")) ? 1 : 4); // 22 = ru lang code
+                        char sound[256];
+                        gamemode.config.sound.GetString("idpadag", sound, sizeof(sound));
+                        gamemode.mngr.PlayTranslatedAmbient(sound, langcode, idpad);
+                        gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
+                    }
+                }
+            }
+            else
+            {
+                if (idpad)
+                {
+                    if (idpad.HasProp("m_nSkin"))
+                    {
+                        idpad.SetProp("m_nSkin", (StrEqual(langcode, "ru")) ? 2 : 5);
+                        char sound[256];
+                        gamemode.config.sound.GetString("idpadad", sound, sizeof(sound));
+                        gamemode.mngr.PlayTranslatedAmbient(sound, langcode, idpad);
+                        gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
+                    }
 
-        delete doorsSnapshot;
+                    if (!ply.IsSCP)
+                    {
+                        char dn[15], aln[128];
+                        FormatEx(dn, sizeof(dn), "AccessLevel_%i", door.access);
+                        FormatEx(aln, sizeof(aln), "%t", dn);
+                        ply.PrintWarning("%t", "Door access denied", aln);
+                    }
+                }
+                
+                idpad.Dispose();
+                return Plugin_Stop;
+            }
+
+            idpad.Dispose();
+        }
 
         EscapeController(ply, doorId);
         gamemode.nuke.Controller(doorId);
@@ -844,8 +833,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         vic.Team("Dead");
         vic.class = null;
 
-        Base pos = vic.GetBase("spawnpos");
-        if (pos) pos.SetBool("lock", false);
+        if (vic.GetBase("spawnpos")) vic.GetBase("spawnpos").SetBool("lock", false);
     }
 
     return Plugin_Handled;
@@ -1596,8 +1584,7 @@ public void EscapeController(Player ply, int doorID)
             
             ply.se.ClearAll();
 
-            Base pos = ply.GetBase("spawnpos");
-            if (pos) pos.SetBool("lock", false);
+            if (ply.GetBase("spawnpos")) ply.GetBase("spawnpos").SetBool("lock", false);
 
             ply.Team(teamName);
             ply.class = gamemode.team(teamName).class(className);
@@ -1942,10 +1929,13 @@ public Action Command_Ents(int client, const char[] command, int argc)
     if (StrEqual(arg, "getall", false))
     {
         ArrayList entities = ents.GetAll();
+        int idx = 0;
 
-        for (int i=0; i < entities.Length; i++) 
+        if (entities.Length >= 150) idx = entities.Length - 50;
+
+        while (idx < entities.Length)
         {
-            Entity ent = entities.Get(i);
+            Entity ent = entities.Get(idx);
             char name[32];
 
             ent.GetClass(name, sizeof(name));
@@ -1954,6 +1944,8 @@ public Action Command_Ents(int client, const char[] command, int argc)
                 PrintToConsole(ply.id, "%s id: %i", name, ent.id);
             else
                 PrintToConsole(ply.id, "%s (picked)", name);
+
+            idx++;
         }
 
         PrintToConsole(ply.id, "------------------------");
@@ -2158,14 +2150,11 @@ public void SCP_OnInput(Player &ply, int buttons)
             gamemode.config.sound.GetString("menuselect", sound, sizeof(sound));
             ply.PlayNonCheckSound(sound);
 
-            if (!ply.IsSCP)
-                InventoryDisplay(ply);
-            else
-            {
-                Call_StartForward(OnCallActionForward);
-                Call_PushCellRef(ply);
-                Call_Finish();
-            }
+            if (!ply.IsSCP) InventoryDisplay(ply);
+
+            Call_StartForward(OnCallActionForward);
+            Call_PushCellRef(ply);
+            Call_Finish();
         }
     }
 }
@@ -2517,10 +2506,9 @@ public any NativePlayer_Inventory_GiveItem(Handle Plugin, int numArgs) {
             Entity ent = new Entity();
             ent.meta = entdata;
             ent.spawned = false;
-            ent.SetString("class", itemname);
+            ent.SetClass(itemname);
 
-            ents.Push(ent);
-            inv.list.Push(ent);
+            inv.list.Push(ents.Push(ent));
 
             if (ent.meta.onpickup)
             {
@@ -2578,7 +2566,11 @@ public any NativePlayer_RestrictWeapons(Handle Plugin, int numArgs) {
 
         if(itemid != -1)
         {
-            ents.RemoveByID(itemid);
+            char wepclass[128];
+            GetEntityClassname(itemid, wepclass, sizeof(wepclass));
+            
+            if (!StrEqual(wepclass, "weapon_fists")) ents.RemoveByID(itemid);
+            
             RemovePlayerItem(ply.id, itemid);
             AcceptEntityInput(itemid, "Kill");
         }
@@ -2587,8 +2579,8 @@ public any NativePlayer_RestrictWeapons(Handle Plugin, int numArgs) {
 
 public any NativePlayer_Inventory_Drop(Handle Plugin, int numArgs) {
     Inventory inv = GetNativeCell(1);
-    Player ply = view_as<Player>(inv.ply);
     InvItem item = GetNativeCell(2);
+    Player ply = view_as<Player>(inv.ply);
     
     if (!item) return view_as<InvItem>(null);
 

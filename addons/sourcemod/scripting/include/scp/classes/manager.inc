@@ -241,7 +241,7 @@ methodmap Manager < Base {
             }
         }
 
-        if (pr == 1) teamAlive = 0;
+        if (pr == 1 && player.Alive() > 1) teamAlive = 0;
 
         delete GlobalTeams;
         delete players;
@@ -299,16 +299,11 @@ methodmap Manager < Base {
     public void GameCheck() {
         if (this.RoundLock || this.RoundComplete) return;
         
-        if(player.InGame() > 0 && player.Alive() > 0)
-        {
-            char winteam[32];
-            if (this.CheckTeamStatus(winteam, sizeof(winteam)))
-                this.EndGame(winteam);
-        }
+        char winteam[32];
+        if(player.InGame() > 1 && player.Alive() > 0 && this.CheckTeamStatus(winteam, sizeof(winteam)))
+            this.EndGame(winteam);
         else if (player.InGame() > 0 && player.Alive() == 0)
-        {
             this.EndGame("nobody");
-        }
     }
 
     public bool CombatReinforcement(char[] teamName) {

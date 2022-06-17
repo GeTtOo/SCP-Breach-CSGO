@@ -166,7 +166,7 @@ methodmap Timers < Base {
     public Tmr Simple(int delay, char[] funcname, any args = false) {
         char timername[64], pname[64];
         GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
-        FormatEx(timername, sizeof(timername), "%s_%i_%i", pname, GetTime(), GetRandomInt(1, 1000));
+        FormatEx(timername, sizeof(timername), "%s_%i_%i", pname, GetTime(), GetRandomInt(1, 1000000));
         return this.Create(timername, delay, 1, funcname, args);
     }
 
