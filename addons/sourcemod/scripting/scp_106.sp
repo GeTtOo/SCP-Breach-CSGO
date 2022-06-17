@@ -111,7 +111,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
             {
                 if (vic.GetBool("106_inpd") && !vic.GetBool("106_tplock"))
                 {
-                    vic.SetPos(gamemode.plconfig.GetVector("pocket"), new Angle(0.0, 0.0, 0.0));
+                    vic.SetPos(gamemode.plconfig.GetVector("pocket") - new Vector(0.0, 0.0, 100.0), new Angle(0.0, 0.0, 0.0));
                     int idposrnd = GetRandomInt(0, gamemode.plconfig.GetObject("pocketout").GetArray("scp").Length - 1);
                     Vector vec = view_as<JSON_OBJECT>(gamemode.plconfig.GetObject("pocketout").GetArray("scp").GetObject(idposrnd)).GetVector("vec");
                     Angle ang = view_as<JSON_OBJECT>(gamemode.plconfig.GetObject("pocketout").GetArray("scp").GetObject(idposrnd)).GetAngle("ang");
@@ -142,7 +142,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
     {
         if (GetRandomInt(1, 100) < gamemode.plconfig.GetInt("escapechanceofpocket", 25))
         {
-            vic.SetPos(gamemode.plconfig.GetVector("pocket"), new Angle(0.0, 0.0, 0.0));
+            vic.SetPos(gamemode.plconfig.GetVector("pocket") - new Vector(0.0, 0.0, 100.0), new Angle(0.0, 0.0, 0.0));
             int idposrnd = GetRandomInt(0, gamemode.plconfig.GetObject("pocketout").GetArray("people").Length - 1);
             Vector vec = view_as<JSON_OBJECT>(gamemode.plconfig.GetObject("pocketout").GetArray("people").GetObject(idposrnd)).GetVector("vec");
             Angle ang = view_as<JSON_OBJECT>(gamemode.plconfig.GetObject("pocketout").GetArray("people").GetObject(idposrnd)).GetAngle("ang");
@@ -164,7 +164,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
             return Plugin_Changed;
         }
         
-        SCP_106_TeleportToPos(vic, gamemode.plconfig.GetVector("pocket"), new Angle(0.0, 0.0, 0.0));
+        SCP_106_TeleportToPos(vic, gamemode.plconfig.GetVector("pocket") - new Vector(0.0, 0.0, 64.0), new Angle(0.0, 0.0, 0.0));
         SpawnBlob(vic);
         vic.SetBool("106_inpd", true);
         return Plugin_Handled;
@@ -476,7 +476,7 @@ public int ActionsMenuHandler(Menu hMenu, MenuAction action, int client, int idx
                     }
                     case 2:
                     {
-                        SCP_106_TeleportToPos(ply, gamemode.plconfig.GetVector("pocket"), new Angle(0.0, 0.0, 0.0));
+                        SCP_106_TeleportToPos(ply, gamemode.plconfig.GetVector("pocket") - new Vector(0.0, 0.0, 64.0), new Angle(0.0, 0.0, 0.0));
                         if (!ply.GetBool("106_inpd")) SpawnBlob(ply);
                         ply.SetBool("106_inpd", true);
                         
