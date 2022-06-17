@@ -54,6 +54,8 @@ public void SCP_RegisterMetaData() {
 
     gamemode.meta.RegEntEvent(ON_PICKUP, "medkit", "MedkitUse");
     gamemode.meta.RegEntEvent(ON_USE, "medkit", "MedkitDeploy");
+
+    gamemode.meta.RegEntEvent(ON_USE, "defibrillator", "DefibrillatorUse");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -153,6 +155,23 @@ public void SCP_OnPlayerSwitchWeapon(Player &ply, Entity &ent)
     }
 }
 
+public void SCP_OnPlayerSpawn(Player &ply) {
+    if (ply.GetHandle("medrevpos"))
+    {
+        ArrayList pos = ply.GetArrayList("medrevpos");
+
+        ply.SetPos(pos.Get(0), pos.Get(1));
+        delete pos;
+        
+        ply.RestrictWeapons();
+        ply.inv.FullClear();
+
+        if (ply.class.fists) EquipPlayerWeapon(ply.id, ply.Give("weapon_fists").id);
+
+        ply.RemoveValue("medrevpos");
+    }
+}
+
 public void HealthShotTimer(Player ply)
 {
     ply.health = ply.GetInt("temphealth");
@@ -176,6 +195,8 @@ public void HealthShotTimer(Player ply)
 
 public bool MedkitUse(Player &ply, Entity &ent)
 {
+    if (ent.GetHandle("deploytmr") && !ent.GetBool("active")) return false;
+
     if (ent.GetBool("active") && ent.GetInt("amount") > 0)
     {
         ply.Give("weapon_healthshot");
@@ -203,7 +224,7 @@ public void MedkitDeploy(Player &ply, InvItem &ent)
 {
     ply.inv.Drop(ent);
 
-    ent.TimerSimple(2000, "MedkitInit", ent);
+    ent.SetHandle("deploytmr", ent.TimerSimple(2000, "MedkitInit", ent));
 }
 
 public void MedkitInit(Entity ent)
@@ -234,4 +255,76 @@ public void MedkitInit(Entity ent)
     info.Input("SetParent", ent.id);
     
     ent.SetHandle("wtinfo", info);
+}
+
+public bool PlayerRevive(Player ply)
+{
+    bool status = false;
+    char filter[1][32] = {"prop_ragdoll"};
+    ArrayList ragdolls = ents.FindInPVS(ply, _, _, filter);
+
+    if (ragdolls.Length > 0)
+    {
+        for (int i=0; i < ragdolls.Length; i++)
+        {
+            Entity vicrag = ragdolls.Get(i);
+
+            ArrayList players = player.GetAll();
+
+            Player vic;
+            for(int k=0; k < players.Length; k++)
+            {
+                vic = players.Get(k);
+
+                if (vic != ply && !vic.IsAlive() && vic.ragdoll)
+                {
+                    if (vic.ragdoll == vicrag && !vic.ragdoll.GetBool("IsSCP"))
+                    {
+                        ArrayList bglist = vic.model.bglist;
+                        char modelname[256];
+                        
+                        vic.ragdoll.meta.model(modelname, sizeof(modelname));
+                        int skinid = vic.ragdoll.model.GetSkin();
+                        
+                        char team[32];
+                        vic.ragdoll.GetString("team", team, sizeof(team));
+
+                        vic.Team(team);
+                        vic.class = view_as<Class>(vic.ragdoll.GetHandle("class"));
+
+                        vic.Spawn();
+                        vic.model.SetPath(modelname);
+
+                        vic.model.bglist = bglist;
+                        vic.model.SetSkin(skinid);
+                        //vic.SetBodyGroup("body", 0);
+                        
+                        ArrayList pos = new ArrayList();
+                        pos.Push(vic.ragdoll.GetPos());
+                        pos.Push(ply.GetAng() - new Angle(0.0, 180.0, 0.0));
+
+                        vic.SetArrayList("medrevpos", pos);
+
+                        ply.PrintWarning("Player revived!");
+
+                        status = true;
+                    }
+                }
+            }
+
+            delete players;
+        }
+    }
+
+    delete ragdolls;
+
+    return status;
+}
+
+public void DefibrillatorUse(Player &ply, InvItem &ent)
+{
+    if (PlayerRevive(ply))
+        ply.inv.Remove(ent);
+    else
+        ply.PrintWarning("Can't find target");
 }
