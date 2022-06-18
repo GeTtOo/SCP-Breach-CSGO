@@ -244,6 +244,9 @@ public void OnMapEnd()
     AdminMenu.Dispose();
     worldtext.Dispose();
     statuseffect.Dispose();
+    
+    gamemode.timer.Dispose();
+    gamemode.config.Dispose();
     gamemode.meta.Dispose();
     gamemode.mngr.Dispose();
     gamemode.nuke.Dispose();

@@ -189,19 +189,8 @@ methodmap GameMode < Base {
 
     public void Dispose()
     {
-        Teams teams;
-        this.GetValue("Teams", teams);
-        teams.Cleanup();
-        delete teams;
-        teams = null;
-        this.RemoveValue("Teams");
-        
-        view_as<Config>(this.GetHandle("Config")).Dispose();
-        this.RemoveValue("Config");
-
-        view_as<Timers>(this.GetHandle("Timers")).Dispose();
-        this.RemoveValue("Timers");
+        view_as<Teams>(this.GetHandle("Teams")).Dispose();
 
         delete this;
-    }
+    } 
 }

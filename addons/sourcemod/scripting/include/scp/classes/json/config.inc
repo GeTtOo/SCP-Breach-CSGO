@@ -132,8 +132,14 @@ methodmap Config < JSON_OBJECT {
     
     public void Dispose()
     {
-        this.GetArray("meta").Clear();
-
+        //this.doors.Dispose();
+        //this.spawnmap.Dispose();
+        //this.regions.Dispose();
+        this.meta.Clear();
+        //this.sound.Dispose();
+        //this.reinforce.Dispose();
+        //this.nuke.Dispose();
+        //view_as<JSON_ARRAY>(this.AdminRoom).Dispose();
         this.Dispose();
     }
 }
