@@ -129,8 +129,8 @@ methodmap NuclearWarhead < Base {
     }
 
     public void Activate() {
-        gamemode.timer.Create("SCP_ALPHA_WARHEAD_CALL_EXPLODE", gamemode.config.nuke.time * 1000, 1, "NukeExplode");
-        gamemode.timer.Create("SCP_ALPHA_WARHEAD_DOOR_CONTROLLER", (gamemode.config.nuke.time - 10) * 1000, 1, "ClosingDoorBeforeNukeExplode");
+        timer.Create("SCP_ALPHA_WARHEAD_CALL_EXPLODE", gamemode.config.nuke.time * 1000, 1, "NukeExplode");
+        timer.Create("SCP_ALPHA_WARHEAD_DOOR_CONTROLLER", (gamemode.config.nuke.time - 10) * 1000, 1, "ClosingDoorBeforeNukeExplode");
 
         char path[256];
         gamemode.config.nuke.sound.start(path, sizeof(path));
@@ -151,9 +151,9 @@ methodmap NuclearWarhead < Base {
         this.detonationtime = GetGameTime() + float(gamemode.config.nuke.time);
 
         //if (this.resumetime == 0.0)
-        gamemode.timer.Create("SCP_ALPHA_WARHEAD_COUNTDOWN", 100, 0, "SCP_AlphaWarheadCountdown");
+        timer.Create("SCP_ALPHA_WARHEAD_COUNTDOWN", 100, 0, "SCP_AlphaWarheadCountdown");
         //else
-            //gamemode.timer.Create("SCP_ALPHA_WARHEAD_COUNTDOWN", 10, RoundToNearest(this.resumetime) * 100000, "SCP_AlphaWarheadCountdown");
+            //timer.Create("SCP_ALPHA_WARHEAD_COUNTDOWN", 10, RoundToNearest(this.resumetime) * 100000, "SCP_AlphaWarheadCountdown");
 
         this.active = true;
 
@@ -173,10 +173,10 @@ methodmap NuclearWarhead < Base {
         this.active = false;
         this.ready = false;
         
-        gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_CALL_EXPLODE");
-        gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_DOOR_CONTROLLER");
-        gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_COUNTDOWN");
-        gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_AUTO_COUNTDOWN");
+        timer.RemoveByName("SCP_ALPHA_WARHEAD_CALL_EXPLODE");
+        timer.RemoveByName("SCP_ALPHA_WARHEAD_DOOR_CONTROLLER");
+        timer.RemoveByName("SCP_ALPHA_WARHEAD_COUNTDOWN");
+        timer.RemoveByName("SCP_ALPHA_WARHEAD_AUTO_COUNTDOWN");
 
         char path[256];
         gamemode.config.nuke.sound.stop(path, sizeof(path));
@@ -241,7 +241,7 @@ methodmap NuclearWarhead < Base {
     
     public void AutoStart(int seconds)
     {
-        gamemode.timer.Create("SCP_ALPHA_WARHEAD_AUTO_COUNTDOWN", seconds * 1000, 1, "SCP_AlphaWarheadAutoStart");
+        timer.Create("SCP_ALPHA_WARHEAD_AUTO_COUNTDOWN", seconds * 1000, 1, "SCP_AlphaWarheadAutoStart");
     }
 
     public void Reset() {
@@ -328,8 +328,8 @@ public void NukeExplode() {
         }
     }
 
-    gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_COUNTDOWN");
-    gamemode.timer.RemoveByName("SCP_ALPHA_WARHEAD_AUTO_COUNTDOWN");
+    timer.RemoveByName("SCP_ALPHA_WARHEAD_COUNTDOWN");
+    timer.RemoveByName("SCP_ALPHA_WARHEAD_AUTO_COUNTDOWN");
 
     gamemode.nuke.Update("Site destroyed", 8);
 

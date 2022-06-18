@@ -78,7 +78,7 @@ methodmap ProgressBar < Base {
         this.active = true;
 
         if (!StrEqual(funcName, ""))
-            return gamemode.timer.Create(timername, time, 1, funcName, this.ply);
+            return timer.Create(timername, time, 1, funcName, this.ply);
 
         return null;
     }
@@ -91,7 +91,7 @@ methodmap ProgressBar < Base {
         SetEntData(this.clientID, this.GetInt("pbd"), 0, 1, true);
         
         if (tmrdest)
-            gamemode.timer.RemoveByName(timername);
+            timer.RemoveByName(timername);
         
         this.active = false;
     }

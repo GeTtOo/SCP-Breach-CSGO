@@ -86,6 +86,7 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("GameMode.timer.get", NativeGameMode_Timers);
     CreateNative("GameMode.log.get", NativeGameMode_Logger);
 
+    CreateNative("Timers.list.get", NativeTimers_GetList);
     CreateNative("Timers.HideCreate", NativeTimers_HideCreate);
 
     CreateNative("StatusEffectSingleton.list.get", NativeStatusEffect_GetList);
@@ -186,6 +187,7 @@ public void OnMapStart()
     ents = new EntitySingleton();
     player = new ClientSingleton();
     worldtext = new WorldTextSingleton();
+    timer = new Timers();
     statuseffect = new StatusEffectSingleton();
     AdminMenu = new AdminMenuSingleton();
     
@@ -243,9 +245,9 @@ public void OnMapEnd()
     player.Dispose();
     AdminMenu.Dispose();
     worldtext.Dispose();
+    timer.Dispose();
     statuseffect.Dispose();
     
-    gamemode.timer.Dispose();
     gamemode.config.Dispose();
     gamemode.meta.Dispose();
     gamemode.mngr.Dispose();
@@ -258,7 +260,7 @@ public void OnGameFrame()
 {
     if (!modloaded) return;
     
-    gamemode.timer.Update();
+    timer.Update();
     statuseffect.Update();
 }
 
@@ -303,7 +305,7 @@ public void OnClientDisconnect(int id)
     {
         char timername[32];
         FormatEx(timername, sizeof(timername), "ent-%i", ply.id);
-        gamemode.timer.RemoveIsContains(timername);
+        timer.RemoveIsContains(timername);
 
         ply.se.ClearAll();
 
@@ -544,10 +546,10 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         gamemode.nuke.SpawnDisplay();
         if (gamemode.config.nuke.autostart) gamemode.nuke.AutoStart(gamemode.config.nuke.ast);
         
-        gamemode.timer.Create("CombatReinforcement", gamemode.config.reinforce.GetInt("time", 300) * 1000, 0, "CombatReinforcement");
-        gamemode.timer.Create("UpdateSpectatorInfo", 1000, 0, "UpdateSpectatorInfo");
-        gamemode.timer.Create("GameController", gamemode.config.GetInt("updategc", 5) * 1000, 0, "GameController");
-        gamemode.timer.Create("PlayerSpawnAfterRoundStart", 1000, gamemode.config.psars, "PSARS");
+        timer.Create("CombatReinforcement", gamemode.config.reinforce.GetInt("time", 300) * 1000, 0, "CombatReinforcement");
+        timer.Create("UpdateSpectatorInfo", 1000, 0, "UpdateSpectatorInfo");
+        timer.Create("GameController", gamemode.config.GetInt("updategc", 5) * 1000, 0, "GameController");
+        timer.Create("PlayerSpawnAfterRoundStart", 1000, gamemode.config.psars, "PSARS");
 
         Call_StartForward(OnRoundStartForward);
         Call_Finish();
@@ -566,7 +568,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
 
             char timername[32];
             FormatEx(timername, sizeof(timername), "ent-%i", ply.id);
-            gamemode.timer.RemoveIsContains(timername);
+            timer.RemoveIsContains(timername);
 
             Call_StartForward(OnClientClearForward);
             Call_PushCellRef(ply);
@@ -597,7 +599,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
         gamemode.mngr.RoundComplete = false;
         gamemode.nuke.Reset();
         statuseffect.ClearAll();
-        gamemode.timer.ClearAll();
+        timer.ClearAll();
 
         Call_StartForward(OnRoundEndForward);
         Call_Finish();
@@ -648,7 +650,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                         char sound[256];
                         gamemode.config.sound.GetString("idpadag", sound, sizeof(sound));
                         gamemode.mngr.PlayTranslatedAmbient(sound, langcode, idpad);
-                        gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
+                        timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
                     }
                 }
             }
@@ -662,7 +664,7 @@ public Action Event_OnButtonPressed(const char[] output, int caller, int activat
                         char sound[256];
                         gamemode.config.sound.GetString("idpadad", sound, sizeof(sound));
                         gamemode.mngr.PlayTranslatedAmbient(sound, langcode, idpad);
-                        gamemode.timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
+                        timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
                     }
 
                     if (!ply.IsSCP)
@@ -822,7 +824,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
         char timername[32];
         FormatEx(timername, sizeof(timername), "ent-%i", vic.id);
-        gamemode.timer.RemoveIsContains(timername);
+        timer.RemoveIsContains(timername);
         
         Call_StartForward(OnPlayerDeathForward);
         Call_PushCellRef(vic);
@@ -1833,16 +1835,16 @@ public Action Command_Base(int client, const char[] command, int argc)
 
     if (StrEqual(arg1, "timers", false))
     {
-        ArrayList timers = gamemode.timer.GetArrayList("timers");
+        ArrayList timers = timer.GetArrayList("timers");
 
         PrintToConsole(ply.id, "---------------Timers---------------");
 
         for (int i=0; i < timers.Length; i++)
         {
             char timername[64];
-            Tmr timer = timers.Get(i);
-            timer.name(timername, sizeof(timername));
-            PrintToConsole(ply.id, "Name: %s | delay: %.3f | repeations: %i", timername, timer.delay, timer.repeations);
+            Tmr tmr = timers.Get(i);
+            tmr.name(timername, sizeof(timername));
+            PrintToConsole(ply.id, "Name: %s | delay: %.3f | repeations: %i", timername, tmr.delay, tmr.repeations);
         }
     }
     if (StrEqual(arg1, "se", false))
@@ -2209,15 +2211,17 @@ public any NativeGameMode_GetTeam(Handle Plugin, int numArgs) {
     return view_as<Teams>(view_as<JSON_OBJECT>(gamemode).GetObject("Teams")).get(name);
 }
 
+public any NativeTimers_GetList(Handle Plugin, int numArgs) { return timer.GetArrayList("timers"); }
+
 public any NativeTimers_HideCreate(Handle Plugin, int numArgs) {
     char timername[64], funcname[64];
     GetNativeString(3, timername, sizeof(timername));
     GetNativeString(6, funcname, sizeof(funcname));
 
-    Tmr timer = new Tmr(GetNativeCell(2), timername, GetNativeCell(4), GetNativeCell(5), funcname, GetNativeCell(7));
-    timer.active = true;
-    gamemode.timer.GetArrayList("timers").Push(timer);
-    return timer;
+    Tmr tmr = new Tmr(GetNativeCell(2), timername, GetNativeCell(4), GetNativeCell(5), funcname, GetNativeCell(7));
+    tmr.active = true;
+    timer.GetArrayList("timers").Push(tmr);
+    return tmr;
 }
 
 public any NativeStatusEffects_Create(Handle Plugin, int numArgs) {

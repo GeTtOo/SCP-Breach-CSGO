@@ -69,7 +69,7 @@ public void SCP_OnUnload() {
 }
 
 public void SCP_OnRoundStart() {
-    gamemode.timer.Create("TutorialPlayerRespawn", 1000, 0, "Tutorial_Respawn");
+    timer.Create("TutorialPlayerRespawn", 1000, 0, "Tutorial_Respawn");
 }
 
 public void SCP_OnPlayerJoin(Player &ply)
@@ -174,7 +174,7 @@ public Action Command_Tutorial(int client, const char[] command, int argc)
         ply.store.SetBool("tutorial", true);
         PrintToChat(ply.id, " \x07[SCP]\x05 Вы успешно завершили туториал! Приятной игры.", ply.id);
 
-        gamemode.timer.Remove(view_as<Tmr>(ply.GetHandle("tutor_sound")));
+        timer.Remove(view_as<Tmr>(ply.GetHandle("tutor_sound")));
         ply.RemoveValue("tutor_sound");
         ply.StopSound("eternity/map/purrple-cat-edge-of-the-universe.wav");
 

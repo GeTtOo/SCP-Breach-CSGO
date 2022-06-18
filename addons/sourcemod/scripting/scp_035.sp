@@ -52,7 +52,7 @@ public void SCP_OnPlayerClear(Player &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("035"))
     {
-        gamemode.timer.RemoveByName("Timer_SCP-035_Hit");
+        timer.RemoveByName("Timer_SCP-035_Hit");
         Entity ent = view_as<Entity>(ply.GetHandle("035_ent"));
         if (ent)
         {
@@ -123,7 +123,7 @@ public bool Logic(Player &ply, Entity &ent)
         
         ply.TimerSimple(1000, "ExecDelay", data);
         
-        gamemode.timer.Create("Timer_SCP-035_Hit", 2500, 0, "HandlerHitSCP", ply);
+        timer.Create("Timer_SCP-035_Hit", 2500, 0, "HandlerHitSCP", ply);
         
         ent.SetBool("used", true);
     }

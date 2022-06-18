@@ -83,7 +83,7 @@ public void SCP_OnPlayerClear(Player &ply) {
     if (ply.class && ply.class.Is("106"))
     {
         SDKUnhook(ply.id, SDKHook_StartTouch, CheckSurface);
-        if (ply.GetHandle("106_tmrpdfo")) gamemode.timer.Remove(view_as<Tmr>(ply.GetHandle("106_tmrpdfo")));
+        if (ply.GetHandle("106_tmrpdfo")) timer.Remove(view_as<Tmr>(ply.GetHandle("106_tmrpdfo")));
         delete ply.GetHandle("106_tp_vec");
         delete ply.GetHandle("106_tp_ang");
         ply.RemoveValue("106_tp_vec");
@@ -118,7 +118,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
                     SCP_106_TeleportToPos(vic, vec - new Vector(0.0, 0.0, 64.0), ang);
                     vic.SetBool("106_inpd", false);
                     
-                    if (vic.GetHandle("106_tmrpdfo")) gamemode.timer.Remove(view_as<Tmr>(vic.GetHandle("106_tmrpdfo")));
+                    if (vic.GetHandle("106_tmrpdfo")) timer.Remove(view_as<Tmr>(vic.GetHandle("106_tmrpdfo")));
 
                     return Plugin_Handled;
                 }
@@ -246,7 +246,7 @@ public void CheckSurface(int client, int entity)
 
                 char timername[64];
                 FormatEx(timername, sizeof(timername), "SCP-106-DoorWalk-%i", ply.id);
-                gamemode.timer.Create(timername, 10, 24, "DoorWalk", ply);
+                timer.Create(timername, 10, 24, "DoorWalk", ply);
             }
 
             door.Dispose();
@@ -270,7 +270,7 @@ public void DoorWalk(Player ply)
         delete list;
         char timername[64];
         FormatEx(timername, sizeof(timername), "SCP-106-DoorWalk-%i", ply.id);
-        gamemode.timer.RemoveByName(timername);
+        timer.RemoveByName(timername);
         ply.RemoveValue("106_sdw");
     }
 }
@@ -308,7 +308,7 @@ public void SCP_106_TeleportToPos(Player ply, Vector vec, Angle ang)
     data.SetBool("fs", true);
 
     FormatEx(timername, sizeof(timername), "SCP-106-Teleport-%i", ply.id);
-    gamemode.timer.Create(timername, 25, height * 2, "SCP_106_TeleportHandler", data);
+    timer.Create(timername, 25, height * 2, "SCP_106_TeleportHandler", data);
 }
 
 public void SCP_106_TeleportHandler(Base data)
@@ -369,7 +369,7 @@ public void SCP_OnAlphaWarhead(AlphaWarhead status) {
 
                 if (ply.GetBool("106_inpd"))
                 {
-                    if (ply.GetHandle("106_tmrpdfo")) gamemode.timer.Remove(view_as<Tmr>(ply.GetHandle("106_tmrpdfo")));
+                    if (ply.GetHandle("106_tmrpdfo")) timer.Remove(view_as<Tmr>(ply.GetHandle("106_tmrpdfo")));
                     ply.RemoveValue("106_tmrpdfo");
 
                     SCP_106_TeleportToPos(ply, gamemode.plconfig.GetObject("exitposafternuke").GetVector("vec") - new Vector(0.0, 0.0, 64.0), gamemode.plconfig.GetObject("exitposafternuke").GetAngle("ang"));
@@ -470,7 +470,7 @@ public int ActionsMenuHandler(Menu hMenu, MenuAction action, int client, int idx
                         if (!ply.GetBool("106_inpd"))
                             SpawnBlob(ply);
                         else
-                            if (ply.GetHandle("106_tmrpdfo")) gamemode.timer.Remove(view_as<Tmr>(ply.GetHandle("106_tmrpdfo")));
+                            if (ply.GetHandle("106_tmrpdfo")) timer.Remove(view_as<Tmr>(ply.GetHandle("106_tmrpdfo")));
 
                         ply.SetBool("106_inpd", false);
                     }

@@ -114,7 +114,7 @@ public void SCP_OnInput(Player &ply, int buttons)
 	{
 		ply.progress.Stop();
 		ply.SetBool("049_reviving", false);
-		//gamemode.timer.Simple(3000, "ReviveUnlock", ply);
+		//timer.Simple(3000, "ReviveUnlock", ply);
 	}
 }
 

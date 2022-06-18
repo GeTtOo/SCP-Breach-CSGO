@@ -46,6 +46,8 @@
 
 #include "scp\classes\meta"
 #include "scp\classes\timers"
+Timers timer;
+
 #include "scp\classes\gamemode"
 #include "scp\classes\logger"
 

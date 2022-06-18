@@ -54,7 +54,7 @@ public void SCP_OnPlayerSpawn(Player &ply) {
     
         char timername[64];
         Format(timername, sizeof(timername), "SCP-966-SoundEffect-%i", ply.id);
-        gamemode.timer.Create(timername, 5000, 0, "SoundEffect", ply);
+        timer.Create(timername, 5000, 0, "SoundEffect", ply);
 
         /*if (player.Alive() >= 15)
         {
@@ -80,7 +80,7 @@ public void SCP_OnPlayerClear(Player &ply) {
         char timername[64];
 
         Format(timername, sizeof(timername), "SCP-966-SoundEffect-%i", ply.id);
-        gamemode.timer.RemoveByName(timername);
+        timer.RemoveByName(timername);
 
         ply.RemoveValue("966_abcd");
     }

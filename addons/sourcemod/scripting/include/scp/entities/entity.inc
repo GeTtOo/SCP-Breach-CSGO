@@ -141,7 +141,7 @@ methodmap Entity < Base {
     public Tmr TimerSimple(int delay, char[] funcname, any args = false) {
         char timername[64];
         FormatEx(timername, sizeof(timername), "ent-%i|time-%i|seed-%i", this.id, GetTime(), GetRandomInt(1, 1000000));
-        return gamemode.timer.Create(timername, delay, 1, funcname, args);
+        return timer.Create(timername, delay, 1, funcname, args);
     }
 
     public Entity SetCollisionGroup(int val) { SetEntData(this.id, gamemode.collisiongroup, val, 4, true); return this; }

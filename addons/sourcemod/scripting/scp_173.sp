@@ -53,10 +53,10 @@ public void SCP_OnPlayerSpawn(Player &ply)
         char  timername[64];
         
         Format(timername, sizeof(timername), "SCP-173-VisChecker-%i", ply.id);
-        gamemode.timer.Create(timername, 100, 0, "CheckVisualContact", ply);
+        timer.Create(timername, 100, 0, "CheckVisualContact", ply);
 
         Format(timername, sizeof(timername), "SCP-173-Holo-%i", ply.id);
-        gamemode.timer.Create(timername, 20, 0, "RenderHologram", ply);
+        timer.Create(timername, 20, 0, "RenderHologram", ply);
 
         char model[256];
         ply.class.Model(model, sizeof(model));
@@ -80,10 +80,10 @@ public void SCP_OnPlayerClear(Player &ply)
         if (ent) ents.Remove(ent);
 
         Format(timername, sizeof(timername), "SCP-173-VisChecker-%i", ply.id);
-        gamemode.timer.RemoveByName(timername);
+        timer.RemoveByName(timername);
 
         Format(timername, sizeof(timername), "SCP-173-Holo-%i", ply.id);
-        gamemode.timer.RemoveByName(timername);
+        timer.RemoveByName(timername);
 
         ply.RemoveValue("173_isvis");
         ply.RemoveValue("173_abtmr");

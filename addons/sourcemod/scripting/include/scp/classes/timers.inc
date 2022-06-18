@@ -35,17 +35,17 @@
 methodmap Tmr < Base {
 
     public Tmr(Handle ph, char[] name, float delay, int repeations, char[] func, ArrayList args) {
-        Tmr timer = view_as<Tmr>(new StringMap());
-        timer.SetValue("pluginhandle", ph);
-        timer.SetString("name", name);
-        timer.SetFloat("delay", delay);
-        timer.SetInt("repeations", repeations);
-        timer.SetString("func", func);
-        timer.SetValue("args", args);
+        Tmr tmr = view_as<Tmr>(new StringMap());
+        tmr.SetValue("pluginhandle", ph);
+        tmr.SetString("name", name);
+        tmr.SetFloat("delay", delay);
+        tmr.SetInt("repeations", repeations);
+        tmr.SetString("func", func);
+        tmr.SetValue("args", args);
 
-        timer.SetFloat("nextinvoke", GetGameTime() + delay);
+        tmr.SetFloat("nextinvoke", GetGameTime() + delay);
 
-        return timer;
+        return tmr;
     }
 
     property Handle ph {
@@ -97,20 +97,22 @@ methodmap Timers < Base {
         return self;
     }
 
+    property ArrayList list {
+        public native get();
+    }
+
     public native Tmr HideCreate(Handle ph, char[] name, float delay, int repeations, char[] funcname, any args);
 
     public Tmr Create(char[] name, int delay, int repeations, char[] funcname, any args = false) {
         return this.HideCreate(GetMyHandle(), name, (float(delay) / float(1000)), repeations, funcname, args);
     }
 
-    public bool IsAlive(Tmr timer) { return (this.GetArrayList("timers").FindValue(timer) != -1) ? true : false; }
+    public bool IsAlive(Tmr tmr) { return (this.list.FindValue(tmr) != -1) ? true : false; }
 
-    public bool Remove(Tmr timer) {
-        ArrayList list = this.GetArrayList("timers");
-        
-        for (int i=0; i < list.Length; i++) {
-            if (list.Get(i) == timer) {
-                timer.active = false;
+    public bool Remove(Tmr tmr) {
+        for (int i=0; i < this.list.Length; i++) {
+            if (this.list.Get(i) == tmr) {
+                tmr.active = false;
                 return true;
             }
         }
@@ -119,14 +121,12 @@ methodmap Timers < Base {
     }
 
     public bool RemoveByName(char[] name) {
-        ArrayList list = this.GetArrayList("timers");
-        
-        for (int i=0; i < list.Length; i++) {
+        for (int i=0; i < this.list.Length; i++) {
             char timername[64];
-            Tmr timer = list.Get(i);
-            timer.name(timername, sizeof(timername));
+            Tmr tmr = this.list.Get(i);
+            tmr.name(timername, sizeof(timername));
             if (StrEqual(timername, name)) {
-                timer.active = false;
+                tmr.active = false;
                 return true;
             }
         }
@@ -135,30 +135,27 @@ methodmap Timers < Base {
     }
 
     public void RemoveIsContains(char[] name) {
-        ArrayList list = this.GetArrayList("timers");
-        
-        for (int i=0; i < list.Length; i++) {
+        for (int i=0; i < this.list.Length; i++) {
             char timername[64];
-            Tmr timer = list.Get(i);
-            timer.name(timername, sizeof(timername));
+            Tmr tmr = this.list.Get(i);
+            tmr.name(timername, sizeof(timername));
             if (StrContains(timername, name) != -1) {
-                timer.active = false;
+                tmr.active = false;
             }
         }
     }
 
     public void ClearAll() {
-        for (int i=0; i < this.GetArrayList("timers").Length; i++) view_as<Tmr>(this.GetArrayList("timers").Get(i)).Dispose();
-        this.GetArrayList("timers").Clear();
+        for (int i=0; i < this.list.Length; i++) view_as<Tmr>(this.list.Get(i)).Dispose();
+        this.list.Clear();
     }
 
     public void PluginClear() {
-        ArrayList list = this.GetArrayList("timers");
-        if (list.Length != 0)
-            for (int i=0; i < list.Length; i++)
-                if (view_as<Tmr>(list.Get(i)).ph == GetMyHandle())
+        if (this.list.Length != 0)
+            for (int i=0; i < this.list.Length; i++)
+                if (view_as<Tmr>(this.list.Get(i)).ph == GetMyHandle())
                 {
-                    list.Erase(i);
+                    this.list.Erase(i);
                     i--;
                 }
     }
@@ -172,50 +169,48 @@ methodmap Timers < Base {
 
     public void Update()
     {
-        ArrayList list = this.GetArrayList("timers");
-
-        for (int i=0; i < list.Length; i++)
+        for (int i=0; i < this.list.Length; i++)
         {
-            Tmr timer = list.Get(i);
+            Tmr tmr = this.list.Get(i);
 
-            if (!timer.GetBool("active"))
+            if (!tmr.GetBool("active"))
             {
-                delete timer;
-                list.Erase(i); i--;
+                delete tmr;
+                this.list.Erase(i); i--;
                 continue;
             }
 
-            if (timer.nextinvoke <= GetGameTime())
+            if (tmr.nextinvoke <= GetGameTime())
             {
 
                 char funcname[64];
-                timer.func(funcname, sizeof(funcname));
+                tmr.func(funcname, sizeof(funcname));
 
-                Call_StartFunction(timer.ph, GetFunctionByName(timer.ph, funcname));
-                if (timer.args)
-                    Call_PushCell(timer.args);
+                Call_StartFunction(tmr.ph, GetFunctionByName(tmr.ph, funcname));
+                if (tmr.args)
+                    Call_PushCell(tmr.args);
                 Call_Finish();
 
                 //if (!this.IsAlive(timer)) continue; // Dirty fix invalid handle error...
 
-                if (timer.repeations == 1)
+                if (tmr.repeations == 1)
                 {
-                    timer.active = false;
+                    tmr.active = false;
                 }
-                else if (timer.repeations > 1)
+                else if (tmr.repeations > 1)
                 {
-                    timer.nextinvoke += timer.delay;
-                    timer.repeations--;
+                    tmr.nextinvoke += tmr.delay;
+                    tmr.repeations--;
                 }
-                else if (timer.repeations == 0)
-                    timer.nextinvoke += timer.delay;
+                else if (tmr.repeations == 0)
+                    tmr.nextinvoke += tmr.delay;
             }
         }
     }
 
     public void Dispose() {
         this.ClearAll();
-        delete this.GetArrayList("timers");
+        delete this.list;
         this.RemoveValue("timers");
     }
 }

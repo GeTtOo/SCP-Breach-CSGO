@@ -78,7 +78,7 @@ public void OnDrop(Player &ply, InvItem &item)
 
 public void NavDisable(Player ply)
 {
-    gamemode.timer.Remove(view_as<Tmr>(ply.GetHandle("nav_active")));
+    timer.Remove(view_as<Tmr>(ply.GetHandle("nav_active")));
     ply.RemoveValue("nav_active");
     ply.SetProp("m_iHideHUD", 1<<12);
 }

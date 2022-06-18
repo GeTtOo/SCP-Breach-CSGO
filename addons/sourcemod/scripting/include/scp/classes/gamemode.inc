@@ -126,7 +126,6 @@ methodmap GameMode < Base {
         self.SetValue("Teams", new Teams());
         self.SetValue("Config", new Config());
         self.SetValue("Meta", new Meta());
-        self.SetValue("Timers", new Timers());
         return self;
     }
 
@@ -168,10 +167,6 @@ methodmap GameMode < Base {
     }
 
     property NuclearWarhead nuke {
-        public native get();
-    }
-
-    property Timers timer {
         public native get();
     }
 

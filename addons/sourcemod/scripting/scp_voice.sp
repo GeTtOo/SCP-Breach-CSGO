@@ -103,7 +103,7 @@ methodmap IntercomController < Base {
         gamemode.plconfig.GetObject("sound").GetString("start", sound, sizeof(sound));
         gamemode.mngr.PlayNonCheckSoundToAll(sound);
 
-        gamemode.timer.Create("Intercom_transmission_active", gamemode.plconfig.GetInt("transmissiontime", 8) * 1000, 1, "TransmissionStop");
+        timer.Create("Intercom_transmission_active", gamemode.plconfig.GetInt("transmissiontime", 8) * 1000, 1, "TransmissionStop");
 
         this.UpdateText("~Live");
 
@@ -114,10 +114,10 @@ methodmap IntercomController < Base {
 
     public void EndTransmission() {
         int transmissiontime = gamemode.plconfig.GetInt("cooldown", 8);
-        gamemode.timer.Create("Intercom_cd_release", transmissiontime * 1000, 1, "VoiceRelease");
+        timer.Create("Intercom_cd_release", transmissiontime * 1000, 1, "VoiceRelease");
         this.relcdtime = GetGameTime() + float(transmissiontime);
 
-        gamemode.timer.Create("Intercom_cd_countdown", 100, 0, "DisplayCounterUpdate");
+        timer.Create("Intercom_cd_countdown", 100, 0, "DisplayCounterUpdate");
 
         char sound[128];
 
@@ -129,7 +129,7 @@ methodmap IntercomController < Base {
     }
 
     public void CooldownRelease() {
-        gamemode.timer.RemoveByName("Intercom_cd_countdown");
+        timer.RemoveByName("Intercom_cd_countdown");
         this.Ready();
     }
 
@@ -175,9 +175,9 @@ methodmap IntercomController < Base {
     }
 
     public void Dispose() {
-        gamemode.timer.RemoveByName("Intercom_transmission_active");
-        gamemode.timer.RemoveByName("Intercom_cd_release");
-        gamemode.timer.RemoveByName("Intercom_cd_countdown");
+        timer.RemoveByName("Intercom_transmission_active");
+        timer.RemoveByName("Intercom_cd_release");
+        timer.RemoveByName("Intercom_cd_countdown");
         for (int i=0; i < this.monitors.Length; i++) view_as<Entity>(this.monitors.Get(i)).Dispose();
         this.monitors.Clear();
         delete this.monitors;
@@ -198,7 +198,7 @@ public void SCP_OnLoad()
 
 public void SCP_OnUnload()
 {
-    gamemode.timer.RemoveByName("AdvancedVoice");
+    timer.RemoveByName("AdvancedVoice");
     Intercom.Dispose();
 }
 
@@ -223,7 +223,7 @@ public void SCP_OnPlayerJoin(Player &ply) {
 public void SCP_OnRoundStart() {
     ResetListening();
 
-    gamemode.timer.Create("AdvancedVoice", 250, 0, "VoiceLogicHandler");
+    timer.Create("AdvancedVoice", 250, 0, "VoiceLogicHandler");
     gamemode.log.Debug("Voice channels starting update");
 
     Intercom.DisplayInit();
@@ -231,7 +231,7 @@ public void SCP_OnRoundStart() {
 }
 
 public void SCP_OnRoundEnd() {
-    gamemode.timer.RemoveByName("AdvancedVoice");
+    timer.RemoveByName("AdvancedVoice");
     Intercom.Clear();
 }
 
