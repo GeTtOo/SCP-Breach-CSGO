@@ -123,9 +123,9 @@ methodmap GameMode < Base {
     
     public GameMode() {
         GameMode self = view_as<GameMode>(new JSON_OBJECT());
-        self.SetValue("Teams", new Teams());
-        self.SetValue("Config", new Config());
-        self.SetValue("Meta", new Meta());
+        self.SetHandle("Teams", new Teams());
+        self.SetHandle("Config", new Config());
+        self.SetHandle("Meta", new Meta());
         return self;
     }
 
@@ -153,6 +153,10 @@ methodmap GameMode < Base {
         }
     }
 
+    property int lang {
+        public get() { return GetServerLanguage(); }
+    }
+
     property int collisiongroup {
         public set(int value) { this.SetInt("collisiongroup", value); }
         public native get();
@@ -175,10 +179,6 @@ methodmap GameMode < Base {
     }
 
     public native ArrayList GetTeamList(bool filter = true);
-    
-    property int lang {
-        public get() { return GetServerLanguage(); }
-    }
 
     public native GTeam team(char[] name);
 
