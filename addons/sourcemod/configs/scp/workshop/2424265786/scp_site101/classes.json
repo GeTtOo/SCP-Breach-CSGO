@@ -83,8 +83,7 @@
                 "escape":{
                     "trigger":689698,
                     "team":"Chaos",
-                    "class":"Alpha",
-                    "wp":"Chaos"
+                    "class":["Alpha","Beta","Gamma"]
                 }
             },
             "Scientist": {
@@ -429,7 +428,7 @@
                 "health":180,
                 "armor":200,
                 "speed":234,
-                "items":["card_chaos", "visor_nv"],
+                "items":["card_chaos"],
                 "weapons":["weapon_scar20", "weapon_p250", "weapon_hegrenade", "weapon_smokegrenade"],
                 "model":{
                     "id":"chaos",
@@ -467,7 +466,7 @@
                 "health":180,
                 "armor":200,
                 "speed":234,
-                "items":["card_chaos", "visor_nv"],
+                "items":["card_chaos"],
                 "weapons":["weapon_negev", "weapon_p250", "weapon_hegrenade", "weapon_smokegrenade"],
                 "model":{
                     "id":"chaos",

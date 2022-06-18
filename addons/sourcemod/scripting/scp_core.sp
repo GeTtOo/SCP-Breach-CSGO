@@ -1587,7 +1587,10 @@ public void EscapeController(Player ply, int doorID)
 
         char className[32], teamName[32];
         ply.class.escape.team(teamName, sizeof(teamName));
-        ply.class.escape.class(className, sizeof(className));
+        if (ply.class.escape.GetType("class") == String)
+            ply.class.escape.class(className, sizeof(className));
+        else
+            ply.class.escape.GetArray("class").GetString(GetRandomInt(0, ply.class.escape.GetArray("class").Length - 1), className, sizeof(className));
 
         data.trigger = ply.class.escape.trigger;
         data.team(teamName);
@@ -1884,7 +1887,7 @@ public Action Command_Base(int client, const char[] command, int argc)
             char sename[64];
             StatusEffect se = sel.Get(i);
             se.name(sename, sizeof(sename));
-            PrintToConsole(ply.id, "Player: %i | name: %s | time: %i | count: %i", se.GetBase("player").GetInt("id"), sename, se.time, se.count);
+            PrintToConsole(ply.id, "Player: %i | name: %s | time: %i | ticks left: %i", se.GetBase("player").GetInt("id"), sename, se.time, se.count);
         }
     }
     if (StrEqual(arg1, "changelevel", false))
