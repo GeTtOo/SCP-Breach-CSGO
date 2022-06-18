@@ -94,7 +94,9 @@ forward void SCP_OnPlayerClear(Player &ply);
 
 forward void SCP_OnPlayerSetupOverlay(Player &ply);
 
-forward void SCP_OnPlayerTakeWeapon(Player &ply, Entity &ent);
+forward bool SCP_OnPlayerPickupItem(Player &ply, Entity &ent);
+
+forward void SCP_OnPlayerPickupWeapon(Player &ply, Entity &ent);
 
 forward void SCP_OnPlayerSwitchWeapon(Player &ply, Entity &ent);
 

@@ -93,7 +93,11 @@ public void SCP_PostPlayerSpawn(Player &ply) {
     
 }
 
-public void OnPlayerTakeWeapon(Player &ply, Entity &ent) {
+public bool SCP_OnPlayerPickupItem(Player &ply, Entity &ent) {
+    
+}
+
+public void SCP_OnPlayerPickupWeapon(Player &ply, Entity &ent) {
     
 }
 

@@ -42,7 +42,7 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void SCP_OnPlayerTakeWeapon(Player &ply, Entity &ent) {
+public void SCP_OnPlayerPickupWeapon(Player &ply, Entity &ent) {
     if (ent.IsClass("weapon_breachcharge") && ent.GetBool("firsttake", true))
     {
         ent.SetProp("m_iClip1", gamemode.plconfig.GetInt("bccount", 10));

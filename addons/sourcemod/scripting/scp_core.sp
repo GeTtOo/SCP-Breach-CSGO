@@ -42,15 +42,16 @@ Handle OnLoadGM;
 Handle OnUnloadGM;
 Handle OnRoundStartForward;
 Handle OnRoundEndForward;
-Handle OnClientJoinForward;
-Handle OnClientLeaveForward;
+Handle OnPlayerJoinForward;
+Handle OnPlayerLeaveForward;
 Handle PreClientSpawnForward;
-Handle OnClientSpawnForward;
+Handle OnPlayerSpawnForward;
 Handle PostClientSpawnForward;
-Handle OnClientClearForward;
-Handle OnClientSetupOverlay;
-Handle OnClientTakeWeaponForward;
-Handle OnClientSwitchWeaponForward;
+Handle OnPlayerClearForward;
+Handle OnPlayerSetupOverlay;
+Handle OnPlayerPickupItemForward;
+Handle OnPlayerPickupWeaponForward;
+Handle OnPlayerSwitchWeaponForward;
 Handle OnTakeDamageForward;
 Handle OnPlayerDeathForward;
 Handle OnPlayerEscapeForward;
@@ -126,15 +127,16 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     OnUnloadGM = CreateGlobalForward("SCP_OnUnload", ET_Event);
     OnRoundStartForward = CreateGlobalForward("SCP_OnRoundStart", ET_Event);
     OnRoundEndForward = CreateGlobalForward("SCP_OnRoundEnd", ET_Event);
-    OnClientJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_CellByRef);
-    OnClientLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_CellByRef);
+    OnPlayerJoinForward = CreateGlobalForward("SCP_OnPlayerJoin", ET_Event, Param_CellByRef);
+    OnPlayerLeaveForward = CreateGlobalForward("SCP_OnPlayerLeave", ET_Event, Param_CellByRef);
     PreClientSpawnForward = CreateGlobalForward("SCP_PrePlayerSpawn", ET_Event, Param_CellByRef);
-    OnClientSpawnForward = CreateGlobalForward("SCP_OnPlayerSpawn", ET_Event, Param_CellByRef);
+    OnPlayerSpawnForward = CreateGlobalForward("SCP_OnPlayerSpawn", ET_Event, Param_CellByRef);
     PostClientSpawnForward = CreateGlobalForward("SCP_PostPlayerSpawn", ET_Event, Param_CellByRef);
-    OnClientClearForward = CreateGlobalForward("SCP_OnPlayerClear", ET_Event, Param_CellByRef);
-    OnClientSetupOverlay = CreateGlobalForward("SCP_OnPlayerSetupOverlay", ET_Event, Param_CellByRef);
-    OnClientTakeWeaponForward = CreateGlobalForward("SCP_OnPlayerTakeWeapon", ET_Event, Param_CellByRef, Param_CellByRef);
-    OnClientSwitchWeaponForward = CreateGlobalForward("SCP_OnPlayerSwitchWeapon", ET_Event, Param_CellByRef, Param_CellByRef);
+    OnPlayerClearForward = CreateGlobalForward("SCP_OnPlayerClear", ET_Event, Param_CellByRef);
+    OnPlayerSetupOverlay = CreateGlobalForward("SCP_OnPlayerSetupOverlay", ET_Event, Param_CellByRef);
+    OnPlayerPickupItemForward = CreateGlobalForward("SCP_OnPlayerPickupItem", ET_Event, Param_CellByRef, Param_CellByRef);
+    OnPlayerPickupWeaponForward = CreateGlobalForward("SCP_OnPlayerPickupWeapon", ET_Event, Param_CellByRef, Param_CellByRef);
+    OnPlayerSwitchWeaponForward = CreateGlobalForward("SCP_OnPlayerSwitchWeapon", ET_Event, Param_CellByRef, Param_CellByRef);
     OnTakeDamageForward = CreateGlobalForward("SCP_OnTakeDamage", ET_Event, Param_CellByRef, Param_CellByRef, Param_FloatByRef, Param_CellByRef, Param_CellByRef);
     OnPlayerDeathForward = CreateGlobalForward("SCP_OnPlayerDeath", ET_Event, Param_CellByRef, Param_CellByRef);
     OnPlayerEscapeForward = CreateGlobalForward("SCP_OnPlayerEscape", ET_Event, Param_CellByRef, Param_CellByRef);
@@ -290,7 +292,7 @@ public void OnClientPostAdminCheck(int id)
     ply.SetHook(SDKHook_OnTakeDamage, OnTakeDamage);
     ply.SetHook(SDKHook_OnTakeDamageAlivePost, OnTakeDamageAlivePost);
 
-    Call_StartForward(OnClientJoinForward);
+    Call_StartForward(OnPlayerJoinForward);
     Call_PushCellRef(ply);
     Call_Finish();
 
@@ -324,8 +326,8 @@ public void OnClientDisconnect(int id)
         ply.RemoveHook(SDKHook_OnTakeDamage, OnTakeDamage);
         ply.RemoveHook(SDKHook_OnTakeDamageAlivePost, OnTakeDamageAlivePost);
 
-        Call_StartForward(OnClientLeaveForward);
-        Call_StartForward(OnClientClearForward);
+        Call_StartForward(OnPlayerLeaveForward);
+        Call_StartForward(OnPlayerClearForward);
         Call_PushCellRef(ply);
         Call_Finish();
 
@@ -396,7 +398,7 @@ public void PlayerSpawn(Player ply)
         ply.Team(team, sizeof(team));
         ply.class.GetString("name", class, sizeof(class));
         
-        Call_StartForward(OnClientSpawnForward);
+        Call_StartForward(OnPlayerSpawnForward);
         Call_PushCellRef(ply);
         Call_Finish();
 
@@ -574,7 +576,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
             FormatEx(timername, sizeof(timername), "ent-%i", ply.id);
             timer.RemoveIsContains(timername);
 
-            Call_StartForward(OnClientClearForward);
+            Call_StartForward(OnPlayerClearForward);
             Call_PushCellRef(ply);
             Call_Finish();
 
@@ -835,7 +837,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
         Call_PushCellRef(atk);
         Call_Finish();
 
-        Call_StartForward(OnClientClearForward);
+        Call_StartForward(OnPlayerClearForward);
         Call_PushCellRef(vic);
         Call_Finish();
 
@@ -972,7 +974,7 @@ public Action OnWeaponSwitch(int client, int iWeapon)
 
     if (ply && ply.class && ent)
     {
-        Call_StartForward(OnClientSwitchWeaponForward);
+        Call_StartForward(OnPlayerSwitchWeaponForward);
         Call_PushCellRef(ply);
         Call_PushCellRef(ent);
         Call_Finish();
@@ -1155,9 +1157,14 @@ public Action CB_EntUse(int entity, int client)
 
     if (ent.meta)
     {
-        if (ply.IsSCP && !ent.meta.SCPCanUse) return;
-        
         bool canpickup = true;
+
+        Call_StartForward(OnPlayerPickupItemForward);
+        Call_PushCellRef(ply);
+        Call_PushCellRef(ent);
+        Call_Finish(canpickup);
+
+        if (ply.IsSCP && !ent.meta.SCPCanUse && !canpickup) return;
         
         if (ent.meta.onpickup)
         {
@@ -1494,7 +1501,7 @@ public void WeaponIdUpdate(Base data)
                     ent.id = item;
                     ents.IndexUpdate(ent);
 
-                    Call_StartForward(OnClientTakeWeaponForward);
+                    Call_StartForward(OnPlayerPickupWeaponForward);
                     Call_PushCellRef(ply);
                     Call_PushCellRef(ent);
                     Call_Finish();
@@ -1520,7 +1527,7 @@ public void PlyHideOverlay(Player ply)
 {
     ply.HideOverlay();
     
-    Call_StartForward(OnClientSetupOverlay);
+    Call_StartForward(OnPlayerSetupOverlay);
     Call_PushCellRef(ply);
     Call_Finish();
 }
@@ -1625,7 +1632,7 @@ public void EscapeController(Player ply, int doorID)
             
             ply.inv.FullClear();
 
-            Call_StartForward(OnClientSpawnForward);
+            Call_StartForward(OnPlayerSpawnForward);
             Call_PushCellRef(ply);
             Call_Finish();
 

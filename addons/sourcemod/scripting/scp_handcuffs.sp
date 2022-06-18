@@ -66,7 +66,13 @@ public Action OnWeaponTake(int client, int iWeapon)
     return Plugin_Continue;
 }
 
-public void SCP_OnPlayerTakeWeapon(Player &ply, Entity &ent) {
+public bool SCP_OnPlayerPickupItem(Player &ply, Entity &ent) {
+    if(ply && ply.class && ply.GetBool("handcuffed")) return false;
+
+    return true;
+}
+
+public void SCP_OnPlayerPickupWeapon(Player &ply, Entity &ent) {
     if (ent.IsClass("weapon_taser") && ent.GetBool("firsttake", true))
     {
         ent.SetProp("m_iClip1", gamemode.plconfig.GetInt("ammocount", 3));
