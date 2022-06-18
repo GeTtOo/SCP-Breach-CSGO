@@ -569,6 +569,13 @@
                 "overlay":"eternity/overlays/scp-049_{lang}_fh",
                 "pos":{"vec":[-8455,975,2],"ang":[0,125,0]},
                 "doors":[455,761],
+                "sound":{
+                    "footsteps":[
+                        "*/eternity/scp/049/step1.mp3",
+                        "*/eternity/scp/049/step2.mp3",
+                        "*/eternity/scp/049/step3.mp3"
+                    ]
+                },
                 "comment":"The Doctor ʕ•ᴥ•ʔ"
             },
             "049_2": {
@@ -603,6 +610,13 @@
                 "handsmodel":"models/player/custom_player/eternity/arms/arms_scp106.mdl",
                 "overlay":"eternity/overlays/scp-106_{lang}_fh",
                 "pos":{"vec":[-11110,520,-365]},
+                "sound":{
+                    "footsteps":[
+                        "*/eternity/scp/106/step1.mp3",
+                        "*/eternity/scp/106/step2.mp3",
+                        "*/eternity/scp/106/step3.mp3"
+                    ]
+                },
                 "comment":"Ded"
             },
             "173": {

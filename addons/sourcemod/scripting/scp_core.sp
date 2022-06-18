@@ -207,6 +207,8 @@ public void OnMapStart()
     AddCommandListener(Command_GetMyPos, "getmypos");
     AddCommandListener(Command_GetEntsInBox, "getentsinbox");
 
+    AddNormalSoundHook(SoundHandler);
+
     if (gamemode.config.debug) AddCommandListener(Command_Debug, "debug");
 
     LoadMetaData();
@@ -238,6 +240,8 @@ public void OnMapEnd()
 
     if (gamemode.config.debug) RemoveCommandListener(Command_Debug, "debug");
     
+    RemoveNormalSoundHook(SoundHandler);
+
     Call_StartForward(OnUnloadGM);
     Call_Finish();
 
@@ -1193,6 +1197,28 @@ public void CB_EntTouch(int firstentity, int secondentity)
         Call_PushCellRef(ent1);
         Call_Finish();
     }
+}
+
+public Action SoundHandler(int clients[MAXPLAYERS], int &numClients, char sample[PLATFORM_MAX_PATH], int &entity, int &channel, float &volume, int &level, int &pitch, int &flags, char soundEntry[PLATFORM_MAX_PATH], int& seed)
+{
+	if (0 < entity <= MaxClients)
+	{
+		if (StrContains(sample, "physics") != -1 || StrContains(sample, "footsteps") != -1)
+		{
+			Player ply = player.GetByID(entity);
+			
+			if (ply && ply.class && ply.class.sound && ply.class.sound.GetArray("footsteps"))
+			{
+				char sound[128];
+				ply.class.sound.GetArray("footsteps").GetString(GetRandomInt(0, ply.class.sound.GetArray("footsteps").Length - 1), sound, sizeof(sound));
+				ply.PlayAmbient(sound);
+				
+				return Plugin_Stop;
+			}
+		}
+	}
+
+	return Plugin_Continue;
 }
 
 public int InventoryHandler(Menu hMenu, MenuAction action, int client, int idx)

@@ -103,6 +103,10 @@ methodmap Class < JSON_OBJECT {
         public get() { return view_as<EscapeInfo>(this.GetObject("escape")); }
     }
 
+    property JSON_OBJECT sound {
+        public get() { return view_as<JSON_OBJECT>(this.GetObject("sound")); }
+    }
+
     property JSON_ARRAY doors {
         public get() { return view_as<JSON_ARRAY>(this.GetObject("doors")); }
     }

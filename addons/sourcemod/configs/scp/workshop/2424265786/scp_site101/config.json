@@ -37,6 +37,7 @@
     "teleport": {
         "Tutorial room":{"vec":[1930,3962,2735],"ang":[-1,0,0]},
         "Train station":{"vec":[-7299,-4495,1876],"ang":[4,131,0]},
+        "Shelter train station":{"vec":[-7710,3424,1856],"ang":[1,-90,0]},
         "D spawn":{"vec":[-2195,-4950,0],"ang":[0,-138,0]},
         "MTF spawn":{"vec":[-10739,-5920,1712],"ang":[0,0,0]},
         "Chaos spawn":{"vec":[-7128,-5693,1712],"ang":[0,-135,0]},
@@ -147,13 +148,6 @@
             "multi":true,
             "inpvs":true,
             "healing":2500
-        },
-        "sound": {
-            "steps":[
-                "*/eternity/scp/049/step1.mp3",
-                "*/eternity/scp/049/step2.mp3",
-                "*/eternity/scp/049/step3.mp3"
-            ]
         }
     },
     "[SCP] 096": {
@@ -197,11 +191,6 @@
                 "*/eternity/scp/106/portal1.mp3",
                 "*/eternity/scp/106/portal2.mp3",
                 "*/eternity/scp/106/portal3.mp3"
-            ],
-            "steps":[
-                "*/eternity/scp/106/step1.mp3",
-                "*/eternity/scp/106/step2.mp3",
-                "*/eternity/scp/106/step3.mp3"
             ]
         }
     },

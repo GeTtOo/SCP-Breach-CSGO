@@ -67,12 +67,7 @@ public Action SoundHandler(int clients[MAXPLAYERS], int &numClients, char sample
 }
 
 public void SCP_OnLoad() {
-    AddNormalSoundHook(SoundHandler);
     HookEntityOutput("trigger_hurt", "OnStartTouch", OnTriggerActivated);
-}
-
-public void SCP_OnUnload() {
-    RemoveNormalSoundHook(SoundHandler);
 }
 
 public void SCP_OnPlayerSpawn(Player &ply) {
