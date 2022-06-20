@@ -78,7 +78,7 @@ public void SCP_OnLoad() {
 public void SCP_OnUnload() {
     gconfig.Dispose();
     gamemode.log.Debug("[Memory status] SCP-914 Recipes unload.");
-    //gamemode.timer.PluginClear();
+    //timer.PluginClear();
 }
 
 public void SCP_OnRoundStart() {
@@ -101,12 +101,12 @@ public void SCP_OnRoundStart() {
         gamemode.log.Debug("Using simple counter");
     }
 
-    gamemode.timer.PluginClear();
+    timer.PluginClear();
 }
 
 public void SCP_OnButtonPressed(Player &ply, int doorId) {
     if (doorId == gamemode.plconfig.GetInt("runbutton"))
-        gamemode.timer.Simple(gamemode.plconfig.GetInt("runtime") * 1000, "Transform", ply);
+        timer.Simple(gamemode.plconfig.GetInt("runtime") * 1000, "Transform", ply);
     
     if (doorId == gamemode.plconfig.GetInt("switchbutton"))
         if (gamemode.plconfig.GetBool("usemathcounter"))
@@ -226,8 +226,12 @@ public void Transform(Player ply) {
                     {
                         if (modifychance >= GetRandomInt(1, 100))
                         {
-                            ents.Create(oentclass).SetPos(oitempos, ent.GetAng()).Spawn();
-
+                            Base data = new Base();
+                            data.SetString("output", oentclass);
+                            data.SetHandle("vec", oitempos);
+                            data.SetHandle("ang", ent.GetAng());
+                            
+                            timer.Simple(100 * i, "CreateEntity", data);
                             ents.Remove(ent);
                         }
                         else
@@ -265,6 +269,13 @@ public void Transform(Player ply) {
     gamemode.log.Debug("Transforming iteration started by player %i (Mode: %s).\nFinded %i entities:%s", ply.id, curmode, entities.Length, entlist);
 
     delete entities;
+}
+
+public void CreateEntity(Base data) {
+    char entclass[64];
+    data.GetString("output", entclass, sizeof(entclass));
+    ents.Create(entclass).SetPos(view_as<Vector>(data.GetHandle("vec")), view_as<Angle>(data.GetHandle("ang"))).Spawn();
+    data.Dispose();
 }
 
 //////////////////////////////////////////////////////////////////////////////
