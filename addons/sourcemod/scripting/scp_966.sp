@@ -82,7 +82,11 @@ public void SCP_OnPlayerClear(Player &ply) {
         Format(timername, sizeof(timername), "SCP-966-SoundEffect-%i", ply.id);
         timer.RemoveByName(timername);
 
-        ply.RemoveValue("966_abcd");
+        if (ply.GetHandle("966_abtmr"))
+        {
+            timer.Remove(view_as<Tmr>(ply.GetHandle("966_abtmr")));
+            ply.RemoveValue("966_abtmr");
+        }
     }
 }
 
@@ -107,30 +111,36 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 
 public void SCP_OnCallAction(Player &ply)
 {
-    if (ply.class.Is("966") && !ply.GetBool("966_abcd"))
-    {
-        float abradius = float(gamemode.plconfig.GetInt("abradius", 250));
-        
-        char filter[1][32] = {"player"};
-        ArrayList players = ents.FindInBox(ply.GetPos() - new Vector(abradius, abradius, 400.0), ply.GetPos() + new Vector(abradius, abradius, 400.0), filter, sizeof(filter));
-
-        for (int i=0; i < players.Length; i++) {
-            Player target = players.Get(i);
+    if (ply.class.Is("966"))
+        if (!ply.GetHandle("966_abtmr"))
+        {
+            float abradius = float(gamemode.plconfig.GetInt("abradius", 250));
             
-            if (ply == target || target.IsSCP || !target.IsAlive()) continue;
+            char filter[1][32] = {"player"};
+            ArrayList players = ents.FindInBox(ply.GetPos() - new Vector(abradius, abradius, 400.0), ply.GetPos() + new Vector(abradius, abradius, 400.0), filter, sizeof(filter));
 
-            target.speed /= gamemode.plconfig.GetFloat("abcsr", 2.0);
-            
-            target.TimerSimple(4000, "SetNormalSpeed", target);
+            for (int i=0; i < players.Length; i++) {
+                Player target = players.Get(i);
+                
+                if (ply == target || target.IsSCP || !target.IsAlive()) continue;
+
+                target.speed /= gamemode.plconfig.GetFloat("abcsr", 2.0);
+                
+                target.TimerSimple(4000, "SetNormalSpeed", target);
+            }
+
+            delete players;
+
+            ply.SetHandle("966_abtmr", ply.TimerSimple(gamemode.plconfig.GetInt("abcd", 15) * 1000, "AbilityUnlock", ply));
         }
-
-        delete players;
-
-        ply.SetBool("966_abcd", true);
-        ply.TimerSimple(gamemode.plconfig.GetInt("abcd", 30) * 1000, "AbilityUnlock", ply);
-    }
-    else if (ply.class.Is("966") && ply.GetBool("966_abcd"))
-        ply.PrintWarning("%t", "Ability cooldown");
+        else
+        {
+            int cdsec = view_as<Tmr>(ply.GetHandle("966_abtmr")).GetTimeLeft();
+            char str[128];
+            FormatEx(str, sizeof(str), "%t", "Ability cooldown", cdsec);
+            if (ply.lang == 22) Utils.AddRuTimeChar(str, sizeof(str), cdsec);
+            ply.PrintWarning(str);
+        }
 }
 
 public void SetNormalSpeed(Player ply)
@@ -140,7 +150,7 @@ public void SetNormalSpeed(Player ply)
 
 public void AbilityUnlock(Player ply)
 {
-    ply.SetBool("966_abcd", false);
+    ply.RemoveValue("966_abtmr");
     ply.progress.Stop(false);
 }
 

@@ -68,7 +68,11 @@ public void SCP_OnPlayerClear(Player &ply)
 {
     if (ply && ply.class && ply.class.Is("457") && ply.InGame())
     {
-        ply.RemoveValue("457_abilitycd");
+        if (ply.GetHandle("457_abtmr"))
+        {
+            timer.Remove(view_as<Tmr>(ply.GetHandle("457_abtmr")));
+            ply.RemoveValue("457_abtmr");
+        }
 
         if (ply.ragdoll)
         {
@@ -80,32 +84,38 @@ public void SCP_OnPlayerClear(Player &ply)
 
 public void SCP_OnCallAction(Player &ply)
 {
-    if (ply.class.Is("457") && !ply.GetBool("457_abilitycd"))
-    {
-        float abradius = float(gamemode.plconfig.GetInt("abradius", 250));
-        
-        char filter[1][32] = {"player"};
-        ArrayList players = ents.FindInBox(ply.GetPos() - new Vector(abradius, abradius, 400.0), ply.GetPos() + new Vector(abradius, abradius, 400.0), filter, sizeof(filter));
-
-        for (int i=0; i < players.Length; i++) {
-            Player target = players.Get(i);
+    if (ply.class.Is("457"))
+        if (!ply.GetHandle("457_abtmr"))
+        {
+            float abradius = float(gamemode.plconfig.GetInt("abradius", 250));
             
-            if (ply == target || target.IsSCP || !target.IsAlive()) continue;
+            char filter[1][32] = {"player"};
+            ArrayList players = ents.FindInBox(ply.GetPos() - new Vector(abradius, abradius, 400.0), ply.GetPos() + new Vector(abradius, abradius, 400.0), filter, sizeof(filter));
 
-            IgniteEntity(target.id, float(gamemode.plconfig.GetInt("ignitetime", 20)));
+            for (int i=0; i < players.Length; i++) {
+                Player target = players.Get(i);
+                
+                if (ply == target || target.IsSCP || !target.IsAlive()) continue;
+
+                IgniteEntity(target.id, float(gamemode.plconfig.GetInt("ignitetime", 20)));
+            }
+
+            delete players;
+
+            ply.SetHandle("457_abtmr", ply.TimerSimple(gamemode.plconfig.GetInt("abcd", 15) * 1000, "AbilityUnlock", ply));
         }
-
-        delete players;
-
-        ply.SetBool("457_abilitycd", true);
-        ply.TimerSimple(gamemode.plconfig.GetInt("abcd", 15) * 1000, "AbilityUnlock", ply);
-    }
-    else if (ply.class.Is("457") && ply.GetBool("457_abilitycd"))
-        ply.PrintWarning("%t", "Ability cooldown");
+        else
+        {
+            int cdsec = view_as<Tmr>(ply.GetHandle("457_abtmr")).GetTimeLeft();
+            char str[128];
+            FormatEx(str, sizeof(str), "%t", "Ability cooldown", cdsec);
+            if (ply.lang == 22) Utils.AddRuTimeChar(str, sizeof(str), cdsec);
+            ply.PrintWarning(str);
+        }
 }
 
 public void AbilityUnlock(Player ply)
 {
-    ply.SetBool("457_abilitycd", false);
+    ply.RemoveValue("457_abtmr");
     ply.progress.Stop(false);
 }

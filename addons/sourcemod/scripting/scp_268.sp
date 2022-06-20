@@ -48,23 +48,17 @@ public void SCP_RegisterMetaData() {
 }
 
 public void OnUse(Player &ply, InvItem &item) {
-    if (!item.disabled) {
+    if (!item.tmr) {
         ply.model.SetRenderMode(RENDER_NONE);
         ply.progress.Start(15000, "InvisibleEffect");
         ply.PrintNotify("Вы ощущаете себя менее заметным");
-        item.CooldownStart(item.meta.cd * 1000, "ItemUnlocked", item);
-        item.disabled = true;
+        item.CooldownStart(item.meta.cd * 1000);
     }
 }
 
 public void OnDrop(Player &ply, InvItem &item) {
     ply.model.SetRenderMode(RENDER_NORMAL);
     ply.progress.Stop();
-}
-
-public void ItemUnlocked(InvItem item) {
-    item.disabled = false;
-    
 }
 
 public void InvisibleEffect(Player ply) {
