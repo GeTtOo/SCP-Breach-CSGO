@@ -1283,7 +1283,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
 
                     InvItem item = ply.inv.Get(StringToInt(itemid));
                     
-                    return (item.meta.onuse && !item.disabled) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED;
+                    return (item.meta.onuse && !item.tmr) ? ITEMDRAW_DEFAULT : ITEMDRAW_DISABLED;
                 }
                 case 1:
                 {
@@ -1313,27 +1313,36 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
             {
                 case 0:
                 {
-                    char bstr[64], fullstr[128];
-                    FormatEx(bstr, sizeof(bstr), "%T", "Inventory Use", ply.id);
-                    float timeremain = item.cdr - GetGameTime();
-                    if (timeremain <= 0.0) item.cdr = 0.0;
-                    if (item.cdr <= 0.0) return RedrawMenuItem(bstr);
-                    int min = RoundToNearest(timeremain) / 60;
-                    int sec = RoundFloat(timeremain) % 60;
-                    FormatEx(fullstr, sizeof(fullstr), (min < 10 ) ? ((sec < 10 ) ? "%s (0%i:0%i)" : "%s (0%i:%i)") : ((sec < 10 ) ? "%s (%i:0%i)" : "%s (%i:%i)"), bstr, min, sec);
-                    return RedrawMenuItem(fullstr);
+                    char str[128];
+                    if (item.meta.menu && item.meta.menu.use(str, sizeof(str))) if (TranslationPhraseExists(str)) // Because indentation error...
+                        FormatEx(str, sizeof(str), "%T", str, ply.id);
+                    else
+                        FormatEx(str, sizeof(str), "%T", "Item use", ply.id);
+                    if (!item.tmr) return RedrawMenuItem(str);
+                    if (item.meta.menu && item.meta.menu.cd(str, sizeof(str))) if (TranslationPhraseExists(str))
+                        FormatEx(str, sizeof(str), "%T", str, ply.id);
+                    else
+                        FormatEx(str, sizeof(str), "%T", "Item cooldown", ply.id);
+                    Utils.GetTimeString(str, sizeof(str), item.tmr.GetTimeLeft());
+                    return RedrawMenuItem(str);
                 }
                 case 1:
                 {
-                    char bstr[64];
-                    FormatEx(bstr, sizeof(bstr), "%T", "Inventory Info", ply.id);
-                    return RedrawMenuItem(bstr);
+                    char str[64];
+                    if (item.meta.menu && item.meta.menu.info(str, sizeof(str))) if (TranslationPhraseExists(str))
+                        FormatEx(str, sizeof(str), "%T", str, ply.id);
+                    else
+                        FormatEx(str, sizeof(str), "%T", "Item info", ply.id);
+                    return RedrawMenuItem(str);
                 }
                 case 2:
                 {
-                    char bstr[64];
-                    FormatEx(bstr, sizeof(bstr), "%T", "Inventory Drop", ply.id);
-                    return RedrawMenuItem(bstr);
+                    char str[64];
+                    if (item.meta.menu && item.meta.menu.drop(str, sizeof(str))) if (TranslationPhraseExists(str))
+                        FormatEx(str, sizeof(str), "%T", str, ply.id);
+                    else
+                        FormatEx(str, sizeof(str), "%T", "Item drop", ply.id);
+                    return RedrawMenuItem(str);
                 }
             }
         }
@@ -1846,7 +1855,7 @@ public Action Command_Kill(int client, const char[] command, int argc)
 {
     Player ply = player.GetByID(client);
 
-    if (ply.IsSCP)
+    if (ply && ply.IsSCP)
     {
         PrintToConsole(client, "Самоуйбиство за класс SCP запрещено!");
         return Plugin_Handled;
@@ -1861,7 +1870,7 @@ public Action Command_Base(int client, const char[] command, int argc)
 {
     Player ply = player.GetByID(client);
     
-    if (!ply.IsAdmin()) return Plugin_Stop;
+    if (ply && !ply.IsAdmin()) return Plugin_Stop;
 
     char arg1[32], arg2[32], arg3[32];
 
@@ -1871,17 +1880,26 @@ public Action Command_Base(int client, const char[] command, int argc)
 
     if (StrEqual(arg1, "timers", false))
     {
-        ArrayList timers = timer.GetArrayList("timers");
+        PrintToConsole(ply.id, "-----------------------------------------Timers----------------------------------------");
+        PrintToConsole(ply.id, "|                    Name                    |   delay   |  repeations  |  time left  |");
+        PrintToConsole(ply.id, "---------------------------------------------------------------------------------------");
 
-        PrintToConsole(ply.id, "---------------Timers---------------");
-
-        for (int i=0; i < timers.Length; i++)
+        for (int i=0; i < timer.list.Length; i++)
         {
-            char timername[64];
-            Tmr tmr = timers.Get(i);
-            tmr.name(timername, sizeof(timername));
-            PrintToConsole(ply.id, "Name: %s | delay: %.3f | repeations: %i", timername, tmr.delay, tmr.repeations);
+            char tmrname[45], tmrdelay[12], tmrrepeat[15], tmrtl[14];
+            Tmr tmr = timer.list.Get(i);
+            tmr.name(tmrname, sizeof(tmrname));
+            FormatEx(tmrdelay, sizeof(tmrdelay), "%.3f", tmr.delay);
+            FormatEx(tmrrepeat, sizeof(tmrrepeat), (tmr.repeations == 0) ? "loop" : "%i", tmr.repeations);
+            IntToString(tmr.GetTimeLeft(), tmrtl, sizeof(tmrtl));
+            while (strlen(tmrname) <= 43) Format(tmrname, sizeof(tmrname), "%s ", tmrname);
+            while (strlen(tmrdelay) <= 10) Format(tmrdelay, sizeof(tmrdelay), "%s ", tmrdelay);
+            while (strlen(tmrrepeat) <= 13) Format(tmrrepeat, sizeof(tmrrepeat), "%s ", tmrrepeat);
+            while (strlen(tmrtl) <= 12) Format(tmrtl, sizeof(tmrtl), "%s ", tmrtl);
+            PrintToConsole(ply.id, "|%s|%s|%s|%s|", tmrname, tmrdelay, tmrrepeat, tmrtl);
         }
+
+        PrintToConsole(ply.id, "---------------------------------------------------------------------------------------");
     }
     if (StrEqual(arg1, "se", false))
     {
@@ -1903,11 +1921,12 @@ public Action Command_Base(int client, const char[] command, int argc)
     if (StrEqual(arg1, "round", false))
     {
         if (StrEqual(arg2, "end", false))
-            (gamemode.mngr.IsWarmup) ? ServerCommand("mp_warmup_end") : gamemode.mngr.EndGame("restart");
+            if (gamemode.mngr.IsWarmup) { ServerCommand("mp_warmup_end"); PrintToConsole(ply.id, "Warmup has been forced to end..."); }
+            else { gamemode.mngr.EndGame("restart"); PrintToConsole(ply.id, "Game round has been forced to end"); }
         if (StrEqual(arg2, "lock", false))
-            gamemode.mngr.RoundLock = true;
+            { gamemode.mngr.RoundLock = true; PrintToConsole(ply.id, "Game round has locked"); }
         if (StrEqual(arg2, "unlock", false))
-            gamemode.mngr.RoundLock = false;
+            { gamemode.mngr.RoundLock = false; PrintToConsole(ply.id, "Game round unlocked"); }
         if (StrEqual(arg2, "status", false))
         {
             ArrayList GlobalTeams = new ArrayList(32);
@@ -1961,7 +1980,7 @@ public Action Command_Ents(int client, const char[] command, int argc)
 {
     Player ply = player.GetByID(client);
 
-    if (!ply.IsAdmin()) return Plugin_Stop;
+    if (ply && !ply.IsAdmin()) return Plugin_Stop;
 
     char arg[32];
 

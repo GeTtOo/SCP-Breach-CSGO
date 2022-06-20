@@ -83,6 +83,8 @@ methodmap Tmr < Base {
         public get() { return this.GetBool("active"); }
     }
 
+    public int GetTimeLeft() { return RoundToCeil(this.nextinvoke - GetGameTime()); }
+
     public void Dispose()
     {
         delete this;
@@ -103,7 +105,7 @@ methodmap Timers < Base {
 
     public native Tmr HideCreate(Handle ph, char[] name, float delay, int repeations, char[] funcname, any args);
 
-    public Tmr Create(char[] name, int delay, int repeations, char[] funcname, any args = false) {
+    public Tmr Create(char[] name, int delay, int repeations, char[] funcname = "", any args = false) {
         return this.HideCreate(GetMyHandle(), name, (float(delay) / float(1000)), repeations, funcname, args);
     }
 
@@ -160,7 +162,7 @@ methodmap Timers < Base {
                 }
     }
     
-    public Tmr Simple(int delay, char[] funcname, any args = false) {
+    public Tmr Simple(int delay, char[] funcname = "", any args = false) {
         char timername[64], pname[64];
         GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
         FormatEx(timername, sizeof(timername), "%s_%i_%i", pname, GetTime(), GetRandomInt(1, 1000000));
@@ -186,10 +188,13 @@ methodmap Timers < Base {
                 char funcname[64];
                 tmr.func(funcname, sizeof(funcname));
 
-                Call_StartFunction(tmr.ph, GetFunctionByName(tmr.ph, funcname));
-                if (tmr.args)
-                    Call_PushCell(tmr.args);
-                Call_Finish();
+                if (strlen(funcname) != 0)
+                {
+                    Call_StartFunction(tmr.ph, GetFunctionByName(tmr.ph, funcname));
+                    if (tmr.args)
+                        Call_PushCell(tmr.args);
+                    Call_Finish();
+                }
 
                 //if (!this.IsAlive(timer)) continue; // Dirty fix invalid handle error...
 

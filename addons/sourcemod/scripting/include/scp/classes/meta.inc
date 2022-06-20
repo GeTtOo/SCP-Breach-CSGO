@@ -112,6 +112,21 @@ methodmap ItemSoundMeta < Base {
     public bool drop(char[] buffer, int max_size = 0) { return (max_size == 0) ? this.SetString("drop", buffer) : this.GetString("drop", buffer, max_size); }
 }
 
+methodmap ItemMenuMeta < Base {
+
+    public ItemMenuMeta() {
+        return view_as<ItemMenuMeta>(new Base());
+    }
+
+    public bool use(char[] buffer, int max_size = 0) { return (max_size == 0) ? this.SetString("use", buffer) : this.GetString("use", buffer, max_size); }
+
+    public bool cd(char[] buffer, int max_size = 0) { return (max_size == 0) ? this.SetString("cd", buffer) : this.GetString("cd", buffer, max_size); }
+
+    public bool info(char[] buffer, int max_size = 0) { return (max_size == 0) ? this.SetString("info", buffer) : this.GetString("info", buffer, max_size); }
+
+    public bool drop(char[] buffer, int max_size = 0) { return (max_size == 0) ? this.SetString("drop", buffer) : this.GetString("drop", buffer, max_size); }
+}
+
 methodmap EntityMeta < Base {
 
     public EntityMeta() {
@@ -179,6 +194,11 @@ methodmap EntityMeta < Base {
         public get() { ItemSoundMeta val; return this.GetValue("sound", val) ? val : null; }
     }
 
+    property ItemMenuMeta menu {
+        public set(ItemMenuMeta val) { this.SetValue("menu", val); }
+        public get() { ItemMenuMeta val; return this.GetValue("menu", val) ? val : null; }
+    }
+
     public void name(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("name", buffer) : this.GetString("name", buffer, max_size); }
 
     public void model(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("model", buffer) : this.GetString("model", buffer, max_size); }
@@ -193,6 +213,7 @@ methodmap EntityMeta < Base {
         if (this.ondrop) delete this.ondrop.hndl;
         delete this.ondrop;
         delete this.sound;
+        delete this.menu;
         delete this;
     }
 }

@@ -28,6 +28,12 @@
  *
  **/
 
+enum TimeCharTypeRU {
+    Sec = 0,
+    Min,
+    Hour
+}
+
 methodmap Utils < StringMap {
     
     public static JSON_OBJECT JSONRead(char[] path)
@@ -77,5 +83,25 @@ methodmap Utils < StringMap {
         strcopy(outpath, 256, metapath);
         ReplaceString(outpath, 256, "{lang}", lang);
         ReplaceString(outpath, 256, "{name}", name);
+    }
+
+    public static void GetRuTimeChar(char[] charout, int sec, TimeCharTypeRU type = Sec)
+    {
+        switch (type)
+        {
+            case Sec: FormatEx(charout, 2, "%s%s", (sec % 10 == 1 && sec % 100 != 11) ? "а": (sec % 10 >= 2 && sec % 10 <= 4 && (sec % 100 < 10 || sec % 100 >= 20)) ? "ы" : "");
+            case Min: FormatEx(charout, 2, "%s%s", (sec % 10 == 1 && sec % 100 != 11) ? "а": (sec % 10 >= 2 && sec % 10 <= 4 && (sec % 100 < 10 || sec % 100 >= 20)) ? "ы" : "");
+            case Hour: FormatEx(charout, 2, "%s%s", (sec % 10 == 1 && sec % 100 != 11) ? "": (sec % 10 >= 2 && sec % 10 <= 4 && (sec % 100 < 10 || sec % 100 >= 20)) ? "а" : "ов");
+        }
+    }
+
+    public static void AddRuTimeChar(char[] charout, int max_size, int sec, TimeCharTypeRU type = Sec)
+    {
+        switch (type)
+        {
+            case Sec: Format(charout, max_size, "%s%s", charout, (sec % 10 == 1 && sec % 100 != 11) ? "а": (sec % 10 >= 2 && sec % 10 <= 4 && (sec % 100 < 10 || sec % 100 >= 20)) ? "ы" : "");
+            case Min: Format(charout, max_size, "%s%s", charout, (sec % 10 == 1 && sec % 100 != 11) ? "а": (sec % 10 >= 2 && sec % 10 <= 4 && (sec % 100 < 10 || sec % 100 >= 20)) ? "ы" : "");
+            case Hour: Format(charout, max_size, "%s%s", charout, (sec % 10 == 1 && sec % 100 != 11) ? "": (sec % 10 >= 2 && sec % 10 <= 4 && (sec % 100 < 10 || sec % 100 >= 20)) ? "а" : "ов");
+        }
     }
 }

@@ -34,19 +34,20 @@
 
 methodmap InvItem < Entity {
 
-    property bool disabled {
-        public set(bool value) { this.SetBool("disabled", value); }
-        public get() { return this.GetBool("disabled"); }
+    property Tmr tmr {
+        public set(Tmr value) { this.SetHandle("timer", value); }
+        public get() {
+            if (!timer.IsAlive(view_as<Tmr>(this.GetHandle("timer")))) this.RemoveValue("timer");
+            return view_as<Tmr>(this.GetHandle("timer"));
+        }
     }
 
-    property float cdr {
-        public set(float value) { this.SetFloat("cdr", value); }
-        public get() { return this.GetFloat("cdr"); }
-    }
-
-    public Tmr CooldownStart(int time, char[] funcname, any arg) {
-        this.cdr = GetGameTime() + float(time / 1000);
-        return this.TimerSimple(time, funcname, arg);
+    public Tmr CooldownStart(int time, char[] funcname = "", any args = false) {
+        char itemclass[64], timername[64];
+        this.GetClass(itemclass, sizeof(itemclass));
+        FormatEx(timername, sizeof(timername), "%s-cd|time-%i|seed-%i", itemclass, GetTime(), GetRandomInt(1, 1000000));
+        this.tmr = timer.Create(timername, time, 1, funcname, args);
+        return this.tmr;
     }
 }
 

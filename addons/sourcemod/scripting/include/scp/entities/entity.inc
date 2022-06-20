@@ -138,7 +138,7 @@ methodmap Entity < Base {
 
     public bool IsValid() { return (this.id != 5000 && IsValidEdict(this.id) && IsValidEntity(this.id) ? true : false); }
 
-    public Tmr TimerSimple(int delay, char[] funcname, any args = false) {
+    public Tmr TimerSimple(int delay, char[] funcname = "", any args = false) {
         char timername[64];
         FormatEx(timername, sizeof(timername), "ent-%i|time-%i|seed-%i", this.id, GetTime(), GetRandomInt(1, 1000000));
         return timer.Create(timername, delay, 1, funcname, args);
