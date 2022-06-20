@@ -233,21 +233,28 @@
         "chi"       "您的庫存是空的"
         "zho"       "您的库存是空的"
     }
-    "Inventory Use"
+    "Item use"
     {
         "en"        "Use"
         "ru"        "Использовать"
         "chi"       "利用"
         "zho"       "利用"
     }
-    "Inventory Info"
+    "Item cooldown"
+    {
+        "en"        "Reload"
+        "ru"        "Перезарядка"
+        "chi"       "充值"
+        "zho"       "充值"
+    }
+    "Item info"
     {
         "en"        "Info"
         "ru"        "Информация"
         "chi"       "信息"
         "zho"       "信息"
     }
-    "Inventory Drop"
+    "Item drop"
     {
         "en"        "Drop"
         "ru"        "Выбросить"
@@ -256,10 +263,11 @@
     }
     "Ability cooldown"
     {
-        "en"        "Ability cooldown"
-        "ru"        "Способность перезаряжается"
-        "chi"       "技能冷卻"
-        "zho"       "技能冷却"
+        "#format"   "{1:i}"
+        "en"        "Ability cooldown - {1} sec"
+        "ru"        "Способность перезаряжается - {1} секунд"
+        "chi"       "技能冷卻 - {1}"
+        "zho"       "技能冷却 - {1}"
     }
     "Door access denied"
     {
