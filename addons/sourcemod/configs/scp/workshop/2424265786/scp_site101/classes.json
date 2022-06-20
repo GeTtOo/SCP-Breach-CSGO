@@ -580,7 +580,17 @@
             "049_2": {
                 "autospawn":false,
                 "health":4500,
+                "model":{
+                    "id":"dclass",
+                    "bodygroups":{
+                        "base":0,
+                        "head":[0,1,2,3,4,5,6],
+                        "eyes":[0,1,2,3,4]
+                    },
+                    "skin":1
+                },
                 "handsmodel_":"models/player/custom_player/eternity/arms/arms_scp049-2.mdl",
+                "pos":{"vec":[-8351,1245,0],"ang":[0,180,0]},
                 "comment":"049-2"
             },
             "079": {
@@ -644,7 +654,7 @@
             },
             "966": {
                 "percent":20,
-                "health":5000,
+                "health":10000,
                 "speed":250,
                 "multipler":1.2,
                 "model":"models/player/custom_player/eternity/scp966.mdl",

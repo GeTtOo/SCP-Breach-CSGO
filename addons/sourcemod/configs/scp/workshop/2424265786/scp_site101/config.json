@@ -197,7 +197,7 @@
     "[SCP] 966": {
         "damage":10.0,
         "abradius":250,
-        "abcd":20,
+        "abcd":25,
         "abcsr":2.0,
         "sound": {
             "idle":[
