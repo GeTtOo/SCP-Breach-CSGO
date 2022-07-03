@@ -1044,7 +1044,7 @@ If it is necessary to carry out manipulations with the player:
 | getmypos                  | Output the current position to the console |
 | getentsinbox              | Display a list of objects around the player in the chat |
 | ents getall               | Output a list of object storage |
-| player getall             | Вывести список всех игроков |
+| player getall             | Display a list of all players |
 | player {ID} inv getall    | Show the inventory of a specific player |
 | player {ID} inv drop {ID} | Discard an item from the player's inventory |
 | gm round end              | Forcibly end the round |
