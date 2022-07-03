@@ -13,7 +13,7 @@ For any manipulations, it is recommended to use a text editor with support for s
 4. [Own items and their customization, access levels](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md#entitiesjson)
 5. [Pointers on the map](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md#regionsjson)
 6. [Spawn of items on the map](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md#spawnlistjson)
-7. [Recipes of SCP-914](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md#914json3)
+7. [Configuring additional plugins](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md#914json3)
 8. [List of commands](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BEN%5D%20Configuration.md#list-of-commands)
 
 ------------------
@@ -63,6 +63,13 @@ Not all parameters are required to be configured. If the parameter isn't specifi
 | doors     | \["Door 1", "Door 2"\]     | Door ID that will be opened when it appears. |
 | comment   | "Text"                      | Section for notes |
 
+Some parameters support the player's language affiliation. The {lang} parameter is responsible for this.
+
+Example:
+```json
+"overlay":"eternity/overlays/dclass_{lang}_fh"
+```
+
 ### Player's position when appearing  
 Setting up a player's position can consist of either a single line or a large array. In the second case, the players will be randomly assigned to the spots.  
 
@@ -88,17 +95,17 @@ Example:
 This method supports randomization of body groups and installation of skins.  
 
 The model is divided into several groups:  
-| Parameter      | Value     |
-| ------------- |------------- |
-| base    | Body                  |
-| head    | Head                |
-| eyes    | Eyes                 |
+| Parameter     | Value             |
+| ------------- |------------------ |
+| base    | Body                    |
+| head    | Head                    |
+| eyes    | Eyes                    |
 | helmet  | Helmet                  |
-| mask    | Face Accessories       |
-| chevron | Chevron                |
+| mask    | Face Accessories        |
+| chevron | Chevron                 |
 | armor   | Armor, waistcoat, etc.  |
-| belt    | Belt                |
-| legs    | Legs                  |
+| belt    | Belt                    |
+| legs    | Legs                    |
 | pl      | Pocket on the left leg  |
 | pr      | Pocket on the right leg |
 
@@ -192,35 +199,30 @@ In this file, the main parameters of the mod are configured.
 | DefaultClass | "Class name" | Default player class [^4] |
 | invsize | Integer | The maximum size of the player's inventory |
 | usablecards | true or false | Method of operation of access cards [^9] |
-| tsto | Integer | The time when the overlay with info is displayed to the player at the start of the round |
+| showoverlaytime  | Integer | The time when the information overlay is shown to the player at the beginning of the round |
 | psars | Integer | The time from the start of the round after which new players will stop spawning |
-| AdminRoom | \[0, 0, 0\] | Coordinates of the administrator's room [^5] |
 
-### Reinforcements  
+### Sounds  
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
-| time | Integer | The time, once in which the percentage of the dead to the living is checked |
-| ratiodeadplayers | Integer | The percentage of the dead to the living, which is necessary for the arrival of reinforcements |
-
-### Meta, models and body groups  
-This section contains information about the model that cannot be obtained from the game[^11].  
-
-| Parameter      | Value      | Details  |
-| ------------- |:-------------:| ---------|
-| id | "Name" | Short model ID (must be unique) |
-| path | "Path" | The path to the model |
-| bginf | \[0,0,0,0,0,0,0,0,0,0,0\] | Setting up body groups (more details below) |
-
-Bginf – information about the number of body groups in the model. At the moment, there are 11 body groups in the modification. You can find out more in [player class settings](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BRU%5D%20Configuration.md#classesjson). You need to specify the number of details for each body group.
-You can find out the quantity in Model Viewer from Valve (included in the CS:GO SDK) or by decompiling the model (a file with the extension QC).
+| menuselect | "The path to the file" | Menu selection sound |
+| idpadag | "The path to the file"  | Access panel sound - Passage is allowed |
+| idpadad | "The path to the file" | Access panel sound - Passage is denied |
 
 ### Alpha Warhead  
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
 | time | Integer | The time from the moment of activation to the explosion of the warhead |
+| ast | Integer | The time after which the automatic detonation of the complex will start |
+| autostart | true or false | Allow autorun of the warhead after the expiration of time |
 | killpos | Integer | The coordinate of the height below which all players will be killed in an explosion |
-| sound | "The path to the audio file" | The audio file that will be played when the warhead is activated |
-| cancelsound | "The path to the audio file" | The audio file that will be played when canceled |
+| immunedoors | \[0, 0, 0\] | Doors that won't open when the warhead is activated |
+
+**Sound Block:**  
+| Parameter      | Value      | Details  |
+| ------------- |:-------------:| ---------|
+| start | "The path to the sound file" | The audio file that will be played when the warhead is activated |
+| stop | "The path to the sound file" | The audio file that will be played when canceled |
 
 **Button Block:**  
 | Parameter      | Value      | Details  |
@@ -238,6 +240,12 @@ Example:
 "spawnlist":[{"pos":[0,0,0],"ang":[0,0,0],"color":[255,255,255],"size":15}]
 ```
 
+### Reinforcements  
+| Parameter      | Value      | Details  |
+| ------------- |:-------------:| ---------|
+| time | Integer | The time, once in which the percentage of the dead to the living is checked |
+| ratiodeadplayers | Integer | The percentage of the dead to the living, which is necessary for the arrival of reinforcements |
+
 ### Teleportation  
 You can place teleportation points on the map for faster movement by administrators of players or yourself.  
 The teleportation point is written in the format: `"Name":{"vec":[coordinates], "ang":[angle of rotation of the player's camera]}`  
@@ -246,8 +254,129 @@ The teleportation point is written in the format: `"Name":{"vec":[coordinates], 
 "D spawn":{"vec":[-2413,-5632,0],"ang":[0,0,0]},
 ```
 
+### Admin room and rights settings
+In this block, the coordinates of the administrator's room and the rights necessary for certain actions are configured.
+| Parameter      | Value      | Details  |
+| ------------- |:-------------:| ---------|
+| AdminRoom | \[0, 0, 0\] | Coordinates of the administrator's room [^5] |
+
+**Rights Block:**  
+| Parameter      | Value      | Details  |
+| ------------- |:-------------:| ---------|
+| SHOW_PLAYER_CLASS | "Admin flag" | Flag required to view the player class |
+| RESPAWN_PLAYER | "Admin flag" | The flag needed to revive the player |
+| TELEPORT | "Admin flag" | Flag required for player teleport |
+| REINFORCE | "Admin flag" | Flag required to call for reinforcements | 
+| GIVE_PLAYER_ITEM | "Admin flag" | Flag required for issuing items and weapons |
+| IGNORE_DOOR_ACCESS | "Admin flag" | Flag required to ignore access cards |
+| MOVE_TO_ADMIN_ZONE | "Admin flag" | The flag required to conduct a conversation with the player |
+| ROUND_RESTART | "Admin flag" | Flag required to restart the round |
+| DESTROY_SITE | "Admin flag" | The flag required to activate the system, destroy the complex |
+
+### Meta, models and body groups  
+This section contains information about the model that cannot be obtained from the game[^11].  
+
+| Parameter      | Value      | Details  |
+| ------------- |:-------------:| ---------|
+| id | "Name" | Short model ID (must be unique) |
+| path | "Path" | The path to the model |
+| bginf | \[0,0,0,0,0,0,0,0,0,0,0\] | Setting up body groups (more details below) |
+
+Bginf – information about the number of body groups in the model. At the moment, there are 11 body groups in the modification. You can find out more in [player class settings](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/docs/%5BRU%5D%20Configuration.md#classesjson). You need to specify the number of details for each body group.
+You can find out the quantity in Model Viewer from Valve (included in the CS:GO SDK) or by decompiling the model (a file with the extension QC).
+
+### \[Optional\] Tutorial[^6]  
+In this section, the points of appearance of players in the training area are configured according to their language affiliation.
+The language code is taken from Sourcemod.
+
+**Example:**
+```json
+"positions": {
+	"ru":{"vec":[2341,4350,1677],"ang":[0,90,0]},
+	"en":{"vec":[2735,3962,1677],"ang":[0,0,0]},
+	"chi":{"vec":[2347,3571,1677],"ang":[0,-90,0]},
+	"zho":{"vec":[2347,3571,1677],"ang":[0,-90,0]}
+}
+```
+
+### \[Optional\] Sapper[^6]  
+In this section, the parameters of the Sapper plugin are configured.
+
+| Parameter      | Value      | Подробно  |
+| ------------- |:-------------:| ---------|
+| bcmultipler | Integer | Explosive Damage Multiplier |
+| bccount | Integer | Maximum amount of explosives |
+
+### \[Опционально\] Handcuffs[^6]  
+In this section, the handcuffs are adjusted.
+
+| Parameter      | Value      | Details  |
+| ------------- |:-------------:| ---------|
+| ammocount | Integer | The amount of ammunition in the Taser |
+| breaktime | Integer | Time to get out of handcuffs |
+| breakingcd | Integer | Delay time between release attempts |
+| breakchance | Integer | Chance to get out of handcuffs [^1] |
+
+**Sound Block:**  
+An array of sounds is specified in this section (selected randomly).
+
+```json
+"sound": {
+	"breaking": [
+		"survival/buy_item_failed_01.wav",
+		"survival/buy_item_failed_02.wav"
+	],
+	"breaked": [
+		"player/winter/snowball_hit_01.wav",
+		"player/winter/snowball_hit_02.wav"
+	]
+}
+```
+
+**Command Configuration Block:**
+In this block, it is configured which team and which class the player will get after evacuation in handcuffs.
+
+| Parameter      | Value      | Details  | 
+| ------------- |:-------------:| ---------|
+| trigger | Integer | ID of the exit trigger |
+| team | "Team" | The team that the player will get |
+| class | "Class" | The class that the player will get |
+
+Example:
+```json
+"arrestedesc": {
+    "D Class": {
+	"trigger":330025,
+	"team":"MTF",
+	"class":"Cadet"
+    },
+    "Scientist": {
+	"trigger":689698,
+	"team":"Chaos",
+	"class":"Beta"
+    }
+```
+
+### \[Optional\] Voice[^6] 
+Voice chat settings are configured in this section.
+
+| Parameter      | Value      | Details  | 
+| ------------- |:-------------:| ---------|
+| wtid | Integer | ID world text ent |
+| transmissiontime | Integer | Intercom broadcast time |
+| cooldown | Integer | Intercom restart time |
+| buttonid | Integer | ID of the intercom button |
+| localdistance | Integer | The distance at which the player can be heard | 
+
+**Sound Block:**  
+| Parameter      | Value      | Details  |
+| ------------- |:-------------:| ---------|
+| start | "The path to the sound file" | The audio file that will be played when the broadcast starts |
+| stop | "The path to the sound file" | The audio file that will be played when the broadcast ends |
+
 ### \[Optional\] SCP-914[^6]  
 Any changes are highly not recommended![^3]  
+
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
 | usemathcounter | true or false | Mode selection (countername or switchbutton) |
@@ -258,25 +387,157 @@ Any changes are highly not recommended![^3]
 | searchzone | \[\[Coordinates\], \[Coordinates\]\] | Two vectors from which the item search cube is built [^7] |
 | distance | \[Coordinates\] | Displacement vector relative to the first camera [^8] |  
 
+**Sound Block:**  
+This section specifies the array of sounds that will be played when the player dies (selected randomly).
+
+```json
+"sound": {
+	"playerkill": [
+		"*/eternity/scp/914/player_rough.mp3"
+	]
+}
+```
+
 ### \[Optional\] SCP-049[^6]  
 The parameters listed below are configured in the "revive" block"
+
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
 | time | Integer | The time it will take to "heal" the player |
 | multi | true or false | "Heal" several players at once |
 | inpvs | true or false | Raise players in or around the 049 visibility zone |
 
+**Sound Block:**  
+This section specifies the array of sounds that will be played when walking SCP-049 (selected randomly).
+
+```json
+"sound": {
+	"steps": [
+                "*/eternity/scp/049/step1.mp3",
+                "*/eternity/scp/049/step2.mp3",
+                "*/eternity/scp/049/step3.mp3"
+	]
+}
+```
+
+### \[Optional\] SCP-096[^6]  
+**Exception Block:**  
+This section specifies the doors that SCP-096 will be able to knock out during aggression (works by the name of the model).
+
+```json
+"doortodestruction":[
+    "office_door",
+    "lite_door",
+    "heavy_door"
+],
+```
+
+**Sound Block:**  
+This section specifies the array of sounds that will be played when the door is knocked out (selected randomly).
+
+```json
+"sound": {
+	"doorbroke": [
+                "*/eternity/scp/096/doorbroke1.mp3",
+                "*/eternity/scp/096/doorbroke2.mp3",
+                "*/eternity/scp/096/doorbroke3.mp3"
+	]
+}
+```
+
+### \[Optional\] SCP-106[^6]  
+
+| Parameter      | Value      | Details  |
+| ------------- |:-------------:| ---------|
+| cell | \[\[Coordinates\], \[Coordinates\]\] | Coordinates of the SCP-106 cell |
+| ecop | Integer | Chance of getting out of the pocket dimension |
+| blockdoors | \[0, 0, 0\] | ID of doors that SCP-106 cannot pass through | 
+
+**Dimension Block:**  
+In this section, the exit points from the pocket dimension are indicated.
+
+```json
+"pocketout": {
+    "people": [
+	{"vec":[-11278,-2771,-1008],"ang":[0,-95,0]},
+	{"vec":[-5755,-7333,0],"ang":[0,130,0]},
+	{"vec":[-7365,-2160,0],"ang":[0,-130,0]},
+	{"vec":[-10411,-222,0],"ang":[3,91,0]}
+    ]
+}
+```
+
+**Sound Block:**  
+This section specifies the array of sounds that will be played when creating a portal to the dimension and the sounds of steps (selected randomly).
+
+```json
+"sound": {
+    "portal":[
+	"*/eternity/scp/106/portal1.mp3",
+	"*/eternity/scp/106/portal2.mp3",
+	"*/eternity/scp/106/portal3.mp3"
+    ],
+    "steps":[
+	"*/eternity/scp/106/step1.mp3",
+	"*/eternity/scp/106/step2.mp3",
+	"*/eternity/scp/106/step3.mp3"
+    ]
+}
+```
+
+### \[Optional\] SCP-996[^6]  
+
+| Parameter      | Value      | Details  |
+| ------------- |:-------------:| ---------|
+| damage | Floating spot number | Урон, наносимый ??? |
+| abradius | Integer | Range of the ability |
+| abcd | Integer | Ability Cooldown Time |
+| abcsr | Floating spot number | The multiplier of slowing down the victim's speed when activating the ability |
+
+**Sound Block:**  
+This section specifies the array of sounds that SCP-966 will emit (the state of calm and the state of hunting).
+
+```json
+"sound": {
+    "idle":[
+	"*/eternity/scp/966/idle1.mp3",
+	"*/eternity/scp/966/idle2.mp3",
+	"*/eternity/scp/966/idle3.mp3"
+    ],
+    "angry":[
+	"*/eternity/scp/966/angry1.mp3",
+	"*/eternity/scp/966/angry2.mp3",
+	"*/eternity/scp/966/angry3.mp3"
+    ]
+}
+```
+
 ### \[Optional\] SCP-173[^6]  
+
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
 | radius | Integer | The distance from player to SCP, which is necessary to trigger the lock when viewing and activate the blinking effect |
 | blinktime | Integer | After how many seconds the player will blink |
+| blinkrange | Integer | Teleport range when the victim blinks |
+| minhpscale | Integer | The amount of HP at which the ability multiplier will stop increasing |
 
 **Block of sounds:**  
-| Parameter      | Value      | Details  |
-| ------------- |:-------------:| ---------|
-| neckbroke | "The path to the sound file" | The sound that will be played when the player is killed |
-| death | "The path to the sound file" | The sound that will be played at the death of SCP-173 |
+This section specifies the array of sounds that will be played when SCP-173 kills or dies (selected randomly).
+
+```json
+"sound": {
+    "neckbroke":[
+	"*/eternity/scp/173/neck1.mp3",
+	"*/eternity/scp/173/neck2.mp3",
+	"*/eternity/scp/173/neck3.mp3"
+    ],
+    "death":[
+	"*/eternity/scp/173/death1.mp3",
+	"*/eternity/scp/173/death2.mp3",
+	"*/eternity/scp/173/death3.mp3"
+    ]
+}
+```
 
 Both parameters support randomization.  
 
@@ -296,32 +557,34 @@ Both parameters support randomization.
     "DefaultClass":"D Class",
     "invsize": 5,
     "usablecards":true,
-    "tsto":5,
+    "showoverlaytime":5,
     "psars": 30,
-    "AdminRoom": [-4890,-6340,0],
-    "reinforce":{
-        "time":180,
-        "ratiodeadplayers":60
-    },
-    "meta": {
-        "models": [
-            {"id":"dclass","path":"models/player/custom_player/eternity/d_class.mdl","bginf":[0,7,4,1,0,0,1,0,1,0,0]},
-            {"id":"scientist","path":"models/player/custom_player/eternity/scientists.mdl","bginf":[1,6,4,0,0,0,0,0,0,0,0]},
-            {"id":"mog","path":"models/player/custom_player/eternity/mog.mdl","bginf":[0,4,3,5,2,15,3,3,0,1,1]},
-            {"id":"chaos","path":"models/player/custom_player/eternity/chaos.mdl","bginf":[3,4,4,4,2,0,0,0,3,0,0]}
-        ]
+    "sound": {
+        "menuselect":"eternity/scp/menu/select.mp3",
+        "idpadag":"eternity/scp/other/{lang}/access_granted.mp3",
+        "idpadad":"eternity/scp/other/{lang}/access_denied.mp3"
     },
     "nuke": {
         "time":110,
+        "ast":1500,
+        "autostart":true,
         "killpos":1690,
-        "sound":"*/eternity/scp/warhead_announcement.mp3",
-        "cancelsound":"*/eternity/scp/warhead_canceled.mp3",
+        "sound": {
+            "start":"eternity/scp/other/{lang}/warhead_start.mp3",
+            "stop":"eternity/scp/other/{lang}/warhead_canceled.mp3"
+        },
         "buttons":{
             "ready":356001,
             "active":356023,
             "cancel":356001
         },
+        "immunedoors":[657,788],
+        "opendoors":[749,835],
         "spawnlist":[]
+    },
+    "reinforce":{
+        "time":180,
+        "ratiodeadplayers":60
     },
     "teleport": {
         "D spawn":{"vec":[-2413,-5632,0],"ang":[0,0,0]},
@@ -343,27 +606,181 @@ Both parameters support randomization.
         "SCP-914":{"vec":[3100,-2231,0],"ang":[0,0,0]},
         "SCP-996":{"vec":[-5406,2626,4],"ang":[-2,-1,0]}
     },
+    "AdminRoom": [-4890,-6340,0],
+        "AdminCommandsFlag": {
+        "SHOW_PLAYER_CLASS": "Admin_Ban",
+        "RESPAWN_PLAYER": "Admin_Ban",
+        "TELEPORT": "Admin_Ban",
+        "REINFORCE": "Admin_Custom1",
+        "GIVE_PLAYER_ITEM": "Admin_Custom1",
+        "IGNORE_DOOR_ACCESS": "Admin_Custom2",
+        "MOVE_TO_ADMIN_ZONE": "Admin_Ban",
+        "ROUND_RESTART": "Admin_Ban",
+        "DESTROY_SITE": "Admin_Custom2"
+    },
+    "meta": {
+        "models": [
+            {"id":"dclass","path":"models/player/custom_player/eternity/d_class.mdl","bginf":[0,7,4,1,0,0,1,0,1,0,0]},
+            {"id":"scientist","path":"models/player/custom_player/eternity/scientists.mdl","bginf":[1,6,4,0,0,0,0,0,0,0,0]},
+            {"id":"mtf","path":"models/player/custom_player/eternity/mog.mdl","bginf":[0,4,3,5,2,15,3,3,0,1,1]},
+            {"id":"chaos","path":"models/player/custom_player/eternity/chaos.mdl","bginf":[3,4,3,4,2,0,0,0,3,0,0]}
+        ]
+    },
+    "[SCP] Tutorial": {
+        "positions": {
+            "ru":{"vec":[2341,4350,1677],"ang":[0,90,0]},
+            "en":{"vec":[2735,3962,1677],"ang":[0,0,0]},
+            "cn":{"vec":[2347,3571,1677],"ang":[0,-90,0]}
+        }
+    },
+    "[SCP] Sapper": {
+        "bcmultipler":3,
+        "bccount":10
+    },
+    "[SCP] Handcuffs": {
+        "ammocount":5,
+        "breaktime":5,
+        "breakingcd":3,
+        "breakchance":20,
+        "cooldown":35,
+        "sound": {
+            "breaking": [
+                "survival/buy_item_failed_01.wav"
+            ],
+            "breaked": [
+                "player/winter/snowball_hit_01.wav"
+            ]
+        },
+        "arrestedesc": {
+            "D Class": {
+                "trigger":330025,
+                "team":"MTF",
+                "class":"Cadet"
+            },
+            "Scientist": {
+                "trigger":689698,
+                "team":"Chaos",
+                "class":"Beta"
+            }
+        }
+    },
+    "[SCP] Voice": {
+        "wtid":8,
+        "transmissiontime":10,
+        "cooldown":30,
+        "buttonid":946850,
+        "localdistance":800,
+        "sound": {
+            "start":"eternity/scp/other/intercom_start.mp3",
+            "stop":"eternity/scp/other/intercom_stop.mp3"
+        }
+    },
     "[SCP] 914": {
-        "usemathcounter":true,
+        "usemathcounter":false,
         "countername": "scp_914_logic_counter",
         "switchbutton": 443873,
         "runbutton": 516151,
         "runtime": 8,
         "searchzone":[[3630, -2072, 20],[3762, -1947, 90]],
-        "distance":[0, 425, 0]
+        "distance":[0, 425, -1],
+        "sound": {
+            "playerkill": [
+                "*/eternity/scp/914/player_rough.mp3"
+            ]
+        }
     },
     "[SCP] 049": {
         "revive":{
             "time":3,
             "multi":true,
-            "inpvs":true
+            "inpvs":true,
+            "healing":2500
+        },
+        "sound": {
+            "steps":[
+                "*/eternity/scp/049/step1.mp3",
+                "*/eternity/scp/049/step2.mp3",
+                "*/eternity/scp/049/step3.mp3"
+            ]
+        }
+    },
+    "[SCP] 096": {
+        "doortodestruction":[
+            "office_door",
+            "lite_door",
+            "heavy_door"
+        ],
+        "sound": {
+            "doorbroke":[
+                "*/eternity/scp/096/doorbroke1.mp3",
+                "*/eternity/scp/096/doorbroke2.mp3",
+                "*/eternity/scp/096/doorbroke3.mp3"
+            ]
+        }
+    },
+    "[SCP] 106": {
+        "cell":{"vec":[-11192,280,-245],"ang":[17,-43,0]},
+        "pocket":[-4306, 683, 2297],
+        "pocketout": {
+            "people": [
+                {"vec":[-11278,-2771,-1008],"ang":[0,-95,0]},
+                {"vec":[-5755,-7333,0],"ang":[0,130,0]},
+                {"vec":[-7365,-2160,0],"ang":[0,-130,0]},
+                {"vec":[-10411,-222,0],"ang":[3,91,0]}
+            ],
+            "scp": [
+                {"vec":[-5951,-6355,0],"ang":[2,90,0]},
+                {"vec":[-9278,2514,0],"ang":[3,-111,0]},
+                {"vec":[-5788,-1701,0],"ang":[3,179,0]},
+                {"vec":[-11527,726,-367],"ang":[0,-45,0]}
+            ]
+        },
+        "tfop":0,
+        "foan":{"vec":[-7351,-4148,1872],"ang":[0,-179,0]},
+        "ecop":25,
+        "blockdoors":[452,454,749,835],
+        "sound": {
+            "portal":[
+                "*/eternity/scp/106/portal1.mp3",
+                "*/eternity/scp/106/portal2.mp3",
+                "*/eternity/scp/106/portal3.mp3"
+            ],
+            "steps":[
+                "*/eternity/scp/106/step1.mp3",
+                "*/eternity/scp/106/step2.mp3",
+                "*/eternity/scp/106/step3.mp3"
+            ]
+        }
+    },
+    "[SCP] 966": {
+        "damage":7.0,
+        "abradius":250,
+        "abcd":20,
+        "abcsr":2.0,
+        "sound": {
+            "idle":[
+                "*/eternity/scp/966/idle1.mp3",
+                "*/eternity/scp/966/idle2.mp3",
+                "*/eternity/scp/966/idle3.mp3"
+            ],
+            "angry":[
+                "*/eternity/scp/966/angry1.mp3",
+                "*/eternity/scp/966/angry2.mp3",
+                "*/eternity/scp/966/angry3.mp3"
+            ]
         }
     },
     "[SCP] 173": {
         "radius":2000,
         "blinktime":5,
+        "blinkrange":580,
+        "minhpscale":3500,
         "sound": {
-            "neckbroke":"*/eternity/scp/173/neckbroke.mp3",
+            "neckbroke":[
+                "*/eternity/scp/173/neck1.mp3",
+                "*/eternity/scp/173/neck2.mp3",
+                "*/eternity/scp/173/neck3.mp3"
+            ],
             "death": [
                 "*/eternity/scp/173/death1.mp3",
                 "*/eternity/scp/173/death2.mp3",
@@ -407,6 +824,7 @@ A file for customizing your items (entity). We highly don't recommend any modifi
 | skin | Integer | Item Texture number |
 | access | Array of access levels | Access that the subject gives |
 | cooldown | Integer | Delay time after use |
+| sound | The path to the sound (or array) | Sound parameter (optional) |
 
 **Example:**  
 ```json
@@ -483,6 +901,21 @@ Example of randomization:
 ]
 ```
 
+Randomization is also supported without specifying a percentage (each position will have equal chances).
+
+Example of randomization without specifying a percentage:
+```json
+"navigator":[
+	[
+  	     {"vec":[-2718,-2907,33],"ang":[360,298,0],"comment":"Lite zone: Office"},
+ 	     {"vec":[-2211,-2873,40],"ang":[360,70,360],"comment":"Lite zone: Office"},
+  	     {"vec":[-2775,-3480,33],"ang":[360,74,360],"comment":"Lite zone: Office"},
+  	     {"vec":[-1325,-2426,24],"ang":[2,140,359],"comment":"Lite zone: Rest room"},
+  	     {"vec":[-1793,-2386,19],"ang":[359,115,1],"comment":"Lite zone: Rest room"} 
+	]
+]
+```
+
 ## [914.json](https://github.com/GeTtOo/SCP-Breach-CSGO/blob/main/addons/sourcemod/configs/scp/workshop/2424265786/scp_site101/914.json)[^3]
 
 If the module 914 is disabled, this configuration file is not used.  
@@ -516,11 +949,12 @@ If it is necessary to carry out manipulations with the player:
 ]
 ```
 
-4 effects are supported:
-1. Injure - Bleeding
-2. Regeneration - Health Regeneration
+5 effects are supported:
+1. Metamorphose - Temporary immortality and the possibility of opening all doors, but death within a minute
+2. Heal - Health regeneration (works only if the SCP_Medicine plugin is installed)
 3. Speed - Speed increase
 4. Butchering - Death by sawing into pieces
+5. Injure - Bleeding
 
 ------------------
 
@@ -570,7 +1004,7 @@ If it is necessary to carry out manipulations with the player:
 	},
         "fine": {
             "player": [
-                ["Regeneration", 50],
+                ["Heal", 50],
                 ["Speed", 50]
             ]
 	},
@@ -590,6 +1024,12 @@ If it is necessary to carry out manipulations with the player:
 
 ## List of commands  
 
+### Команды для игроков
+| Command       | Description       |
+| ------------- | ------------------|
+| game_ready    | Complete training |
+| trs           | Reset training    | 
+
 ### Commands for the Administrator 
 | Command       | Description |
 | ------------- | ---------|
@@ -599,19 +1039,27 @@ If it is necessary to carry out manipulations with the player:
 | ents getall   | Output a list of all entities in the repository to the console |
 
 ### Development commands (work only when the debug parameter is enabled)  
-| Command            | Description |
-| ------------------ | ---------|
-| getmypos           | Output the current position to the console |
-| getentsinbox       | Display a list of objects around the player in the chat |
-| debug set body     | Set the body group |
-| debug set skin     | Set Skin |
-| debug flashlight   | Turn on/off the flashlight |
-| debug nvgs         | Enable/disable NVD |
-| debug round end    | Forcibly end the round |
-| debug round lock   | Block a round |
-| debug round unlock | Unlock the round |
-| debug voice mute   | Disable the option to player {1} hear the player {2} (player id) |
-| debug voice unmute | Installation to player {1} ability to hear the player {2} (player id) |
+| Command                   | Description |
+| --------------------------| ------------|
+| getmypos                  | Output the current position to the console |
+| getentsinbox              | Display a list of objects around the player in the chat |
+| ents getall               | Output a list of object storage |
+| player getall             | Вывести список всех игроков |
+| player {ID} inv getall    | Show the inventory of a specific player |
+| player {ID} inv drop {ID} | Discard an item from the player's inventory |
+| gm round end              | Forcibly end the round |
+| gm round lock             | Block the round |
+| gm round unlock           | Unlock the round |
+| gm round status           | Round statistics |
+| gm timers                 | List of active timers |
+| gm se                     | Display a list of active status effects |
+| debug voice mute          | Disable the option to player {1} hear the player {2} (player id) |
+| debug voice unmute        | Installation to player {1} ability to hear the player {2} (player id) |
+| debug getground           | Show the type of surface under the player |
+| debug set body            | Set the body group |
+| debug set skin            | Set Skin |
+| debug flashlight          | Turn on/off the flashlight |
+| debug nvgs                | Enable/disable NVD |
 
 [^1]: ATTENTION! The total share should be 100!
 [^2]: Required to appear at the beginning of the round. For example: with a small number of players, you need at least one SCP. 
