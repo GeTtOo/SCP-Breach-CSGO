@@ -43,7 +43,7 @@ public Plugin myinfo = {
 };
 
 public void SCP_OnLoad() {
-    RegConsoleCmd("vip", Command_VIP);
+    RegAdminCmd("sm_vip", Command_VIP, ADMFLAG_CUSTOM5, "sm_vip");
 }
 
 public void SCP_OnPlayerJoin(Player &ply) {
@@ -77,10 +77,10 @@ public void SCP914_OnModify(Player &ply, int &ruinechance, int &modifychance) {
     }
 }
 
-public Action Command_VIP(int client, int argc)
+public Action Command_VIP(int client, int args)
 {
     VIP_Menu_Render(player.GetByID(client));
-    return Plugin_Continue;
+    return Plugin_Handled;
 }
 
 public void VIP_Menu_Render(Player ply)
