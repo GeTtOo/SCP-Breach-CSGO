@@ -43,89 +43,43 @@ public Plugin myinfo = {
 };
 
 public void SCP_OnLoad() {
-    AddCommandListener(Command_VIP, "say");
+    RegConsoleCmd("vip", Command_VIP);
 }
 
-public void SCP_OnUnload() {
-    RemoveCommandListener(Command_VIP, "say");
+public void SCP_OnPlayerJoin(Player &ply) {
+    if (ply.IsAdmin(Admin_Custom5)) ply.SetBool("IsVIP", true);
 }
 
-public void SCP_OnPlayerSpawn(Player &ply) {
-    if (GetAdminFlag(GetUserAdmin(ply.id), Admin_Custom5))
+public void SCP_PrePlayerSpawn(Player &ply) {
+    if (ply.IsAdmin(Admin_Custom5))
     {
+        char team[32];
+        ply.Team(team, sizeof(team));
+
         if (ply.class.Is("D Class") && ply.store.GetBool("vip_replace_dclass"))
-        {
-            char team[32];
-
-            ply.Team(team, sizeof(team));
-
             ply.class = gamemode.team(team).class("Medic");
-            ply.SetupBaseStats();
-        }
         else if (ply.class.Is("Scientist") && ply.store.GetBool("vip_replace_scientist"))
-        {
-            char team[32];
-
-            ply.Team(team, sizeof(team));
-
             ply.class = gamemode.team(team).class("Dr.Bright");
-            ply.SetupBaseStats();
-        }
         else if (ply.class.Is("Cadet") && ply.store.GetBool("vip_replace_cadet"))
-        {
-            char team[32];
-
-            ply.Team(team, sizeof(team));
-
             ply.class = gamemode.team(team).class("Sapper");
-            ply.SetupBaseStats();
-        }
         else if (ply.class.Is("Lieutenant") && ply.store.GetBool("vip_replace_lieutenant"))
-        {
-            char team[32];
-
-            ply.Team(team, sizeof(team));
-
             ply.class = gamemode.team(team).class("Lieutenant-Medic");
-            ply.SetupBaseStats();
-        }
     }
 }
 
 public void SCP914_OnModify(Player &ply, int &ruinechance, int &modifychance) {
-    if (GetAdminFlag(GetUserAdmin(ply.id), Admin_Custom5))
+    if (ply.IsAdmin(Admin_Custom5))
     {
         if ((ruinechance != -1))
-            if ((ruinechance - 25) >= 0)
-                ruinechance -= 25;
-            else
-                ruinechance = 0;
+            ((ruinechance - 25) >= 0) ? (ruinechance -= 25) : (ruinechance = 0);
                 
-        if ((modifychance + 25) <= 100)
-            modifychance += 25;
-        else
-            modifychance = 100;
+        ((modifychance + 25) <= 100) ? (modifychance += 25) : (modifychance = 100);
     }
 }
 
-public Action Command_VIP(int client, const char[] command, int argc)
+public Action Command_VIP(int client, int argc)
 {
-    Player ply = player.GetByID(client);
-    
-    char arg1[32];
-
-    GetCmdArg(1, arg1, sizeof(arg1));
-
-    if (StrEqual(arg1, "!vip") || StrEqual(arg1, "/vip") || StrEqual(arg1, "vip"))
-    {
-        if (GetAdminFlag(GetUserAdmin(ply.id), Admin_Custom5))
-            VIP_Menu_Render(ply);
-        else
-            PrintToChat(ply.id, "У вас нет доступа к данной команде!");
-
-        return Plugin_Stop;
-    }
-
+    VIP_Menu_Render(player.GetByID(client));
     return Plugin_Continue;
 }
 
@@ -133,10 +87,11 @@ public void VIP_Menu_Render(Player ply)
 {
     Menu hndl = new Menu(VIPMenuHandler, MenuAction_Select);
 
-    hndl.SetTitle("Меню VIP | Баланс: 0 Doge");
+    hndl.SetTitle("Меню VIP | Баланс: %i SCP coin", ply.store.GetInt("scpcoin"));
 
     hndl.AddItem("0", "Замена класса", ITEMDRAW_DEFAULT);
-    hndl.AddItem("1", "Вероятности SCP-914", ITEMDRAW_DISABLED);
+    hndl.AddItem("1", "Приобрести предмет", ITEMDRAW_DEFAULT);
+    hndl.AddItem("2", "Вероятности SCP-914", ITEMDRAW_DISABLED);
     
     hndl.Display(ply.id, 30);
 }
@@ -151,16 +106,17 @@ public int VIPMenuHandler(Menu hMenu, MenuAction action, int arg1, int idx)
             
             switch (idx)
             {
-                case 0:
-                VIP_Menu_Change_Class_Render(ply);
+                case 0: VIP_Menu_Change_Class_Menu(ply);
+                case 1: VIP_Menu_Buy_Item_Menu(ply);
             }
         }
+        case MenuAction_End: delete hMenu;
     }
 
     return 0;
 }
 
-public void VIP_Menu_Change_Class_Render(Player ply)
+public void VIP_Menu_Change_Class_Menu(Player ply)
 {
     Menu hndl = new Menu(VIP_Menu_Change_Class_Handler, MenuAction_DisplayItem | MenuAction_Select | MenuAction_End);
 
@@ -224,14 +180,24 @@ public int VIP_Menu_Change_Class_Handler(Menu hMenu, MenuAction action, int arg1
                     ply.store.SetBool("vip_replace_lieutenant", !ply.store.GetBool("vip_replace_lieutenant"));
             }
             
-            VIP_Menu_Change_Class_Render(ply);
+            VIP_Menu_Change_Class_Menu(ply);
         }
-        case MenuAction_End:
-        {
-            //if (arg1 == MenuEnd_Selected)
-            delete hMenu;
-        }
+        case MenuAction_End: delete hMenu;
     }
 
     return 0;
+}
+
+public void VIP_Menu_Buy_Item_Menu(Player ply)
+{
+    Menu hndl = new Menu(VIP_Menu_Change_Class_Handler, MenuAction_DisplayItem | MenuAction_Select | MenuAction_End);
+
+    hndl.SetTitle("Меню VIP");
+
+    hndl.AddItem("1", "", ITEMDRAW_DEFAULT);
+    hndl.AddItem("2", "", ITEMDRAW_DEFAULT);
+    hndl.AddItem("3", "", ITEMDRAW_DEFAULT);
+    hndl.AddItem("4", "", ITEMDRAW_DEFAULT);
+    
+    hndl.Display(ply.id, 30);
 }
