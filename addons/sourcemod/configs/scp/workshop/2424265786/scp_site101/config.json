@@ -119,7 +119,7 @@
     },
     "[SCP] Voice": {
         "wtid":8,
-        "transmissiontime":10,
+        "transmissiontime":20,
         "cooldown":30,
         "buttonid":946850,
         "localdistance":800,
