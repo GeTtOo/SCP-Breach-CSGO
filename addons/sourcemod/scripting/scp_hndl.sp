@@ -49,9 +49,19 @@ public void OnMapStart()
     AddCommandListener(Command_GetHndlSize, "hs");
 }
 
+public void OnMapEnd()
+{
+    RemoveCommandListener(Command_GetHndlSize, "hs");
+}
+
 public void SCP_OnRoundStart() {
-    gamemode.timer.Create("DumpHandles", 250, 0, "SaveHandles");
-    gamemode.timer.Simple(500, "CheckLeak");
+    SaveHandles();
+    //timer.Create("DumpHandles", 250, 0, "SaveHandles");
+    timer.Simple(500, "CheckLeak");
+}
+
+public void SCP_OnRoundEnd() {
+    SaveHandles();
 }
 
 public void CheckLeak() {

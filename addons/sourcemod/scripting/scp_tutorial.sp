@@ -74,22 +74,29 @@ public void SCP_OnRoundStart() {
 
 public void SCP_OnPlayerJoin(Player &ply)
 {
-    if (!ply.store.GetBool("tutorial", false))
+    if (!ply.store.GetBool("tutorial"))
         ply.ready = false;
 }
 
 public void SCP_PrePlayerSpawn(Player &ply) {
-    if (!ply.store.GetBool("tutorial", false))
+    if (!ply.store.GetBool("tutorial"))
     {
         ply.SetPropFloat("m_flNextDecalTime", 2.0);
         ply.Team("None");
         ply.class = tutorial;
         //ply.SetupBaseStats();
         
-        ply.TimerSimple(250, "TeleportToTutorialRoom", ply);
+        //ply.TimerSimple(250, "TeleportToTutorialRoom", ply);
         
         PlayAmbientTheme(ply);
-        if (!ply.GetHandle("tutor_sound")) ply.SetHandle("tutor_sound", ply.TimerSimple(180000, "PlayAmbientTheme", ply));
+        //if (!ply.GetHandle("tutor_sound")) ply.SetHandle("tutor_sound", ply.TimerSimple(180000, "PlayAmbientTheme", ply));
+    }
+}
+
+public void SCP_OnPlayerSpawn(Player &ply) {
+    if (!ply.store.GetBool("tutorial"))
+    {
+        TeleportToTutorialRoom(ply);
     }
 }
 
@@ -122,8 +129,14 @@ public void PlayAmbientTheme(Player ply)
 {
     char mapname[32];
     GetCurrentMap(mapname, sizeof(mapname));
+    
     if (StrEqual(mapname, "workshop/2424265786/scp_site101"))
-        ply.PlaySound("eternity/map/purrple-cat-edge-of-the-universe.wav", _, 25);
+    {
+        int clients[1];
+        clients[0] = ply.id;
+
+        EmitSound(clients, sizeof(clients), "eternity/map/purrple-cat-edge-of-the-universe.wav", ply.id, 1, 25);
+    }
 
     ply.SetHandle("tutor_sound", ply.TimerSimple(180000, "PlayAmbientTheme", ply));
 }

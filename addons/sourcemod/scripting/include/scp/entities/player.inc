@@ -136,7 +136,7 @@ methodmap Player < Entity {
 
     public bool IsAlive() { return IsPlayerAlive(this.id); }
 
-    public bool IsAdmin() { return GetAdminFlag(GetUserAdmin(this.id), Admin_Generic); }
+    public bool IsAdmin(AdminFlag flag = Admin_Generic) { return GetAdminFlag(GetUserAdmin(this.id), flag); }
 
     public bool InGame() { return IsClientInGame(this.id); }
 
@@ -198,6 +198,8 @@ methodmap Player < Entity {
     }
 
     public void PlaySound(char[] path, int channel = 1, int level = 100, int entity = 0) {
+        if (!this.ready) return;
+
         int clients[1];
         clients[0] = this.id;
 
@@ -220,6 +222,8 @@ methodmap Player < Entity {
     }
 
     public void PlayNonCheckSound(char[] path) {
+        if (!this.ready) return;
+
         char soundcommand[256];
         FormatEx(soundcommand, sizeof(soundcommand), "playgamesound %s", path);
         this.ExecCommand(soundcommand);

@@ -42,30 +42,6 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public Action SoundHandler(int clients[MAXPLAYERS], int &numClients, char sample[PLATFORM_MAX_PATH], int &entity, int &channel, float &volume, int &level, int &pitch, int &flags, char soundEntry[PLATFORM_MAX_PATH], int& seed)
-{
-	if (0 < entity <= MaxClients)
-	{
-		if (StrContains(sample, "physics") != -1 || StrContains(sample, "footsteps") != -1)
-		{
-			Player ply = player.GetByID(entity);
-			
-			if (ply && ply.class && ply.class.Is("106"))
-			{
-				char sound[128];
-				JSON_ARRAY sarr = gamemode.plconfig.GetObject("sound").GetArray("steps");
-				sarr.GetString(GetRandomInt(0, sarr.Length - 1), sound, sizeof(sound));
-				ply.PlayAmbient(sound);
-				//EmitSound(clients, numClients, sound, entity, channel, level, flags, volume, pitch);
-				
-				return Plugin_Stop;
-			}
-		}
-	}
-
-	return Plugin_Continue;
-}
-
 public void SCP_OnLoad() {
     HookEntityOutput("trigger_hurt", "OnStartTouch", OnTriggerActivated);
 }
@@ -114,12 +90,14 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
                     vic.SetBool("106_inpd", false);
                     
                     if (vic.GetHandle("106_tmrpdfo")) timer.Remove(view_as<Tmr>(vic.GetHandle("106_tmrpdfo")));
-
-                    return Plugin_Handled;
                 }
-                else if (damage > 25000.0) damage = 1000.0;
+                else if (vic.GetBool("106_lock"))
+                {
+                    damage = 1000.0;
+                    return Plugin_Changed;
+                }
 
-                return Plugin_Changed;
+                return Plugin_Handled;
             }
             default:
             {
@@ -189,6 +167,10 @@ public Action OnTriggerActivated(const char[] output, int caller, int activator,
         }
 
         delete players;
+        
+        char sound[128];
+        gamemode.plconfig.GetObject("sound").GetString("recontainment", sound, sizeof(sound));
+        gamemode.mngr.PlayNonCheckSoundToAll(sound);
 
         return Plugin_Continue;
     }
@@ -480,6 +462,7 @@ public int ActionsMenuHandler(Menu hMenu, MenuAction action, int client, int idx
                     }
                 }
         }
+        case MenuAction_End: delete hMenu;
     }
 
     return 0;

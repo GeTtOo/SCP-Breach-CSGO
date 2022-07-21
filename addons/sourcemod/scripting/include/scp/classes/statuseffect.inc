@@ -196,8 +196,6 @@ methodmap StatusEffectSingleton < Base {
                             Call_Finish();
                         }
                         
-                        if (!se) continue;
-                        
                         char name[64];
                         se.name(name, sizeof(name));
                         this.Remove(se.ply, name);

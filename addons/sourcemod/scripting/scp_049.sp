@@ -61,33 +61,38 @@ public Plugin myinfo = {
 
 public void SCP_OnInput(Player &ply, int buttons)
 {
-	if (buttons & IN_USE && ply.class.Is("049") && !ply.GetBool("049_reviving"))
+	if (ply.class.Is("049"))
 	{
-		if (buttons & IN_USE)
+		if (buttons & IN_USE && !ply.GetBool("049_reviving"))
 		{
-			char filter[1][32] = {"prop_ragdoll"};
-			ArrayList ragdolls = ents.FindInPVS(ply, _, _, filter);
-			
-			if (ragdolls.Length > 0)
+			if (buttons & IN_USE)
 			{
-				ply.SetBool("049_reviving", true);
-				ply.progress.Start((gamemode.plconfig.GetObject("revive").GetBool("multi", true)) ? gamemode.plconfig.GetObject("revive").GetInt("time", 3000) * 1000 * ragdolls.Length : gamemode.plconfig.GetObject("revive").GetInt("time", 3000) * 1000, "Revive");
-				ply.PrintNotify("Reviving");
+				char filter[1][32] = {"prop_ragdoll"};
+				ArrayList ragdolls = ents.FindInPVS(ply, _, _, filter);
+				
+				if (ragdolls.Length > 0)
+				{
+					ply.SetBool("049_reviving", true);
+					ply.progress.Start((gamemode.plconfig.GetObject("revive").GetBool("multi", true)) ? gamemode.plconfig.GetObject("revive").GetInt("time", 3000) * 1000 * ragdolls.Length : gamemode.plconfig.GetObject("revive").GetInt("time", 3000) * 1000, "Revive");
+					ply.PrintNotify("Reviving");
+				}
+
+				delete ragdolls;
 			}
 		}
-	}
 
-	if ((buttons & IN_FORWARD || buttons & IN_BACK || buttons & IN_MOVELEFT || buttons & IN_MOVERIGHT) && ply.class.Is("049") && ply.GetBool("049_reviving"))
-	{
-		ply.progress.Stop();
-		ply.SetBool("049_reviving", false);
-		//timer.Simple(3000, "ReviveUnlock", ply);
+		if ((buttons & IN_FORWARD || buttons & IN_BACK || buttons & IN_MOVELEFT || buttons & IN_MOVERIGHT) && ply.GetBool("049_reviving"))
+		{
+			ply.progress.Stop();
+			ply.SetBool("049_reviving", false);
+			//timer.Simple(3000, "ReviveUnlock", ply);
+		}
 	}
 }
 
 public void SCP_OnPlayerClear(Player &ply)
 {
-	if (ply && ply.class && ply.class.Is("049")) {
+	if (ply.class && ply.class.Is("049")) {
 		ply.RemoveValue("049_reviving");
 		ply.RemoveValue("049_lock");
 		ply.RemoveValue("049_saying");
@@ -136,7 +141,8 @@ public void Revive(Player ply)
 							//vic.SetBodyGroup("body", 0);
 							vic.model.SetSkin(vic.model.GetSkin() + 1);
 							
-							vic.SetPos(vic.ragdoll.GetPos(), ply.GetAng() - new Angle(0.0, 180.0, 0.0));
+							vic.SetHandle("049_2_vec", vic.ragdoll.GetPos());
+							vic.SetHandle("049_2_ang", ply.GetAng() - new Angle(0.0, 180.0, 0.0));
 
 							ply.health += gamemode.plconfig.GetInt("healing", 2500);
 						}
@@ -175,6 +181,16 @@ public void Revive(Player ply)
 		}
 
 		delete players;
+	}
+}
+
+public void SCP_PostPlayerSpawn(Player &ply)
+{
+	if (ply.class.Is("049_2") && ply.GetHandle("049_2_vec") && ply.GetHandle("049_2_ang"))
+	{
+		ply.SetPos(view_as<Vector>(ply.GetHandle("049_2_vec")), view_as<Angle>(ply.GetHandle("049_2_ang")));
+		ply.RemoveValue("049_2_vec");
+		ply.RemoveValue("049_2_ang");
 	}
 }
 

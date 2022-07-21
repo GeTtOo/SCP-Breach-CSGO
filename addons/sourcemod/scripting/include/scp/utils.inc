@@ -85,6 +85,11 @@ methodmap Utils < StringMap {
         ReplaceString(outpath, 256, "{name}", name);
     }
 
+    public static void GetTimeString(char[] str, int max_size, int time)
+    {
+        Format(str, max_size, (time / 60 < 10 ) ? ((time % 60 < 10 ) ? "%s (0%i:0%i)" : "%s (0%i:%i)") : ((time % 60 < 10 ) ? "%s (%i:0%i)" : "%s (%i:%i)"), str, time / 60, time % 60);
+    }
+
     public static void GetRuTimeChar(char[] charout, int sec, TimeCharTypeRU type = Sec)
     {
         switch (type)

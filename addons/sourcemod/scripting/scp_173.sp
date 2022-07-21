@@ -49,7 +49,8 @@ public void SCP_OnLoad()
 
 public void SCP_OnPlayerSpawn(Player &ply) 
 {
-    if (ply.class && ply.class.Is("173")) {
+    if (ply.class.Is("173"))
+    {
         char  timername[64];
         
         Format(timername, sizeof(timername), "SCP-173-VisChecker-%i", ply.id);
@@ -73,7 +74,7 @@ public void SCP_OnPlayerSpawn(Player &ply)
 
 public void SCP_OnPlayerClear(Player &ply)
 {
-    if (ply != null && ply.class != null && ply.class.Is("173")) {
+    if (ply.class && ply.class.Is("173")) {
         char  timername[64];
         Entity ent = view_as<Entity>(ply.GetHandle("173_holo"));
         
@@ -245,10 +246,7 @@ public void KillInPVS(Player ply, int radius)
 
 public void SCP_OnInput(Player &ply, int buttons)
 {
-    if (ply.class.Is("173") && !ply.GetBool("173_isvis") && buttons & IN_ATTACK)  // 2^0 +attack
-    {
-        KillInPVS(ply, 90);
-    }
+    if (ply.class.Is("173") && !ply.GetBool("173_isvis") && buttons & IN_ATTACK) KillInPVS(ply, 90); // 2^0 +attack
 }
 
 public void AbilityCooldown(Player ply)
@@ -265,18 +263,22 @@ public void SCP_OnCallAction(Player &ply)
         Entity ent = view_as<Entity>(ply.GetHandle("173_holo"));
 
         ply.SetPos(ent.GetPos());
-        
-        KillInPVS(ply, 175);
 
         delete ent;
 
+        KillInPVS(ply, 125);
         ply.SetBool("173_isvis", false);
         ply.SetBool("173_abready", false);
-
         ply.speed = ply.class.speed;
     }
     else if (ply.GetBool("173_isvis") && !ply.GetBool("173_abready"))
-        ply.PrintWarning("%t", "Ability cooldown");
+    {
+        int cdsec = view_as<Tmr>(ply.GetHandle("173_abtmr")).GetTimeLeft();
+        char str[128];
+        FormatEx(str, sizeof(str), "%t", "Ability cooldown", cdsec);
+        if (ply.lang == 22) Utils.AddRuTimeChar(str, sizeof(str), cdsec);
+        ply.PrintWarning(str);
+    }
 }
 
 public void RenderHologram(Player ply)

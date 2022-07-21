@@ -228,7 +228,9 @@ public void MedkitDeploy(Player &ply, InvItem &ent)
 }
 
 public void MedkitInit(Entity ent)
-{   
+{
+    if (!ent) return;
+    
     Vector pos = ent.GetPos();
     
     ent.meta.spawnflags = 4364; // Add motion disabled flag

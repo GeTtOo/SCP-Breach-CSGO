@@ -42,14 +42,9 @@ public Plugin myinfo = {
     url = "https://github.com/Eternity-Development-Team/csgo_scp"
 };
 
-public void SCP_OnPlayerJoin(Player &ply) 
-{
-    SDKHook(ply.id, SDKHook_OnTakeDamage, OnTakeDamage);
-}
-
 public void SCP_OnPlayerSpawn(Player &ply) {
-    if (ply.class.Is("096")) {
-
+    if (ply.class.Is("096"))
+    {
         char uid[32];
         FormatEx(uid, sizeof(uid), "ply_%i", ply.id);
         ply.SetKV("targetname", uid);
@@ -72,10 +67,10 @@ public void SCP_OnPlayerSpawn(Player &ply) {
         
         char  timername[64];
         Format(timername, sizeof(timername), "SCP-096-%i", ply.id);
-        gamemode.timer.Create(timername, 250, 0, "CheckVisualContact", ply);
+        timer.Create(timername, 250, 0, "CheckVisualContact", ply);
 
         Format(timername, sizeof(timername), "SCP-096-S-%i", ply.id);
-        gamemode.timer.Create(timername, 46000, 0, "Crying", ply);
+        timer.Create(timername, 46000, 0, "Crying", ply);
 
         Crying(ply);
     }
@@ -83,8 +78,9 @@ public void SCP_OnPlayerSpawn(Player &ply) {
 
 public void SCP_OnPlayerClear(Player &ply)
 {
-    if (ply.class && ply.class.Is("096")) {
-        view_as<Entity>(ply.GetHandle("096_ambient_cry")).Input("StopSound").Remove();
+    if (ply.class && ply.class.Is("096"))
+    {
+        if (ply.GetHandle("096_ambient_cry")) view_as<Entity>(ply.GetHandle("096_ambient_cry")).Input("StopSound").Remove();
         ply.RemoveValue("096_ambient_cry");
         ply.RemoveValue("096_IsRage");
         ply.RemoveValue("096_cooldown");
@@ -92,16 +88,15 @@ public void SCP_OnPlayerClear(Player &ply)
         
         char  timername[64];
         Format(timername, sizeof(timername), "SCP-096-%i", ply.id);
-        gamemode.timer.RemoveByName(timername);
+        timer.RemoveByName(timername);
 
         Format(timername, sizeof(timername), "SCP-096-S-%i", ply.id);
-        gamemode.timer.RemoveByName(timername);
+        timer.RemoveByName(timername);
     }
 }
 
-public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
+public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype, int &inflictor)
 {
-	Player atk = player.GetByID(attacker);
 	if (atk == null || atk.class == null) return Plugin_Continue;
 
 	if(atk.class.Is("096"))
@@ -205,7 +200,7 @@ public void CheckVisualContact(Player ply)
 
                 char  timername[64];
                 Format(timername, sizeof(timername), "SCP-096-S-%i", ply.id);
-                gamemode.timer.RemoveByName(timername);
+                timer.RemoveByName(timername);
                 
                 ply.TimerSimple(5500, "Rage", ply);
                 view_as<Entity>(ply.GetHandle("096_ambient_cry")).Input("StopSound");
@@ -250,7 +245,7 @@ public void Tranquility(Player ply) {
 public void StartCrying(Player ply) {
     char  timername[128];
     Format(timername, sizeof(timername), "SCP-096-S-%i", ply.id);
-    gamemode.timer.Create(timername, 46000, 0, "Crying", ply);
+    timer.Create(timername, 46000, 0, "Crying", ply);
 
     Crying(ply);
 }

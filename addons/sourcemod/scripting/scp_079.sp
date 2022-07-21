@@ -30,7 +30,6 @@
 
 #include <sdkhooks>
 #include <scpcore>
-#include <json>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -43,78 +42,166 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-ArrayList CamList;
+methodmap Camera < Base {
+
+    public Camera(Entity ent) {
+        Camera cam = view_as<Camera>(new Base());
+        
+        cam.SetHandle("ent", ent);
+
+        return cam;
+    }
+
+    property Entity ent {
+        public set(Entity val) { this.SetHandle("ent", val); }
+        public get() { return view_as<Entity>(this.GetHandle("ent")); }
+    }
+
+    property bool lock {
+        public set(bool val) { this.SetBool("locked", val); }
+        public get() { return this.GetBool("locked"); }
+    }
+}
 
 methodmap Controller < Base {
     
-    property Entity current {
-        public set(Entity val) { this.SetValue("current", val); }
-        public get() { Entity val; this.GetValue("current", val); return val; }
+    public Controller(Player ply) {
+        Controller self = view_as<Controller>(new Base());
+        self.SetHandle("player", ply);
+        self.CreateArrayList("camlist");
+
+        return self;
     }
 
-    property bool locked {
+    property Player ply {
+        public get() { return view_as<Player>(this.GetHandle("player")); }
+    }
+
+    property Camera curcam {
+        public set(Camera val) { this.SetHandle("curcam", val); }
+        public get() { return view_as<Camera>(this.GetHandle("curcam")); }
+    }
+
+    property bool lock {
         public set(bool val) { this.SetBool("locked", val); }
         public get() { return this.GetBool("locked"); }
     }
 
-    public void Set(Entity camera) {
-        Player ply;
-        this.GetValue("player", ply);
+    property ArrayList camlist {
+        public get() { return this.GetArrayList("camlist"); }
+    }
 
-        float CameraAngle[3];
-        camera.GetAng().GetArr(CameraAngle);
-        ply.SetPos(camera.GetPos() - new Vector(0.0,0.0,75.0), new Angle(CameraAngle[0] + 25, CameraAngle[1], 0.0));
-        this.current = camera;
+    public void Init() {
+        int entId = 0;
+        while ((entId = FindEntityByClassname(entId, "prop_dynamic")) != -1) {
+            if (!IsValidEntity(entId)) continue;
+
+            char ModelName[128];
+            GetEntPropString(entId, Prop_Data, "m_ModelName", ModelName, sizeof(ModelName));
+
+            if (StrEqual(ModelName, "models/freeman/cctv_camera_fisheye.mdl"))
+            {
+                this.camlist.Push(new Camera(new Entity(entId)));
+            }
+        }
+
+        SetEntityMoveType(this.ply.id, MOVETYPE_NONE);
+        this.ply.model.SetRenderMode(RENDER_NONE);
+        this.ply.model.scale = 0.01;
+
+        this.ply.SetProp("m_iHideHUD", 4112); // 1<<12|1<<4 || 2^12 + 2^4
+
+        ClientCommand(this.ply.id, "r_screenoverlay models/scp/camera_effect");
+    }
+
+    public void Set(Camera camera) {
+        Angle ang = camera.ent.GetAng();
+        ang.x += 25.0;
+        ang.z = 0.0;
+        this.ply.SetPos(camera.ent.GetPos() - new Vector(0.0,0.0,75.0), ang);
+        this.curcam = camera;
     }
 
     public void Next() {
-        this.current = CamList.Get((CamList.FindValue(this.current) + 1) > CamList.Length - 1  ? 0 : CamList.FindValue(this.current) + 1);
-        this.Set(this.current);
+        this.curcam = this.camlist.Get((this.camlist.FindValue(this.curcam) + 1) > this.camlist.Length - 1  ? 0 : this.camlist.FindValue(this.curcam) + 1);
+        this.Set(this.curcam);
     }
 
     public void Prev() {
-        this.current = CamList.Get((CamList.FindValue(this.current) - 1) < 0 ? CamList.Length - 1 : CamList.FindValue(this.current) - 1);
-        this.Set(this.current);
+        this.curcam = this.camlist.Get((this.camlist.FindValue(this.curcam) - 1) < 0 ? this.camlist.Length - 1 : this.camlist.FindValue(this.curcam) - 1);
+        this.Set(this.curcam);
     }
 
-    public Controller(Player ply) {
-        Controller self = view_as<Controller>(new Base());
-        self.SetValue("player", ply);
-        self.SetValue("current", CamList.Get(0));
-        self.Set(self.current);
-
-        return self;
-    }
-}
-
-public void SCP_OnRoundStart() {
-    CamList = new ArrayList();
-
-    int entId = 0;
-    while ((entId = FindEntityByClassname(entId, "prop_dynamic")) != -1) {
-        if (!IsValidEntity(entId)) continue;
-
-        char ModelName[128];
-        GetEntPropString(entId, Prop_Data, "m_ModelName", ModelName, sizeof(ModelName));
-
-        if (StrEqual(ModelName, "models/freeman/cctv_camera_fisheye.mdl"))
-            CamList.Push(new Entity(entId));
+    public void Dispose() {
+        delete this.camlist;
     }
 }
 
 public void SCP_OnPlayerSpawn(Player &ply) {
-    if (ply.class.Is("079")) {
-        SetEntityMoveType(ply.id, MOVETYPE_NONE);
-        SetEntityRenderMode(ply.id, RENDER_NONE);
-        SetEntProp(ply.id, Prop_Send, "m_iHideHUD", 4112); // 1<<12|1<<4 || 2^12 + 2^4
-        SetEntPropFloat(ply.id, Prop_Send, "m_flModelScale", 0.01);
-        ply.SetValue("camcontrol", new Controller(ply));
-        ClientCommand(ply.id, "r_screenoverlay models/scp/camera_effect");
-        char timername[32];
-        Format(timername, sizeof(timername), "SCP-079_timeupd_", ply.id);
-        gamemode.timer.Create(timername, 1000, 0, "TimeUpdate", ply);
-        TimeUpdate(ply);
+    if (ply.class.Is("079"))
+    {
+        Controller controller = new Controller(ply);
+        
+        controller.Init();
+        controller.curcam = controller.camlist.Get(0);
+        
+        ply.SetHandle("079_controller", controller);
+        
+        //char timername[32];
+        //Format(timername, sizeof(timername), "SCP-079_timeupd_", ply.id);
+        //timer.Create(timername, 1000, 0, "TimeUpdate", ply);
+        //TimeUpdate(ply);
     }
+}
+
+public void SCP_OnPlayerClear(Player &ply) {
+    if (ply && ply.class && ply.class.Is("079"))
+    {
+        view_as<Controller>(ply.GetHandle("079_controller")).Dispose();
+
+        ply.HideOverlay();
+    }
+
+    //char timername[32];
+    //Format(timername, sizeof(timername), "SCP-079_timeupd_", ply.id);
+    //timer.RemoveByName(timername);
+}
+
+public void SCP_OnPlayerSetupOverlay(Player &ply) {
+    if (ply && ply.class && ply.class.Is("079"))
+        ply.ShowOverlay("eternity/overlays/079");
+}
+
+public void SCP_OnInput(Player &ply, int buttons)
+{
+    if (ply.class.Is("079") && ply.IsAlive())
+    {
+        Controller controller = view_as<Controller>(ply.GetHandle("079_controller"));
+
+        if (!controller.lock)
+        {
+            Camera curcam = controller.curcam;
+
+            if (buttons & IN_ATTACK) // 2^0 +attack
+                controller.Next();
+            else if (buttons & IN_ATTACK2) // 2^11 +attack2
+                controller.Prev();
+
+            if (controller.curcam != curcam) {
+                controller.lock = true;
+                ply.TimerSimple(250, "CameraUnlock", ply);
+            }
+        }
+    }
+}
+
+public void SCP_OnCallAction(Player &ply) {
+    if (ply.class.Is("079"))
+        ActionsMenu(ply);
+}
+
+public void CameraUnlock(Player ply) {
+    view_as<Controller>(ply.GetHandle("079_controller")).lock = false;
 }
 
 public void TimeUpdate(Player ply) {
@@ -127,65 +214,6 @@ public void TimeUpdate(Player ply) {
     FormatTime(date, sizeof(date), "%d/%m/%y");
     SetHudTextParams(0.025, 0.915, 1.0, 200, 200, 200, 190);
     ShowHudText(ply.id, 53, date);
-}
-
-public void SCP_OnPlayerReset(Player &ply) {
-    Controller Camera;
-    ply.GetValue("camcontrol", Camera);
-    delete Camera;
-
-    char timername[32];
-    Format(timername, sizeof(timername), "SCP-079_timeupd_", ply.id);
-    gamemode.timer.Remove(timername);
-
-    ClientCommand(ply.id, "r_screenoverlay off");
-}
-
-public void SCP_OnPlayerDeath(Player &ply) {
-    Controller Camera;
-    ply.GetValue("camcontrol", Camera);
-    delete Camera;
-
-    char timername[32];
-    Format(timername, sizeof(timername), "SCP-079_timeupd_", ply.id);
-    gamemode.timer.Remove(timername);
-
-    ClientCommand(ply.id, "r_screenoverlay off");
-}
-
-public void SCP_OnInput(Player &ply, int buttons)
-{
-    if (ply.class.Is("079") && IsPlayerAlive(ply.id))
-    {
-        Controller Camera;
-        ply.GetValue("camcontrol", Camera);
-
-        if (!Camera.locked)
-        {
-            Entity curcam = Camera.current;
-
-            if (buttons & IN_ATTACK) // 2^0 +attack
-                Camera.Next();
-            else if (buttons & IN_ATTACK2) // 2^11 +attack2
-                Camera.Prev();
-
-            if (Camera.current != curcam) {
-                Camera.locked = true;
-                gamemode.timer.Simple(250, "CameraUnlock", ply);
-            }
-        }
-    }
-}
-
-public void CameraUnlock(Player ply) {
-    Controller Camera;
-    ply.GetValue("camcontrol", Camera);
-    Camera.locked = false;
-}
-
-public void SCP_OnCallActionMenu(Player &ply) {
-    if (ply.class.Is("079"))
-        ActionsMenu(ply);
 }
 
 public void ActionsMenu(Player ply) {
@@ -205,7 +233,7 @@ public int ActionsMenuHandler(Menu hMenu, MenuAction action, int client, int ite
     {
         delete hMenu;
     }
-    else if (action == MenuAction_Select) 
+    else if (action == MenuAction_Select)
     {
         PrintToChat(client, "Test");
     }

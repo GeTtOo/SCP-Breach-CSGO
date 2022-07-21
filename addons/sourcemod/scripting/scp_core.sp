@@ -156,14 +156,17 @@ public void OnPluginStart()
     LoadTranslations("scpcore.regions");
     LoadTranslations("scpcore.entities");
     LoadTranslations("scpcore.logs");
-
-    RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_GENERIC);
     
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_prestart", OnRoundPreStart);
     HookEvent("player_death", Event_PlayerDeath, EventHookMode_Pre);
     
     HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
+
+    RegAdminCmd("gm", Command_Base, ADMFLAG_ROOT);
+    RegAdminCmd("ents", Command_Ents, ADMFLAG_ROOT);
+    RegAdminCmd("player", Command_Player, ADMFLAG_ROOT);
+    RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_GENERIC);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -202,9 +205,6 @@ public void OnMapStart()
     gamemode.collisiongroup = FindSendPropInfo("CBaseEntity", "m_CollisionGroup");
     gamemode.mngr.CreateEscapeZoneList();
 
-    AddCommandListener(Command_Base, "gm");
-    AddCommandListener(Command_Ents, "ents");
-    AddCommandListener(Command_Player, "player");
     AddCommandListener(Command_Kill, "kill");
     AddCommandListener(Command_GetMyPos, "getmypos");
     AddCommandListener(Command_GetEntsInBox, "getentsinbox");
@@ -233,9 +233,6 @@ public void OnMapEnd()
 {
     if (!modloaded) return;
 
-    RemoveCommandListener(Command_Base, "gm");
-    RemoveCommandListener(Command_Ents, "ents");
-    RemoveCommandListener(Command_Player, "player");
     RemoveCommandListener(Command_Kill, "kill");
     RemoveCommandListener(Command_GetMyPos, "getmypos");
     RemoveCommandListener(Command_GetEntsInBox, "getentsinbox");
@@ -279,7 +276,7 @@ public void OnClientPostAdminCheck(int id)
 {
     Player ply = player.Add(id);
 
-    if(GetAdminFlag(GetUserAdmin(id), Admin_Generic)) AdminMenu.Add(ply);
+    if(ply.IsAdmin()) AdminMenu.Add(ply);
 
     char clientname[32];
     ply.GetName(clientname, sizeof(clientname));
@@ -585,7 +582,6 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
             ply.class = null;
             ply.inv.Clear();
             ply.progress.Stop(false);
-            ply.SetBool("ActionAvailable", true);
             
             ply.RestrictWeapons();
 
@@ -776,18 +772,20 @@ public void OnTakeDamageAlivePost(int victim, int attacker, int inflictor, float
 
             if (logchange) return;
 
-            char vicname[32], vicauth[32];
+            char vicname[32], vicauth[32], victeam[32];
             vic.GetName(vicname, sizeof(vicname));
             vic.GetAuth(vicauth, sizeof(vicauth));
+            vic.Team(victeam, sizeof(victeam));
             
             if(atk)
             {
-                char atkname[32], atkauth[32];
+                char atkname[32], atkauth[32], atkteam[32];
 
                 atk.GetName(atkname, sizeof(atkname));
                 atk.GetAuth(atkauth, sizeof(atkauth));
+                atk.Team(atkteam, sizeof(atkteam));
 
-                gamemode.log.Info("%t", "Log_Core_PlayerDead", vicname, vicauth, atkname, atkauth);
+                gamemode.log.Info("%t", "Log_Core_PlayerDead", vicname, vicauth, victeam, atkname, atkauth, atkteam);
             }
             else
             {
@@ -1164,7 +1162,7 @@ public Action CB_EntUse(int entity, int client)
         Call_PushCellRef(ent);
         Call_Finish(canpickup);
 
-        if (ply.IsSCP && !ent.meta.SCPCanUse && !canpickup) return;
+        if (!canpickup || ply.IsSCP && !ent.meta.SCPCanUse) return;
         
         if (ent.meta.onpickup)
         {
@@ -1214,14 +1212,30 @@ public Action SoundHandler(int clients[MAXPLAYERS], int &numClients, char sample
 		{
 			Player ply = player.GetByID(entity);
 			
-			if (ply && ply.class && ply.class.sound && ply.class.sound.GetArray("footsteps"))
+			if (ply && ply.class && ply.class.sound && ply.class.sound.HasKey("footsteps"))
 			{
-				char sound[128];
-				ply.class.sound.GetArray("footsteps").GetString(GetRandomInt(0, ply.class.sound.GetArray("footsteps").Length - 1), sound, sizeof(sound));
-				ply.PlayAmbient(sound);
-				
-				return Plugin_Stop;
-			}
+                JSON_ARRAY soundarr = ply.class.sound.GetArray("footsteps");
+
+                int idx = GetRandomInt(0, ply.class.sound.GetArray("footsteps").Length - 1);
+                char sound[128];
+
+                if (soundarr.GetType(idx) == Object)
+                {
+                    if (timer.IsAlive(view_as<Tmr>(ply.GetHandle("footstepcd"))))
+                        return Plugin_Stop;
+                    else
+                        ply.RemoveValue("footstepcd");
+
+                    ply.SetHandle("footstepcd", ply.TimerSimple(soundarr.GetArray(idx).GetInt(1)));
+                    soundarr.GetArray(idx).GetString(0, sound, sizeof(sound));
+                }
+                else
+                    soundarr.GetString(idx, sound, sizeof(sound));
+
+                ply.PlayAmbient(sound);
+
+                return Plugin_Stop;
+            }
 		}
 	}
 
@@ -1309,42 +1323,49 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
 
             InvItem item = ply.inv.Get(StringToInt(itemid));
 
+            char str[128];
             switch (idx)
             {
                 case 0:
                 {
-                    char str[128];
-                    if (item.meta.menu && item.meta.menu.use(str, sizeof(str))) if (TranslationPhraseExists(str)) // Because indentation error...
-                        FormatEx(str, sizeof(str), "%T", str, ply.id);
+                    if (!item.tmr)
+                    {
+                        if (item.meta.menu && item.meta.menu.use(str, sizeof(str)))
+                        {
+                            if (TranslationPhraseExists(str)) FormatEx(str, sizeof(str), "%T", str, ply.id);
+                        }
+                        else FormatEx(str, sizeof(str), "%T", "Item use", ply.id);
+                    }
                     else
-                        FormatEx(str, sizeof(str), "%T", "Item use", ply.id);
-                    if (!item.tmr) return RedrawMenuItem(str);
-                    if (item.meta.menu && item.meta.menu.cd(str, sizeof(str))) if (TranslationPhraseExists(str))
-                        FormatEx(str, sizeof(str), "%T", str, ply.id);
-                    else
-                        FormatEx(str, sizeof(str), "%T", "Item cooldown", ply.id);
-                    Utils.GetTimeString(str, sizeof(str), item.tmr.GetTimeLeft());
-                    return RedrawMenuItem(str);
+                    {
+                        if (item.meta.menu && item.meta.menu.cd(str, sizeof(str)))
+                        {
+                            if (TranslationPhraseExists(str)) FormatEx(str, sizeof(str), "%T", str, ply.id);
+                        }
+                        else FormatEx(str, sizeof(str), "%T", "Item cooldown", ply.id);
+
+                        Utils.GetTimeString(str, sizeof(str), item.tmr.GetTimeLeft());
+                    }
                 }
                 case 1:
                 {
-                    char str[64];
-                    if (item.meta.menu && item.meta.menu.info(str, sizeof(str))) if (TranslationPhraseExists(str))
-                        FormatEx(str, sizeof(str), "%T", str, ply.id);
-                    else
-                        FormatEx(str, sizeof(str), "%T", "Item info", ply.id);
-                    return RedrawMenuItem(str);
+                    if (item.meta.menu && item.meta.menu.info(str, sizeof(str)))
+                    {
+                        if (TranslationPhraseExists(str)) FormatEx(str, sizeof(str), "%T", str, ply.id);
+                    }
+                    else FormatEx(str, sizeof(str), "%T", "Item info", ply.id);
                 }
                 case 2:
                 {
-                    char str[64];
-                    if (item.meta.menu && item.meta.menu.drop(str, sizeof(str))) if (TranslationPhraseExists(str))
-                        FormatEx(str, sizeof(str), "%T", str, ply.id);
-                    else
-                        FormatEx(str, sizeof(str), "%T", "Item drop", ply.id);
-                    return RedrawMenuItem(str);
+                    if (item.meta.menu && item.meta.menu.drop(str, sizeof(str)))
+                    {
+                        if (TranslationPhraseExists(str)) FormatEx(str, sizeof(str), "%T", str, ply.id);
+                    }
+                    else FormatEx(str, sizeof(str), "%T", "Item drop", ply.id);
                 }
             }
+
+            return RedrawMenuItem(str);
         }
         case MenuAction_Select:
         {
@@ -1389,16 +1410,17 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                         gamemode.config.sound.GetString("menuselect", sound, sizeof(sound));
                         ply.PlayNonCheckSound(sound);
 
-                        char class[64], classname[64];
-                        item.GetClass(class, sizeof(class));
-                        FormatEx(classname, sizeof(classname), "%T", class, ply.id);
-                        Format(class, sizeof(class), "%s_info", class);
+                        char classdata[64], itemaname[64];
+                        item.GetClass(classdata, sizeof(classdata));
+                        FormatEx(itemaname, sizeof(itemaname), "%T", classdata, ply.id);
+                        Format(classdata, sizeof(classdata), "%s_info", classdata);
 
-                        PrintToChat(ply.id, "------------------------------%s------------------------------", classname);
+                        PrintToChat(ply.id, "%s", itemaname);
+                        PrintToChat(ply.id, "------------------------");
 
                         char text[8192];
                         char exptext[20][1024];
-                        FormatEx(text, sizeof(text), "%T", class, ply.id);
+                        FormatEx(text, sizeof(text), "%T", classdata, ply.id);
                         ExplodeString(text, "<br>", exptext, 20, 1024);
 
                         int i=0;
@@ -1408,7 +1430,7 @@ public int InventoryItemHandler(Menu hMenu, MenuAction action, int client, int i
                             i++;
                         }
                             
-                        PrintToChat(ply.id, "------------------------------------------------------------");
+                        PrintToChat(ply.id, "------------------------");
                     }
                 }
                 case 2:
@@ -1632,6 +1654,10 @@ public void EscapeController(Player ply, int doorID)
                 opa = ply.GetAng();
             }
             
+            char timername[32];
+            FormatEx(timername, sizeof(timername), "ent-%i", ply.id);
+            timer.RemoveIsContains(timername);
+
             ply.se.ClearAll();
 
             if (ply.GetBase("spawnpos")) ply.GetBase("spawnpos").SetBool("lock", false);
@@ -1641,7 +1667,7 @@ public void EscapeController(Player ply, int doorID)
             
             ply.inv.FullClear();
 
-            Call_StartForward(OnPlayerSpawnForward);
+            Call_StartForward(PreClientSpawnForward);
             Call_PushCellRef(ply);
             Call_Finish();
 
@@ -1650,11 +1676,15 @@ public void EscapeController(Player ply, int doorID)
             if (data.savepos)
                 ply.SetPos(opp, opa);
 
+            Call_StartForward(OnPlayerSpawnForward);
+            Call_PushCellRef(ply);
+            Call_Finish();
+
             if (ply.class.HasKey("overlay"))
             {
-                char name[32];
-                ply.class.overlay(name, sizeof(name));
-                ply.ShowOverlay(name);
+                char path[256];
+                ply.class.overlay(path, sizeof(path));
+                ply.ShowOverlay(path);
             
                 ply.TimerSimple(gamemode.config.showoverlaytime * 1000, "PlyHideOverlay", ply);
             }
@@ -1866,11 +1896,9 @@ public Action Command_Kill(int client, const char[] command, int argc)
     return Plugin_Handled;
 }
 
-public Action Command_Base(int client, const char[] command, int argc)
+public Action Command_Base(int client, int argc)
 {
     Player ply = player.GetByID(client);
-    
-    if (ply && !ply.IsAdmin()) return Plugin_Stop;
 
     char arg1[32], arg2[32], arg3[32];
 
@@ -1976,11 +2004,9 @@ public Action Command_Base(int client, const char[] command, int argc)
     return Plugin_Stop;
 }
 
-public Action Command_Ents(int client, const char[] command, int argc)
+public Action Command_Ents(int client, int argc)
 {
     Player ply = player.GetByID(client);
-
-    if (ply && !ply.IsAdmin()) return Plugin_Stop;
 
     char arg[32];
 
@@ -2018,11 +2044,9 @@ public Action Command_Ents(int client, const char[] command, int argc)
     return Plugin_Stop;
 }
 
-public Action Command_Player(int client, const char[] command, int argc)
+public Action Command_Player(int client, int argc)
 {
     Player ply = player.GetByID(client);
-
-    if (!ply.IsAdmin()) return Plugin_Stop;
 
     char arg1[32],arg2[32],arg3[32],arg4[32];
 
@@ -2199,27 +2223,21 @@ public void InventoryDisplay(Player ply)
 
 public void SCP_OnInput(Player &ply, int buttons)
 {
-    if (buttons & IN_SCORE)
+    if (buttons & IN_SCORE && !timer.IsAlive(view_as<Tmr>(ply.GetHandle("ActionCD"))))
     {
-        if (ply.GetBool("ActionAvailable", true))
-        {
-            ply.SetBool("ActionAvailable", false);
-            ply.TimerSimple(1000, "ActionUnlock", ply);
+        ply.SetHandle("ActionCD", ply.TimerSimple(1000));
 
-            char sound[256];
-            gamemode.config.sound.GetString("menuselect", sound, sizeof(sound));
-            ply.PlayNonCheckSound(sound);
+        char sound[256];
+        gamemode.config.sound.GetString("menuselect", sound, sizeof(sound));
+        ply.PlayNonCheckSound(sound);
 
-            if (!ply.IsSCP) InventoryDisplay(ply);
+        if (!ply.IsSCP) InventoryDisplay(ply);
 
-            Call_StartForward(OnCallActionForward);
-            Call_PushCellRef(ply);
-            Call_Finish();
-        }
+        Call_StartForward(OnCallActionForward);
+        Call_PushCellRef(ply);
+        Call_Finish();
     }
 }
-
-public void ActionUnlock(Player ply) { ply.SetBool("ActionAvailable", true); }
 
 //////////////////////////////////////////////////////////////////////////////
 //
