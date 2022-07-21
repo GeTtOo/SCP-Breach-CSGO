@@ -81,9 +81,9 @@
     },
     "[SCP] Tutorial": {
         "positions": {
-            "ru":{"vec":[2341,4350,2735],"ang":[0,90,0]},
-            "en":{"vec":[2735,3962,2735],"ang":[0,0,0]},
-            "zho":{"vec":[2347,3571,2735],"ang":[0,-90,0]}
+            "ru":{"vec":[2341,4595,2735],"ang":[0,-180,0]},
+            "en":{"vec":[2980,3962,2735],"ang":[0,90,0]},
+            "zho":{"vec":[2347,3323,2735],"ang":[0,0,0]}
         }
     },
     "[SCP] Sapper": {
@@ -191,7 +191,8 @@
                 "*/eternity/scp/106/portal1.mp3",
                 "*/eternity/scp/106/portal2.mp3",
                 "*/eternity/scp/106/portal3.mp3"
-            ]
+            ],
+            "recontainment":"eternity/scp/106/recontainment.mp3"
         }
     },
     "[SCP] 966": {

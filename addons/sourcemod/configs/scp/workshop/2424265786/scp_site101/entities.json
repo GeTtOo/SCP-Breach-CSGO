@@ -99,7 +99,10 @@
     "268_cap": {
         "model":"models/eternity/props/scp/scp_267.mdl",
         "mass":1.0,
-        "cooldown":60
+        "cooldown":60,
+        "menu": {
+            "use":"Надеть"
+        }
     },
     "035_mask": {
         "model":"models/eternity/props/scp/scp_035.mdl",

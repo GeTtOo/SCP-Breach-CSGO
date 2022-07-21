@@ -611,12 +611,16 @@ sound/eternity/scp/106/portal3.mp3
 sound/eternity/scp/106/step1.mp3
 sound/eternity/scp/106/step2.mp3
 sound/eternity/scp/106/step3.mp3
+sound/eternity/scp/106/recontainment.mp3
 sound/eternity/scp/173/death1.mp3
 sound/eternity/scp/173/death2.mp3
 sound/eternity/scp/173/death3.mp3
 sound/eternity/scp/173/neck1.mp3
 sound/eternity/scp/173/neck2.mp3
 sound/eternity/scp/173/neck3.mp3
+sound/eternity/scp/173/step1.mp3
+sound/eternity/scp/173/step2.mp3
+sound/eternity/scp/173/step3.mp3
 sound/eternity/scp/427/active.mp3
 sound/eternity/scp/427/transform.mp3
 sound/eternity/scp/914/player_rough.mp3

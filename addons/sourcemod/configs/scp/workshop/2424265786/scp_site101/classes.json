@@ -348,7 +348,7 @@
                     },
                     "skin":0
                 },
-                "overlay":"eternity/overlays/lieutenant_{lang}_fh",
+                "overlay":"eternity/overlays/lieutenant_sapper_{lang}_fh",
                 "pos":{"vec":[-10800,-5950,1715]}
             },
             "Lieutenant-Medic": {
@@ -639,6 +639,13 @@
                 "pos":{"vec":[-1800,-900,0],"ang":[0,270,0]},
                 "doors":[307,889],
                 "doorsdelay":15,
+                "sound":{
+                    "footsteps":[
+                        ["*/eternity/scp/173/step1.mp3", 300],
+                        ["*/eternity/scp/173/step2.mp3", 300],
+                        ["*/eternity/scp/173/step3.mp3", 300]
+                    ]
+                },
                 "comment":"173"
             },
             "457": {
