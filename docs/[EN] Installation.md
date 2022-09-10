@@ -40,7 +40,6 @@ ammo_item_limit_healthshot 1
 The localization file setup is taken from Sourcemod. If the required language is not available, English will be used. This applies both to translation files and to models and inscriptions on them.  
 
 ## Additional plugins
-[Discord API Core](https://github.com/CrazyHackGUT/Discord) - for send logs to Discord (optional)  
 [Fix-Pickup-Shield](https://github.com/theelsaud/Fix-Pickup-Shield) - for picking up shields (recommended)  
 [Always Weapon Skins](https://forums.alliedmods.net/showthread.php?t=237114) - for saving player skins (optional)  
 
