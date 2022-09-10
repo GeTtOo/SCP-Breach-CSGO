@@ -32,6 +32,9 @@ mp_playercashawards 0
 mp_teamcashawards 0
 mp_force_pick_time 0
 mp_force_assigm_teams 1
+mp_radar_showall 1
+mp_drop_knife_enable 1
+sv_shield_hitpoints 12500
 ammo_item_limit_healthshot 1
 ```
 
