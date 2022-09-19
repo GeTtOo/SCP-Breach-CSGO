@@ -37,7 +37,7 @@
 
 public Plugin myinfo = {
     name = "[SCP] Discord Logger",
-    author = "GeTtOo, Andrey::Dono",
+    author = "Andrey::Dono, GeTtOo",
     description = "Discord logger for SCP Breach modification",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"

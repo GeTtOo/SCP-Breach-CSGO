@@ -202,9 +202,6 @@
         {"chance":50,"vec":[-6807,-1675,1],"ang":[0,-40,0],"comment":"Heavy Zone: Cube"},
         {"chance":50,"vec":[-1814,-2329,18],"ang":[0,-140,0],"comment":"Lite zone: Rest room"}
     ],
-    "427_amulet":[
-        {"chance":25,"vec":[-6795,-1726,1],"ang":[0,90,0],"comment":"Heavy Zone"}
-    ],
     "268_cap":[ 
         {
             "20":{"vec":[-2726,-3348,32],"ang":[0,-90,0],"comment":"Office "},

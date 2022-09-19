@@ -36,10 +36,10 @@
 
 public Plugin myinfo = {
     name = "[SCP] 096",
-    author = "Andrey::Dono",
+    author = "Andrey::Dono, GeTtOo",
     description = "SCP-096 for CS:GO modification SCP Foundation",
     version = "1.0",
-    url = "https://github.com/Eternity-Development-Team/csgo_scp"
+    url = "https://github.com/GeTtOo/csgo_scp"
 };
 
 public void SCP_OnPlayerSpawn(Player &ply) {

@@ -128,20 +128,6 @@
             "stop":"eternity/scp/other/intercom_stop.mp3"
         }
     },
-    "[SCP] 914": {
-        "usemathcounter":false,
-        "countername": "scp_914_logic_counter",
-        "switchbutton": 443873,
-        "runbutton": 516151,
-        "runtime": 8,
-        "searchzone":[[3630, -2072, 20],[3762, -1947, 90]],
-        "distance":[0, 425, -1],
-        "sound": {
-            "playerkill": [
-                "*/eternity/scp/914/player_rough.mp3"
-            ]
-        }
-    },
     "[SCP] 049": {
         "revive":{
             "time":3,
@@ -195,24 +181,6 @@
             "recontainment":"eternity/scp/106/recontainment.mp3"
         }
     },
-    "[SCP] 966": {
-        "damage":10.0,
-        "abradius":250,
-        "abcd":25,
-        "abcsr":2.0,
-        "sound": {
-            "idle":[
-                "*/eternity/scp/966/idle1.mp3",
-                "*/eternity/scp/966/idle2.mp3",
-                "*/eternity/scp/966/idle3.mp3"
-            ],
-            "angry":[
-                "*/eternity/scp/966/angry1.mp3",
-                "*/eternity/scp/966/angry2.mp3",
-                "*/eternity/scp/966/angry3.mp3"
-            ]
-        }
-    },
     "[SCP] 173": {
         "radius":2000,
         "blinktime":5,
@@ -233,5 +201,37 @@
     },
     "[SCP] 457": {
         "ignitetime":10
+    },
+    "[SCP] 966": {
+        "damage":10.0,
+        "abradius":250,
+        "abcd":25,
+        "abcsr":2.0,
+        "sound": {
+            "idle":[
+                "*/eternity/scp/966/idle1.mp3",
+                "*/eternity/scp/966/idle2.mp3",
+                "*/eternity/scp/966/idle3.mp3"
+            ],
+            "angry":[
+                "*/eternity/scp/966/angry1.mp3",
+                "*/eternity/scp/966/angry2.mp3",
+                "*/eternity/scp/966/angry3.mp3"
+            ]
+        }
+    },
+    "[SCP] 914": {
+        "usemathcounter":false,
+        "countername": "scp_914_logic_counter",
+        "switchbutton": 443873,
+        "runbutton": 516151,
+        "runtime": 8,
+        "searchzone":[[3630, -2072, 20],[3762, -1947, 90]],
+        "distance":[0, 425, -1],
+        "sound": {
+            "playerkill": [
+                "*/eternity/scp/914/player_rough.mp3"
+            ]
+        }
     }
 }

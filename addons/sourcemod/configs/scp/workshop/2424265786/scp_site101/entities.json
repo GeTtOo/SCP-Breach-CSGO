@@ -92,10 +92,6 @@
         "bodygroup":1,
         "spawnflags":4352
     },
-    "427_amulet": {
-        "model":"models/eternity/props/scp/scp_427.mdl",
-        "mass":2.5
-    },
     "268_cap": {
         "model":"models/eternity/props/scp/scp_267.mdl",
         "mass":1.0,

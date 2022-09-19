@@ -593,12 +593,6 @@
                 "pos":{"vec":[-8351,1245,0],"ang":[0,180,0]},
                 "comment":"049-2"
             },
-            "079": {
-                "autospawn":false,
-                "comment":"AI computer",
-                "fists":false,
-                "overlay":"eternity/overlays/scp-079_{lang}_fh"
-            },
             "096": {
                 "percent":10,
                 "health":20000,

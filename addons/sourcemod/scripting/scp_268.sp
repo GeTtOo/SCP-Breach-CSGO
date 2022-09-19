@@ -36,7 +36,7 @@
 
 public Plugin myinfo = {
     name = "[SCP] 268",
-    author = "Any",
+    author = "Andrey::Dono, GeTtOo",
     description = "SCP-268 for CS:GO modification - SCP Foundation",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"
