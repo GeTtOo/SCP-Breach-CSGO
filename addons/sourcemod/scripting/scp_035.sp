@@ -89,7 +89,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
     return Plugin_Continue;
 }
 
-public Action HandlerHitSCP(Player ply)
+public void HandlerHitSCP(Player ply)
 {
     if(ply.health > 10)
         ply.health -= 10;

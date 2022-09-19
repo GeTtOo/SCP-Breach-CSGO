@@ -55,19 +55,19 @@ methodmap Vector < Base {
         public get() { return this.GetFloat("z"); }
     }
 
-    public void SetArr(float[3] vec) {
+    public void SetArr(float vec[3]) {
         this.x = vec[0];
         this.y = vec[1];
         this.z = vec[2];
     }
 
-    public void GetArr(float[3] vec) {
+    public void GetArr(float vec[3]) {
         vec[0] = this.x;
         vec[1] = this.y;
         vec[2] = this.z;
     }
 
-    public void GetArrD(float[3] vec) {
+    public void GetArrD(float vec[3]) {
         vec[0] = this.x;
         vec[1] = this.y;
         vec[2] = this.z;

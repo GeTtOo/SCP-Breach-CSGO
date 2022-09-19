@@ -51,7 +51,7 @@ methodmap Config < JSON_OBJECT {
         this.SetValue(name, value);
     }
 
-    public Base GetBase(char[] name) { return view_as<Base>(this.GetObject(name)); }
+    public Base GetBase(char[] name) { return view_as<Base>(this.Get(name)); }
     
     public void DefaultGlobalClass(char[] team, int max_size) {
         this.GetString("DefaultGlobalClass", team, max_size);
@@ -63,21 +63,21 @@ methodmap Config < JSON_OBJECT {
 
     property Doors doors {
         public set(Doors val) { this.SetValue("doors", val); }
-        public get() { return view_as<Doors>(this.GetObject("doors")); }
+        public get() { return view_as<Doors>(this.Get("doors")); }
     }
 
     property JSON_OBJECT spawnmap {
         public set(JSON_OBJECT val) { this.SetValue("spawnmap", val); }
-        public get() { return view_as<JSON_OBJECT>(this.GetObject("spawnmap")); }
+        public get() { return view_as<JSON_OBJECT>(this.Get("spawnmap")); }
     }
 
     property JSON_ARRAY regions {
         public set(JSON_ARRAY val) { this.SetValue("regions", val); }
-        public get() { return view_as<JSON_ARRAY>(this.GetObject("regions")); }
+        public get() { return view_as<JSON_ARRAY>(this.Get("regions")); }
     }
     
     property JSON_ARRAY meta {
-        public get() { return this.GetArray("meta"); }
+        public get() { return this.GetArr("meta"); }
     }
 
     property int invsize {
@@ -93,11 +93,11 @@ methodmap Config < JSON_OBJECT {
     }
 
     property JSON_OBJECT sound {
-        public get() { return this.GetObject("sound"); }
+        public get() { return this.Get("sound"); }
     }
 
     property JSON_OBJECT reinforce {
-        public get() { return this.GetObject("reinforce"); }
+        public get() { return this.Get("reinforce"); }
     }
 
     property NukeConfig nuke {
@@ -122,10 +122,6 @@ methodmap Config < JSON_OBJECT {
         public get() { return this.GetInt("logmode"); }
     }
 
-    property int loglevel {
-        public get() { return this.GetInt("loglevel"); }
-    }
-
     property bool ff {
         public get() { return this.GetBool("ff"); }
     }
@@ -140,6 +136,6 @@ methodmap Config < JSON_OBJECT {
         //this.reinforce.Dispose();
         //this.nuke.Dispose();
         //view_as<JSON_ARRAY>(this.AdminRoom).Dispose();
-        this.Dispose();
+        this.Cleanup();
     }
 }

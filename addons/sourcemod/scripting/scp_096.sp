@@ -126,7 +126,7 @@ public void CheckSurface(int client, int entity) {
                 char doorModel[256], configModel[256];
                 
                 Entity idpad = new Entity(entity);
-                JSON_ARRAY doors = gamemode.plconfig.GetArray("doortodestruction");
+                JSON_ARRAY doors = gamemode.plconfig.GetArr("doortodestruction");
                 idpad.model.GetPath(doorModel, sizeof(doorModel));
                 delete idpad;
                 
@@ -137,7 +137,7 @@ public void CheckSurface(int client, int entity) {
                     if(StrContains(doorModel, configModel) != -1)
                     {
                         char sound[128];
-                        JSON_ARRAY nbs = gamemode.plconfig.GetObject("sound").GetArray("doorbroke");
+                        JSON_ARRAY nbs = gamemode.plconfig.Get("sound").GetArr("doorbroke");
                         nbs.GetString(GetRandomInt(0, nbs.Length - 1), sound, sizeof(sound));
 
                         float vecarr[3];

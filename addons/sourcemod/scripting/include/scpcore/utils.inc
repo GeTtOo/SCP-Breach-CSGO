@@ -42,7 +42,7 @@ methodmap Utils < StringMap {
         
         if (FileExists(path))
         {
-            char buffer[65536];
+            char buffer[131072];
             Handle file = OpenFile(path,"r+");
             ReadFileString(file, buffer, sizeof(buffer));
             delete file;
@@ -57,7 +57,7 @@ methodmap Utils < StringMap {
     {
         BuildPath(Path_SM, path, PLATFORM_MAX_PATH, path);
 
-        char buffer[65536];
+        char buffer[131072];
         Handle file = OpenFile(path,"w+");
         json_encode(json, buffer, sizeof(buffer));
         WriteFileString(file, buffer, true);

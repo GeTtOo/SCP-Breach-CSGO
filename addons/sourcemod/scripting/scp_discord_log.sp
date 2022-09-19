@@ -67,7 +67,7 @@ public void SCP_OnLog(LogType type, Player &admin, const char[] logtext)
     
     if (!config.HasKey(strtype)) return;
 
-    JSON_OBJECT tconfig = config.GetObject(strtype);
+    JSON_OBJECT tconfig = config.Get(strtype);
 
     JSONObject point = new JSONObject();
 

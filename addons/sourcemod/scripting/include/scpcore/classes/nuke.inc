@@ -218,7 +218,7 @@ methodmap NuclearWarhead < Base {
         JSON_ARRAY spawnlist = gamemode.config.nuke.spawnlist;
 
         for (int i=0; i < spawnlist.Length; i++) {
-            JSON_OBJECT data = view_as<JSON_OBJECT>(spawnlist.GetObject(i));
+            JSON_OBJECT data = view_as<JSON_OBJECT>(spawnlist.Get(i));
 
             worldtext.Create(data.GetVector("pos"), data.GetAngle("ang"), NukeMonitor).SetSize(data.GetInt("size")).SetColor(data.GetColor("color")).SetText("Disabled");
         }

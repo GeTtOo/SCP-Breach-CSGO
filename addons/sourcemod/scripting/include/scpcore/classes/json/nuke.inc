@@ -80,22 +80,22 @@ methodmap NukeConfig < JSON_OBJECT {
     }
 
     property NukeSounds sound {
-        public get() { return view_as<NukeSounds>(this.GetObject("sound")); }
+        public get() { return view_as<NukeSounds>(this.Get("sound")); }
     }
 
     property NukeButtons buttons {
-        public get() { return view_as<NukeButtons>(this.GetObject("buttons")); }
+        public get() { return view_as<NukeButtons>(this.Get("buttons")); }
     }
 
     property JSON_ARRAY immunedoors {
-        public get() { return view_as<JSON_ARRAY>(this.GetObject("immunedoors")); }
+        public get() { return view_as<JSON_ARRAY>(this.Get("immunedoors")); }
     }
 
     property JSON_ARRAY opendoors {
-        public get() { return view_as<JSON_ARRAY>(this.GetObject("opendoors")); }
+        public get() { return view_as<JSON_ARRAY>(this.Get("opendoors")); }
     }
 
     property JSON_ARRAY spawnlist {
-        public get() { return view_as<JSON_ARRAY>(this.GetObject("spawnlist")); }
+        public get() { return view_as<JSON_ARRAY>(this.Get("spawnlist")); }
     }
 }

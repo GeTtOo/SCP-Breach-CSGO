@@ -348,7 +348,7 @@ methodmap Player < Entity {
         {
             this.SetPos(pos.GetVector("vec"), pos.GetAngle("ang"));
             pos.SetBool("lock", true);
-            this.SetBase("spawnpos", view_as<Base>(pos));
+            this.SetHandle("spawnpos", pos);
         }
 
         if (this.class.items)
@@ -362,7 +362,7 @@ methodmap Player < Entity {
                 }
                 else
                 {
-                    JSON_OBJECT items = view_as<JSON_OBJECT>(this.class.items.GetObject(i));
+                    JSON_OBJECT items = view_as<JSON_OBJECT>(this.class.items.Get(i));
 
                     if (items.IsArray)
                     {
@@ -379,7 +379,6 @@ methodmap Player < Entity {
                         keylen = sitems.KeyBufferSize(k);
                         char[] chance = new char[keylen];
                         sitems.GetKey(k, chance, keylen);
-                        if (json_is_meta_key(chance)) continue;
 
                         count += StringToInt(chance);
                         char itemname[32];
@@ -406,7 +405,7 @@ methodmap Player < Entity {
                 }
                 else
                 {
-                    JSON_OBJECT weapons = view_as<JSON_OBJECT>(this.class.weapons.GetObject(i));
+                    JSON_OBJECT weapons = view_as<JSON_OBJECT>(this.class.weapons.Get(i));
 
                     if (weapons.IsArray)
                     {
@@ -423,7 +422,6 @@ methodmap Player < Entity {
                         keylen = sweapons.KeyBufferSize(k);
                         char[] chance = new char[keylen];
                         sweapons.GetKey(k, chance, keylen);
-                        if (json_is_meta_key(chance)) continue;
 
                         count += StringToInt(chance);
                         char weapon[32];
@@ -462,7 +460,7 @@ methodmap Player < Entity {
             }
             else
             {
-                JSON_OBJECT modeldata = this.class.GetObject("model");
+                JSON_OBJECT modeldata = this.class.Get("model");
 
                 char mdlid[32];
                 modeldata.GetString("id", mdlid, sizeof(mdlid));
@@ -474,7 +472,7 @@ methodmap Player < Entity {
                     }
                     else
                     {
-                        JSON_OBJECT pgi = modeldata.GetObject("bodygroups");
+                        JSON_OBJECT pgi = modeldata.Get("bodygroups");
                         StringMapSnapshot spgi = pgi.Snapshot();
                         
                         int keylen;
@@ -482,12 +480,11 @@ methodmap Player < Entity {
                             keylen = spgi.KeyBufferSize(i);
                             char[] name = new char[keylen];
                             spgi.GetKey(i, name, keylen);
-                            if (json_is_meta_key(name)) continue;
                             
                             if (pgi.GetType(name) == Int)
                                 this.model.SetBodyGroup(name, pgi.GetInt(name));
                             else
-                                this.model.SetBodyGroup(name, pgi.GetArray(name).GetInt(GetRandomInt(0, pgi.GetArray(name).Length - 1)));
+                                this.model.SetBodyGroup(name, pgi.GetArr(name).GetInt(GetRandomInt(0, pgi.GetArr(name).Length - 1)));
                         }
 
                         delete spgi;

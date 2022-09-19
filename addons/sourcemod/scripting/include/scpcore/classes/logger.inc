@@ -44,7 +44,7 @@ enum LogType
 
 methodmap Logger < Base
 {
-    public Logger(char[] fwname, int mode, int loglevel, bool debugmode)
+    public Logger(char[] fwname, int mode, bool debugmode)
     {
         Logger logger = view_as<Logger>(new Base());
         logger.SetHandle("fw", CreateGlobalForward(fwname, ET_Event, Param_Cell, Param_CellByRef, Param_String));

@@ -274,7 +274,7 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
     }
     else if (action == MenuAction_Select)
     {
-        switch(item)
+        switch(view_as<TypeAdminAction>(item))
         {
             case SHOW_PLAYER_CLASS:
             {
@@ -320,6 +320,8 @@ public int MenuHandler_ScpAdminMenu(Menu hMenu, MenuAction action, int client, i
             }
         }
     }
+
+    return 0;
 }
 
 public void DisplayTargetMenu(int client)
@@ -371,7 +373,7 @@ public int MenuHandler_ScpAdminMenuTarget(Menu hMenu, MenuAction action, int cli
 		{
             AdminMenu.Get(client).target = target;
             
-            switch(AdminMenu.Get(client).action)
+            switch(view_as<TypeAdminAction>(AdminMenu.Get(client).action))
             {
                 case RESPAWN_PLAYER:
                 {
@@ -416,6 +418,8 @@ public int MenuHandler_ScpAdminMenuTarget(Menu hMenu, MenuAction action, int cli
             }
         }
     }
+
+    return 0;
 }
 
 public bool GetLookPos_Filter(int entity, int contentsMask, any data)
@@ -485,6 +489,8 @@ public int MenuHandler_GetTeams(Menu hMenu, MenuAction action, int client, int i
             RenderClassMenu(client, team);
         }
     }
+
+    return 0;
 }
 
 public int MenuHandler_GetClass(Menu hMenu, MenuAction action, int client, int item)
@@ -516,6 +522,8 @@ public int MenuHandler_GetClass(Menu hMenu, MenuAction action, int client, int i
             gamemode.log.Admin(AdminMenu.Get(client).admin, "%t", "Log_Admin_Respawn", targetname, targetauth, team, class);
         }
     }
+
+    return 0;
 }
 
 public void RenderTeleportMenu(int client)
@@ -527,16 +535,13 @@ public void RenderTeleportMenu(int client)
     FormatEx(buffer, sizeof(buffer), "%T", "Select point", client);
     hMenu.SetTitle(buffer);
 
-    StringMapSnapshot stp = gamemode.config.GetObject("teleport").Snapshot();
+    StringMapSnapshot stp = gamemode.config.Get("teleport").Snapshot();
 
     for(int i = 0; i < stp.Length; i++)
     {
         Keylen = stp.KeyBufferSize(i);
         char[] pointName = new char[Keylen];
         stp.GetKey(i, pointName, Keylen);
-
-        if(json_is_meta_key(pointName))
-            continue;
 
         hMenu.AddItem(pointName, pointName, ITEMDRAW_DEFAULT);
     }
@@ -559,7 +564,7 @@ public int MenuHandler_GetTeleportPoint(Menu hMenu, MenuAction action, int clien
             char tpname[32];
             hMenu.GetItem(item, tpname, sizeof(tpname));
 
-            JSON_OBJECT pos = gamemode.config.GetObject("teleport").GetObject(tpname);
+            JSON_OBJECT pos = gamemode.config.Get("teleport").Get(tpname);
 
             AdminMenu.Get(client).target.SetPos(pos.GetVector("vec"), pos.GetAngle("ang"));
 
@@ -572,6 +577,8 @@ public int MenuHandler_GetTeleportPoint(Menu hMenu, MenuAction action, int clien
             gamemode.log.Admin(AdminMenu.Get(client).admin, "%t", "Log_Admin_PlayerTeleportObject",targetname, targetauth, tpname);
         }
     }
+
+    return 0;
 }
 
 public void RenderReinforceMenu(int client)
@@ -616,6 +623,8 @@ public int MenuHandler_Reinforce(Menu hMenu, MenuAction action, int client, int 
 
         gamemode.log.Admin(AdminMenu.Get(client).admin, "%t", "Log_Admin_Reinforce");
     }
+
+    return 0;
 }
 
 public void RenderGiveMenu(int client)
@@ -669,6 +678,8 @@ public int MenuHandler_GiveMenu(Menu hMenu, MenuAction action, int client, int i
             gamemode.log.Admin(AdminMenu.Get(client).admin, "%t", "Log_Admin_GiveItem", targetname, targetauth, itemclass);
         }
     }
+
+    return 0;
 }
 
 public void RenderWeaponMenu(int client)
@@ -781,6 +792,8 @@ public int MenuHandler_WeaponList(Menu hMenu, MenuAction action, int client, int
 
         hGiveMenu.Display(client, 30);
     }
+
+    return 0;
 }
 
 public AdminFlag GetFlagFromConfig(TypeAdminAction action)
@@ -790,25 +803,25 @@ public AdminFlag GetFlagFromConfig(TypeAdminAction action)
     switch(action)
     {
         case SHOW_PLAYER_CLASS:
-            gamemode.config.GetObject("AdminCommandsFlag").GetString("SHOW_PLAYER_CLASS", buffer, sizeof(buffer));
+            gamemode.config.Get("AdminCommandsFlag").GetString("SHOW_PLAYER_CLASS", buffer, sizeof(buffer));
         case RESPAWN_PLAYER:
-            gamemode.config.GetObject("AdminCommandsFlag").GetString("RESPAWN_PLAYER", buffer, sizeof(buffer));
+            gamemode.config.Get("AdminCommandsFlag").GetString("RESPAWN_PLAYER", buffer, sizeof(buffer));
         case TELEPORT:
-            gamemode.config.GetObject("AdminCommandsFlag").GetString("TELEPORT", buffer, sizeof(buffer));
+            gamemode.config.Get("AdminCommandsFlag").GetString("TELEPORT", buffer, sizeof(buffer));
         case REINFORCE:
-            gamemode.config.GetObject("AdminCommandsFlag").GetString("REINFORCE", buffer, sizeof(buffer));
+            gamemode.config.Get("AdminCommandsFlag").GetString("REINFORCE", buffer, sizeof(buffer));
         case GIVE_PLAYER_ITEM:
-            gamemode.config.GetObject("AdminCommandsFlag").GetString("GIVE_PLAYER_ITEM", buffer, sizeof(buffer));
+            gamemode.config.Get("AdminCommandsFlag").GetString("GIVE_PLAYER_ITEM", buffer, sizeof(buffer));
         case IGNORE_DOOR_ACCESS:
-            gamemode.config.GetObject("AdminCommandsFlag").GetString("IGNORE_DOOR_ACCESS", buffer, sizeof(buffer));
+            gamemode.config.Get("AdminCommandsFlag").GetString("IGNORE_DOOR_ACCESS", buffer, sizeof(buffer));
         /*case MOVE_TO_SPEC:
-            gamemode.config.GetObject("AdminCommandsFlag").GetString("MOVE_TO_SPEC", buffer, sizeof(buffer));*/
+            gamemode.config.Get("AdminCommandsFlag").GetString("MOVE_TO_SPEC", buffer, sizeof(buffer));*/
         case MOVE_TO_ADMIN_ZONE:
-            gamemode.config.GetObject("AdminCommandsFlag").GetString("MOVE_TO_ADMIN_ZONE", buffer, sizeof(buffer));
+            gamemode.config.Get("AdminCommandsFlag").GetString("MOVE_TO_ADMIN_ZONE", buffer, sizeof(buffer));
         case ROUND_RESTART:
-            gamemode.config.GetObject("AdminCommandsFlag").GetString("ROUND_RESTART", buffer, sizeof(buffer));
+            gamemode.config.Get("AdminCommandsFlag").GetString("ROUND_RESTART", buffer, sizeof(buffer));
         case DESTROY_SITE:
-            gamemode.config.GetObject("AdminCommandsFlag").GetString("DESTROY_SITE", buffer, sizeof(buffer));
+            gamemode.config.Get("AdminCommandsFlag").GetString("DESTROY_SITE", buffer, sizeof(buffer));
     }
 
     // ¯\_(ツ)_/¯

@@ -100,7 +100,7 @@ methodmap IntercomController < Base {
 
     public void StrartTransmission(Player speaker) {
         char sound[128];
-        gamemode.plconfig.GetObject("sound").GetString("start", sound, sizeof(sound));
+        gamemode.plconfig.Get("sound").GetString("start", sound, sizeof(sound));
         gamemode.mngr.PlayNonCheckSoundToAll(sound);
 
         timer.Create("Intercom_transmission_active", gamemode.plconfig.GetInt("transmissiontime", 8) * 1000, 1, "TransmissionStop");
@@ -121,7 +121,7 @@ methodmap IntercomController < Base {
 
         char sound[128];
 
-        gamemode.plconfig.GetObject("sound").GetString("stop", sound, sizeof(sound));
+        gamemode.plconfig.Get("sound").GetString("stop", sound, sizeof(sound));
         gamemode.mngr.PlayNonCheckSoundToAll(sound);
 
         this.curply = null;

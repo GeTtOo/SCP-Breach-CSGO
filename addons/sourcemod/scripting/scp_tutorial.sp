@@ -54,7 +54,7 @@ public void SCP_OnLoad() {
     ptc.SetInt(1, true, true);
     delete ptc;
     
-    tutorial = view_as<Class>(new Base());
+    tutorial = view_as<Class>(new JSON_OBJECT());
 
     tutorial.Name("Tutorial");
     tutorial.SetInt("health", 1337);
@@ -146,10 +146,10 @@ public void TeleportToTutorialRoom(Player ply)
     char lang[3];
     ply.GetLangInfo(lang, sizeof(lang));
 
-    JSON_OBJECT pos = gamemode.plconfig.GetObject("positions").GetObject("en");
+    JSON_OBJECT pos = gamemode.plconfig.Get("positions").Get("en");
     
-    if (gamemode.plconfig.GetObject("positions").HasKey(lang))
-        pos = gamemode.plconfig.GetObject("positions").GetObject(lang);
+    if (gamemode.plconfig.Get("positions").HasKey(lang))
+        pos = gamemode.plconfig.Get("positions").Get(lang);
 
     ply.SetPos(pos.GetVector("vec"), pos.GetAngle("ang"));
     ply.model.SetRenderMode(RENDER_TRANSCOLOR);

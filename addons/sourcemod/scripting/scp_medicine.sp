@@ -88,7 +88,7 @@ public void Injure_Init(Player ply) {
     ply.PrintWarning("Ваше тело начинает кровоточить из множества мелких ран...");
 
     char sound[128];
-    JSON_ARRAY soundarr = gamemode.plconfig.GetObject("sound").GetArray("playerkill");
+    JSON_ARRAY soundarr = gamemode.plconfig.Get("sound").GetArr("playerkill");
     soundarr.GetString(GetRandomInt(0, soundarr.Length - 1), sound, sizeof(sound));
     
     ply.PlaySound(sound);

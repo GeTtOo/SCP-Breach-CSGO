@@ -36,37 +36,37 @@
 #pragma dynamic 131072
 
 // ¯\_(ツ)_/¯
-#include "scp\structures\base"
-#include "scp\structures\vector"
-#include "scp\structures\angle"
-#include "scp\structures\color"
-#include "scp\structures\json"
+#include "scpcore\structures\base"
+#include "scpcore\structures\vector"
+#include "scpcore\structures\angle"
+#include "scpcore\structures\color"
+#include "scpcore\structures\json"
 
-#include "scp\utils"
+#include "scpcore\utils"
 
-#include "scp\classes\meta"
-#include "scp\classes\timers"
+#include "scpcore\classes\meta"
+#include "scpcore\classes\timers"
 Timers timer;
 
-#include "scp\classes\gamemode"
-#include "scp\classes\logger"
+#include "scpcore\classes\gamemode"
+#include "scpcore\classes\logger"
 
 GameMode gamemode;
 
-#include "scp\classes\statuseffect"
+#include "scpcore\classes\statuseffect"
 StatusEffectSingleton statuseffect;
 
-#include "scp\entities\entity"
-#include "scp\entities\player"
-#include "scp\entities\worldtext"
-#include "scp\classes\singletons"
+#include "scpcore\entities\entity"
+#include "scpcore\entities\player"
+#include "scpcore\entities\worldtext"
+#include "scpcore\classes\singletons"
 
 ClientSingleton player;
 EntitySingleton ents;
 WorldTextSingleton worldtext;
 
-#include "scp\classes\manager"
-#include "scp\classes\nuke"
+#include "scpcore\classes\manager"
+#include "scpcore\classes\nuke"
 
 forward void SCP_RegisterMetaData();
 

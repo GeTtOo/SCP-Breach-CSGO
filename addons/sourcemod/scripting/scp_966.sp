@@ -170,12 +170,12 @@ public void SoundEffect(Player ply)
 
     if (players.Length == 0)
     {
-        JSON_ARRAY sarr = gamemode.plconfig.GetObject("sound").GetArray("idle");
+        JSON_ARRAY sarr = gamemode.plconfig.Get("sound").GetArr("idle");
         sarr.GetString(GetRandomInt(0, sarr.Length - 1), soundname, sizeof(soundname));
     }
     else
     {
-        JSON_ARRAY sarr = gamemode.plconfig.GetObject("sound").GetArray("angry");
+        JSON_ARRAY sarr = gamemode.plconfig.Get("sound").GetArr("angry");
         sarr.GetString(GetRandomInt(0, sarr.Length - 1), soundname, sizeof(soundname));
     }
     

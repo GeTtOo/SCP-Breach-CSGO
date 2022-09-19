@@ -55,6 +55,7 @@ public Plugin myinfo = {
 
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) {
     OnModify = CreateGlobalForward("SCP914_OnModify", ET_Event, Param_CellByRef, Param_CellByRef, Param_CellByRef);
+    return APLRes_Success;
 }
 
 public void SCP_RegisterMetaData() {
@@ -124,11 +125,11 @@ public void SCP_OnButtonPressed(Player &ply, int doorId) {
 }
 
 public void Transform(Player ply) {
-    JSON_OBJECT recipes = gconfig.GetObject("recipes").GetObject(curmode);
+    JSON_OBJECT recipes = gconfig.Get("recipes").Get(curmode);
 
     char filter[3][32] = {"prop_physics", "weapon_", "player"};
     
-    ArrayList entities = ents.FindInBox(gamemode.plconfig.GetArray("searchzone").GetVector(0), gamemode.plconfig.GetArray("searchzone").GetVector(1), filter, sizeof(filter));
+    ArrayList entities = ents.FindInBox(gamemode.plconfig.GetArr("searchzone").GetVector(0), gamemode.plconfig.GetArr("searchzone").GetVector(1), filter, sizeof(filter));
 
     char entlist[3072];
 
@@ -151,17 +152,16 @@ public void Transform(Player ply) {
             keylen = srecipes.KeyBufferSize(k);
             char[] ientclass = new char[keylen];
             srecipes.GetKey(k, ientclass, keylen);
-            if (json_is_meta_key(ientclass)) continue;
 
             if (StrEqual(entclass, ientclass)) {
                 Vector oitempos = ent.GetPos() - gamemode.plconfig.GetVector("distance");
 
-                JSON_OBJECT oentdata = recipes.GetObject(ientclass);
+                JSON_OBJECT oentdata = recipes.Get(ientclass);
                 JSON_ARRAY recipe;
 
                 if (oentdata.IsArray)
                 {
-                    recipe = view_as<JSON_ARRAY>(oentdata).GetArray(GetRandomInt(0, view_as<JSON_ARRAY>(oentdata).Length - 1));
+                    recipe = view_as<JSON_ARRAY>(oentdata).GetArr(GetRandomInt(0, view_as<JSON_ARRAY>(oentdata).Length - 1));
                 }
                 else
                 {
@@ -173,11 +173,10 @@ public void Transform(Player ply) {
                         keylen2 = soentdata.KeyBufferSize(v);
                         char[] chance = new char[keylen2];
                         soentdata.GetKey(v, chance, keylen2);
-                        if (json_is_meta_key(chance)) continue;
 
                         count += StringToInt(chance);
                         if (count >= random) {
-                            recipe = oentdata.GetArray(chance);
+                            recipe = oentdata.GetArr(chance);
                             break;
                         }
                     }
@@ -303,10 +302,8 @@ public void Metamarphose_End(Player ply) {
     ply.RemoveValue("dooraccess");
     ply.TakeDamage(ply, 3000.0, DMG_ENERGYBEAM);
     ply.PrintWarning("Вы перешли на другой уровень бытия...");
-    
-    char targetname[32];
-    
-    FormatEx(targetname, sizeof(targetname), "dis_rag_%i", ply.id);
+
+    delete ply.ragdoll.meta;
     ents.Dissolve(ply.ragdoll);
     ply.ragdoll = null;
 }
@@ -332,7 +329,7 @@ public void Butchering(Player ply) {
     ply.PrintWarning("Ваше тело было разорвано на части...");
 
     char sound[128];
-    JSON_ARRAY soundarr = gamemode.plconfig.GetObject("sound").GetArray("playerkill");
+    JSON_ARRAY soundarr = gamemode.plconfig.Get("sound").GetArr("playerkill");
     soundarr.GetString(GetRandomInt(0, soundarr.Length - 1), sound, sizeof(sound));
     
     ply.PlayAmbient(sound);

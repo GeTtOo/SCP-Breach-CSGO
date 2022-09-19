@@ -32,11 +32,11 @@
 /*------------------------------------------------------Game Mode-------------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
-#include "scp\classes\json\config"
-#include "scp\classes\json\class"
+#include "scpcore\classes\json\config"
+#include "scpcore\classes\json\class"
 
 methodmap Classes < JSON_OBJECT {
-    public Class get(char[] name) { Class class = view_as<Class>(this.GetObject(name)); class.Name(name); return class; }
+    public Class get(char[] name) { Class class = view_as<Class>(this.Get(name)); class.Name(name); return class; }
 }
 
 methodmap GTeam < JSON_OBJECT {
@@ -58,7 +58,7 @@ methodmap GTeam < JSON_OBJECT {
     }
 
     property Classes classes {
-        public get() { return view_as<Classes>(this.GetObject("classes")); }
+        public get() { return view_as<Classes>(this.Get("classes")); }
     }
 
     public Class class(char[] name) {
@@ -66,7 +66,7 @@ methodmap GTeam < JSON_OBJECT {
     }
 
     public StringMapSnapshot GetClassNames() {
-        return this.GetObject("classes").Snapshot();
+        return this.Get("classes").Snapshot();
     }
 
     public ArrayList GetClassList(bool filter = true) {
@@ -77,7 +77,6 @@ methodmap GTeam < JSON_OBJECT {
             keylength = snap.KeyBufferSize(i);
             char[] className = new char[keylength];
             snap.GetKey(i, className, keylength);
-            if (json_is_meta_key(className)) continue;
             if (filter && (this.class(className).percent == 0 || !this.class(className).autospawn)) continue;
             list.PushString(className);
         }
@@ -116,7 +115,7 @@ methodmap Teams < JSON_OBJECT {
         this.SetObject(name, class);
     }
 
-    public GTeam get(char[] name) { return view_as<GTeam>(this.GetObject(name)); }
+    public GTeam get(char[] name) { return view_as<GTeam>(this.Get(name)); }
 }
 
 methodmap GameMode < Base {
@@ -139,14 +138,8 @@ methodmap GameMode < Base {
             GetPluginInfo(GetMyHandle(), PlInfo_Name, pname, sizeof(pname));
             if (!StrEqual(pname, "[SCP] GameMode"))
             {
-                JSON_OBJECT plconfig = this.config.GetObject(pname);
-                if (!plconfig)
-                {
-                    plconfig = view_as<JSON_OBJECT>(CreateTrie());
-                    //this.config.SetObject(pname, view_as<JSON_OBJECT>(CloneHandle(plconfig, FindPluginByFile("scp_core.sp"))));
-                    //delete plconfig;
-                    this.config.SetObject(pname, view_as<JSON_OBJECT>(plconfig));
-                }
+                JSON_OBJECT plconfig = this.config.Get(pname);
+                if (!plconfig) this.config.SetObject(pname, view_as<JSON_OBJECT>(plconfig = view_as<JSON_OBJECT>(new JSON_OBJECT())));
                 return plconfig;
             }
             return view_as<JSON_OBJECT>(null);

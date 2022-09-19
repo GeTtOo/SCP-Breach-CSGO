@@ -37,16 +37,16 @@
 #pragma newdecls required
 
 char sounds[10][64] = {
-    { "*/eternity/scp/049/1.wav" },
-    { "*/eternity/scp/049/2.wav" }, 
-    { "*/eternity/scp/049/3.wav" },  
-    { "*/eternity/scp/049/4.wav" }, 
-    { "*/eternity/scp/049/5.wav" },
-    { "*/eternity/scp/049/6.wav" },
-    { "*/eternity/scp/049/7.wav" },
-    { "*/eternity/scp/049/alert_1.wav" },
-    { "*/eternity/scp/049/alert_2.wav" },
-    { "*/eternity/scp/049/alert_3.wav" }
+    "*/eternity/scp/049/1.wav",
+    "*/eternity/scp/049/2.wav", 
+    "*/eternity/scp/049/3.wav",  
+    "*/eternity/scp/049/4.wav", 
+    "*/eternity/scp/049/5.wav",
+    "*/eternity/scp/049/6.wav",
+    "*/eternity/scp/049/7.wav",
+    "*/eternity/scp/049/alert_1.wav",
+    "*/eternity/scp/049/alert_2.wav",
+    "*/eternity/scp/049/alert_3.wav"
 };
 
 int soundstime[10] = {12,2,2,2,3,4,5,1,1,4};
@@ -73,7 +73,7 @@ public void SCP_OnInput(Player &ply, int buttons)
 				if (ragdolls.Length > 0)
 				{
 					ply.SetBool("049_reviving", true);
-					ply.progress.Start((gamemode.plconfig.GetObject("revive").GetBool("multi", true)) ? gamemode.plconfig.GetObject("revive").GetInt("time", 3000) * 1000 * ragdolls.Length : gamemode.plconfig.GetObject("revive").GetInt("time", 3000) * 1000, "Revive");
+					ply.progress.Start((gamemode.plconfig.Get("revive").GetBool("multi", true)) ? gamemode.plconfig.Get("revive").GetInt("time", 3000) * 1000 * ragdolls.Length : gamemode.plconfig.Get("revive").GetInt("time", 3000) * 1000, "Revive");
 					ply.PrintNotify("Reviving");
 				}
 
@@ -104,7 +104,7 @@ public void Revive(Player ply)
 	ply.progress.Stop(false);
 	ply.SetBool("049_reviving", false);
 
-	if (gamemode.plconfig.GetObject("revive").GetBool("inpvs", true))
+	if (gamemode.plconfig.Get("revive").GetBool("inpvs", true))
 	{
 		char filter[1][32] = {"prop_ragdoll"};
 		ArrayList ragdolls = ents.FindInPVS(ply, _, _, filter);
@@ -151,7 +151,7 @@ public void Revive(Player ply)
 
 				delete players;
 
-				if (!gamemode.plconfig.GetObject("revive").GetBool("multi", true)) break;
+				if (!gamemode.plconfig.Get("revive").GetBool("multi", true)) break;
 			}
 		}
 

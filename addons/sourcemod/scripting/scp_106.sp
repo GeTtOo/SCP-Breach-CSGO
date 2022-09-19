@@ -66,6 +66,14 @@ public void SCP_OnPlayerClear(Player &ply) {
     }
     
     if (ply.class && !ply.IsSCP) ply.RemoveValue("106_inpd");
+
+    if (ply.class && !ply.IsSCP && ply.ragdoll && ply.GetBool("106_cellvic"))
+    {
+        delete ply.ragdoll.meta;
+        ents.Dissolve(ply.ragdoll);
+        ply.ragdoll = null;
+        ply.RemoveValue("106_cellvic");
+    }
 }
 
 public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype, int &inflictor) {
@@ -83,9 +91,9 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
                 if (vic.GetBool("106_inpd") && !vic.GetBool("106_tplock"))
                 {
                     vic.SetPos(gamemode.plconfig.GetVector("pocket") - new Vector(0.0, 0.0, 100.0), new Angle(0.0, 0.0, 0.0));
-                    int idposrnd = GetRandomInt(0, gamemode.plconfig.GetObject("pocketout").GetArray("scp").Length - 1);
-                    Vector vec = view_as<JSON_OBJECT>(gamemode.plconfig.GetObject("pocketout").GetArray("scp").GetObject(idposrnd)).GetVector("vec");
-                    Angle ang = view_as<JSON_OBJECT>(gamemode.plconfig.GetObject("pocketout").GetArray("scp").GetObject(idposrnd)).GetAngle("ang");
+                    int idposrnd = GetRandomInt(0, gamemode.plconfig.Get("pocketout").GetArr("scp").Length - 1);
+                    Vector vec = view_as<JSON_OBJECT>(gamemode.plconfig.Get("pocketout").GetArr("scp").Get(idposrnd)).GetVector("vec");
+                    Angle ang = view_as<JSON_OBJECT>(gamemode.plconfig.Get("pocketout").GetArr("scp").Get(idposrnd)).GetAngle("ang");
                     SCP_106_TeleportToPos(vic, vec - new Vector(0.0, 0.0, 64.0), ang);
                     vic.SetBool("106_inpd", false);
                     
@@ -116,9 +124,9 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
         if (GetRandomInt(1, 100) < gamemode.plconfig.GetInt("escapechanceofpocket", 25))
         {
             vic.SetPos(gamemode.plconfig.GetVector("pocket") - new Vector(0.0, 0.0, 100.0), new Angle(0.0, 0.0, 0.0));
-            int idposrnd = GetRandomInt(0, gamemode.plconfig.GetObject("pocketout").GetArray("people").Length - 1);
-            Vector vec = view_as<JSON_OBJECT>(gamemode.plconfig.GetObject("pocketout").GetArray("people").GetObject(idposrnd)).GetVector("vec");
-            Angle ang = view_as<JSON_OBJECT>(gamemode.plconfig.GetObject("pocketout").GetArray("people").GetObject(idposrnd)).GetAngle("ang");
+            int idposrnd = GetRandomInt(0, gamemode.plconfig.Get("pocketout").GetArr("people").Length - 1);
+            Vector vec = view_as<JSON_OBJECT>(gamemode.plconfig.Get("pocketout").GetArr("people").Get(idposrnd)).GetVector("vec");
+            Angle ang = view_as<JSON_OBJECT>(gamemode.plconfig.Get("pocketout").GetArr("people").Get(idposrnd)).GetAngle("ang");
             SCP_106_TeleportToPos(vic, vec - new Vector(0.0, 0.0, 64.0), ang);
             vic.SetBool("106_inpd", false);
             return Plugin_Handled;
@@ -153,6 +161,8 @@ public Action OnTriggerActivated(const char[] output, int caller, int activator,
 
     if (StrEqual(triggername, "scp_106_trigger") && !player.GetByID(activator).IsSCP)
     {
+        player.GetByID(activator).SetBool("106_cellvic", true);
+
         ArrayList players = player.GetAll();
     
         for (int i=0; i < player.Length; i++)
@@ -169,7 +179,7 @@ public Action OnTriggerActivated(const char[] output, int caller, int activator,
         delete players;
         
         char sound[128];
-        gamemode.plconfig.GetObject("sound").GetString("recontainment", sound, sizeof(sound));
+        gamemode.plconfig.Get("sound").GetString("recontainment", sound, sizeof(sound));
         gamemode.mngr.PlayNonCheckSoundToAll(sound);
 
         return Plugin_Continue;
@@ -297,7 +307,7 @@ public void SCP_106_TeleportHandler(Base data)
     if (points.Length == plen)
     {
         char sound[128];
-        JSON_ARRAY sarr = gamemode.plconfig.GetObject("sound").GetArray("portal");
+        JSON_ARRAY sarr = gamemode.plconfig.Get("sound").GetArr("portal");
         sarr.GetString(GetRandomInt(0, sarr.Length - 1), sound, sizeof(sound));
         ply.PlayAmbient(sound);
     }
@@ -349,7 +359,7 @@ public void SCP_OnAlphaWarhead(AlphaWarhead status) {
                     if (ply.GetHandle("106_tmrpdfo")) timer.Remove(view_as<Tmr>(ply.GetHandle("106_tmrpdfo")));
                     ply.RemoveValue("106_tmrpdfo");
 
-                    SCP_106_TeleportToPos(ply, gamemode.plconfig.GetObject("exitposafternuke").GetVector("vec") - new Vector(0.0, 0.0, 64.0), gamemode.plconfig.GetObject("exitposafternuke").GetAngle("ang"));
+                    SCP_106_TeleportToPos(ply, gamemode.plconfig.Get("exitposafternuke").GetVector("vec") - new Vector(0.0, 0.0, 64.0), gamemode.plconfig.Get("exitposafternuke").GetAngle("ang"));
                     ply.SetBool("106_inpd", false);
                 }
             }
@@ -393,12 +403,12 @@ public void ForcedTpFromPD(Player ply)
 
 public void SCP_106_Locking(Player ply)
 {
-    SCP_106_TeleportToPos(ply, gamemode.plconfig.GetObject("cell").GetVector("vec")- new Vector(0.0,0.0,64.0), gamemode.plconfig.GetObject("cell").GetAngle("ang"));
+    SCP_106_TeleportToPos(ply, gamemode.plconfig.Get("cell").GetVector("vec")- new Vector(0.0,0.0,64.0), gamemode.plconfig.Get("cell").GetAngle("ang"));
 }
 
 public bool DoorIsBlock(int doorid)
 {
-    JSON_ARRAY blockdoors = gamemode.plconfig.GetArray("blockdoors");
+    JSON_ARRAY blockdoors = gamemode.plconfig.GetArr("blockdoors");
     
     for (int i=0; i < blockdoors.Length; i++)
         if (blockdoors.GetInt(i) == doorid)

@@ -43,7 +43,7 @@ methodmap Class < JSON_OBJECT {
     }
 
     public JSON_OBJECT GetVecAng() {
-        JSON_OBJECT posobj = this.GetObject("pos");
+        JSON_OBJECT posobj = this.Get("pos");
         
         if (posobj != null)
             if (!posobj.IsArray)
@@ -53,7 +53,7 @@ methodmap Class < JSON_OBJECT {
                 JSON_ARRAY posarr = view_as<JSON_ARRAY>(posobj);
                 for (int i=0; i < posarr.Length; i++)
                 {
-                    JSON_OBJECT pos = view_as<JSON_OBJECT>(posarr.GetObject(i));
+                    JSON_OBJECT pos = view_as<JSON_OBJECT>(posarr.Get(i));
                     if (!pos.GetBool("lock"))
                         return pos;
                 }
@@ -100,23 +100,23 @@ methodmap Class < JSON_OBJECT {
     }
 
     property EscapeInfo escape {
-        public get() { return view_as<EscapeInfo>(this.GetObject("escape")); }
+        public get() { return view_as<EscapeInfo>(this.Get("escape")); }
     }
 
     property JSON_OBJECT sound {
-        public get() { return view_as<JSON_OBJECT>(this.GetObject("sound")); }
+        public get() { return view_as<JSON_OBJECT>(this.Get("sound")); }
     }
 
     property JSON_ARRAY doors {
-        public get() { return view_as<JSON_ARRAY>(this.GetObject("doors")); }
+        public get() { return view_as<JSON_ARRAY>(this.Get("doors")); }
     }
 
     property JSON_ARRAY items {
-        public get() { return view_as<JSON_ARRAY>(this.GetObject("items")); }
+        public get() { return view_as<JSON_ARRAY>(this.Get("items")); }
     }
 
     property JSON_ARRAY weapons {
-        public get() { return view_as<JSON_ARRAY>(this.GetObject("weapons")); }
+        public get() { return view_as<JSON_ARRAY>(this.Get("weapons")); }
     }
 
     public bool Is(char[] equalClass) {

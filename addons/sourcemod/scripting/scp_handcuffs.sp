@@ -108,7 +108,7 @@ public EscapeInfo SCP_OnPlayerEscape(Player &ply, EscapeInfo &data)
 {
     if (ply.GetBool("handcuffed"))
     {
-        JSON_OBJECT arrestarr = gamemode.plconfig.GetObject("arrestedesc");
+        JSON_OBJECT arrestarr = gamemode.plconfig.Get("arrestedesc");
         StringMapSnapshot arrestarrsnap = arrestarr.Snapshot();
         
         char teamname[32], classname[32];
@@ -117,13 +117,12 @@ public EscapeInfo SCP_OnPlayerEscape(Player &ply, EscapeInfo &data)
             int kl = arrestarrsnap.KeyBufferSize(i);
             char[] class = new char[kl];
             arrestarrsnap.GetKey(i, class, kl);
-            if (json_is_meta_key(class)) continue;
             
             ply.class.Name(classname, sizeof(classname));
 
             if (StrEqual(class, classname))
             {
-                EscapeInfo arrestdata = view_as<EscapeInfo>(arrestarr.GetObject(class));
+                EscapeInfo arrestdata = view_as<EscapeInfo>(arrestarr.Get(class));
                 arrestdata.team(teamname, sizeof(teamname));
                 arrestdata.class(classname, sizeof(classname));
                 
@@ -154,7 +153,7 @@ public void SCP_OnInput(Player &ply, int buttons) {
         ply.PrintNotify("%t", "Handcuff breaking");
 
         char sound[128];
-        JSON_ARRAY sndarr = gamemode.plconfig.GetObject("sound").GetArray("breaking");
+        JSON_ARRAY sndarr = gamemode.plconfig.Get("sound").GetArr("breaking");
         sndarr.GetString(GetRandomInt(0, sndarr.Length - 1), sound, sizeof(sound));
         ply.PlayAmbient(sound);
 
@@ -186,7 +185,7 @@ public void HcBreak(Player ply) {
         ply.HideOverlay();
 
         char sound[128];
-        JSON_ARRAY sndarr = gamemode.plconfig.GetObject("sound").GetArray("breaked");
+        JSON_ARRAY sndarr = gamemode.plconfig.Get("sound").GetArr("breaked");
         sndarr.GetString(GetRandomInt(0, sndarr.Length - 1), sound, sizeof(sound));
         ply.PlayAmbient(sound);
     }

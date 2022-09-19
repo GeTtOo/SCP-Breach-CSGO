@@ -98,7 +98,7 @@ public void SCP_OnPlayerDeath(Player &ply)
 {
     if (ply != null && ply.class != null && ply.class.Is("173")) {
         char sound[128];
-        JSON_ARRAY ds = gamemode.plconfig.GetObject("sound").GetArray("death");
+        JSON_ARRAY ds = gamemode.plconfig.Get("sound").GetArr("death");
         ds.GetString(GetRandomInt(0, ds.Length - 1), sound, sizeof(sound));
         ply.PlayAmbient(sound);
     }
@@ -228,7 +228,7 @@ public void KillInPVS(Player ply, int radius)
             if (!TR_DidHit(ray))
             {
                 char sound[128];
-                JSON_ARRAY nbs = gamemode.plconfig.GetObject("sound").GetArray("neckbroke");
+                JSON_ARRAY nbs = gamemode.plconfig.Get("sound").GetArr("neckbroke");
                 nbs.GetString(GetRandomInt(0, nbs.Length - 1), sound, sizeof(sound));
                 vic.PlayAmbient(sound);
 

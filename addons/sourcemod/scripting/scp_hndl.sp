@@ -46,12 +46,8 @@ int phs = 0;
 
 public void OnMapStart()
 {
-    AddCommandListener(Command_GetHndlSize, "hs");
-}
-
-public void OnMapEnd()
-{
-    RemoveCommandListener(Command_GetHndlSize, "hs");
+    RegAdminCmd("hs", Command_GetHndlSize, ADMFLAG_GENERIC);
+    RegServerCmd("hs", Command_GetHndlSizeSrv);
 }
 
 public void SCP_OnRoundStart() {
@@ -81,13 +77,18 @@ public void SaveHandles()
     ServerCommand("sm_dump_handles /addons/sourcemod/plugins/SCP/hndl.txt");
 }
 
-public Action Command_GetHndlSize(int client, const char[] command, int argc)
+public Action Command_GetHndlSize(int client, int argc)
 {
     Player ply = player.GetByID(client);
     
-    if (!ply.IsAdmin()) return Plugin_Stop;
-    
     PrintToConsole(ply.id, "Handles size: %i Kb", (FileSize("/addons/sourcemod/plugins/SCP/hndl.txt") / 8));
+
+    return Plugin_Stop;
+}
+
+public Action Command_GetHndlSizeSrv(int argc)
+{
+    PrintToServer("Handles size: %i Kb", (FileSize("/addons/sourcemod/plugins/SCP/hndl.txt") / 8));
 
     return Plugin_Stop;
 }
