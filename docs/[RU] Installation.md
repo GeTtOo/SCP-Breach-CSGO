@@ -55,6 +55,7 @@ ammo_item_limit_healthshot 1
 [RIPEXT](https://github.com/ErikMinekus/sm-ripext/releases) - необходимо для работы плагина SCP_Discord_Log  
 [Fix-Pickup-Shield](https://github.com/theelsaud/Fix-Pickup-Shield) - для подбирания щитов (рекомендуется)  
 [Always Weapon Skins](https://forums.alliedmods.net/showthread.php?t=237114) - для сохранения скинов игроков (необязательно)  
+[-N- Arms Fix](https://github.com/NomisCZ/Arms-Fix/releases) - для исправления проблем с нестандартными руками (рекомендуется)  
 
 
 ## Для создателей контента 
