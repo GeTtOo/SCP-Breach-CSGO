@@ -54,6 +54,7 @@ The localization file setup is taken from Sourcemod. If the required language is
 [RIPEXT](https://github.com/ErikMinekus/sm-ripext/releases) - required for the SCP_Discord_Log  
 [Fix-Pickup-Shield](https://github.com/theelsaud/Fix-Pickup-Shield) - for picking up shields (recommended)  
 [Always Weapon Skins](https://forums.alliedmods.net/showthread.php?t=237114) - for saving player skins (optional)  
+[-N- Arms Fix](https://github.com/NomisCZ/Arms-Fix/releases) - to fix problems with non-standard hands (recommended)  
 
 
 ## For content creators 
