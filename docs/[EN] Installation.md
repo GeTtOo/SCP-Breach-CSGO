@@ -19,6 +19,14 @@ The content is updated by extracting all files to the root of the server.
 Variables required to modification's work:  
 
 ```c
+mp_ct_default_melee									""
+mp_ct_default_secondary							""
+mp_ct_default_primary								""
+mp_t_default_melee									""
+mp_t_default_secondary							""
+mp_t_default_primary								""
+
+
 mp_autokick 0
 mp_freezetime 0
 mp_warmuptime 30
