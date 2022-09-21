@@ -489,7 +489,7 @@ This section specifies the array of sounds that will be played when creating a p
 
 | Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
-| damage | Floating spot number | Урон, наносимый ??? |
+| damage | Floating spot number | Damage multiplier |
 | abradius | Integer | Range of the ability |
 | abcd | Integer | Ability Cooldown Time |
 | abcsr | Floating spot number | The multiplier of slowing down the victim's speed when activating the ability |
@@ -837,7 +837,7 @@ A file for customizing your items (entity). We highly don't recommend any modifi
 ```
 
 ### Access levels 
-Делятся на 10 категорий:
+They are divided into 10 categories:
 1. Holding cells, level 1
 2. Holding cells, level 2
 3. Holding cells, level 3
@@ -945,7 +945,7 @@ For example, automatic 50-50 split:
 If it is necessary to carry out manipulations with the player:
 ```json
 "player": [
-  ["Эффект", "Процент успешного «улучшения» от 0 до 100"]
+  ["Effect", "Successful “improvement” percentage from 0 to 100"]
 ]
 ```
 
@@ -1024,7 +1024,7 @@ If it is necessary to carry out manipulations with the player:
 
 ## List of commands  
 
-### Команды для игроков
+### Player Commands
 | Command       | Description       |
 | ------------- | ------------------|
 | game_ready    | Complete training |
