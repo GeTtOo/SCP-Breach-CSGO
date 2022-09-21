@@ -36,7 +36,7 @@
 
 public Plugin myinfo = {
     name = "[SCP] Navigator",
-    author = "Andrey::Dono",
+    author = "Andrey::Dono, GeTtOo",
     description = "Plugin added navigator for CS:GO modification - SCP Foundation",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"

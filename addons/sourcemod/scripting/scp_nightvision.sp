@@ -36,7 +36,7 @@
 
 public Plugin myinfo = {
     name = "[SCP] Flashlight",
-    author = "Andrey::Dono",
+    author = "Andrey::Dono, GeTtOo",
     description = "Nightvision googles for CS:GO modification - SCP Foundation",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"

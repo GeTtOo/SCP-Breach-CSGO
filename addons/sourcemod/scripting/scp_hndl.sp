@@ -36,10 +36,10 @@
 
 public Plugin myinfo = {
     name = "[SCP] Leak checker",
-    author = "Andrey::Dono",
+    author = "Andrey::Dono, GeTtOo",
     description = "Memory leak checker for CS:GO modification - SCP Foundation",
     version = "1.0",
-    url = "https://github.com/dogma4b"
+    url = "https://github.com/GeTtOo/csgo_scp"
 };
 
 int phs = 0;

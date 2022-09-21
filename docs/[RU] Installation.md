@@ -20,6 +20,14 @@
 Переменные необходимые для работы модификации:  
 
 ```c
+mp_ct_default_melee	  ""
+mp_ct_default_secondary	  ""
+mp_ct_default_primary	  ""
+mp_t_default_melee        ""
+mp_t_default_secondary    ""
+mp_t_default_primary      ""
+
+
 mp_autokick 0
 mp_freezetime 0
 mp_warmuptime 30

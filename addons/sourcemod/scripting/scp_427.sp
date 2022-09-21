@@ -36,10 +36,10 @@
 
 public Plugin myinfo = {
     name = "[SCP] 427",
-    author = "Andrey::Dono",
+    author = "Andrey::Dono, GeTtOo",
     description = "SCP 427 for CS:GO modification - SCP Foundation",
     version = "1.0",
-    url = "https://github.com/author/plugin"
+    url = "https://github.com/GeTtOo/csgo_scp"
 };
 
 public void SCP_RegisterMetaData() {

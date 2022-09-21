@@ -38,7 +38,7 @@
 #include <scpcore>
 
 public Plugin myinfo = {
-    name = "[SCP] GameMode",
+    name = "[SCP] GameMode Core",
     author = "Andrey::Dono, GeTtOo",
     description = "SCP gamemode for CS:GO",
     version = "1.0",

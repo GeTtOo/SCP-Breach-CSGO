@@ -36,7 +36,7 @@
 
 public Plugin myinfo = {
     name = "[SCP] Crosshair",
-    author = "Andrey::Dono",
+    author = "Andrey::Dono, GeTtOo",
     description = "Plugin added crosshair on fists, awp, scar20 for CS:GO modification - SCP Foundation",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"
