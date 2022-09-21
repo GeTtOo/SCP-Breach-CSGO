@@ -307,7 +307,7 @@ In this section, the parameters of the Sapper plugin are configured.
 | bcmultipler | Integer | Explosive Damage Multiplier |
 | bccount | Integer | Maximum amount of explosives |
 
-### \[Опционально\] Handcuffs[^6]  
+### \[Optional\] Handcuffs[^6]  
 In this section, the handcuffs are adjusted.
 
 | Parameter      | Value      | Details  |
