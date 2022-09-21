@@ -302,7 +302,7 @@ The language code is taken from Sourcemod.
 ### \[Optional\] Sapper[^6]  
 In this section, the parameters of the Sapper plugin are configured.
 
-| Parameter      | Value      | Подробно  |
+| Parameter      | Value      | Details  |
 | ------------- |:-------------:| ---------|
 | bcmultipler | Integer | Explosive Damage Multiplier |
 | bccount | Integer | Maximum amount of explosives |
