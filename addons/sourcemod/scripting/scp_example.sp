@@ -36,10 +36,10 @@
 
 public Plugin myinfo = {
     name = "[SCP] Plugin example",
-    author = "Anyone",
+    author = "Andrey::Dono, GeTtOo",
     description = "Plugin example for CS:GO modification - SCP Foundation",
     version = "1.0",
-    url = "https://github.com/author/plugin"
+    url = "https://github.com/GeTtOo/csgo_scp"
 };
 
 public void SCP_RegisterMetaData() {

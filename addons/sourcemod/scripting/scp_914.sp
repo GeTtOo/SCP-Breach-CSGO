@@ -47,7 +47,7 @@ char curmode[32] = "rough";
 
 public Plugin myinfo = {
     name = "[SCP] 914",
-    author = "Andrey::Dono",
+    author = "Andrey::Dono, GeTtOo",
     description = "SCP-914 for CS:GO modification SCP Foundation",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"

@@ -36,7 +36,7 @@
 
 public Plugin myinfo = {
     name = "[SCP] Tutorial",
-    author = "GeTtOo, Anfrey::Dono",
+    author = "Andrey::Dono, GeTtOo",
     description = "Tutorial for CS:GO modification - SCP Foundation",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"

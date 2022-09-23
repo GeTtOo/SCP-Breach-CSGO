@@ -38,7 +38,7 @@
 
 public Plugin myinfo = {
     name = "[SCP] 035",
-    author = "GeTtOo",
+    author = "Andrey::Dono, GeTtOo",
     description = "Added SCP-035",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"
