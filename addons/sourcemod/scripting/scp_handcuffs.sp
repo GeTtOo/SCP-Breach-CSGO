@@ -44,7 +44,7 @@ public Plugin myinfo = {
 
 public void SCP_OnLoad()
 {
-    LoadTranslations("handcuff");
+    LoadTranslations("scp.handcuff");
 }
 
 public void SCP_OnPlayerJoin(Player &ply)

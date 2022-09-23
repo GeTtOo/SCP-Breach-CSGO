@@ -66,6 +66,9 @@ public void SCP_RegisterMetaData() {
     gamemode.meta.RegStatusEffectEvent(INIT, "Metamarphose", "Metamarphose_Init");
     gamemode.meta.RegStatusEffectEvent(UPDATE, "Metamarphose", "Metamarphose_Update");
     gamemode.meta.RegStatusEffectEvent(END, "Metamarphose", "Metamarphose_End");
+
+    gamemode.meta.RegisterStatusEffect("Speed");
+    gamemode.meta.RegStatusEffectEvent(INIT, "Speed", "Speed");
 }
 
 public void SCP_OnLoad() {
@@ -199,8 +202,6 @@ public void Transform(Player ply) {
                     
                     gamemode.mngr.Fade(entply.id, 800, 3000, new Colour(0,0,0,255));
 
-        
-
                     ruinechance = -1;
 
                     if (!entply.IsSCP && modifychance >= GetRandomInt(1, 100)) {
@@ -318,6 +319,11 @@ public void Metamarphose_ForceEnd(Player ply) {
 //                              Speed status effect
 //
 //////////////////////////////////////////////////////////////////////////////
+
+public void Speed(Player ply) {
+    ply.multipler = ply.multipler * 0.2;
+    ply.PrintWarning("Вы чувствуете как вас переполняет энергия");
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //

@@ -1,0 +1,33 @@
+"Phrases"
+{
+    "Healing"
+    {
+        "en"        "You're feeling better"
+        "ru"        "Вы стали себя лучше чувствовать"
+    }
+
+    "Injured"
+    {
+        "en"        "You were seriously injured..."
+        "ru"        "Вы получили серьёзное ранение..."
+    }
+    
+    "Healed"
+    {
+        "en"        "You wounds stop bleeding"
+        "ru"        "Ваши раны перестают кровоточить"
+    }
+
+    "Revived"
+    {
+        "#format"   "{1:s}"
+        "en"        "Player {1} revived"
+        "ru"        "Вы реанимировали игрока - {1}"
+    }
+
+    "No target"
+    {
+        "en"        "Can't find target"
+        "ru"        "Цель не обнаружена"
+    }
+}

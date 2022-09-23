@@ -35,9 +35,9 @@
 #pragma newdecls required
 
 public Plugin myinfo = {
-    name = "[SCP] HealthShot",
+    name = "[SCP] Medecine",
     author = "Andrey::Dono, GeTtOo",
-    description = "Removes hp restriction when using healthshot",
+    description = "Plugin added advanced medecine",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"
 };
@@ -65,7 +65,7 @@ public void SCP_RegisterMetaData() {
 //////////////////////////////////////////////////////////////////////////////
 
 public void Heal_Init(Player ply) {
-    ply.PrintWarning("Скорость твоего метаболизма возрасла в разы...");
+    ply.PrintNotify("%t", "Healing");
 }
 
 public void Heal_Update(Player ply) {
@@ -85,13 +85,7 @@ public void Heal_Update(Player ply) {
 public void Injure_Init(Player ply) {
     ply.speed = ply.class.speed / 1.4;
 
-    ply.PrintWarning("Ваше тело начинает кровоточить из множества мелких ран...");
-
-    char sound[128];
-    JSON_ARRAY soundarr = gamemode.plconfig.Get("sound").GetArr("playerkill");
-    soundarr.GetString(GetRandomInt(0, soundarr.Length - 1), sound, sizeof(sound));
-    
-    ply.PlaySound(sound);
+    ply.PrintWarning("%t", "Injured");
 }
 
 public void Injure_Update(Player ply) {
@@ -99,11 +93,13 @@ public void Injure_Update(Player ply) {
 }
 
 public void Injure_End(Player ply) {
-    ply.PrintWarning("Вы чувствуете себя немного лучше...");
+    if (ply.class) ply.speed = ply.class.speed;
+    
+    ply.PrintNotify("%t", "Healed");
 }
 
 public void Injure_ForceEnd(Player ply) {
-    if (ply.class) ply.speed = ply.class.speed;
+    Injure_End(ply);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -114,6 +110,7 @@ public void Injure_ForceEnd(Player ply) {
 
 public void SCP_OnLoad()
 {
+    LoadTranslations("scp.medicine");
     HookEvent("weapon_fire", Event_WeaponFire, EventHookMode_Pre);
 }
 
@@ -307,7 +304,9 @@ public bool PlayerRevive(Player ply)
 
                         vic.SetArrayList("medrevpos", pos);
 
-                        ply.PrintWarning("Player revived!");
+                        char vicname[32];
+                        vic.GetName(vicname, sizeof(vicname));
+                        ply.PrintWarning("%t", "Revived", vicname);
 
                         status = true;
                     }
@@ -328,5 +327,5 @@ public void DefibrillatorUse(Player &ply, InvItem &ent)
     if (PlayerRevive(ply))
         ply.inv.Remove(ent);
     else
-        ply.PrintWarning("Can't find target");
+        ply.PrintWarning("%t", "No target");
 }
