@@ -1,0 +1,26 @@
+"Phrases"
+{
+    "Metamarphose Start"
+    {
+        "en"        "They are unworthy... Kill them all..."
+        "ru"        "Они все недостойны... Убить их всех..."
+    }
+
+    "Metamarphose End"
+    {
+        "en"        "You have ascended to another level of being..."
+        "ru"        "Вы вознеслись на другой уровень бытия..."
+    }
+    
+    "Speed"
+    {
+        "en"        "You feeling energy overflowing your body"
+        "ru"        "Вы чувствуете как вас переполняет энергия"
+    }
+
+    "Butchering"
+    {
+        "en"        "Your body was torn apart..."
+        "ru"        "Ваше тело было разорвано на части..."
+    }
+}

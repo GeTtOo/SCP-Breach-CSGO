@@ -287,7 +287,7 @@ public void CreateEntity(Base data) {
 public void Metamarphose_Init(Player ply) {
     ply.multipler = 2.5;
     ply.SetArrayList("dooraccess", gamemode.meta.GetEntity("005_picklock").GetArrayList("access"));
-    ply.PrintWarning("Они все недостойны... Убить их всех...");
+    ply.PrintWarning("%t", "Metamarphose Start");
 }
 
 public void Metamarphose_Update(Player ply) {
@@ -302,7 +302,7 @@ public void Metamarphose_Update(Player ply) {
 public void Metamarphose_End(Player ply) {
     ply.RemoveValue("dooraccess");
     ply.TakeDamage(ply, 3000.0, DMG_ENERGYBEAM);
-    ply.PrintWarning("Вы перешли на другой уровень бытия...");
+    ply.PrintWarning("%t", "Metamarphose End");
 
     delete ply.ragdoll.meta;
     ents.Dissolve(ply.ragdoll);
@@ -322,7 +322,7 @@ public void Metamarphose_ForceEnd(Player ply) {
 
 public void Speed(Player ply) {
     ply.multipler = ply.multipler * 0.2;
-    ply.PrintWarning("Вы чувствуете как вас переполняет энергия");
+    ply.PrintWarning("%t", "Speed");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -332,7 +332,7 @@ public void Speed(Player ply) {
 //////////////////////////////////////////////////////////////////////////////
 
 public void Butchering(Player ply) {
-    ply.PrintWarning("Ваше тело было разорвано на части...");
+    ply.PrintWarning("%t", "Butchering");
 
     char sound[128];
     JSON_ARRAY soundarr = gamemode.plconfig.Get("sound").GetArr("playerkill");

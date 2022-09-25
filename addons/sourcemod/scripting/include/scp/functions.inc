@@ -104,13 +104,15 @@ public void SetupIdPads()
 
         if (StrEqual(ModelName, "models/eternity/map/keypad.mdl"))
         {
-            SetEntProp(entId, Prop_Send, "m_nSkin", (gamemode.mngr.serverlang == 22) ? 0 : 2);
+            SetEntProp(entId, Prop_Send, "m_nSkin", (gamemode.mngr.serverlang == 22) ? 0 : 3);
         }
     }
 }
 
 public void ResetIdPad(int entid)
 {
+    char langcode[3];
+    gamemode.mngr.GetServerLangInfo(langcode, sizeof(langcode));
     SetEntProp(entid, Prop_Send, "m_nSkin", (gamemode.mngr.serverlang == 22) ? 0 : 3);
 }
 
