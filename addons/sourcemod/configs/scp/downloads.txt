@@ -219,7 +219,6 @@ materials/eternity/overlays/win_staff_ru_fh.vmt
 materials/eternity/overlays/arrested_ru_fh.vmt
 materials/eternity/overlays/fists_ru_fh.vmt
 materials/eternity/overlays/inventory_ru_fh.vmt
-materials/models/eternity/overlays/inventory_ru_fh.vmt
 materials/models/eternity/players/chaos/belt02.vmt
 materials/models/eternity/players/chaos/belt02.vtf
 materials/models/eternity/players/chaos/belt02_ref.vtf
