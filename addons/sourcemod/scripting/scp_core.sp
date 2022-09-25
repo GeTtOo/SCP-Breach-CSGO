@@ -437,35 +437,6 @@ public void OnEntityDestroyed(int entity)
     }
 }
 
-public void OnPlayerRunCmdPost(int client, int buttons)
-{
-    Player ply = player.GetByID(client);
-    
-    if (ply && ply.class)
-    {
-        Call_StartForward(OnInputForward);
-        Call_PushCellRef(ply);
-        Call_PushCell(buttons);
-        Call_Finish();
-    }
-}
-
-public Action CS_OnTerminateRound(float &delay, CSRoundEndReason &reason)
-{
-    if(gamemode.mngr.IsWarmup)
-	{
-		return Plugin_Continue;
-	}
-    else if(gamemode.mngr.RoundComplete)
-    {
-        return Plugin_Continue;
-    }
-    else
-    {
-        return Plugin_Handled;
-    }
-}
-
 public void SCP_OnInput(Player &ply, int buttons)
 {
     if (buttons & IN_SCORE && !timer.IsAlive(view_as<Tmr>(ply.GetHandle("ActionCD"))))

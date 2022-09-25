@@ -605,3 +605,32 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
     return Plugin_Handled;
 }
+
+public void OnPlayerRunCmdPost(int client, int buttons)
+{
+    Player ply = player.GetByID(client);
+    
+    if (ply && ply.class)
+    {
+        Call_StartForward(OnInputForward);
+        Call_PushCellRef(ply);
+        Call_PushCell(buttons);
+        Call_Finish();
+    }
+}
+
+public Action CS_OnTerminateRound(float &delay, CSRoundEndReason &reason)
+{
+    if(gamemode.mngr.IsWarmup)
+	{
+		return Plugin_Continue;
+	}
+    else if(gamemode.mngr.RoundComplete)
+    {
+        return Plugin_Continue;
+    }
+    else
+    {
+        return Plugin_Handled;
+    }
+}
