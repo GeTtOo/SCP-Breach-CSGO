@@ -73,6 +73,7 @@ public void SCP_RegisterMetaData() {
 
 public void SCP_OnLoad() {
     LoadTranslations("scpcore.phrases");
+    LoadTranslations("scp.914");
 
     gconfig = Utils.ReadCurMapConfig("914");
     
