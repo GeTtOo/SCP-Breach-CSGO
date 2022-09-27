@@ -185,7 +185,7 @@
         "timeforcedpocketexit":0,
         "exitposafternuke":{"vec":[-7351,-4148,1872],"ang":[0,-179,0]},
         "escapechanceofpocket":25,
-        "blockdoors":[452,454,749,835],
+        "blockdoors":[535,928,1077,1079],
         "sound": {
             "portal":[
                 "*/eternity/scp/106/portal1.mp3",
