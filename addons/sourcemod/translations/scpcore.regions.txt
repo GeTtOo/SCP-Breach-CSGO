@@ -4,180 +4,252 @@
     {
         "en"    "SCP-914"
         "ru"    "SCP-914"
+        "chi"   "SCP-914"
+        "zho"   "SCP-914"
     }
     "MogSpawn"
     {
         "en"    "MOG spawn site"
         "ru"    "Зона высадки оперативной группы MOG"
+        "chi"   "政府军队复活点"
+        "zho"   "政府军队复活点"
     }
     "ChaosSpawn"
     {
         "en"    "Chaos spawn site"
         "ru"    "Зона высадки Повстанцев Хаоса"
+        "chi"   "混沌分裂者复活点"
+        "zho"   "混沌分裂者复活点"
     }
     "DSpawn"
     {
         "en"    "Class D living zone"
         "ru"    "Жилая зона Д класса"
+        "chi"   "D级人员生活区"
+        "zho"   "D级人员生活区"
     }
     "SecurityRoom"
     {
         "en"    "Security room"
         "ru"    "Помещение охраны комплекса"
+        "chi"   "警卫室"
+        "zho"   "警卫室"
     }
     "SCP-106-zone"
     {
         "en"    "SCP-106 containment zone"
         "ru"    "Зона сдерживания SCP-106"
+        "chi"   "SCP-106 收容区域"
+        "zho"   "SCP-106 收容区域"
     }
     "SCP-106-control-room"
     {
         "en"    "SCP-106 control room"
         "ru"    "Контрольный пункт камеры SCP-106"
+        "chi"   "SCP-106 控制室"
+        "zho"   "SCP-106 控制室"
     }
     "SCP-106-room"
     {
         "en"    "SCP-106 room"
         "ru"    "Камера SCP-106"
+        "chi"   "SCP-106 收容室"
+        "zho"   "SCP-106 收容室"
     }
     "scientists-office"
     {
         "en"    "Scientist's Office"
         "ru"    "Офис учёных"
+        "chi"   "科学家办公室"
+        "zho"   "科学家办公室"
     }
     "construction"
     {
         "en"    "Construction"
         "ru"    "Стройка"
+        "chi"   "建筑"
+        "zho"   "建筑"
     }
     "server-room"
     {
         "en"    "Server Room"
         "ru"    "Серверная"
+        "chi"   "服务器房间"
+        "zho"   "服务器房间"
     }
     "scp-079"
     {
         "en"    "SCP-079"
         "ru"    "SCP-079"
+        "chi"   "SCP-079"
+        "zho"   "SCP-079"
     }
     "locker-room"
     {
         "en"    "Locker Room"
         "ru"    "Раздевалка"
+        "chi"   "带锁的房间"
+        "zho"   "带锁的房间"
     }
     "womens-toilet"
     {
         "en"    "Women's Toilet"
         "ru"    "Женский туалет"
+        "chi"   "女厕所"
+        "zho"   "女厕所"
     }
     "mens-toilet"
     {
         "en"    "Men's toilet"
         "ru"    "Мужской туалет"
+        "chi"   "男厕所"
+        "zho"   "男厕所"
     }
     "staff-room"
     {
         "en"    "Staff Room"
         "ru"    "Комната персонала"
+        "chi"   "员工房间"
+        "zho"   "员工房间"
     }
     "scp-173"
     {
         "en"    "SCP-173"
         "ru"    "SCP-173"
+        "chi"   "SCP-173"
+        "zho"   "SCP-173"
     }
     "storage-room"
     {
         "en"    "Storage Room"
         "ru"    "Склад"
+        "chi"   "储藏室"
+        "zho"   "储藏室"
     }
     "lite-armory-room"
     {
         "en"    "Lite Armory Room"
         "ru"    "Оружейная лёгкой зоны"
+        "chi"   "轻武器库"
+        "zho"   "轻武器库"
     }
     "scp-457"
     {
         "en"    "SCP-457"
         "ru"    "SCP-457"
+        "chi"   "SCP-457"
+        "zho"   "SCP-457"
     }
     "gate-zone"
     {
         "en"    "Gate Zone"
         "ru"    "КПП"
+        "chi"   "大门区域"
+        "zho"   "大门区域"
     }
     "scp-035"
     {
         "en"    "SCP-035"
         "ru"    "SCP-035"
+        "chi"   "SCP-035"
+        "zho"   "SCP-035"
     }
     "lite-contaiment-room"
     {
         "en"    "Lite Contaiment Room"
         "ru"    "Лёгкая зона содержания"
+        "chi"   "轻收容室"
+        "zho"   "轻收容室"
     }
     "scp-996"
     {
         "en"    "SCP-996"
         "ru"    "SCP-996"
+        "chi"   "SCP-996"
+        "zho"   "SCP-996"
     }
     "hard-armory-room"
     {
         "en"    "Hard Armory Room"
         "ru"    "Оружейная тяжёлой зоны"
+        "chi"   "重武器库"
+        "zho"   "重武器库"
     }
     "main-armory-room"
     {
         "en"    "Main Armory Room"
         "ru"    "Главная оружейная"
+        "chi"   "主武器库"
+        "zho"   "主武器库"
     }
     "nuke-side"
     {
         "en"    "Nuke Side"
         "ru"    "Реакторная зона"
+        "chi"   "核弹"
+        "zho"   "核弹"
     }
     "ventilation"
     {
         "en"    "Ventilation"
         "ru"    "Вентиляция"
+        "chi"   "通风"
+        "zho"   "通风"
     }
     "gate-b"
     {
         "en"    "Gate B"
         "ru"    "Выход Б"
+        "chi"   "大门 B"
+        "zho"   "大门 B"
     }
     "gate-a"
     {
         "en"    "Gate A"
         "ru"    "Выход А"
+        "chi"   "大门 A"
+        "zho"   "大门 A"
     }
     "scp-049"
     {
         "en"    "SCP-049"
         "ru"    "SCP-049"
+        "chi"   "SCP-049"
+        "zho"   "SCP-049"
     }
     "scp-096"
     {
         "en"    "SCP-096"
         "ru"    "SCP-096"
+        "chi"   "SCP-096"
+        "zho"   "SCP-096"
     }
     "intercom"
     {
         "en"    "Intercom"
         "ru"    "Интерком"
+        "chi"   "内部通讯"
+        "zho"   "内部通讯"
     }
     "tutorial"
     {
         "en"    "Tutorial"
         "ru"    "Туториал"
+        "chi"   "教程"
+        "zho"   "教程"
     }
     "train-station"
     {
         "en"    "Train station"
         "ru"    "Зона ожидания поезда"
+        "chi"   "火车站"
+        "zho"   "火车站"
     }
     "shelter"
     {
         "en"    "Shelter"
         "ru"    "Убежище"
+        "chi"   "庇护所"
+        "zho"   "庇护所"
     }
 }
