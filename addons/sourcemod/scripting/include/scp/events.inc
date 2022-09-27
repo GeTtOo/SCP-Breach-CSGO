@@ -634,3 +634,8 @@ public Action CS_OnTerminateRound(float &delay, CSRoundEndReason &reason)
         return Plugin_Handled;
     }
 }
+
+public Action RadioMsg(UserMsg msg_id, Protobuf msg, const int[] players, int playersNum, bool reliable, bool init)
+{
+	return Plugin_Handled;
+}

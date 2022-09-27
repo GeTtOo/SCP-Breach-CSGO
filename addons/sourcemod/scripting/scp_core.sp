@@ -96,6 +96,11 @@ public void OnPluginStart()
     
     HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
 
+    if (GetUserMessageType() == UM_Protobuf)
+	{
+		HookUserMessage(GetUserMessageId("RadioText"), RadioMsg, true);
+	}
+
     RegAdminCmd("gm", Command_Base, ADMFLAG_ROOT);
     RegAdminCmd("ents", Command_Ents, ADMFLAG_ROOT);
     RegAdminCmd("player", Command_Player, ADMFLAG_ROOT);
