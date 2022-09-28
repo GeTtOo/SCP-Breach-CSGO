@@ -51,16 +51,19 @@ public void SCP_OnPlayerSpawn(Player &ply)
 
 public void CheckPlayerHint(Player ply) 
 {
-	if(ply != null && ply.class != null && ply.IsAlive())
+	if(ply)
 	{
-		ArrayList entArr = ents.FindInPVS(ply, 125);
-		if (entArr.Length == 0) return;
-		Player target = entArr.Get(0);
-		delete entArr;
-
-		if(target != null && target.class != null && target.IsAlive() && ply.id != target.id && !target.IsSCP)
+		if(ply.class != null && ply.IsAlive())
 		{
-			ply.PrintNotify("%N", target.id);
+			ArrayList entArr = ents.FindInPVS(ply, 125);
+			if (entArr.Length == 0) return;
+			Player target = entArr.Get(0);
+			delete entArr;
+
+			if(target != null && target.class != null && target.IsAlive() && ply.id != target.id && !target.IsSCP)
+			{
+				ply.PrintNotify("%N", target.id);
+			}
 		}
 	}
 }
