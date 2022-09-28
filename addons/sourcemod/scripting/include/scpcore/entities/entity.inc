@@ -36,6 +36,7 @@
 #pragma newdecls required
 
 #include <sdktools>
+#include <sdkhooks>
 
 #include "scp/classes/entity/model"
 
