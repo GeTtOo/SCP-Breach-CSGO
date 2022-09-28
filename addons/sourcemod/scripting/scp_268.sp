@@ -65,3 +65,8 @@ public void InvisibleEffect(Player ply) {
     ply.model.SetRenderMode(RENDER_NORMAL);
     ply.progress.Stop(false);
 }
+
+public void SCP_OnPlayerClear(Player &ply) {
+    if (ply.inv.Have("268_cap"))
+        ply.model.SetRenderMode(RENDER_NORMAL);
+}
