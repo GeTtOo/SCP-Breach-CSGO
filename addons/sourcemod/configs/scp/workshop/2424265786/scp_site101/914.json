@@ -96,9 +96,6 @@
             "weapon_breachcharge": [
                 ["weapon_breachcharge", 100, 0]
             ],
-            "weapon_knife": [
-                ["weapon_knife", 100, 0]
-            ],
             "weapon_hammer": [
                 ["weapon_hammer", 100, 0]
             ],
@@ -301,9 +298,6 @@
             ],
             "weapon_breachcharge": [
                 ["plastic", 20, 80]
-            ],
-            "weapon_knife": [
-                ["iron_ingot", 0, 100]
             ],
             "weapon_hammer": [
                 ["iron_ingot", 0, 100]
@@ -515,14 +509,11 @@
             "weapon_breachcharge": [
                 ["weapon_xm1014", 60, 60]
             ],
-            "weapon_knife": [
-                ["weapon_axe", 15, 80]
-            ],
             "weapon_hammer": [
                 ["weapon_spanner", 15, 80]
             ],
             "weapon_axe": [
-                ["weapon_knife", 15, 80]
+                ["weapon_spanner", 15, 80]
             ],
             "weapon_spanner": [
                 ["weapon_axe", 15, 80]
@@ -736,9 +727,6 @@
             ],
             "weapon_breachcharge": [
                 ["weapon_negev", 20, 80]
-            ],
-            "weapon_knife": [
-                ["weapon_hegrenade", 20, 80]
             ],
             "weapon_hammer": [
                 ["weapon_smokegrenade", 20, 80]
@@ -957,9 +945,6 @@
             ],
             "weapon_breachcharge": [
                 ["weapon_scar20", 60, 30]
-            ],
-            "weapon_knife": [
-                ["weapon_hkp2000", 90, 15]
             ],
             "weapon_hammer": [
                 ["weapon_taser", 90, 15]
