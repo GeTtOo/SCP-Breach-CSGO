@@ -44,33 +44,30 @@ public Plugin myinfo = {
 
 public void SCP_OnPlayerSpawn(Player &ply)
 {
-	char  timername[64];
+	char timername[64];
 	Format(timername, sizeof(timername), "PLY-HintTextPlayerName-%i", ply.id);
 	timer.Create(timername, 1500, 0, "CheckPlayerHint", ply);
 }
 
-public void CheckPlayerHint(Player ply) 
-{
-	if(ply)
-	{
-		if(ply.class != null && ply.IsAlive())
-		{
-			ArrayList entArr = ents.FindInPVS(ply, 125);
-			if (entArr.Length == 0) return;
-			Player target = entArr.Get(0);
-			delete entArr;
-
-			if(target != null && target.class != null && target.IsAlive() && ply.id != target.id && !target.IsSCP)
-			{
-				ply.PrintNotify("%N", target.id);
-			}
-		}
-	}
-}
-
 public void SCP_OnPlayerClear(Player &ply)
 {
-	char  timername[64];
+	char timername[64];
 	Format(timername, sizeof(timername), "PLY-HintTextPlayerName-%i", ply.id);
 	timer.RemoveByName(timername);
+}
+
+public void CheckPlayerHint(Player ply) 
+{
+	if (ply.IsAlive())
+	{
+		ArrayList entArr = ents.FindInPVS(ply, 125);
+		if (entArr.Length == 0) return;
+		Player target = entArr.Get(0);
+		delete entArr;
+
+		if(target && target.class && target.IsAlive() && ply.id != target.id && !target.IsSCP)
+		{
+			ply.PrintNotify("%N", target.id);
+		}
+	}
 }
