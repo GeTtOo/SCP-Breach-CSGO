@@ -33,7 +33,6 @@
 
 #include <sourcemod>
 #include <cstrike>
-#include <sdkhooks>
 // ¯\_(ツ)_/¯
 #include <scpcore>
 
@@ -92,14 +91,17 @@ public void OnPluginStart()
     
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_prestart", OnRoundPreStart);
-    HookEvent("player_death", Event_PlayerDeath, EventHookMode_Pre);
+    HookEvent("player_death", OnPlayerDeath, EventHookMode_Pre);
+    HookEvent("player_team", OnPlayerSwitchTeam);
     
-    HookEntityOutput("func_button", "OnPressed", Event_OnButtonPressed);
+    HookEntityOutput("func_button", "OnPressed", OnButtonPressed);
 
     if (GetUserMessageType() == UM_Protobuf)
 	{
 		HookUserMessage(GetUserMessageId("RadioText"), RadioMsg, true);
 	}
+
+    RegConsoleCmd("spec", Command_Spec, "Toggle player afk status");
 
     RegAdminCmd("gm", Command_Base, ADMFLAG_ROOT);
     RegAdminCmd("ents", Command_Ents, ADMFLAG_ROOT);
@@ -147,6 +149,8 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("Player.Give", NativePlayer_GiveWeapon);
     CreateNative("Player.DropWeapons", NativePlayer_DropWeapons);
     CreateNative("Player.RestrictWeapons", NativePlayer_RestrictWeapons);
+    CreateNative("Player.Setup", NativePlayer_Setup);
+    CreateNative("Player.SetupModel", NativePlayer_SetupModel);
 
     CreateNative("Inventory.Give", NativePlayer_Inventory_GiveItem);
     CreateNative("Inventory.Drop", NativePlayer_Inventory_Drop);

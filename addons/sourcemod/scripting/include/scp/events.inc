@@ -56,6 +56,19 @@ public Action OnPlayerSpawn(int client)
     return Plugin_Continue;
 }
 
+public Action OnPlayerSwitchTeam(Event event, const char[] name, bool dbroadcast)
+{
+    Player ply = player.GetByID(GetClientOfUserId(GetEventInt(event, "userid")));
+    int team = GetEventInt(event, "team");
+
+    if (team == 1)
+    {
+        ply.ready = false;
+    }
+
+    return Plugin_Continue;
+}
+
 public Action OnWeaponTake(int client, int iWeapon)
 {
     Player ply = player.GetByID(client);
@@ -368,7 +381,7 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
     }
 }
 
-public Action Event_OnButtonPressed(const char[] output, int caller, int activator, float delay)
+public Action OnButtonPressed(const char[] output, int caller, int activator, float delay)
 {
     if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsClientInSpec(activator))
     {
@@ -561,7 +574,7 @@ public void OnTakeDamageAlivePost(int victim, int attacker, int inflictor, float
     }
 }
 
-public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
+public Action OnPlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
     if(!gamemode.mngr.IsWarmup)
     {

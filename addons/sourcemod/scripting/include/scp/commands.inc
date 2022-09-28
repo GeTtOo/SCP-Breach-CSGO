@@ -63,6 +63,24 @@ public Action Command_Kill(int client, const char[] command, int argc)
     return Plugin_Handled;
 }
 
+public Action Command_Spec(int client, int argc)
+{
+    Player ply = player.GetByID(client);
+    
+    if (GetClientTeam(ply.id) > 1)
+    {
+        ply.ready = false;
+        ChangeClientTeam(ply.id, 1);
+    }
+    else if (GetClientTeam(ply.id) == 1)
+    {
+        ply.ready = true;
+        ChangeClientTeam(ply.id, GetRandomInt(2, 3));
+    }
+
+    return Plugin_Handled;
+}
+
 public Action Command_Base(int client, int argc)
 {
     Player ply = player.GetByID(client);

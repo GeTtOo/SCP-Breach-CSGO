@@ -358,6 +358,175 @@ public any NativeWT_Remove(Handle Plugin, int numArgs) {
     return false;
 }
 
+public any NativePlayer_Setup(Handle Plugin, int numArgs) {
+    Player ply = GetNativeCell(1);
+    
+    JSON_OBJECT pos = ply.class.GetVecAng();
+    if (pos)
+    {
+        ply.SetPos(pos.GetVector("vec"), pos.GetAngle("ang"));
+        pos.SetBool("lock", true);
+        ply.SetHandle("spawnpos", pos);
+    }
+
+    if (ply.class.items)
+    {
+        for (int i=0; i < ply.class.items.Length; i++) {
+            if (ply.class.items.GetType(i) == String)
+            {
+                char itemname[32];
+                ply.class.items.GetString(i, itemname, sizeof(itemname));
+                ply.inv.Give(itemname);
+            }
+            else
+            {
+                JSON_OBJECT items = view_as<JSON_OBJECT>(ply.class.items.Get(i));
+
+                if (items.IsArray)
+                {
+                    char itemname[32];
+                    view_as<JSON_ARRAY>(items).GetString(GetRandomInt(0, view_as<JSON_ARRAY>(items).Length - 1), itemname, sizeof(itemname));
+                    ply.inv.Give(itemname);
+                    continue;
+                }
+                
+                StringMapSnapshot sitems = items.Snapshot();
+                int keylen, random = GetRandomInt(1,100), count = 0;
+
+                for (int k=0; k < sitems.Length; k++) {
+                    keylen = sitems.KeyBufferSize(k);
+                    char[] chance = new char[keylen];
+                    sitems.GetKey(k, chance, keylen);
+
+                    count += StringToInt(chance);
+                    char itemname[32];
+                    if (count >= random) {
+                        items.GetString(chance, itemname, sizeof(itemname));
+                        ply.inv.Give(itemname);
+                        break;
+                    }
+                }
+
+                delete sitems;
+            }
+        }
+    }
+
+    if (ply.class.fists) EquipPlayerWeapon(ply.id, ply.Give("weapon_fists").id);
+
+    if (ply.class.weapons)
+        for (int i=0; i < ply.class.weapons.Length; i++) {
+            if (ply.class.weapons.GetType(i) == String) {
+                char weapon[32];
+                ply.class.weapons.GetString(i, weapon, sizeof(weapon));
+                ply.Give(weapon);
+            }
+            else
+            {
+                JSON_OBJECT weapons = view_as<JSON_OBJECT>(ply.class.weapons.Get(i));
+
+                if (weapons.IsArray)
+                {
+                    char weapon[32];
+                    view_as<JSON_ARRAY>(weapons).GetString(GetRandomInt(0, view_as<JSON_ARRAY>(weapons).Length - 1), weapon, sizeof(weapon));
+                    ply.Give(weapon);
+                    continue;
+                }
+                
+                StringMapSnapshot sweapons = weapons.Snapshot();
+                int keylen, random = GetRandomInt(1,100), count = 0;
+                
+                for (int k=0; k < sweapons.Length; k++) {
+                    keylen = sweapons.KeyBufferSize(k);
+                    char[] chance = new char[keylen];
+                    sweapons.GetKey(k, chance, keylen);
+
+                    count += StringToInt(chance);
+                    char weapon[32];
+                    if (count >= random) {
+                        weapons.GetString(chance, weapon, sizeof(weapon));
+                        ply.Give(weapon);
+                        break;
+                    }
+                }
+
+                delete sweapons;
+            }
+        }
+    
+    if (ply.class.doors)
+        if (ply.class.GetInt("doorsdelay") == 0)
+            for (int i=0; i < ply.class.doors.Length; i++)
+                AcceptEntityInput(ply.class.doors.GetInt(i), "Open");
+        else
+            ply.TimerSimple(ply.class.GetInt("doorsdelay") * 1000, "OpenCameraDoors", ply.class.doors);
+
+
+    char teamName[32], className[32];
+    ply.Team(teamName, sizeof(teamName));
+    ply.class.Name(className, sizeof(className));
+    PrintToChat(ply.id, " \x07[SCP] \x01%t", "Show class when player spawn", teamName, className);
+
+    return true;
+}
+
+public any NativePlayer_SetupModel(Handle Plugin, int numArgs) {
+    Player ply = GetNativeCell(1);
+    
+    if (ply.class.HasKey("model")) {
+        if (ply.class.GetType("model") == String)
+        {
+            char modelName[256];
+            ply.class.Model(modelName, sizeof(modelName));
+            ply.model.SetPath(modelName);
+        }
+        else
+        {
+            JSON_OBJECT modeldata = ply.class.Get("model");
+
+            char mdlid[32];
+            modeldata.GetString("id", mdlid, sizeof(mdlid));
+            ply.model.SetById(mdlid);
+
+            if (modeldata.HasKey("bodygroups"))
+                if (modeldata.GetType("bodygroups") == Int) {
+                    ply.SetProp("m_nBody", modeldata.GetInt("bodygroups", 0));
+                }
+                else
+                {
+                    JSON_OBJECT pgi = modeldata.Get("bodygroups");
+                    StringMapSnapshot spgi = pgi.Snapshot();
+                    
+                    int keylen;
+                    for (int i=0; i < spgi.Length; i++) {
+                        keylen = spgi.KeyBufferSize(i);
+                        char[] name = new char[keylen];
+                        spgi.GetKey(i, name, keylen);
+                        
+                        if (pgi.GetType(name) == Int)
+                            ply.model.SetBodyGroup(name, pgi.GetInt(name));
+                        else
+                            ply.model.SetBodyGroup(name, pgi.GetArr(name).GetInt(GetRandomInt(0, pgi.GetArr(name).Length - 1)));
+                    }
+
+                    delete spgi;
+                }
+
+            if (modeldata.HasKey("skin"))
+                ply.model.SetSkin(modeldata.GetInt("skin"));
+        }
+    }
+
+    if (ply.class.HasKey("handsmodel")) {
+        char handsModel[128];
+        ply.class.HandsModel(handsModel, sizeof(handsModel));
+
+        ply.SetHandsModel(handsModel);
+    }
+
+    return true;
+}
+
 public any NativePlayer_GiveWeapon(Handle Plugin, int numArgs) {
     Player ply = GetNativeCell(1);
     
