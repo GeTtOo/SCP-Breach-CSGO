@@ -126,23 +126,19 @@ public void Revive(Player ply)
 					{
 						if (vic.ragdoll == vicrag && !vic.ragdoll.GetBool("IsSCP"))
 						{
-							ArrayList bglist = vic.model.bglist;
-							char modelname[256];
-							
-							vic.ragdoll.meta.model(modelname, sizeof(modelname));
 							
 							vic.Team("SCP");
 							vic.class = gamemode.team("SCP").class("049_2");
 
 							vic.Spawn();
-							vic.model.SetPath(modelname);
-
-							vic.model.bglist = bglist;
-							//vic.SetBodyGroup("body", 0);
-							vic.model.SetSkin(vic.model.GetSkin() + 1);
 							
 							vic.SetHandle("049_2_vec", vic.ragdoll.GetPos());
 							vic.SetHandle("049_2_ang", ply.GetAng() - new Angle(0.0, 180.0, 0.0));
+
+							char modelname[256];
+							vic.ragdoll.meta.model(modelname, sizeof(modelname));
+							vic.SetString("049_2_mdl", modelname);
+							vic.SetInt("049_2_skin", vic.ragdoll.model.GetSkin() + 1);
 
 							ply.health += gamemode.plconfig.GetInt("healing", 2500);
 						}
@@ -189,8 +185,16 @@ public void SCP_PostPlayerSpawn(Player &ply)
 	if (ply.class.Is("049_2") && ply.GetHandle("049_2_vec") && ply.GetHandle("049_2_ang"))
 	{
 		ply.SetPos(view_as<Vector>(ply.GetHandle("049_2_vec")), view_as<Angle>(ply.GetHandle("049_2_ang")));
+		
+		char modelname[256];
+		ply.GetString("049_2_mdl", modelname, sizeof(modelname));
+		ply.model.SetPath(modelname);
+		ply.model.SetSkin(ply.GetInt("049_2_skin"));
+
 		ply.RemoveValue("049_2_vec");
 		ply.RemoveValue("049_2_ang");
+		ply.RemoveValue("049_2_mdl");
+		ply.RemoveValue("049_2_skin");
 	}
 }
 

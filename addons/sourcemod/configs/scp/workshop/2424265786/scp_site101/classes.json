@@ -582,11 +582,6 @@
                 "health":4500,
                 "model":{
                     "id":"dclass",
-                    "bodygroups":{
-                        "base":0,
-                        "head":[0,1,2,3,4,5,6],
-                        "eyes":[0,1,2,3,4]
-                    },
                     "skin":1
                 },
                 "handsmodel_":"models/player/custom_player/eternity/arms/arms_scp049-2.mdl",
