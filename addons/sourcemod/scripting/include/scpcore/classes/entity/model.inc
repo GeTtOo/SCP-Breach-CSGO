@@ -85,9 +85,6 @@ methodmap Mdl < Base {
     }
 
     public void SetBodyGroup(char[] name, int idx) {
-        char plymdl[128];
-        this.GetPath(plymdl, sizeof(plymdl));
-
         this.bglist.Set(this.mdlmeta.GetBgId(name), this.mdlmeta.GetBgIdx(name, idx));
 
         int bgmath = 0;
