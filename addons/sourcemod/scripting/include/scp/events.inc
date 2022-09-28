@@ -648,7 +648,7 @@ public Action CS_OnTerminateRound(float &delay, CSRoundEndReason &reason)
     }
 }
 
-public Action RadioMsg(UserMsg msg_id, Protobuf msg, const int[] players, int playersNum, bool reliable, bool init)
+public Action OnPlayerPing(int client, const char[] command, int args)
 {
-	return Plugin_Handled;
+	return Plugin_Stop;
 }
