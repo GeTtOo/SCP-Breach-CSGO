@@ -58,16 +58,11 @@ public void SCP_OnPlayerClear(Player &ply)
 
 public void CheckPlayerHint(Player ply) 
 {
-	if (ply.IsAlive())
-	{
-		ArrayList entArr = ents.FindInPVS(ply, 125);
-		if (entArr.Length == 0) return;
-		Player target = entArr.Get(0);
-		delete entArr;
+	ArrayList entArr = ents.FindInPVS(ply, 125);
+	if (entArr.Length == 0) return;
+	Player target = entArr.Get(0);
+	delete entArr;
 
-		if(target && target.class && target.IsAlive() && ply.id != target.id && !target.IsSCP)
-		{
-			ply.PrintNotify("%N", target.id);
-		}
-	}
+	if(target && target.class && target.IsAlive() && ply.id != target.id && !target.IsSCP)
+		ply.PrintNotify("%N", target.id);
 }
