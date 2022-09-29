@@ -42,13 +42,35 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
+ArrayList weapons;
+
+public void SCP_OnLoad()
+{
+    weapons = new ArrayList(32);
+    weapons.PushString("weapon_fists");
+    weapons.PushString("weapon_ssg08");
+    weapons.PushString("weapon_awp");
+    weapons.PushString("weapon_scar20");
+    weapons.PushString("weapon_g3sg1");
+}
+
+public void SCP_OnUnload()
+{
+    delete weapons;
+}
+
 public void SCP_OnPlayerSwitchWeapon(Player &ply, Entity &ent)
 {
     if (!ply.IsSCP && !ply.GetHandle("fct"))
-        if (ent.IsClass("weapon_fists") || ent.IsClass("weapon_ssg08") || ent.IsClass("weapon_awp") || ent.IsClass("weapon_scar20") || ent.IsClass("weapon_g3sg1"))
+    {
+        char weapon[32];
+        ent.GetClass(weapon, sizeof(weapon));
+
+        if (weapons.FindString(weapon) != -1)
             ply.ShowOverlay("eternity/overlays/fists_{lang}_fh");
         else
             if (!ply.IsSCP && ply.IsAlive()) ply.ShowOverlay("eternity/overlays/inventory_{lang}_fh");
+    }
 }
 
 public void SCP_OnPlayerSpawn(Player &ply)
@@ -65,7 +87,7 @@ public void ShowCrosshair(Player ply)
         char weapon[32];
         ply.GetCurWeapon(weapon, sizeof(weapon));
 
-        if (!ply.IsSCP && (StrEqual(weapon, "weapon_fists") || StrEqual(weapon, "weapon_ssg08") || StrEqual(weapon, "weapon_awp") || StrEqual(weapon, "weapon_scar20") || StrEqual(weapon, "weapon_g3sg1")))
+        if (!ply.IsSCP && weapons.FindString(weapon) != -1)
             ply.ShowOverlay("eternity/overlays/fists_{lang}_fh");
         else
             ply.ShowOverlay("eternity/overlays/inventory_{lang}_fh");
