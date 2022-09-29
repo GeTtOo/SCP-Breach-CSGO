@@ -64,6 +64,9 @@ public Action OnPlayerSwitchTeam(Event event, const char[] name, bool dbroadcast
     if (team == 1)
     {
         ply.ready = false;
+
+        SetHudTextParams(0.025, 0.915, 100.0, 200, 200, 200, 190);
+        ShowHudText(ply.id, 1, "%t", "Spec msg");
     }
 
     return Plugin_Continue;

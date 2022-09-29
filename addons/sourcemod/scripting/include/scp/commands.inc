@@ -69,13 +69,15 @@ public Action Command_Spec(int client, int argc)
     
     if (GetClientTeam(ply.id) > 1)
     {
-        ply.ready = false;
         ChangeClientTeam(ply.id, 1);
     }
     else if (GetClientTeam(ply.id) == 1)
     {
         ply.ready = true;
-        ChangeClientTeam(ply.id, GetRandomInt(2, 3));
+        CS_SwitchTeam(ply.id, GetRandomInt(2, 3));
+
+        SetHudTextParams(0.025, 0.915, 100.0, 200, 200, 200, 190);
+        ShowHudText(ply.id, 1, "");
     }
 
     return Plugin_Handled;

@@ -121,6 +121,11 @@
         "chi"       "转移到观众"
         "zho"       "转移到观众"
     }
+    "Spec msg"
+    {
+        "en"        "Send !spec in chat to get off the afk"
+        "ru"        "Введите !spec в чат, чтобы вернуться в игру"
+    }
     "Talk"
     {
         "en"        "Conduct a conversation with player"
