@@ -647,14 +647,14 @@
             "card_mog_lieutenant": [
                 ["card_mog_commander", 3, 90]
             ],
-            "card_guard": [
+            "card_senior_guard": [
                 ["card_mog_lieutenant", 3, 90]
             ],
-            "card_senior_guard": [
-                ["card_guard", 3, 90]
+            "card_guard": [
+                ["card_senior_guard", 3, 90]
             ],
             "card_zone_manager": [
-                ["card_senior_guard", 3, 90]
+                ["card_guard", 3, 90]
             ],
             "card_major_scientist": [
                 ["card_zone_manager", 3, 90]
