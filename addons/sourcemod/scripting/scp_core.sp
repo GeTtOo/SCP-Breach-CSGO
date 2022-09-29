@@ -88,6 +88,9 @@ public void OnPluginStart()
     LoadTranslations("scpcore.regions");
     LoadTranslations("scpcore.entities");
     LoadTranslations("scpcore.logs");
+
+    AddCommandListener(OnPlayerPing, "player_ping");
+    AddCommandListener(OnPlayerPing, "chatwheel_ping");
     
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_prestart", OnRoundPreStart);
@@ -95,12 +98,7 @@ public void OnPluginStart()
     HookEvent("player_team", OnPlayerSwitchTeam);
     
     HookEntityOutput("func_button", "OnPressed", OnButtonPressed);
-
-    if (GetUserMessageType() == UM_Protobuf)
-	{
-		HookUserMessage(GetUserMessageId("RadioText"), RadioMsg, true);
-	}
-
+    
     RegConsoleCmd("spec", Command_Spec, "Toggle player afk status");
 
     RegAdminCmd("gm", Command_Base, ADMFLAG_ROOT);
