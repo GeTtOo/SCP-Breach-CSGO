@@ -392,7 +392,7 @@
                 "armor":200,
                 "speed":234,
                 "items":["card_chaos"],
-                "weapons":["weapon_ak47", "weapon_p250", "weapon_hegrenade", ["weapon_flashbang", 2], "weapon_smokegrenade"],
+                "weapons":["weapon_p90", "weapon_p250", "weapon_hegrenade", ["weapon_flashbang", 2], "weapon_smokegrenade"],
                 "model":{
                     "id":"chaos",
                     "bodygroups":{
@@ -429,7 +429,7 @@
                 "armor":200,
                 "speed":234,
                 "items":["card_chaos"],
-                "weapons":["weapon_ssg08", "weapon_p250", "weapon_hegrenade", "weapon_smokegrenade"],
+                "weapons":["weapon_galilar", "weapon_p250", "weapon_hegrenade", "weapon_smokegrenade"],
                 "model":{
                     "id":"chaos",
                     "bodygroups":{
@@ -467,7 +467,7 @@
                 "armor":200,
                 "speed":234,
                 "items":["card_chaos"],
-                "weapons":["weapon_negev", "weapon_p250", "weapon_hegrenade", "weapon_smokegrenade"],
+                "weapons":["weapon_ak47", "weapon_p250", "weapon_hegrenade", "weapon_smokegrenade"],
                 "model":{
                     "id":"chaos",
                     "bodygroups":{
@@ -554,7 +554,7 @@
         "classes": {
             "035": {
                 "autospawn":false,
-                "health":12000,
+                "health":15000,
                 "weapons":["weapon_axe", "weapon_axe", "weapon_axe"],
                 "overlay":"eternity/overlays/scp-035_{lang}_fh",
                 "comment":"035"
@@ -608,7 +608,7 @@
             },
             "106": {
                 "percent":20,
-                "health":32000,
+                "health":20000,
                 "speed":180,
                 "model":"models/player/custom_player/eternity/scp_106.mdl",
                 "handsmodel":"models/player/custom_player/eternity/arms/arms_scp106.mdl",
@@ -625,7 +625,7 @@
             },
             "173": {
                 "percent":20,
-                "health":15000,
+                "health":16000,
                 "speed":250,
                 "multipler":2.1,
                 "model":"models/player/custom_player/eternity/173.mdl",
@@ -645,7 +645,7 @@
             },
             "457": {
                 "percent":10,
-                "health":14000,
+                "health":18000,
                 "speed":240,
                 "multipler":0.9,
                 "model":"models/player/custom_player/eternity/scp_457.mdl",
