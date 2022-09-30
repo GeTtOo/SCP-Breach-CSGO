@@ -413,7 +413,7 @@
         },
         "one_by_one": {
             "player": {
-                "40":["Injure", 10, 100],
+                "50":["Injure", 10, 100],
                 "30":["Butchering", 1, 100],
                 "20":["Speed", 10, 100]
             },
@@ -457,11 +457,9 @@
                 ["flashlight", 10, 80]
             ],
             "flashlight": [
-                ["radio", 10, 80],
-                ["visor_nv", 10, 80]
+                ["radio", 10, 80]
             ],
             "visor_nv": [
-                ["radio", 10, 80],
                 ["flashlight", 10, 80]
             ],
             "iron_ingot": [
