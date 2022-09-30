@@ -250,7 +250,7 @@
         "en"        "Decorated antique key<br>Unlocks any doors"
         "ru"        "Украшенный старинный ключ<br>Отпирает любые двери"
         "chi"       "精美的古董钥匙<br>可以打开任何门"
-        "zho"       "精美的古董钥匙<br>可以打开任何门
+        "zho"       "精美的古董钥匙<br>可以打开任何门"
     }
     "427_amulet"
     {
