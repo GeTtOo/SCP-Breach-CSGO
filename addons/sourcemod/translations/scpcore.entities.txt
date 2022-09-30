@@ -42,28 +42,28 @@
         "chi"       "员工门禁卡"
         "zho"       "员工门禁卡"
     }
-    "card_mog_commander"
+    "card_MTF_commander"
     {
-        "en"        "MOG commander card"
+        "en"        "MTF commander card"
         "ru"        "Карта командира МОГ"
         "chi"       "九尾狐门禁卡"
         "zho"       "九尾狐门禁卡"
     }
-    "card_mog_commander_info"
+    "card_MTF_commander_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
         "chi"       "员工门禁卡"
         "zho"       "员工门禁卡"
     }
-    "card_mog_lieutenant"
+    "card_MTF_lieutenant"
     {
-        "en"        "MOG lieutenant card"
+        "en"        "MTF lieutenant card"
         "ru"        "Карта лейтенанта МОГ"
         "chi"       "九尾狐中尉门禁卡"
         "zho"       "九尾狐中尉门禁卡"
     }
-    "card_mog_lieutenant_info"
+    "card_MTF_lieutenant_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
@@ -310,14 +310,14 @@
     }
     "visor_nv"
     {
-        "en"        "Nightvision googles"
+        "en"        "Night Vision goggles"
         "ru"        "Очки ночного виденья"
         "chi"       "夜视仪"
         "zho"       "夜视仪"
     }
     "visor_nv_info"
     {
-        "en"        "Night vision device is included in the standard equipment of MOG"
+        "en"        "Night vision device is included in the standard equipment of MTF"
         "ru"        "Прибор ночного виденья, входит в стандартную экипировку МОГ"
         "chi"       "夜视仪包含在九尾狐军队的基本装备中"
         "zho"       "夜视仪包含在九尾狐军队的基本装备中"
