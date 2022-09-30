@@ -35,9 +35,9 @@
 #pragma newdecls required
 
 public Plugin myinfo = {
-    name = "[SCP] HealthShot",
+    name = "[SCP] Turret",
     author = "Andrey::Dono, GeTtOo",
-    description = "Removes hp restriction when using healthshot",
+    description = "Automatic turret",
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"
 };

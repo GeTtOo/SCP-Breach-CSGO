@@ -35,7 +35,7 @@
 #pragma newdecls required
 
 public Plugin myinfo = {
-    name = "[SCP] Flashlight",
+    name = "[SCP] Nightvision",
     author = "Andrey::Dono, GeTtOo",
     description = "Nightvision googles for CS:GO modification - SCP Foundation",
     version = "1.0",
