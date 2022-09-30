@@ -42,28 +42,28 @@
         "chi"       "员工门禁卡"
         "zho"       "员工门禁卡"
     }
-    "card_MTF_commander"
+    "card_mog_commander"
     {
         "en"        "MTF commander card"
         "ru"        "Карта командира МОГ"
         "chi"       "九尾狐门禁卡"
         "zho"       "九尾狐门禁卡"
     }
-    "card_MTF_commander_info"
+    "card_mog_commander_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
         "chi"       "员工门禁卡"
         "zho"       "员工门禁卡"
     }
-    "card_MTF_lieutenant"
+    "card_mog_lieutenant"
     {
         "en"        "MTF lieutenant card"
         "ru"        "Карта лейтенанта МОГ"
         "chi"       "九尾狐中尉门禁卡"
         "zho"       "九尾狐中尉门禁卡"
     }
-    "card_MTF_lieutenant_info"
+    "card_mog_lieutenant_info"
     {
         "en"        "Employee access card"
         "ru"        "Карта доступа сотрудника"
