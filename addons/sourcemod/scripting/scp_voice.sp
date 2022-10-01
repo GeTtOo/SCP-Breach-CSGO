@@ -78,16 +78,18 @@ methodmap IntercomController < Base {
         public get() { return this.GetFloat("relcdtime"); }
     }
 
-    public void UpdateText(char[] text, int size = 0) {
+    public void UpdateText(const char[] format, any ...) {
         ArrayList displays = worldtext.GetAll(this.wtid);
 
         if (displays.Length > 0)
             for (int i=0; i < displays.Length; i++) {
                 WorldText display = displays.Get(i);
 
-                display.SetText(text);
-                if (size != 0)
-                    display.SetSize(size);
+                int len = strlen(format) + 8192;
+                char[] formattedText = new char[len];
+                VFormat(formattedText, len, format, 3);
+
+                display.SetText(formattedText);
             }
 
         delete displays;
@@ -95,7 +97,7 @@ methodmap IntercomController < Base {
 
     public void Ready() {
         this.ready = true;
-        this.UpdateText("Ready");
+        this.UpdateText("%T", "Intercom ready", gamemode.mngr.serverlang);
     }
 
     public void StrartTransmission(Player speaker) {
@@ -105,7 +107,7 @@ methodmap IntercomController < Base {
 
         timer.Create("Intercom_transmission_active", gamemode.plconfig.GetInt("transmissiontime", 8) * 1000, 1, "TransmissionStop");
 
-        this.UpdateText("~Live");
+        this.UpdateText("%T", "Intercom live", gamemode.mngr.serverlang);
 
         this.curply = speaker;
         this.IsBroadcast = true;
@@ -193,6 +195,7 @@ public void SCP_RegisterMetaData() {
 
 public void SCP_OnLoad()
 {
+    LoadTranslations("scp.voice");
     Intercom = new IntercomController();
 }
 
@@ -242,7 +245,7 @@ public void SCP_OnButtonPressed(Player &ply, int doorid) {
 public void OnUse(Player &ply, Entity &ent)
 {
     ent.SetBool("active", !ent.GetBool("active", true));
-    ply.PrintNotify((ent.GetBool("active")) ? "Рация включена" : "Рация выключена");
+    ply.PrintNotify("%t", (ent.GetBool("active")) ? "Radio on" : "Radio off");
 }
 
 public void TransmissionStop()

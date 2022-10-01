@@ -1,0 +1,24 @@
+"Phrases"
+{
+    "Radio on"
+    {
+        "en"        "Radio on"
+        "ru"        "Рация включена"
+    }
+
+    "Radio off"
+    {
+        "en"        "Radio off"
+        "ru"        "Рация выключена"
+    }
+    
+    "Intercom ready"
+    {
+        "en"        "Ready"
+    }
+
+    "Intercom live"
+    {
+        "en"        "~Live"
+    }
+}
