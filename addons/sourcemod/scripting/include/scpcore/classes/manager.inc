@@ -314,7 +314,7 @@ methodmap Manager < Base {
         for (int i=0; i < players.Length; i++) {
             Player ply = players.Get(i);
 
-            if (!ply.IsAlive())
+            if (!ply.IsAlive() && ply.ready)
                 deadPlayers.Push(ply);
         }
 
@@ -401,7 +401,7 @@ methodmap Manager < Base {
         target.Team(team, sizeof(team));
         target.class.Name(class, sizeof(class));
 
-        char invstr[160];
+        char invstr[512];
 
         for (int i=0; i < target.inv.list.Length; i++)
         {
@@ -414,11 +414,23 @@ methodmap Manager < Base {
             Format(invstr, sizeof(invstr), "%s%i. %s\n", invstr, i+1, itemname);
         }
 
-        char fullinfo[512];
+        char fullinfo[1024];
 
         Format(fullinfo, sizeof(fullinfo), "      %s: %s - %s\n-------------------------------------------------\n%s", playername, team, class, invstr);
 
         ply.PrintNotify(fullinfo);
+    }
+
+    public bool CanAttack(Player atk, Player vic)
+    {
+        char vicTeam[32], atkTeam[32];
+
+        vic.Team(vicTeam, sizeof(vicTeam));
+        atk.Team(atkTeam, sizeof(atkTeam));
+
+        if(StrEqual(vicTeam, atkTeam)) return false;
+
+        return true;
     }
 
     public void Dispose()

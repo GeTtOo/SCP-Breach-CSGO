@@ -81,7 +81,7 @@
                     {"vec":[-2908,-5105,145],"ang":[0,0,0]}
                 ],
                 "escape":{
-                    "trigger":689698,
+                    "trigger":1123,
                     "team":"Chaos",
                     "class":["Alpha","Beta","Gamma"]
                 }
@@ -106,7 +106,7 @@
                     {"vec":[-5859,-5337,0],"ang":[0,180,0]}
                 ],
                 "escape":{
-                    "trigger":330025,
+                    "trigger":384,
                     "team":"MTF",
                     "class":"Lieutenant",
                     "savepos":true,
@@ -128,7 +128,7 @@
                 "overlay":"eternity/overlays/drbright_{lang}_fh",
                 "pos":{"vec":[-1281,-2370,0],"ang":[23,-179,0]},
                 "escape":{
-                    "trigger":330025,
+                    "trigger":384,
                     "team":"MTF",
                     "class":"Lieutenant-Medic",
                     "savepos":true,
@@ -158,7 +158,7 @@
                     {"vec":[-6216,-7347,0],"ang":[0,270,0]}
                 ],
                 "escape":{
-                    "trigger":330025,
+                    "trigger":384,
                     "team":"MTF",
                     "class":"Lieutenant-Medic"
                 }
@@ -189,7 +189,7 @@
                     {"vec":[-11098,-2904,-1008],"ang":[1,92,0]}
                 ],
                 "escape":{
-                    "trigger":330025,
+                    "trigger":384,
                     "team":"MTF",
                     "class":"Cadet"
                 }
@@ -346,7 +346,7 @@
                         "pl":1,
                         "pr":1
                     },
-                    "skin":0
+                    "skin":2
                 },
                 "overlay":"eternity/overlays/lieutenant_sapper_{lang}_fh",
                 "pos":{"vec":[-10800,-5950,1715]}

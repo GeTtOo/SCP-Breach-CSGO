@@ -23,9 +23,9 @@
             "stop":"eternity/scp/other/{lang}/warhead_canceled.mp3"
         },
         "buttons":{
-            "ready":356001,
-            "active":356023,
-            "cancel":356001
+            "ready":900,
+            "active":245,
+            "cancel":900
         },
         "immunedoors":[108,533],
         "spawnlist":[]
@@ -106,12 +106,12 @@
         },
         "arrestedesc": {
             "D Class": {
-                "trigger":330025,
+                "trigger":384,
                 "team":"MTF",
                 "class":"Cadet"
             },
             "Scientist": {
-                "trigger":689698,
+                "trigger":1123,
                 "team":"Chaos",
                 "class":"Beta"
             }
@@ -121,7 +121,7 @@
         "wtid":8,
         "transmissiontime":20,
         "cooldown":30,
-        "buttonid":946850,
+        "buttonid":872,
         "localdistance":800,
         "sound": {
             "start":"eternity/scp/other/intercom_start.mp3",
@@ -131,8 +131,8 @@
     "[SCP] 914": {
         "usemathcounter":false,
         "countername": "scp_914_logic_counter",
-        "switchbutton": 443873,
-        "runbutton": 516151,
+        "switchbutton": 324,
+        "runbutton": 334,
         "runtime": 8,
         "searchzone":[[3630, -2072, 20],[3762, -1947, 90]],
         "distance":[0, 425, -1],

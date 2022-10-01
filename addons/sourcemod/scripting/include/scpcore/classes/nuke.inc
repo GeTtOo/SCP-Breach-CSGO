@@ -300,6 +300,8 @@ public void ClosingDoorBeforeNukeExplode() {
             AcceptEntityInput(ent, "Lock");
         }
     }
+
+    AcceptEntityInput(gamemode.config.nuke.buttons.cancel, "Lock");
 }
 
 public void NukeExplode() {

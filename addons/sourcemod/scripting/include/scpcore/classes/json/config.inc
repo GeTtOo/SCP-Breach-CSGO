@@ -32,15 +32,15 @@
 /*----------------------------------------------------Configuration-----------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
-#include "scp/classes/json/doors"
-#include "scp/classes/json/nuke"
+#include "scpcore/classes/json/buttons"
+#include "scpcore/classes/json/nuke"
 
 methodmap Config < JSON_OBJECT {
     
     public Config() {
         Config self = view_as<Config>(Utils.ReadCurMapConfig("config"));
 
-        self.SetObject("doors", view_as<Doors>(Utils.ReadCurMapConfig("doors")));
+        self.SetObject("buttons", view_as<Buttons>(Utils.ReadCurMapConfig("buttons")));
         self.SetObject("spawnmap", view_as<JSON_OBJECT>(Utils.ReadCurMapConfig("spawnlist")));
         self.SetObject("regions", view_as<JSON_ARRAY>(Utils.ReadCurMapConfig("regions")));
 
@@ -61,9 +61,9 @@ methodmap Config < JSON_OBJECT {
         this.GetString("DefaultClass", class, max_size);
     }
 
-    property Doors doors {
-        public set(Doors val) { this.SetValue("doors", val); }
-        public get() { return view_as<Doors>(this.Get("doors")); }
+    property Buttons buttons {
+        public set(Buttons val) { this.SetValue("buttons", val); }
+        public get() { return view_as<Buttons>(this.Get("buttons")); }
     }
 
     property JSON_OBJECT spawnmap {

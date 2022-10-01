@@ -198,10 +198,10 @@ methodmap EntitySingleton < Base {
     }
 }
 
-methodmap ClientSingleton < Base {
+methodmap PlayerSingleton < Base {
 
-    public ClientSingleton() {
-        return view_as<ClientSingleton>(new Base());
+    public PlayerSingleton() {
+        return view_as<PlayerSingleton>(new Base());
     }
     
     property ArrayList list {

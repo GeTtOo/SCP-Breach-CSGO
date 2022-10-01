@@ -136,9 +136,9 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("EntitySingleton.IndexUpdate", NativeEntities_IndexUpdate);
     CreateNative("EntitySingleton.Clear", NativeEntities_Clear);
 
-    CreateNative("ClientSingleton.list.get", NativeEntities_GetList);
-    CreateNative("ClientSingleton.Add", NativeClients_Add);
-    CreateNative("ClientSingleton.Remove", NativeClients_Remove);
+    CreateNative("PlayerSingleton.list.get", NativeEntities_GetList);
+    CreateNative("PlayerSingleton.Add", NativeClients_Add);
+    CreateNative("PlayerSingleton.Remove", NativeClients_Remove);
 
     CreateNative("WorldTextSingleton.list.get", NativeEntities_GetList);
     CreateNative("WorldTextSingleton.Create", NativeWT_Create);
@@ -200,7 +200,7 @@ public void OnMapStart()
     }
 
     ents = new EntitySingleton();
-    player = new ClientSingleton();
+    player = new PlayerSingleton();
     worldtext = new WorldTextSingleton();
     timer = new Timers();
     statuseffect = new StatusEffectSingleton();
@@ -407,6 +407,9 @@ public void PlayerSpawn(Player ply)
 public void PostPlayerSpawn(Player ply)
 {
     ply.SetProp("m_iHideHUD", 1<<12);
+
+    int glovesid = ply.GetPropEntId("m_hMyWearables");
+    if (glovesid > 0) AcceptEntityInput(glovesid, "KillHierarchy");
 
     Call_StartForward(PostClientSpawnForward);
     Call_PushCellRef(ply);

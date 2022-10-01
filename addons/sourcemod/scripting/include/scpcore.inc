@@ -61,7 +61,7 @@ StatusEffectSingleton statuseffect;
 #include "scpcore\entities\worldtext"
 #include "scpcore\classes\singletons"
 
-ClientSingleton player;
+PlayerSingleton player;
 EntitySingleton ents;
 WorldTextSingleton worldtext;
 

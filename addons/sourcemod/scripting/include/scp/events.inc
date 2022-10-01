@@ -65,7 +65,7 @@ public Action OnPlayerSwitchTeam(Event event, const char[] name, bool dbroadcast
     {
         ply.ready = false;
 
-        SetHudTextParams(0.025, 0.915, 100.0, 200, 200, 200, 190);
+        SetHudTextParams(0.025, 0.915, 9999.0, 102, 102, 255, 190);
         ShowHudText(ply.id, 1, "%t", "Spec msg");
     }
 
@@ -384,29 +384,27 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
     }
 }
 
-public Action OnButtonPressed(const char[] output, int caller, int activator, float delay)
+public Action OnButtonPressed(const char[] output, int btnid, int activator, float delay)
 {
-    if(IsClientExist(activator) && IsValidEntity(caller) && IsPlayerAlive(activator) && !IsClientInSpec(activator))
+    if(IsClientExist(activator) && IsValidEntity(btnid) && IsPlayerAlive(activator) && !IsClientInSpec(activator))
     {
         Player ply = player.GetByID(activator);
 
         char langcode[3];
         ply.GetLangInfo(langcode, sizeof(langcode));
 
-        int doorId = GetEntProp(caller, Prop_Data, "m_iHammerID");
-
         if (gamemode.config.debug)
-            PrintToChat(ply.id, " \x07[SCP Admin] \x01Door/Button id: (%i)", doorId);
+            PrintToChat(ply.id, " \x07[SCP Admin] \x01Door/Button id: (%i)", btnid);
 
         char doorKey[10];
-        IntToString(doorId, doorKey, sizeof(doorKey));
+        IntToString(btnid, doorKey, sizeof(doorKey));
         
-        if (gamemode.config.doors.HasKey(doorKey))
+        if (gamemode.config.buttons.HasKey(doorKey))
         {
-            Door door = gamemode.config.doors.Get(doorKey);
+            Button button = gamemode.config.buttons.Get(doorKey);
 
-            int entid = GetEntPropEnt(caller, Prop_Data, "m_hMoveChild");
-            Entity idpad = (entid != -1) ? new Entity(entid) : new Entity(caller);
+            int entid = GetEntPropEnt(btnid, Prop_Data, "m_hMoveChild");
+            Entity idpad = (entid != -1) ? new Entity(entid) : new Entity(btnid);
             
             if (gamemode.mngr.IsWarmup)
             {
@@ -416,7 +414,7 @@ public Action OnButtonPressed(const char[] output, int caller, int activator, fl
             {
                 return Plugin_Continue;
             }
-            else if ((door.checkwhenuse && ply.inv.Check("access", door.access)) || (gamemode.config.usablecards && ply.Check("dooraccess", door.access)) || (!gamemode.config.usablecards && ply.inv.Check("access", door.access)) || (ply.IsSCP && door.scp)) // old check = ply.inv.Check("access", door.access)
+            else if ((button.checkwhenuse && ply.inv.Check("access", button.access)) || (gamemode.config.usablecards && ply.Check("dooraccess", button.access)) || (!gamemode.config.usablecards && ply.inv.Check("access", button.access)) || (ply.IsSCP && button.scp)) // old check = ply.inv.Check("access", door.access)
             {
                 if (idpad)
                 {
@@ -426,7 +424,7 @@ public Action OnButtonPressed(const char[] output, int caller, int activator, fl
                         char sound[256];
                         gamemode.config.sound.GetString("idpadag", sound, sizeof(sound));
                         gamemode.mngr.PlayTranslatedAmbient(sound, langcode, idpad);
-                        timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
+                        timer.Simple(RoundToCeil(GetEntPropFloat(btnid, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
                     }
                 }
             }
@@ -440,13 +438,13 @@ public Action OnButtonPressed(const char[] output, int caller, int activator, fl
                         char sound[256];
                         gamemode.config.sound.GetString("idpadad", sound, sizeof(sound));
                         gamemode.mngr.PlayTranslatedAmbient(sound, langcode, idpad);
-                        timer.Simple(RoundToCeil(GetEntPropFloat(caller, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
+                        timer.Simple(RoundToCeil(GetEntPropFloat(btnid, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
                     }
 
                     if (!ply.IsSCP)
                     {
                         char dn[15], aln[128];
-                        FormatEx(dn, sizeof(dn), "AccessLevel_%i", door.access);
+                        FormatEx(dn, sizeof(dn), "AccessLevel_%i", button.access);
                         FormatEx(aln, sizeof(aln), "%t", dn);
                         ply.PrintWarning("%t", "Door access denied", aln);
                     }
@@ -459,12 +457,12 @@ public Action OnButtonPressed(const char[] output, int caller, int activator, fl
             idpad.Dispose();
         }
 
-        EscapeController(ply, doorId);
-        gamemode.nuke.Controller(doorId);
+        EscapeController(ply, btnid);
+        gamemode.nuke.Controller(btnid);
 
         Call_StartForward(OnButtonPressedForward);
         Call_PushCellRef(ply);
-        Call_PushCell(doorId);
+        Call_PushCell(btnid);
         Call_Finish();
     }
     
@@ -487,14 +485,9 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
                 {
                     return Plugin_Stop;
                 }
-                else if(!gamemode.config.ff)
+                else if(!gamemode.config.ff && !gamemode.mngr.CanAttack(atk, vic))
                 {
-                    char vicTeam[32], atkTeam[32];
-                    
-                    vic.Team(vicTeam, sizeof(vicTeam));
-                    atk.Team(atkTeam, sizeof(atkTeam));
-                    
-                    if(StrEqual(vicTeam, atkTeam)) return Plugin_Stop;
+                    return Plugin_Stop;
                 }
             }
         }

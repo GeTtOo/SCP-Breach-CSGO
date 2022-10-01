@@ -1,176 +1,176 @@
 {
-    "354154": {
+    "405": {
         "location":"Gate A Up",
         "access":9,
         "scp":false
     },
-    "354066": {
+    "947": {
         "location":"Gate A Down",
         "access":9,
         "scp":false
     },
-    "329781": {
+    "950": {
         "location":"Gate B Up",
         "access":9,
         "scp":false
     },
-    "329820": {
+    "875": {
         "location":"Gate B Down",
         "access":9,
         "scp":false
     },
-    "1189004": {
+    "92": {
         "location":"Gate Shelter",
         "access":7,
         "scp":false
     },
-    "311385": {
+    "774": {
         "location":"Nuke Door Down 1",
         "access":10,
         "scp":false
     },
-    "311379": {
+    "180": {
         "location":"Nuke Door Down 2",
         "access":10,
         "scp":false
     },
-    "356023": {
+    "245": {
         "location":"Nuclear warhead activation panel",
         "access":10,
         "scp":false
     },
-    "553431": {
+    "118": {
         "location":"Heavy armory 1",
         "access":5,
         "scp":false
     },
-    "553424": {
+    "209": {
         "location":"Heavy armory 2",
         "access":5,
         "scp":false
     },
-    "370644": {
+    "497": {
         "location":"SCP-049",
         "access":2,
         "scp":false
     },
-    "302774": {
+    "477": {
         "location":"SCP-996",
         "access":2,
         "scp":false
     },
-    "354434": {
+    "739": {
         "location":"SCP-035",
         "access":3,
         "scp":false
     },
-    "299838": {
+    "674": {
         "location":"Heavy gate 1",
         "access":7,
         "scp":true
     },
-    "299847": {
+    "524": {
         "location":"Heavy gate 2",
         "access":7,
         "scp":true
     },
-    "299710": {
+    "130": {
         "location":"Heavy gate 3",
         "access":7,
         "scp":true
     },
-    "299713": {
+    "454": {
         "location":"Heavy gate 4",
         "access":7,
         "scp":true
     },
-    "562394": {
+    "618": {
         "location":"Lite armory 1",
         "access":4,
         "scp":false
     },
-    "562388": {
+    "597": {
         "location":"Lite armory 1",
         "access":4,
         "scp":false
     },
-    "945730": {
+    "881": {
         "location":"Intercom 1",
         "access":7,
         "scp":false
     },
-    "945737": {
+    "864": {
         "location":"Intercom 2",
         "access":7,
         "scp":false
     },
-    "312244": {
+    "395": {
         "location":"SCP-079",
         "access":3,
         "scp":false
     },
-    "312255": {
+    "309": {
         "location":"SCP-079",
         "access":3,
         "scp":false
     },
-    "276978": {
+    "934": {
         "location":"SCP-914",
         "access":1,
         "scp":false
     },
-    "276975": {
+    "595": {
         "location":"SCP-914",
         "access":1,
         "scp":false
     },
-    "490772": {
+    "1040": {
         "location":"SCP-096",
         "access":3,
         "scp":false
     },
-    "1432989": {
+    "221": {
         "location":"SCP-106",
         "access":3,
         "checkwhenuse":true,
         "scp":false
     },
-    "863713": {
+    "128": {
         "location":"Main armory 1",
         "access":6,
         "scp":false
     },
-    "863723": {
+    "443": {
         "location":"Main armory 2",
         "access":6,
         "scp":false
     },
-    "311929": {
+    "216": {
         "location":"Office gate 1",
         "access":7,
         "scp":true
     },
-    "311920": {
+    "621": {
         "location":"Office gate 2",
         "access":7,
         "scp":true
     },
-    "311842": {
+    "622": {
         "location":"Office gate 3",
         "access":7,
         "scp":true
     },
-    "311839": {
+    "679": {
         "location":"Office gate 4",
         "access":7,
         "scp":true
     },
-    "311748": {
+    "170": {
         "location":"Nuke control door 1",
         "access":10,
         "scp":false
     },
-    "311745": {
+    "794": {
         "location":"Nuke control door 2",
         "access":10,
         "scp":false

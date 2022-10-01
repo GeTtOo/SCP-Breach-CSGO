@@ -76,7 +76,7 @@ public Action Command_Spec(int client, int argc)
         ply.ready = true;
         CS_SwitchTeam(ply.id, GetRandomInt(2, 3));
 
-        SetHudTextParams(0.025, 0.915, 100.0, 200, 200, 200, 190);
+        SetHudTextParams(0.025, 0.915, 1.0, 255, 255, 255, 255);
         ShowHudText(ply.id, 1, "");
     }
 

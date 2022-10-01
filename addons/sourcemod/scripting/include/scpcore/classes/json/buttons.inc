@@ -29,13 +29,13 @@
  **/
 
 /*----------------------------------------------------------------------------------------------------------------------*/
-/*--------------------------------------------------------Doors---------------------------------------------------------*/
+/*--------------------------------------------------------Buttons---------------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
-methodmap Door < JSON_OBJECT {
+methodmap Button < JSON_OBJECT {
     
-    public Door(Door door) {
-        return view_as<Door>(door);
+    public Button(Button button) {
+        return view_as<Button>(button);
     }
     
     property int id {
@@ -55,8 +55,8 @@ methodmap Door < JSON_OBJECT {
     }
 }
 
-methodmap Doors < JSON_OBJECT {
+methodmap Buttons < JSON_OBJECT {
     public StringMapSnapshot GetAll() { return this.Snapshot(); }
 
-    public Door Get(char[] id) { return view_as<Door>(this.GetObject(id)); }
+    public Button Get(char[] id) { return view_as<Button>(this.GetObject(id)); }
 }

@@ -123,10 +123,10 @@ public void SetPlyDoorAccess(Player &ply, Entity &item)
 
     if (list.Length != 0)
     {
-        Entity door = list.Get(0);
-        char doorid[8];
-        IntToString(door.GetProp("m_iHammerID", Prop_Data), doorid, sizeof(doorid));
-        if (gamemode.config.doors.HasKey(doorid))
+        Entity button = list.Get(0);
+        char buttonid[8];
+        IntToString(button.id, buttonid, sizeof(buttonid));
+        if (gamemode.config.buttons.HasKey(buttonid))
         {
             ply.SetArrayList("dooraccess", item.meta.GetArrayList("access"));
             view_as<Entity>(list.Get(0)).Input("Use", ply.id);
@@ -136,7 +136,7 @@ public void SetPlyDoorAccess(Player &ply, Entity &item)
             ply.PrintWarning("%t", "ID pad not found");
         }
 
-        delete door;
+        delete button;
     }
     else
     {
