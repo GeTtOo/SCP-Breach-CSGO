@@ -270,6 +270,13 @@ public bool PlayerRevive(Player ply)
 
             ArrayList players = player.GetAll();
 
+            for (int k=0; k < players.Length; k++)
+            {
+                if (view_as<Player>(players.Get(k)).ready) continue;
+                players.Erase(k);
+                k--;
+            }
+
             Player vic;
             for(int k=0; k < players.Length; k++)
             {
