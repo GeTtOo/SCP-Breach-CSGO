@@ -131,6 +131,11 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
             vic.SetBool("106_inpd", false);
             return Plugin_Handled;
         }
+        else
+        {
+            vic.inv.FullClear();
+            vic.RestrictWeapons();
+        }
         
         return Plugin_Continue;
     }
