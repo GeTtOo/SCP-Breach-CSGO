@@ -28,7 +28,6 @@
  *
  **/
 
-#include <sdkhooks>
 #include <scpcore>
 
 #pragma semicolon 1
@@ -45,14 +44,14 @@ public Plugin myinfo = {
 public void SCP_OnPlayerSpawn(Player &ply)
 {
 	char timername[64];
-	Format(timername, sizeof(timername), "PLY-HintTextPlayerName-%i", ply.id);
+	Format(timername, sizeof(timername), "HintPlayerInfo-%i", ply.id);
 	timer.Create(timername, 1500, 0, "CheckPlayerHint", ply);
 }
 
 public void SCP_OnPlayerClear(Player &ply)
 {
 	char timername[64];
-	Format(timername, sizeof(timername), "PLY-HintTextPlayerName-%i", ply.id);
+	Format(timername, sizeof(timername), "HintPlayerInfo-%i", ply.id);
 	timer.RemoveByName(timername);
 }
 
