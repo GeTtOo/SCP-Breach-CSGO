@@ -580,6 +580,7 @@
             "049_2": {
                 "autospawn":false,
                 "health":4500,
+                "speed":220,
                 "model":{
                     "id":"dclass",
                     "skin":1
