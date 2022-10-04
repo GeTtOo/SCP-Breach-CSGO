@@ -724,7 +724,7 @@
                 ["weapon_mac10", 20, 80]
             ],
             "weapon_breachcharge": [
-                ["weapon_negev", 20, 80]
+                ["weapon_negev", 50, 80]
             ],
             "weapon_hammer": [
                 ["weapon_smokegrenade", 20, 80]
