@@ -415,7 +415,7 @@
             "player": {
                 "50":["Injure", 10, 100],
                 "30":["Butchering", 1, 100],
-                "20":["Speed", 10, 100]
+                "20":["Metamarphose", 50, 40]
             },
             "card_o5": [
                 ["card_facility_manager", 50, 80]
@@ -841,7 +841,7 @@
         },
         "very_fine": {
             "player": [
-                ["Metamarphose", 75, 20]
+                ["Metamarphose", 75, 10]
             ],
             "card_o5": [
                 ["005_picklock", 70, 20]
