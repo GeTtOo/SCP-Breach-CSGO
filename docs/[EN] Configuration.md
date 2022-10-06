@@ -1029,6 +1029,7 @@ If it is necessary to carry out manipulations with the player:
 | ------------- | ------------------|
 | game_ready    | Complete training |
 | trs           | Reset training    | 
+| spec          | Go to spectator   | 
 
 ### Commands for the Administrator 
 | Command       | Description |
