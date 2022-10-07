@@ -45,18 +45,17 @@ public void SCP_OnPlayerSpawn(Player &ply)
 {
 	char timername[64];
 	Format(timername, sizeof(timername), "HintPlayerInfo-%i", ply.id);
-	timer.Create(timername, 1500, 0, "CheckPlayerHint", ply);
+	ply.SetHandle("hint-info-tmr", timer.Create(timername, 1500, 0, "CheckPlayerHint", ply));
 }
 
 public void SCP_OnPlayerClear(Player &ply)
 {
-	char timername[64];
-	Format(timername, sizeof(timername), "HintPlayerInfo-%i", ply.id);
-	timer.RemoveByName(timername);
+	timer.Remove(view_as<Tmr>(ply.GetHandle("hint-info-tmr")));
 }
 
 public void CheckPlayerHint(Player ply) 
 {
+	if (!ply || !ply.ready) return;
 	ArrayList entArr = ents.FindInPVS(ply, 125);
 	if (entArr.Length == 0) return;
 	Player target = entArr.Get(0);
