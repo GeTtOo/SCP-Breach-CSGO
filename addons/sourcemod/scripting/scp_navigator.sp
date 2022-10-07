@@ -43,6 +43,7 @@ public Plugin myinfo = {
 };
 
 public void SCP_RegisterMetaData() {
+    gamemode.meta.RegEntEvent(ON_PICKUP, "navigator", "OnPickup"); // @arg1 Player, @arg2 Entity
     gamemode.meta.RegEntEvent(ON_USE, "navigator", "OnUse"); // @arg1 Player, @arg2 Entity
     gamemode.meta.RegEntEvent(ON_DROP, "navigator", "OnDrop"); // @arg1 Player, @arg2 Entity, @arg3 char[] sound
 }
@@ -55,12 +56,32 @@ public void SCP_OnCallAction(Player &ply)
     }
 }
 
+public bool OnPickup(Player &ply, InvItem &item)
+{
+    if (!item.HasKey("battery"))
+    {
+        item.SetInt("battery", item.meta.GetInt("battery"));
+    }
+
+    return true;
+}
+
 public void OnUse(Player &ply, InvItem &item)
 {
     if (!ply.GetHandle("nav_active"))
     {
-        ply.SetHandle("nav_active", ply.TimerSimple(gamemode.plconfig.GetInt("showtime", 7) * 1000, "NavDisable", ply));
-        ply.SetProp("m_iHideHUD", 0);
+        if (item.GetInt("battery") > 0)
+        {
+            ply.SetHandle("nav_active", ply.TimerSimple(gamemode.plconfig.GetInt("showtime", 15) * 1000, "NavDisable", ply));
+            ply.SetProp("m_iHideHUD", 0);
+
+            item.SetInt("battery", item.GetInt("battery") - 1);
+            ply.PrintNotify("The battery has enough power for %i more uses", item.GetInt("battery"));
+        }
+        else
+        {
+            ply.PrintNotify("The battery is low");
+        }
     }
     else
     {
