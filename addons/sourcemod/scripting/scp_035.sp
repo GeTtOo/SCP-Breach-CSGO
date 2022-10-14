@@ -28,7 +28,6 @@
  *
  **/
 
-#include <sdkhooks>
 #include <scpcore>
 
 #pragma semicolon 1
@@ -45,32 +44,42 @@ public Plugin myinfo = {
 };
 
 public void SCP_RegisterMetaData() {
-    gamemode.meta.RegEntEvent(ON_PICKUP, "035_mask", "Logic");
+    gamemode.meta.RegEntEvent(ON_PICKUP, "035_mask", "Setup");
 }
 
 public void SCP_OnPlayerClear(Player &ply)
 {
-    if (ply != null && ply.class != null && ply.class.Is("035"))
+    if (ply.class && ply.class.Is("035"))
     {
-        timer.RemoveByName("Timer_SCP-035_Hit");
+        char timername[64];
+        Format(timername, sizeof(timername), "hit-035-%i", ply.id);
+        timer.RemoveByName(timername);
+
         Entity ent = view_as<Entity>(ply.GetHandle("035_ent"));
         if (ent)
         {
-            //ent.model.SetRenderMode(RENDER_NONE);
-            ent.Input("ClearParrent");
+            //char entclass[32];
+            //ent.GetClass(entclass, sizeof(entclass));
+
+            ent.Input("ClearParent");
+
             ents.Remove(ent);
+            //ents.Create(entclass).SetPos(ply.ragdoll.GetPos()).Spawn().Input("Wake");
+
             ply.RemoveValue("035_ent");
+            ply.RemoveValue("035_decayed");
         }
+
+        SetEntityRenderColor(ply.id, 255, 255, 255);
+        SetEntityRenderColor(ply.ragdoll.id, 0, 0, 0);
     }
 }
 
 public Action TransmitHandler(int entity, int client)
 {
-    Player ply = player.GetByID(client);
+    Entity ent = view_as<Entity>(player.GetByID(client).GetBase("035_ent"));
 
-    Handle hndl = ply.GetHandle("035_ent");
-
-    if (hndl && view_as<Entity>(hndl).id == entity)
+    if (ent && ent.id == entity)
         return Plugin_Handled;
 
     return Plugin_Continue;
@@ -78,7 +87,7 @@ public Action TransmitHandler(int entity, int client)
 
 public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype)
 {
-    if (atk == null || atk.class == null) return Plugin_Continue;
+    if (!atk || !atk.class) return Plugin_Continue;
    
     if(atk.class.Is("035"))
     {
@@ -89,71 +98,44 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
     return Plugin_Continue;
 }
 
-public void HandlerHitSCP(Player ply)
+public bool Setup(Player &ply, Entity &ent)
 {
-    if(ply.health > 10)
-        ply.health -= 10;
-    else
-        ply.Kill();
-}
-
-public bool Logic(Player &ply, Entity &ent)
-{
-    if (!ent.GetBool("used"))
-    {
-        Vector sp = ply.GetPos();
-        Angle sa = ply.GetAng();
-
-        char model[256];
-        ply.model.GetPath(model, sizeof(model));
-
-        Base data = new Base();
-        data.SetHandle("player", ply);
-        data.SetHandle("entity", ent);
-        data.SetInt("skin", ply.model.GetSkin());
-        data.SetString("modelname", model);
-
-        ply.Kill();
-
-        ply.Team("SCP");
-        ply.class = gamemode.team("SCP").class("035");
-        
-        ply.Spawn();
-        ply.SetPos(sp, sa);
-        
-        ply.TimerSimple(1000, "ExecDelay", data);
-        
-        timer.Create("Timer_SCP-035_Hit", 2500, 0, "HandlerHitSCP", ply);
-        
-        ent.SetBool("used", true);
-    }
-
-    return false;
-}
-
-public void ExecDelay(Base data)
-{
-    char model[256];
+    ply.Team("SCP");
+    ply.class = gamemode.team("SCP").class("035");
     
-    Player ply = view_as<Player>(data.GetHandle("player"));
-    Entity ent = view_as<Entity>(data.GetHandle("entity"));
-    int skinid = data.GetInt("skin");
-    data.GetString("modelname", model, sizeof(model));
-
-    delete data;
-
-    //ents.IndexUpdate(ent.Create("prop_dynamic_override").Spawn());
+    ply.Spawn(false,false,_,true);
     
     ply.SetHandle("035_ent", ent);
-    ply.model.SetPath(model);
-    ply.model.SetSkin(skinid + 1);
-    ent.SetHook(SDKHook_SetTransmit, TransmitHandler);
     
+    ent.SetProp("m_fEffects", 1);
+    ent.SetHook(SDKHook_SetTransmit, TransmitHandler);
+
     SetVariantString("!activator");
     ent.Input("SetParent", ply.id, ent.id);
 
     SetVariantString("facemask");
     ent.Input("SetParentAttachment", ent.id, ent.id);
+    
+    char timername[64];
+    Format(timername, sizeof(timername), "hit-035-%i", ply.id);
+    timer.Create(timername, 15000, 0, "HandlerHitSCP", ply);
 
-    ent.SetPos(_, new Angle(0.0, 180.0, 90.0)); // ent.SetPos(_, ply.GetAng());
+    return false;
+}
+
+public void HandlerHitSCP(Player ply)
+{
+    if (!ply.class) return;
+
+    ply.TakeDamage(_,250.0);
+
+    if (ply.health < ply.class.health / 100 * 75 && !ply.HasKey("035_decayed"))
+    {
+        ply.model.SetSkin(ply.model.GetSkin() + 1);
+        ply.SetBool("035_decayed", true);
+    }
+
+    int color = RoundToCeil(float(ply.class.health / 100 * 255) / ply.class.health * (float(ply.health) / float(ply.class.health) * float(100)));
+
+    SetEntityRenderColor(ply.id, color, color, color);
 }
