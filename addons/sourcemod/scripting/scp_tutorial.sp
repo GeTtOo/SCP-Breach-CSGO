@@ -114,7 +114,7 @@ public void Tutorial_Respawn() {
     {
         Player ply = players.Get(i);
 
-        if (!ply.store.GetBool("tutorial", false) && GetClientTeam(ply.id) > 1)
+        if (!ply.store.GetBool("tutorial", false) && GetClientTeam(ply.id) > 1 && !ply.IsAlive())
         {
             ply.Team("None");
             ply.class = tutorial;
@@ -199,7 +199,7 @@ public Action Command_Tutorial(int client, const char[] command, int argc)
             ply.Team(team);
             ply.class = gamemode.team(team).class(class);
             
-            ply.UpdateClass();
+            ply.Spawn();
 
             gamemode.mngr.GameCheck();
         }
