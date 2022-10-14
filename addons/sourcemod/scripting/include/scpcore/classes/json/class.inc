@@ -119,6 +119,10 @@ methodmap Class < JSON_OBJECT {
         public get() { return view_as<JSON_ARRAY>(this.Get("weapons")); }
     }
 
+    property JSON_ARRAY ffex {
+        public get() { return view_as<JSON_ARRAY>(this.Get("ffex")); }
+    }
+
     public bool Is(char[] equalClass) {
         char thisClass[32]; this.GetString("name", thisClass, sizeof(thisClass)); return StrEqual(thisClass, equalClass);
     }

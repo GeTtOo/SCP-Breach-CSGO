@@ -90,6 +90,8 @@ forward void SCP_OnPlayerSpawn(Player &ply);
 
 forward void SCP_PostPlayerSpawn(Player &ply);
 
+forward void SCP_OnUpdateClass(Player &ply);
+
 forward void SCP_OnPlayerClear(Player &ply);
 
 forward void SCP_OnPlayerSetupOverlay(Player &ply);

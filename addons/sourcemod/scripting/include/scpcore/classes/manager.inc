@@ -428,7 +428,24 @@ methodmap Manager < Base {
         vic.Team(vicTeam, sizeof(vicTeam));
         atk.Team(atkTeam, sizeof(atkTeam));
 
-        if(StrEqual(vicTeam, atkTeam)) return false;
+        if(StrEqual(vicTeam, atkTeam))
+        {
+            if (atk.class.ffex)
+            {
+                char classnamevic[64];
+                vic.class.Name(classnamevic, sizeof(classnamevic));
+
+                for (int i=0; i < atk.class.ffex.Length; i++)
+                {
+                    char classname[64];
+                    atk.class.ffex.GetString(i, classname, sizeof(classname));
+
+                    if (StrEqual(classnamevic, classname)) return true;
+                }
+            }
+
+            return false;
+        }
 
         return true;
     }

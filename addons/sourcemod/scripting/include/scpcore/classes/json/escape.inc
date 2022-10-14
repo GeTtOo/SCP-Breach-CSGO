@@ -40,7 +40,7 @@ methodmap EscapeInfo < JSON_OBJECT {
 
     property bool savepos {
         public set(bool val) { this.SetBool("savepos", val); }
-        public get() { return this.GetBool("savepos"); }
+        public get() { return this.GetBool("savepos", false); }
     }
 
     public void team(char[] buffer, int max_size = 0) { (max_size == 0) ? this.SetString("team", buffer) : this.GetString("team", buffer, max_size); }

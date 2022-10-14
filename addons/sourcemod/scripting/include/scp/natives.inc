@@ -358,16 +358,8 @@ public any NativeWT_Remove(Handle Plugin, int numArgs) {
     return false;
 }
 
-public any NativePlayer_Setup(Handle Plugin, int numArgs) {
+public any NativePlayer_SetupEquipment(Handle Plugin, int numArgs) {
     Player ply = GetNativeCell(1);
-    
-    JSON_OBJECT pos = ply.class.GetVecAng();
-    if (pos)
-    {
-        ply.SetPos(pos.GetVector("vec"), pos.GetAngle("ang"));
-        pos.SetBool("lock", true);
-        ply.SetHandle("spawnpos", pos);
-    }
 
     if (ply.class.items)
     {
@@ -461,12 +453,6 @@ public any NativePlayer_Setup(Handle Plugin, int numArgs) {
         else
             ply.TimerSimple(ply.class.GetInt("doorsdelay") * 1000, "OpenCameraDoors", ply.class.doors);
 
-
-    char teamName[32], className[32];
-    ply.Team(teamName, sizeof(teamName));
-    ply.class.Name(className, sizeof(className));
-    PrintToChat(ply.id, " \x07[SCP] \x01%t", "Show class when player spawn", teamName, className);
-
     return true;
 }
 
@@ -523,6 +509,104 @@ public any NativePlayer_SetupModel(Handle Plugin, int numArgs) {
 
         ply.SetHandsModel(handsModel);
     }
+
+    return true;
+}
+
+public any NativePlayer_Spawn(Handle Plugin, int numArgs) {
+    Player ply = GetNativeCell(1);
+    if (!ply.HasKey("meta-setpos")) ply.SetBool("meta-setpos", GetNativeCell(2));
+    if (!ply.HasKey("meta-setmdl")) ply.SetBool("meta-setmdl", GetNativeCell(3));
+    if (!ply.HasKey("meta-setequip")) ply.SetBool("meta-setequip", GetNativeCell(4));
+    if (!ply.HasKey("meta-isclassupdate")) ply.SetBool("meta-isclassupdate", GetNativeCell(5));
+    if (!ply.HasKey("meta-cleanequip")) ply.SetBool("meta-cleanequip", GetNativeCell(6));
+    if (!ply.HasKey("meta-cleanse")) ply.SetBool("meta-cleanse", GetNativeCell(7));
+
+    ply.spawned = true;
+
+    if (!ply.IsAlive())
+    {
+        CS_RespawnPlayer(ply.id);
+        return true;
+    }
+
+    bool setpos = ply.GetBool("meta-setpos");
+    bool setmdl = ply.GetBool("meta-setmdl");
+    bool setequip = ply.GetBool("meta-setequip");
+    bool isclassupdate = ply.GetBool("meta-isclassupdate");
+    bool cleanequip = ply.GetBool("meta-cleanequip");
+    bool cleanse = ply.GetBool("meta-cleanse");
+    ply.RemoveValue("meta-setpos");
+    ply.RemoveValue("meta-setmdl");
+    ply.RemoveValue("meta-setequip");
+    ply.RemoveValue("meta-isclassupdate");
+    ply.RemoveValue("meta-cleanequip");
+    ply.RemoveValue("meta-cleanse");
+
+    if (isclassupdate)
+    {
+        char timername[32];
+        FormatEx(timername, sizeof(timername), "ent-%i", ply.id);
+        timer.RemoveIsContains(timername);
+
+        if (cleanse) ply.se.ClearAll();
+        if (cleanequip)
+        {
+            ply.inv.FullClear();
+            ply.RestrictWeapons();
+        }
+
+        if (ply.GetHandle("spawnpos")) view_as<JSON_OBJECT>(ply.GetHandle("spawnpos")).SetBool("lock", false);
+
+        Call_StartForward(PreClientSpawnForward);
+        Call_PushCellRef(ply);
+        Call_Finish();
+    }
+
+    ply.SetupPos(setpos);
+
+    if (ply.ragdoll)
+    {
+        delete ply.ragdoll.meta;
+        ents.Remove(ply.ragdoll);
+        ply.ragdoll = null;
+    }
+
+    ply.SetupBaseStats();
+
+    if (setmdl) ply.SetupModel();
+    if (setequip) ply.SetupEquipment();
+
+    char team[32], class[32];
+
+    ply.Team(team, sizeof(team));
+    ply.class.GetString("name", class, sizeof(class));
+    
+    Call_StartForward(OnPlayerSpawnForward);
+    Call_PushCellRef(ply);
+    Call_Finish();
+
+    if (isclassupdate)
+    {
+        Call_StartForward(OnPlayerUpdateClass);
+        Call_PushCellRef(ply);
+        Call_Finish();
+    }
+
+    if (ply.class.HasKey("overlay"))
+    {
+        char path[256];
+        ply.class.overlay(path, sizeof(path));
+        ply.ShowOverlay(path);
+    
+        ply.TimerSimple(gamemode.config.showoverlaytime * 1000, "PlyHideOverlay", ply);
+    }
+
+    PrintToChat(ply.id, " \x07[SCP] \x01%t", "Show class when player spawn", team, class);
+
+    ply.TimerSimple(1, "PostPlayerSpawn", ply);
+
+    gamemode.log.Debug("Player %L spawned | Team/Class: (%s - %s)", ply.id, team, class);
 
     return true;
 }
@@ -586,7 +670,7 @@ public any NativePlayer_Inventory_GiveItem(Handle Plugin, int numArgs) {
     return view_as<Entity>(null);
 }
 
-public any NativePlayer_DropWeapons(Handle Plugin, int numArgs) {
+public int NativePlayer_DropWeapons(Handle Plugin, int numArgs) {
     Player ply = GetNativeCell(1);
 
     int itemid, weparrsize = GetEntPropArraySize(ply.id, Prop_Send, "m_hMyWeapons");
@@ -605,10 +689,10 @@ public any NativePlayer_DropWeapons(Handle Plugin, int numArgs) {
         }
     }
 
-    return false;
+    return 0;
 }
 
-public any NativePlayer_RestrictWeapons(Handle Plugin, int numArgs) {
+public int NativePlayer_RestrictWeapons(Handle Plugin, int numArgs) {
     Player ply = GetNativeCell(1);
 
     int itemid, weparrsize = GetEntPropArraySize(ply.id, Prop_Send, "m_hMyWeapons");
@@ -628,7 +712,7 @@ public any NativePlayer_RestrictWeapons(Handle Plugin, int numArgs) {
         }
     }
 
-    return false;
+    return 0;
 }
 
 public any NativePlayer_Inventory_Drop(Handle Plugin, int numArgs) {
@@ -671,13 +755,13 @@ public any NativePlayer_Inventory_DropByIdx(Handle Plugin, int numArgs) {
     return ply.inv.Drop(inv.Get(GetNativeCell(2)));
 }
 
-public any NativePlayer_Inventory_DropAll(Handle Plugin, int numArgs) {
+public int NativePlayer_Inventory_DropAll(Handle Plugin, int numArgs) {
     Player ply = view_as<Player>(view_as<Base>(GetNativeCell(1)).GetHandle("ply"));
 
     while (ply.inv.list.Length != 0)
         ply.inv.DropByIdx();
 
-    return false;
+    return 0;
 }
 
 public any NativePlayer_Inventory_Remove(Handle Plugin, int numArgs) {
@@ -706,7 +790,7 @@ public any NativePlayer_Inventory_Remove(Handle Plugin, int numArgs) {
     return false;
 }
 
-public any NativePlayer_Inventory_FullClear(Handle Plugin, int numArgs) {
+public int NativePlayer_Inventory_FullClear(Handle Plugin, int numArgs) {
     ArrayList entities = ents.list;
     Player ply = view_as<Player>(view_as<Base>(GetNativeCell(1)).GetHandle("ply"));
 
@@ -717,5 +801,5 @@ public any NativePlayer_Inventory_FullClear(Handle Plugin, int numArgs) {
         item.Dispose();
     }
 
-    return false;
+    return 0;
 }

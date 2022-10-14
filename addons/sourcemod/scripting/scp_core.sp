@@ -59,6 +59,8 @@ Handle OnPlayerLeaveForward;
 Handle PreClientSpawnForward;
 Handle OnPlayerSpawnForward;
 Handle PostClientSpawnForward;
+Handle OnPlayerUpdateClass;
+Handle PrePlayerClearForward;
 Handle OnPlayerClearForward;
 Handle OnPlayerSetupOverlay;
 Handle OnPlayerPickupItemForward;
@@ -94,7 +96,7 @@ public void OnPluginStart()
     
     HookEvent("round_start", OnRoundStart);
     HookEvent("round_prestart", OnRoundPreStart);
-    HookEvent("player_death", OnPlayerDeath, EventHookMode_Pre);
+    HookEvent("player_death", OnKillNotify, EventHookMode_Pre);
     HookEvent("player_team", OnPlayerSwitchTeam);
     
     HookEntityOutput("func_button", "OnPressed", OnButtonPressed);
@@ -147,8 +149,9 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     CreateNative("Player.Give", NativePlayer_GiveWeapon);
     CreateNative("Player.DropWeapons", NativePlayer_DropWeapons);
     CreateNative("Player.RestrictWeapons", NativePlayer_RestrictWeapons);
-    CreateNative("Player.Setup", NativePlayer_Setup);
+    CreateNative("Player.SetupEquipment", NativePlayer_SetupEquipment);
     CreateNative("Player.SetupModel", NativePlayer_SetupModel);
+    CreateNative("Player.Spawn", NativePlayer_Spawn);
 
     CreateNative("Inventory.Give", NativePlayer_Inventory_GiveItem);
     CreateNative("Inventory.Drop", NativePlayer_Inventory_Drop);
@@ -166,6 +169,8 @@ public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
     PreClientSpawnForward = CreateGlobalForward("SCP_PrePlayerSpawn", ET_Event, Param_CellByRef);
     OnPlayerSpawnForward = CreateGlobalForward("SCP_OnPlayerSpawn", ET_Event, Param_CellByRef);
     PostClientSpawnForward = CreateGlobalForward("SCP_PostPlayerSpawn", ET_Event, Param_CellByRef);
+    OnPlayerUpdateClass = CreateGlobalForward("SCP_OnPlayerUpdateClass", ET_Event, Param_CellByRef);
+    PrePlayerClearForward = CreateGlobalForward("SCP_PrePlayerClear", ET_Event, Param_CellByRef);
     OnPlayerClearForward = CreateGlobalForward("SCP_OnPlayerClear", ET_Event, Param_CellByRef);
     OnPlayerSetupOverlay = CreateGlobalForward("SCP_OnPlayerSetupOverlay", ET_Event, Param_CellByRef);
     OnPlayerPickupItemForward = CreateGlobalForward("SCP_OnPlayerPickupItem", ET_Event, Param_CellByRef, Param_CellByRef);
@@ -363,42 +368,9 @@ public void PlayerSpawn(Player ply)
         Call_Finish();
 
         if (!ply.class) return;
-        
-        if (ply.ragdoll) //Fix check if valid
-        {
-            delete ply.ragdoll.meta;
-            ents.Remove(ply.ragdoll);
-            ply.ragdoll = null;
-        }
 
         ply.Spawn();
         ply.SetCollisionGroup(2);
-
-        ply.SetupBaseStats();
-        ply.SetupModel();
-        ply.Setup();
-
-        char team[32], class[32];
-
-        ply.Team(team, sizeof(team));
-        ply.class.GetString("name", class, sizeof(class));
-        
-        Call_StartForward(OnPlayerSpawnForward);
-        Call_PushCellRef(ply);
-        Call_Finish();
-
-        if (ply.class.HasKey("overlay"))
-        {
-            char path[256];
-            ply.class.overlay(path, sizeof(path));
-            ply.ShowOverlay(path);
-        
-            ply.TimerSimple(gamemode.config.showoverlaytime * 1000, "PlyHideOverlay", ply);
-        }
-        
-        ply.TimerSimple(1, "PostPlayerSpawn", ply);
-
-        gamemode.log.Debug("Player %L spawned | Team/Class: (%s - %s)", ply.id, team, class);
     }
 
     ply.RemoveValue("rsptmr");

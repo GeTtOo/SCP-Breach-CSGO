@@ -177,49 +177,10 @@ public void EscapeController(Player ply, int doorID)
             data.team(teamName, sizeof(teamName));
             data.class(className, sizeof(className));
 
-            Vector opp;
-            Angle opa;
-
-            if (data.savepos)
-            {
-                opp = ply.GetPos();
-                opa = ply.GetAng();
-            }
-            
-            char timername[32];
-            FormatEx(timername, sizeof(timername), "ent-%i", ply.id);
-            timer.RemoveIsContains(timername);
-
-            ply.se.ClearAll();
-
-            if (ply.GetBase("spawnpos")) ply.GetBase("spawnpos").SetBool("lock", false);
-
             ply.Team(teamName);
             ply.class = gamemode.team(teamName).class(className);
-            
-            ply.inv.FullClear();
 
-            Call_StartForward(PreClientSpawnForward);
-            Call_PushCellRef(ply);
-            Call_Finish();
-
-            ply.UpdateClass();
-
-            if (data.savepos)
-                ply.SetPos(opp, opa);
-
-            Call_StartForward(OnPlayerSpawnForward);
-            Call_PushCellRef(ply);
-            Call_Finish();
-
-            if (ply.class.HasKey("overlay"))
-            {
-                char path[256];
-                ply.class.overlay(path, sizeof(path));
-                ply.ShowOverlay(path);
-            
-                ply.TimerSimple(gamemode.config.showoverlaytime * 1000, "PlyHideOverlay", ply);
-            }
+            ply.Spawn(!data.savepos,_,_,true);
         }
 
         delete data;

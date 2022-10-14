@@ -63,6 +63,7 @@ public Action OnPlayerSwitchTeam(Event event, const char[] name, bool dbroadcast
 
     if (team == 1)
     {
+        ply.Kill();
         ply.ready = false;
 
         SetHudTextParams(0.025, 0.915, 9999.0, 102, 102, 255, 190);
@@ -196,6 +197,255 @@ public void WeaponIdUpdate(Base data)
                 }
             }
         }
+    }
+}
+
+public Action OnButtonPressed(const char[] output, int btnid, int activator, float delay)
+{
+    if(IsClientExist(activator) && IsValidEntity(btnid) && IsPlayerAlive(activator) && !IsClientInSpec(activator))
+    {
+        Player ply = player.GetByID(activator);
+
+        char langcode[3];
+        ply.GetLangInfo(langcode, sizeof(langcode));
+
+        if (gamemode.config.debug)
+            PrintToChat(ply.id, " \x07[SCP Admin] \x01Door/Button id: (%i)", btnid);
+
+        char doorKey[10];
+        IntToString(btnid, doorKey, sizeof(doorKey));
+        
+        if (gamemode.config.buttons.HasKey(doorKey))
+        {
+            Button button = gamemode.config.buttons.Get(doorKey);
+
+            int entid = GetEntPropEnt(btnid, Prop_Data, "m_hMoveChild");
+            Entity idpad = (entid != -1) ? new Entity(entid) : new Entity(btnid);
+            
+            if (gamemode.mngr.IsWarmup)
+            {
+                return Plugin_Continue;
+            }
+            else if(ply.fullaccess)
+            {
+                return Plugin_Continue;
+            }
+            else if ((button.checkwhenuse && ply.inv.Check("access", button.access)) || (gamemode.config.usablecards && ply.Check("dooraccess", button.access)) || (!gamemode.config.usablecards && ply.inv.Check("access", button.access)) || (ply.IsSCP && button.scp)) // old check = ply.inv.Check("access", door.access)
+            {
+                if (idpad)
+                {
+                    if (idpad.HasProp("m_nSkin"))
+                    {
+                        idpad.SetProp("m_nSkin", (StrEqual(langcode, "ru")) ? 1 : 4); // 22 = ru lang code
+                        char sound[256];
+                        gamemode.config.sound.GetString("idpadag", sound, sizeof(sound));
+                        gamemode.mngr.PlayTranslatedAmbient(sound, langcode, idpad);
+                        timer.Simple(RoundToCeil(GetEntPropFloat(btnid, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
+                    }
+                }
+            }
+            else
+            {
+                if (idpad)
+                {
+                    if (idpad.HasProp("m_nSkin"))
+                    {
+                        idpad.SetProp("m_nSkin", (StrEqual(langcode, "ru")) ? 2 : 5);
+                        char sound[256];
+                        gamemode.config.sound.GetString("idpadad", sound, sizeof(sound));
+                        gamemode.mngr.PlayTranslatedAmbient(sound, langcode, idpad);
+                        timer.Simple(RoundToCeil(GetEntPropFloat(btnid, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
+                    }
+
+                    if (!ply.IsSCP)
+                    {
+                        char dn[15], aln[128];
+                        FormatEx(dn, sizeof(dn), "AccessLevel_%i", button.access);
+                        FormatEx(aln, sizeof(aln), "%t", dn);
+                        ply.PrintWarning("%t", "Door access denied", aln);
+                    }
+                }
+                
+                idpad.Dispose();
+                return Plugin_Stop;
+            }
+
+            idpad.Dispose();
+        }
+
+        EscapeController(ply, btnid);
+        gamemode.nuke.Controller(btnid);
+
+        Call_StartForward(OnButtonPressedForward);
+        Call_PushCellRef(ply);
+        Call_PushCell(btnid);
+        Call_Finish();
+    }
+    
+    return Plugin_Continue;
+}
+
+public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
+{   
+    if(IsClientExist(victim))
+    {
+        Player atk, vic = player.GetByID(victim);
+        Action result;
+
+        if(IsClientExist(attacker))
+        {
+            atk = player.GetByID(attacker);
+            if (vic != null && vic.class != null)
+            {
+                if(vic.IsSCP && atk.IsSCP)
+                {
+                    return Plugin_Stop;
+                }
+                else if(!gamemode.config.ff && !gamemode.mngr.CanAttack(atk, vic))
+                {
+                    return Plugin_Stop;
+                }
+            }
+        }
+        else
+        {
+            atk = null;
+        }
+
+        //if (atk == null || atk.class == null) return Plugin_Continue;
+        if (vic == null || vic.class == null) return Plugin_Continue;
+        
+        Call_StartForward(OnTakeDamageForward);
+        Call_PushCellRef(vic);
+        Call_PushCellRef(atk);
+        Call_PushFloatRef(damage);
+        Call_PushCellRef(damagetype);
+        Call_PushCellRef(inflictor);
+        Call_Finish(result);
+
+        return result;
+    }
+
+    return Plugin_Continue;
+}
+
+public void OnTakeDamageAlivePost(int victim, int attacker, int inflictor, float damage, int damagetype)
+{   
+    if(IsClientExist(victim))
+    {
+        Player vic = player.GetByID(victim);
+        Player atk = null;
+        
+        if(IsClientExist(attacker))
+            atk = player.GetByID(attacker);
+
+        if (vic.health <= 0)
+        {
+            vic.DropWeapons();
+
+            bool logchange = false;
+                
+            Call_StartForward(Log_PlayerDeathForward);
+            Call_PushCellRef(vic);
+            Call_PushCellRef(atk);
+            Call_PushCell(damage);
+            Call_PushCell(damagetype);
+            Call_PushCell(inflictor);
+            Call_Finish(logchange);
+
+            if (logchange) return;
+
+            char vicname[32], vicauth[32], victeam[32];
+            vic.GetName(vicname, sizeof(vicname));
+            vic.GetAuth(vicauth, sizeof(vicauth));
+            vic.Team(victeam, sizeof(victeam));
+            
+            if(atk)
+            {
+                char atkname[32], atkauth[32], atkteam[32];
+
+                atk.GetName(atkname, sizeof(atkname));
+                atk.GetAuth(atkauth, sizeof(atkauth));
+                atk.Team(atkteam, sizeof(atkteam));
+
+                gamemode.log.Info("%t", "Log_Core_PlayerDead", vicname, vicauth, victeam, atkname, atkauth, atkteam);
+            }
+            else
+            {
+                switch (damagetype)
+                {
+                    case DMG_BLAST:
+                        gamemode.log.Info("%t", "Log_Core_Death_By_Alpha_Warhead",  vicname, vicauth);
+                    case DMG_RADIATION:
+                        gamemode.log.Info("%t", "Log_Core_Death_By_Radiation",  vicname, vicauth);
+                    default:
+                        gamemode.log.Info("%t", "Log_Core_Suicide",  vicname, vicauth);
+                }
+            }
+        }
+    }
+}
+
+public void OnPlayerDeath(Player vic, Player atk)
+{
+    if(!gamemode.mngr.IsWarmup)
+    {
+        if (!vic) return;
+
+        vic.ragdoll = vic.CreateRagdoll();
+        ents.Push(vic.ragdoll);
+
+        Call_StartForward(PrePlayerClearForward);
+        Call_PushCellRef(vic);
+        Call_Finish();
+
+        vic.inv.DropAll();
+        vic.se.ClearAll();
+
+        vic.HideOverlay();
+
+        if (vic.progress.active)
+            vic.progress.Stop();
+
+        vic.spawned = false;
+
+        char timername[32];
+        FormatEx(timername, sizeof(timername), "ent-%i", vic.id);
+        timer.RemoveIsContains(timername);
+
+        Call_StartForward(OnPlayerDeathForward);
+        Call_PushCellRef(vic);
+        Call_PushCellRef(atk);
+        Call_Finish();
+
+        Call_StartForward(OnPlayerClearForward);
+        Call_PushCellRef(vic);
+        Call_Finish();
+
+        vic.Team("Dead");
+        vic.class = null;
+
+        if (vic.GetHandle("spawnpos")) view_as<JSON_OBJECT>(vic.GetHandle("spawnpos")).SetBool("lock", false);
+    }
+}
+
+public Action OnKillNotify(Event event, const char[] name, bool dontBroadcast)
+{
+    OnPlayerDeath(player.GetByID(GetClientOfUserId(GetEventInt(event, "userid"))), player.GetByID(GetClientOfUserId(GetEventInt(event, "attacker"))));
+
+    return Plugin_Handled;
+}
+
+public void OnPlayerRunCmdPost(int client, int buttons)
+{
+    Player ply = player.GetByID(client);
+    
+    if (ply && ply.class)
+    {
+        Call_StartForward(OnInputForward);
+        Call_PushCellRef(ply);
+        Call_PushCell(buttons);
+        Call_Finish();
     }
 }
 
@@ -381,250 +631,6 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
         Call_Finish();
 
         gamemode.log.Info("%t", "Log_Core_RoundStart");
-    }
-}
-
-public Action OnButtonPressed(const char[] output, int btnid, int activator, float delay)
-{
-    if(IsClientExist(activator) && IsValidEntity(btnid) && IsPlayerAlive(activator) && !IsClientInSpec(activator))
-    {
-        Player ply = player.GetByID(activator);
-
-        char langcode[3];
-        ply.GetLangInfo(langcode, sizeof(langcode));
-
-        if (gamemode.config.debug)
-            PrintToChat(ply.id, " \x07[SCP Admin] \x01Door/Button id: (%i)", btnid);
-
-        char doorKey[10];
-        IntToString(btnid, doorKey, sizeof(doorKey));
-        
-        if (gamemode.config.buttons.HasKey(doorKey))
-        {
-            Button button = gamemode.config.buttons.Get(doorKey);
-
-            int entid = GetEntPropEnt(btnid, Prop_Data, "m_hMoveChild");
-            Entity idpad = (entid != -1) ? new Entity(entid) : new Entity(btnid);
-            
-            if (gamemode.mngr.IsWarmup)
-            {
-                return Plugin_Continue;
-            }
-            else if(ply.fullaccess)
-            {
-                return Plugin_Continue;
-            }
-            else if ((button.checkwhenuse && ply.inv.Check("access", button.access)) || (gamemode.config.usablecards && ply.Check("dooraccess", button.access)) || (!gamemode.config.usablecards && ply.inv.Check("access", button.access)) || (ply.IsSCP && button.scp)) // old check = ply.inv.Check("access", door.access)
-            {
-                if (idpad)
-                {
-                    if (idpad.HasProp("m_nSkin"))
-                    {
-                        idpad.SetProp("m_nSkin", (StrEqual(langcode, "ru")) ? 1 : 4); // 22 = ru lang code
-                        char sound[256];
-                        gamemode.config.sound.GetString("idpadag", sound, sizeof(sound));
-                        gamemode.mngr.PlayTranslatedAmbient(sound, langcode, idpad);
-                        timer.Simple(RoundToCeil(GetEntPropFloat(btnid, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
-                    }
-                }
-            }
-            else
-            {
-                if (idpad)
-                {
-                    if (idpad.HasProp("m_nSkin"))
-                    {
-                        idpad.SetProp("m_nSkin", (StrEqual(langcode, "ru")) ? 2 : 5);
-                        char sound[256];
-                        gamemode.config.sound.GetString("idpadad", sound, sizeof(sound));
-                        gamemode.mngr.PlayTranslatedAmbient(sound, langcode, idpad);
-                        timer.Simple(RoundToCeil(GetEntPropFloat(btnid, Prop_Data, "m_flWait")) * 1000, "ResetIdPad", idpad.id);
-                    }
-
-                    if (!ply.IsSCP)
-                    {
-                        char dn[15], aln[128];
-                        FormatEx(dn, sizeof(dn), "AccessLevel_%i", button.access);
-                        FormatEx(aln, sizeof(aln), "%t", dn);
-                        ply.PrintWarning("%t", "Door access denied", aln);
-                    }
-                }
-                
-                idpad.Dispose();
-                return Plugin_Stop;
-            }
-
-            idpad.Dispose();
-        }
-
-        EscapeController(ply, btnid);
-        gamemode.nuke.Controller(btnid);
-
-        Call_StartForward(OnButtonPressedForward);
-        Call_PushCellRef(ply);
-        Call_PushCell(btnid);
-        Call_Finish();
-    }
-    
-    return Plugin_Continue;
-}
-
-public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype)
-{   
-    if(IsClientExist(victim))
-    {
-        Player atk, vic = player.GetByID(victim);
-        Action result;
-
-        if(IsClientExist(attacker))
-        {
-            atk = player.GetByID(attacker);
-            if (vic != null && vic.class != null)
-            {
-                if(vic.IsSCP && atk.IsSCP)
-                {
-                    return Plugin_Stop;
-                }
-                else if(!gamemode.config.ff && !gamemode.mngr.CanAttack(atk, vic))
-                {
-                    return Plugin_Stop;
-                }
-            }
-        }
-        else
-        {
-            atk = null;
-        }
-
-        //if (atk == null || atk.class == null) return Plugin_Continue;
-        if (vic == null || vic.class == null) return Plugin_Continue;
-        
-        Call_StartForward(OnTakeDamageForward);
-        Call_PushCellRef(vic);
-        Call_PushCellRef(atk);
-        Call_PushFloatRef(damage);
-        Call_PushCellRef(damagetype);
-        Call_PushCellRef(inflictor);
-        Call_Finish(result);
-
-        return result;
-    }
-
-    return Plugin_Continue;
-}
-
-public void OnTakeDamageAlivePost(int victim, int attacker, int inflictor, float damage, int damagetype)
-{   
-    if(IsClientExist(victim))
-    {
-        Player vic = player.GetByID(victim);
-        Player atk = null;
-        
-        if(IsClientExist(attacker))
-            atk = player.GetByID(attacker);
-
-        if (vic.health <= 0)
-        {
-            vic.DropWeapons();
-            
-            bool logchange = false;
-                
-            Call_StartForward(Log_PlayerDeathForward);
-            Call_PushCellRef(vic);
-            Call_PushCellRef(atk);
-            Call_PushCell(damage);
-            Call_PushCell(damagetype);
-            Call_PushCell(inflictor);
-            Call_Finish(logchange);
-
-            if (logchange) return;
-
-            char vicname[32], vicauth[32], victeam[32];
-            vic.GetName(vicname, sizeof(vicname));
-            vic.GetAuth(vicauth, sizeof(vicauth));
-            vic.Team(victeam, sizeof(victeam));
-            
-            if(atk)
-            {
-                char atkname[32], atkauth[32], atkteam[32];
-
-                atk.GetName(atkname, sizeof(atkname));
-                atk.GetAuth(atkauth, sizeof(atkauth));
-                atk.Team(atkteam, sizeof(atkteam));
-
-                gamemode.log.Info("%t", "Log_Core_PlayerDead", vicname, vicauth, victeam, atkname, atkauth, atkteam);
-            }
-            else
-            {
-                switch (damagetype)
-                {
-                    case DMG_BLAST:
-                        gamemode.log.Info("%t", "Log_Core_Death_By_Alpha_Warhead",  vicname, vicauth);
-                    case DMG_RADIATION:
-                        gamemode.log.Info("%t", "Log_Core_Death_By_Radiation",  vicname, vicauth);
-                    default:
-                        gamemode.log.Info("%t", "Log_Core_Suicide",  vicname, vicauth);
-                }
-            }
-        }
-    }
-}
-
-public Action OnPlayerDeath(Event event, const char[] name, bool dontBroadcast)
-{
-    if(!gamemode.mngr.IsWarmup)
-    {
-        Player vic = player.GetByID(GetClientOfUserId(GetEventInt(event, "userid")));
-        Player atk = player.GetByID(GetClientOfUserId(GetEventInt(event, "attacker")));
-
-        if (!vic) return Plugin_Handled;
-        
-        vic.ragdoll = vic.CreateRagdoll();
-        
-        ents.Push(vic.ragdoll);
-
-        vic.inv.DropAll();
-        vic.se.ClearAll();
-
-        vic.HideOverlay();
-
-        if (vic.progress.active)
-            vic.progress.Stop();
-
-        vic.spawned = false;
-
-        char timername[32];
-        FormatEx(timername, sizeof(timername), "ent-%i", vic.id);
-        timer.RemoveIsContains(timername);
-        
-        Call_StartForward(OnPlayerDeathForward);
-        Call_PushCellRef(vic);
-        Call_PushCellRef(atk);
-        Call_Finish();
-
-        Call_StartForward(OnPlayerClearForward);
-        Call_PushCellRef(vic);
-        Call_Finish();
-
-        vic.Team("Dead");
-        vic.class = null;
-
-        if (vic.GetHandle("spawnpos")) view_as<JSON_OBJECT>(vic.GetHandle("spawnpos")).SetBool("lock", false);
-    }
-
-    return Plugin_Handled;
-}
-
-public void OnPlayerRunCmdPost(int client, int buttons)
-{
-    Player ply = player.GetByID(client);
-    
-    if (ply && ply.class)
-    {
-        Call_StartForward(OnInputForward);
-        Call_PushCellRef(ply);
-        Call_PushCell(buttons);
-        Call_Finish();
     }
 }
 

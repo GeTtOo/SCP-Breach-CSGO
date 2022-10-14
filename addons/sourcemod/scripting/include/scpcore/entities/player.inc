@@ -342,25 +342,30 @@ methodmap Player < Entity {
         this.multipler = this.class.multipler;
     }
 
-    public native void Setup();
+    public void SetupPos(bool setpos)
+    {
+        if (setpos)
+        {
+            JSON_OBJECT pos = this.class.GetVecAng();
+            if (pos)
+            {
+                this.SetPos(pos.GetVector("vec"), pos.GetAngle("ang"));
+                pos.SetBool("lock", true);
+                this.SetHandle("spawnpos", pos);
+            }
+        }
+        else
+        {
+            if (this.ragdoll)
+                this.SetPos(this.ragdoll.GetPos());
+        }
+    }
 
     public native void SetupModel();
 
-    public void Spawn() {
-        this.spawned = true;
-        if (!this.IsAlive())
-            CS_RespawnPlayer(this.id);
-    }
+    public native void SetupEquipment();
 
-    public void UpdateClass() {
-        this.Spawn();
-        this.RestrictWeapons();
-        this.inv.FullClear();
-        
-        this.SetupBaseStats();
-        this.SetupModel();
-        this.Setup();
-    }
+    public native void Spawn(bool setpos = true, bool setmdl = true, bool setequip = true, bool isclassupdate = false, bool cleanequip = true, bool cleanse = true);
 
     public void Dispose() {
         this.inv.Dispose();

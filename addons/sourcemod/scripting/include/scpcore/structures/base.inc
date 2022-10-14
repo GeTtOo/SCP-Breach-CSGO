@@ -52,6 +52,7 @@ methodmap Base < StringMap {
     public Base GetAngle(char[] index, Base defval = null) { Base val; return this.GetValue(index, val) ? val : defval; }
     public ArrayList GetArrayList(char[] index) { ArrayList list; return this.GetValue(index, list) ? list : null; }
 
+    public bool HasKey(char[] index) { return this.ContainsKey(index); }
     public bool RemoveValue(char[] index) { return this.Remove(index); }
 
     property int Length {
