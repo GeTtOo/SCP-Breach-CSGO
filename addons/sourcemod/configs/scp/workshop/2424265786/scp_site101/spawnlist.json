@@ -1,6 +1,6 @@
 {
     "035_mask":[
-        {"chance":80,"vec":[-7682,464,118],"ang":[0,0,0],"comment":"035 cell"}
+        {"chance":80,"vec":[-7682,470,20],"ang":[0,0,0],"comment":"035 cell"}
     ],
     "weapon_hkp2000":[
 

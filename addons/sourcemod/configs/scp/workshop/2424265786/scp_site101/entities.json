@@ -105,8 +105,9 @@
         }
     },
     "035_mask": {
-        "model":"models/eternity/props/scp/scp_035.mdl",
-        "mass":0.5
+        "model":"models/eternity/props/scp/scp_035_v2.mdl",
+        "mass":0.5,
+        "spawnflags":4357
     },
     "iron_ingot": {
         "model":"models/eternity/props/ingot.mdl",
@@ -129,12 +130,12 @@
     },
     "radio": {
         "model":"models/eternity/props/radio.mdl",
-        "mass":2.0,
-        "remote":true
+        "mass":2.0
     },
     "navigator": {
         "model":"models/weapons/w_eq_tablet_dropped.mdl",
-        "mass":2.0
+        "mass":2.0,
+        "battery":5
     },
     "medkit" : {
         "model":"models/eternity/props/medbag_german.mdl",

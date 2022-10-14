@@ -84,7 +84,8 @@
                     "trigger":1123,
                     "team":"Chaos",
                     "class":["Alpha","Beta","Gamma"]
-                }
+                },
+                "ffex":["Security"]
             },
             "Scientist": {
                 "percent":20,
@@ -192,7 +193,8 @@
                     "trigger":384,
                     "team":"MTF",
                     "class":"Cadet"
-                }
+                },
+                "ffex":["D Class"]
             }
         }
     },
@@ -247,7 +249,7 @@
                 "armor":200,
                 "helmet":true,
                 "items":["card_mog_lieutenant", "radio", "visor_nv"],
-                "weapons":["weapon_m4a1_silencer", "weapon_usp_silencer", "weapon_taser"],
+                "weapons":[["weapon_m4a1_silencer","weapon_m4a1"], "weapon_usp_silencer", "weapon_taser"],
                 "model":{
                     "id":"mtf",
                     "bodygroups":{
@@ -555,7 +557,7 @@
             "035": {
                 "autospawn":false,
                 "health":15000,
-                "weapons":["weapon_axe", "weapon_axe", "weapon_axe"],
+                "weapons":["weapon_axe"],
                 "overlay":"eternity/overlays/scp-035_{lang}_fh",
                 "comment":"035"
             },
