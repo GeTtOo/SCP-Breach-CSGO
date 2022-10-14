@@ -37,10 +37,10 @@
 #include <sdktools>
 #include <cstrike>
 
-#include "scp/classes/player/store"
-#include "scp/classes/player/inventory"
-#include "scp/classes/player/progress"
-#include "scp/classes/player/statuseffect"
+#include "scpcore/classes/player/store"
+#include "scpcore/classes/player/inventory"
+#include "scpcore/classes/player/progress"
+#include "scpcore/classes/player/statuseffect"
 
 methodmap Player < Entity {
 
