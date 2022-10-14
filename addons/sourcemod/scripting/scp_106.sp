@@ -41,6 +41,88 @@ public Plugin myinfo = {
     version = "1.0",
     url = "https://github.com/GeTtOo/csgo_scp"
 };
+// New door-walk method, but it unstable...
+/*
+
+ArrayList ignoresurfs;
+
+public void SCP_OnLoad() {
+    HookEntityOutput("trigger_hurt", "OnStartTouch", OnTriggerActivated);
+
+    ignoresurfs = new ArrayList(1,0);
+    for (int i=0; i < gamemode.plconfig.GetArr("entwalktype").Length; i++)
+    {
+        char type[64];
+        gamemode.plconfig.GetArr("entwalktype").GetString(i, type, sizeof(type));
+        
+        int entid = -1;
+        while ((entid = FindEntityByClassname(entid, type)) != -1)
+        {
+            bool valid = true;
+
+            for (int k=0; k < gamemode.plconfig.GetArr("entex").Length; k++)
+                if (entid == gamemode.plconfig.GetArr("entex").GetInt(k))
+                    valid = false;
+
+            if (valid) ignoresurfs.Push(new Entity(entid));
+        }
+    }
+}
+
+public void SCP_OnUnload()
+{
+    for (int i=0; i < ignoresurfs.Length; i++)
+        view_as<Entity>(ignoresurfs.Get(i)).Dispose();
+
+    ignoresurfs.Clear();
+    delete ignoresurfs;
+}
+
+public void SCP_OnPlayerSpawn(Player &ply) {
+    if (ply.class.Is("106"))
+        for (int i=0; i < ignoresurfs.Length; i++)
+            view_as<Entity>(ignoresurfs.Get(i)).SetHook(SDKHook_ShouldCollide, DoorWalkCheck);
+}
+
+public bool DoorWalkCheck(int entid, int cg, int cm, bool result)
+{
+    Player ply = player.GetByID(GetPlyBeforeEnt(entid));
+
+    if (ply && ply.class && ply.class.Is("106"))
+    {
+        if (gamemode.config.debug) PrintToChat(ply.id, "Touch ent id: %i", entid);
+
+        return false;
+    }
+
+    return true;
+}
+
+public int GetPlyBeforeEnt(int entid)
+{
+    float entpos[3];
+    GetEntPropVector(entid, Prop_Data, "m_vecAbsOrigin", entpos);
+
+    float cd = 999999.0;
+    int cp = -1;
+    
+    for (int i=1; i < MaxClients+1; i++)
+    {
+        if (IsClientExist(i) && IsPlayerAlive(i))
+        {
+            float plypos[3];
+            GetClientAbsOrigin(i, plypos);
+            
+            float dist = GetVectorDistance(entpos, plypos);
+
+            if (dist < cd) cp = i;
+        }
+    }
+
+    return cp;
+}
+
+*/
 
 public void SCP_OnLoad() {
     HookEntityOutput("trigger_hurt", "OnStartTouch", OnTriggerActivated);
@@ -48,6 +130,19 @@ public void SCP_OnLoad() {
 
 public void SCP_OnPlayerSpawn(Player &ply) {
     if (ply.class.Is("106")) SDKHook(ply.id, SDKHook_StartTouch, CheckSurface);
+}
+
+public void SCP_PrePlayerClear(Player &ply)
+{
+    if (ply.class && !ply.IsSCP && ply.GetBool("106_inpd"))
+    {
+        ply.inv.FullClear();
+        ply.RemoveValue("106_inpd");
+
+        delete ply.ragdoll.meta;
+        ents.Dissolve(ply.ragdoll);
+        ply.ragdoll = null;
+    }
 }
 
 public void SCP_OnPlayerClear(Player &ply) {
@@ -64,8 +159,6 @@ public void SCP_OnPlayerClear(Player &ply) {
         ply.RemoveValue("106_lock");
         ply.RemoveValue("106_tmrpdfo");
     }
-    
-    if (ply.class && !ply.IsSCP) ply.RemoveValue("106_inpd");
 
     if (ply.class && !ply.IsSCP && ply.ragdoll && ply.GetBool("106_cellvic"))
     {
@@ -73,6 +166,14 @@ public void SCP_OnPlayerClear(Player &ply) {
         ents.Dissolve(ply.ragdoll);
         ply.ragdoll = null;
         ply.RemoveValue("106_cellvic");
+    }
+
+    if (ply.class && ply.ragdoll && ply.GetBool("106_lock"))
+    {
+        delete ply.ragdoll.meta;
+        ents.Dissolve(ply.ragdoll);
+        ply.ragdoll = null;
+        ply.RemoveValue("106_lock");
     }
 }
 
@@ -131,11 +232,6 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
             vic.SetBool("106_inpd", false);
             return Plugin_Handled;
         }
-        else
-        {
-            vic.inv.FullClear();
-            vic.RestrictWeapons();
-        }
         
         return Plugin_Continue;
     }
@@ -152,6 +248,7 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
         
         SCP_106_TeleportToPos(vic, gamemode.plconfig.GetVector("pocket") - new Vector(0.0, 0.0, 64.0), new Angle(0.0, 0.0, 0.0));
         SpawnBlob(vic);
+        vic.RestrictWeapons();
         vic.SetBool("106_inpd", true);
         return Plugin_Handled;
     }
@@ -182,7 +279,7 @@ public Action OnTriggerActivated(const char[] output, int caller, int activator,
         }
 
         delete players;
-        
+
         char sound[128];
         gamemode.plconfig.Get("sound").GetString("recontainment", sound, sizeof(sound));
         gamemode.mngr.PlayNonCheckSoundToAll(sound);
