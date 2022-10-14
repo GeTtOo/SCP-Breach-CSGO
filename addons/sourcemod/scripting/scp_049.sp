@@ -81,7 +81,7 @@ public void SCP_OnInput(Player &ply, int buttons)
 			}
 		}
 
-		if ((buttons & IN_FORWARD || buttons & IN_BACK || buttons & IN_MOVELEFT || buttons & IN_MOVERIGHT) && ply.GetBool("049_reviving"))
+		if ((buttons & (IN_FORWARD | IN_BACK | IN_MOVELEFT | IN_MOVERIGHT | IN_WALK | IN_SPEED)) && ply.GetBool("049_reviving"))
 		{
 			ply.progress.Stop();
 			ply.SetBool("049_reviving", false);
@@ -97,6 +97,12 @@ public void SCP_OnPlayerClear(Player &ply)
 		ply.RemoveValue("049_lock");
 		ply.RemoveValue("049_saying");
 	}
+
+	if (ply.class && ply.class.Is("049_2"))
+	{
+		ply.RemoveValue("pre_049_2_team");
+		ply.RemoveValue("pre_049_2_class");
+	}
 }
 
 public void Revive(Player ply)
@@ -104,94 +110,68 @@ public void Revive(Player ply)
 	ply.progress.Stop(false);
 	ply.SetBool("049_reviving", false);
 
-	if (gamemode.plconfig.Get("revive").GetBool("inpvs", true))
+	char filter[1][32] = {"prop_ragdoll"};
+	ArrayList ragdolls = ents.FindInPVS(ply, _, _, filter);
+
+	if (ragdolls.Length > 0)
 	{
-		char filter[1][32] = {"prop_ragdoll"};
-		ArrayList ragdolls = ents.FindInPVS(ply, _, _, filter);
-
-		if (ragdolls.Length > 0)
+		for (int i=0; i < ragdolls.Length; i++)
 		{
-			for (int i=0; i < ragdolls.Length; i++)
+			Entity vicrag = ragdolls.Get(i);
+
+			ArrayList players = player.GetAll();
+
+			Player vic;
+			for(int k=0; k < players.Length; k++)
 			{
-				Entity vicrag = ragdolls.Get(i);
+				vic = players.Get(k);
 
-				ArrayList players = player.GetAll();
-
-				Player vic;
-				for(int k=0; k < players.Length; k++)
+				if (vic != ply && !vic.IsAlive() && vic.ragdoll)
 				{
-					vic = players.Get(k);
-
-					if (vic != ply && !vic.IsAlive() && vic.ragdoll)
+					if (vic.ragdoll == vicrag && !vic.ragdoll.GetBool("IsSCP"))
 					{
-						if (vic.ragdoll == vicrag && !vic.ragdoll.GetBool("IsSCP"))
-						{
-							
-							vic.Team("SCP");
-							vic.class = gamemode.team("SCP").class("049_2");
+						char team[32];
+						vic.ragdoll.GetString("team", team, sizeof(team));
+						vic.SetString("pre_049_2_team", team);
+						vic.SetHandle("pre_049_2_class", vic.ragdoll.GetHandle("class"));
 
-							vic.Spawn();
-							
-							vic.SetHandle("049_2_vec", vic.ragdoll.GetPos());
-							vic.SetHandle("049_2_ang", ply.GetAng() - new Angle(0.0, 180.0, 0.0));
+						vic.Team("SCP");
+						vic.class = gamemode.team("SCP").class("049_2");
 
-							char modelname[256];
-							vic.ragdoll.meta.model(modelname, sizeof(modelname));
-							vic.SetString("049_2_mdl", modelname);
-							vic.SetInt("049_2_skin", vic.ragdoll.model.GetSkin() + 1);
+						vic.Spawn(false);
+						
+						vic.SetHandle("049_2_ang", ply.GetAng() - new Angle(0.0, 180.0, 0.0));
 
-							ply.health += gamemode.plconfig.GetInt("healing", 2500);
-						}
+						char modelname[256];
+						vic.ragdoll.meta.model(modelname, sizeof(modelname));
+						vic.SetString("049_2_mdl", modelname);
+						vic.SetInt("049_2_skin", vic.ragdoll.model.GetSkin() + 1);
+
+						ply.health += gamemode.plconfig.GetInt("healing", 2500);
 					}
 				}
-
-				delete players;
-
-				if (!gamemode.plconfig.Get("revive").GetBool("multi", true)) break;
 			}
+
+			delete players;
+
+			if (!gamemode.plconfig.Get("revive").GetBool("multi", true)) break;
 		}
-
-		delete ragdolls;
 	}
-	else
-	{
-		ArrayList players = player.GetAll();
 
-		Player vic;
-		for(int i=0; i < players.Length; i++)
-		{
-			vic = players.Get(i);
-
-			if (ply == vic) continue;
-			if (vic.IsAlive()) continue;
-			if (!vic.ragdoll) continue;
-
-			if ((ply.GetPos() - new Vector(200.0, 200.0, 100.0)) < vic.ragdoll.GetPos() && (ply.GetPos() + new Vector(200.0, 200.0, 100.0)) > vic.ragdoll.GetPos())
-			{
-				vic.Team("SCP");
-				vic.class = gamemode.team("SCP").class("049_2");
-
-				vic.Spawn();
-				vic.SetPos(vic.ragdoll.GetPos(), ply.GetAng() - new Angle(0.0, 180.0, 0.0));
-			}
-		}
-
-		delete players;
-	}
+	delete ragdolls;
 }
 
 public void SCP_PostPlayerSpawn(Player &ply)
 {
-	if (ply.class.Is("049_2") && ply.GetHandle("049_2_vec") && ply.GetHandle("049_2_ang"))
+	if (ply.class.Is("049_2") && ply.GetHandle("049_2_ang"))
 	{
-		ply.SetPos(view_as<Vector>(ply.GetHandle("049_2_vec")), view_as<Angle>(ply.GetHandle("049_2_ang")));
+		ply.SetPos(_, view_as<Angle>(ply.GetHandle("049_2_ang")));
 		
 		char modelname[256];
 		ply.GetString("049_2_mdl", modelname, sizeof(modelname));
 		ply.model.SetPath(modelname);
 		ply.model.SetSkin(ply.GetInt("049_2_skin"));
 
-		ply.RemoveValue("049_2_vec");
 		ply.RemoveValue("049_2_ang");
 		ply.RemoveValue("049_2_mdl");
 		ply.RemoveValue("049_2_skin");
