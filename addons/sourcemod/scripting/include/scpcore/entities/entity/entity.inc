@@ -38,7 +38,7 @@
 #include <sdktools>
 #include <sdkhooks>
 
-#include "scpcore/classes/entity/model"
+#include "scpcore/entities/entity/model"
 
 methodmap Entity < Base {
 

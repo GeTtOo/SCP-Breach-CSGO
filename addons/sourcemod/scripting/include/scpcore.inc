@@ -56,8 +56,8 @@ GameMode gamemode;
 #include "scpcore\classes\statuseffect"
 StatusEffectSingleton statuseffect;
 
-#include "scpcore\entities\entity"
-#include "scpcore\entities\player"
+#include "scpcore\entities\entity\entity"
+#include "scpcore\entities\player\player"
 #include "scpcore\entities\worldtext"
 #include "scpcore\classes\singletons"
 
