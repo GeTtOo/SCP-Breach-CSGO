@@ -119,7 +119,7 @@ public void ResetIdPad(int entid)
 public void SetPlyDoorAccess(Player &ply, Entity &item)
 {
     char filter[1][32] = {"func_button"};
-    ArrayList list = ents.FindInPVS(ply, 55, 90, filter);
+    ArrayList list = ents.FindInCone(ply.EyePos(), ply.GetAng().GetForwardVectorScaled(ply.EyePos(), float(55)), 90, filter, sizeof(filter));
 
     if (list.Length != 0)
     {

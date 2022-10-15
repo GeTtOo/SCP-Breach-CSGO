@@ -75,7 +75,7 @@ public void SCP_OnPlayerSpawn(Player &ply)
 public void SCP_OnPlayerClear(Player &ply)
 {
     if (ply.class && ply.class.Is("173")) {
-        char  timername[64];
+        char timername[64];
         Entity ent = view_as<Entity>(ply.GetHandle("173_holo"));
         
         if (ent) ents.Remove(ent);
@@ -142,9 +142,6 @@ public void CheckVisualContact(Player ply)
     {
         bool visible = false;
 
-        float scpPosArr[3];
-        ply.EyePos().GetArrD(scpPosArr);
-
         char filter[1][32] = {"player"};
         ArrayList players = ents.FindInBox(ply.GetPos() - new Vector(2000.0, 2000.0, 400.0), ply.GetPos() + new Vector(2000.0, 2000.0, 400.0), filter, sizeof(filter));
 
@@ -153,25 +150,8 @@ public void CheckVisualContact(Player ply)
             
             if (ply == checkply || checkply.IsSCP || !checkply.IsAlive()) continue;
 
-            float checkPlyPosArr[3];
-            checkply.EyePos().GetArrD(checkPlyPosArr);
-
             ArrayList checklist = ents.FindInPVS(checkply, 2000);
-
-            if (checklist.FindValue(ply) != -1)
-            {
-                Handle ray = TR_TraceRayFilterEx(checkPlyPosArr, scpPosArr, MASK_VISIBLE, RayType_EndPoint, RayFilter);
-                if (!TR_DidHit(ray))
-                {
-                    visible = true;
-
-                    if (!ply.GetHandle("173_abtmr") && !ply.GetBool("173_abready"))
-                        gamemode.mngr.Fade(checkply.id, 25, 250, new Colour(0,0,0,255));
-                }
-
-                delete ray;
-            }
-
+            if (checklist.FindValue(ply) != -1) visible = true;
             delete checklist;
         }
         

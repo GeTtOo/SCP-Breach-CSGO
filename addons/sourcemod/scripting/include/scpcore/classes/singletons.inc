@@ -187,8 +187,42 @@ methodmap EntitySingleton < Base {
         return entArr;
     }
 
-    public ArrayList FindInPVS(Player ply, int distance = 100, int fov = 90, char filter[1][32] = {"player"}) {
-        return this.FindInCone(ply.EyePos(), ply.GetAng().GetForwardVectorScaled(ply.EyePos(), float(distance)), fov, filter, sizeof(filter));
+    public ArrayList FindInPVS(Entity ent, int distance = 100, int fov = 90, char filter[1][32] = {"player"}) {
+        ArrayList entarr;
+        float firstentpos[3], secondentpos[3];
+        Handle tr;
+        bool isplayer = ent.IsClass("player");
+
+        if (isplayer)
+            entarr = this.FindInCone(view_as<Player>(ent).EyePos(), ent.GetAng().GetForwardVectorScaled(view_as<Player>(ent).EyePos(), float(distance)), fov, filter, sizeof(filter));
+        else
+            entarr = this.FindInCone(ent.GetPos(), ent.GetAng().GetForwardVectorScaled(ent.GetPos(), float(distance)), fov, filter, sizeof(filter));
+
+        if (isplayer) view_as<Player>(ent).EyePos().GetArrD(firstentpos); else ent.GetPos().GetArrD(firstentpos);
+
+        for (int i=0; i < entarr.Length; i++)
+        {
+            Entity entity = entarr.Get(i);
+
+            if (isplayer) view_as<Player>(entity).EyePos().GetArrD(secondentpos); else entity.GetPos().GetArrD(secondentpos);
+            
+            ArrayList trargs = new ArrayList();
+            trargs.Push(ent.id);
+            trargs.Push(entity.id);
+
+            tr = TR_TraceRayFilterEx(firstentpos, secondentpos, MASK_VISIBLE, RayType_EndPoint, FindInPVSFilter, trargs);
+            
+            if (TR_DidHit(tr))
+            {
+                entarr.Erase(i);
+                i--;
+            }
+
+            delete trargs;
+            delete tr;
+        }
+
+        return entarr;
     }
 
     public void Dispose() {
@@ -196,6 +230,12 @@ methodmap EntitySingleton < Base {
         delete this.GetArrayList("entities");
         this.RemoveValue("entities");
     }
+}
+
+stock bool FindInPVSFilter(int entid, int mask, ArrayList trargs)
+{
+    if (entid == trargs.Get(0) || entid == trargs.Get(1)) return false;
+    return true;
 }
 
 methodmap PlayerSingleton < Base {

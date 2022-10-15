@@ -155,58 +155,41 @@ public void CheckSurface(int client, int entity) {
 
 public void CheckVisualContact(Player ply) 
 {
-    if (ply && ply.class && ply.class.Is("096") && ply.IsAlive())
+    if (!ply && !ply.class && !ply.class.Is("096") && !ply.IsAlive()) return;
+
+    bool visible = false;
+
+    char filter[1][32] = {"player"};
+    ArrayList players = ents.FindInCone(ply.EyePos(), ply.GetAng().GetForwardVectorScaled(ply.EyePos(), 2000.0), 90, filter, sizeof(filter));
+
+    for (int i=0; i < players.Length; i++) {
+        Player checkply = players.Get(i);
+
+        if (ply == checkply || checkply.IsSCP || !checkply.IsAlive()) continue;
+
+        ArrayList checklist = ents.FindInPVS(checkply, 2000);
+        if (checklist.FindValue(ply) != -1) visible = true;
+
+        delete checklist;
+    }
+
+    delete players;
+
+    if (visible)
     {
-        bool visible = false;
-
-        float scpPosArr[3];
-        ply.EyePos().GetArrD(scpPosArr);
-
-        char filter[1][32] = {"player"};
-        ArrayList players = ents.FindInBox(ply.GetPos() - new Vector(2000.0, 2000.0, 400.0), ply.GetPos() + new Vector(2000.0, 2000.0, 400.0), filter, sizeof(filter));
-
-        for (int i=0; i < players.Length; i++) {
-            Player checkply = players.Get(i);
-            
-            if (ply == checkply || checkply.IsSCP || !checkply.IsAlive()) continue;
-
-            float checkPlyPosArr[3];
-            checkply.EyePos().GetArrD(checkPlyPosArr);
-
-            ArrayList checklist = ents.FindInPVS(checkply, 2000);
-
-            if (checklist.FindValue(ply) != -1)
-            {
-                Handle ray = TR_TraceRayFilterEx(checkPlyPosArr, scpPosArr, MASK_VISIBLE, RayType_EndPoint, RayFilter);
-                if (!TR_DidHit(ray))
-                {
-                    visible = true;
-                }
-
-                delete ray;
-            }
-
-            delete checklist;
-        }
-        
-        delete players;
-
-        if (visible)
+        if (!ply.GetBool("096_IsRage") && !ply.GetBool("096_cooldown"))
         {
-            if (!ply.GetBool("096_IsRage") && !ply.GetBool("096_cooldown"))
-            {
-                ply.SetBool("096_IsRage", true);
-                ply.speed = 0.1;
+            ply.SetBool("096_IsRage", true);
+            ply.speed = 0.1;
 
-                char  timername[64];
-                Format(timername, sizeof(timername), "SCP-096-S-%i", ply.id);
-                timer.RemoveByName(timername);
-                
-                ply.TimerSimple(5500, "Rage", ply);
-                view_as<Entity>(ply.GetHandle("096_ambient_cry")).Input("StopSound");
-                ply.PlayAmbient("*/eternity/scp/096/rage_start.mp3");
-                ply.SetBool("096_IsRage", true);
-            }
+            char  timername[64];
+            Format(timername, sizeof(timername), "SCP-096-S-%i", ply.id);
+            timer.RemoveByName(timername);
+            
+            ply.TimerSimple(5500, "Rage", ply);
+            view_as<Entity>(ply.GetHandle("096_ambient_cry")).Input("StopSound");
+            ply.PlayAmbient("*/eternity/scp/096/rage_start.mp3");
+            ply.SetBool("096_IsRage", true);
         }
     }
 }
