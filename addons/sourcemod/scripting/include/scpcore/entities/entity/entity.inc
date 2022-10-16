@@ -147,6 +147,10 @@ methodmap Entity < Base {
         return this;
     }
 
+    public Entity SetTargetName(char[] targetname) { this.SetString("targetname", targetname); this.SetKV("targetname", targetname); return this; }
+
+    public Entity GetTargetName(char[] name, int max_size) { this.GetString("targetname", name, max_size); return this; }
+
     public bool IsValid() { return (this.id != 5000 && IsValidEdict(this.id) && IsValidEntity(this.id) ? true : false); }
 
     public Tmr TimerSimple(int delay, char[] funcname = "", any args = false) {
@@ -188,7 +192,7 @@ methodmap Entity < Base {
 
             char targetname[32];
             FormatEx(targetname, sizeof(targetname), "ent-%i", this.id);
-            this.SetKV("targetname", targetname);
+            this.SetTargetName(targetname);
 
             if (this.meta.spawnflags != 0) {
                 char flags[8];
@@ -205,8 +209,6 @@ methodmap Entity < Base {
     public void GetClass(char[] name, int max_size) { if (!this.GetString("class", name, max_size)) GetEntityClassname(this.id, name, max_size); }
 
     public bool IsClass(char[] equalClass) { char thisClass[32]; this.GetClass(thisClass, sizeof(thisClass)); return StrEqual(thisClass, equalClass); }
-
-    public Entity GetTargetName(char[] name, int max_size) { FormatEx(name, max_size, "ent-%i", this.id); return this; }
 
     public Vector GetPos() { return this.GetPropVector("m_vecOrigin"); }
 
