@@ -32,6 +32,7 @@ methodmap Base < StringMap {
     
     public Base() { return view_as<Base>(CreateTrie()); }
     
+    public bool Set(char[] index, any val) { return this.SetValue(index, val); }
     public bool CreateBase(char[] index) { return this.SetValue(index, new Base()); }
     public bool SetBase(char[] index, Base val) { return this.SetValue(index, val); }
     public bool SetHandle(char[] index, Handle val) { return this.SetValue(index, val); }
@@ -43,6 +44,7 @@ methodmap Base < StringMap {
     public bool SetArrayList(char[] index, ArrayList val) { return this.SetValue(index, val); }
     public bool CreateArrayList(char[] index, int blocksize = 1, int size = 0) { return this.SetValue(index, new ArrayList(blocksize, size)); }
 
+    public any Get(char[] index) { any val; this.GetValue(index, val); return val; }
     public Base GetBase(char[] index, Base defval = null) { Base val; return this.GetValue(index, val) ? val : defval; }
     public Handle GetHandle(char[] index, Handle defval = null) { Handle val; return this.GetValue(index, val) ? val : defval; }
     public int GetInt(char[] index, int defval = 0) { int val; return this.GetValue(index, val) ? val : defval; }

@@ -275,15 +275,13 @@ public any NativeEntities_Dissolve(Handle Plugin, int numArgs) {
     int idx = entities.FindValue(ent, 1);
 
     char targetname[32];
-
-    FormatEx(targetname, sizeof(targetname), "dis_ent_%i", ent.id);
-    ent.SetKV("targetname", targetname);
+    ent.GetTargetName(targetname, sizeof(targetname));
 
     Entity disolver = new Entity();
     disolver.Create("env_entity_dissolver");
     disolver.SetKV("dissolvetype", "0");
     disolver.SetKV("target", targetname);
-        
+
     if (idx != -1)
     {
         ent.Dispose();

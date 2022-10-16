@@ -76,6 +76,16 @@ methodmap Entity < Base {
         return this;
     }
 
+    public Entity SetKVInt(char[] name, int value) {
+        DispatchKeyValueInt(this.id, name, value);
+        return this;
+    }
+
+    public Entity SetKVFloat(char[] name, float value) {
+        DispatchKeyValueFloat(this.id, name, value);
+        return this;
+    }
+
     public bool HasProp(char[] name, any type = Prop_Send) {
         return HasEntProp(this.id, type, name);
     }
@@ -176,6 +186,10 @@ methodmap Entity < Base {
             this.SetKV("body", bodygroup);
             this.SetKV("skin", skin);
 
+            char targetname[32];
+            FormatEx(targetname, sizeof(targetname), "ent-%i", this.id);
+            this.SetKV("targetname", targetname);
+
             if (this.meta.spawnflags != 0) {
                 char flags[8];
                 IntToString(this.meta.spawnflags, flags, sizeof(flags));
@@ -191,6 +205,8 @@ methodmap Entity < Base {
     public void GetClass(char[] name, int max_size) { if (!this.GetString("class", name, max_size)) GetEntityClassname(this.id, name, max_size); }
 
     public bool IsClass(char[] equalClass) { char thisClass[32]; this.GetClass(thisClass, sizeof(thisClass)); return StrEqual(thisClass, equalClass); }
+
+    public Entity GetTargetName(char[] name, int max_size) { FormatEx(name, max_size, "ent-%i", this.id); return this; }
 
     public Vector GetPos() { return this.GetPropVector("m_vecOrigin"); }
 
