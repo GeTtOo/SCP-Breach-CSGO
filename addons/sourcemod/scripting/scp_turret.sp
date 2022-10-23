@@ -35,42 +35,53 @@
 #pragma newdecls required
 
 public Plugin myinfo = {
-    name = "[SCP] Turret",
-    author = "Andrey::Dono, GeTtOo",
-    description = "Automatic turret",
-    version = "1.0",
-    url = "https://github.com/GeTtOo/csgo_scp"
+	name = "[SCP] Turret",
+	author = "Andrey::Dono, GeTtOo",
+	description = "Automatic turret",
+	version = "1.0",
+	url = "https://github.com/GeTtOo/csgo_scp"
 };
 
 public void SCP_RegisterMetaData() {
-    gamemode.meta.RegEntEvent(ON_USE, "turret", "TurretDeploy");
+	gamemode.meta.RegEntEvent(ON_USE, "turret", "TurretDeploy");
 }
 
 public void SCP_OnLoad() {
-    PrecacheModel("models/props_survival/dronegun/dronegun.mdl");
-    PrecacheModel("models/props_survival/dronegun/dronegun_gib1.mdl");
-    PrecacheModel("models/props_survival/dronegun/dronegun_gib2.mdl");
-    PrecacheModel("models/props_survival/dronegun/dronegun_gib3.mdl");
-    PrecacheModel("models/props_survival/dronegun/dronegun_gib4.mdl");
-    PrecacheModel("models/props_survival/dronegun/dronegun_gib5.mdl");
-    PrecacheModel("models/props_survival/dronegun/dronegun_gib6.mdl");
-    PrecacheModel("models/props_survival/dronegun/dronegun_gib7.mdl");
-    PrecacheModel("models/props_survival/dronegun/dronegun_gib8.mdl");
+	PrecacheModel("models/props_survival/dronegun/dronegun.mdl");
+	PrecacheModel("models/props_survival/dronegun/dronegun_gib1.mdl");
+	PrecacheModel("models/props_survival/dronegun/dronegun_gib2.mdl");
+	PrecacheModel("models/props_survival/dronegun/dronegun_gib3.mdl");
+	PrecacheModel("models/props_survival/dronegun/dronegun_gib4.mdl");
+	PrecacheModel("models/props_survival/dronegun/dronegun_gib5.mdl");
+	PrecacheModel("models/props_survival/dronegun/dronegun_gib6.mdl");
+	PrecacheModel("models/props_survival/dronegun/dronegun_gib7.mdl");
+	PrecacheModel("models/props_survival/dronegun/dronegun_gib8.mdl");
+}
+
+public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &damagetype, int &inflictor)
+{
+	char clsname[64];
+	GetEntityClassname(inflictor, clsname, sizeof(clsname));
+
+	if(StrEqual("env_gunfire", clsname))
+		damage = float(vic.class.health / 100 * 15);
+
+	return Plugin_Changed;
 }
 
 public void TurretDeploy(Player &ply, InvItem &ent)
 {
-    Entity turret = ents.Create("dronegun");
-    
-    Vector pos = ply.GetAng().GetForwardVectorScaled(ply.EyePos(), 75.0);
-    Vector plypos = ply.GetPos();
-    pos.z = plypos.z;
-    delete plypos;
+	Entity turret = ents.Create("dronegun");
+	
+	Vector pos = ply.GetAng().GetForwardVectorScaled(ply.EyePos(), 75.0);
+	Vector plypos = ply.GetPos();
+	pos.z = plypos.z;
+	delete plypos;
 
-    turret.SetPos(pos);
-    turret.Spawn();
-    turret.SetProp("m_iHealth", 300);
-    turret.SetCollisionGroup(2);
+	turret.SetPos(pos);
+	turret.Spawn();
+	turret.SetProp("m_iHealth", 300);
+	turret.SetCollisionGroup(2);
 
-    ply.inv.Remove(ent);
+	ply.inv.Remove(ent);
 }
