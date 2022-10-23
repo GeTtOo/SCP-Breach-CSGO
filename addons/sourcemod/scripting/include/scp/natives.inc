@@ -447,7 +447,13 @@ public any NativePlayer_SetupEquipment(Handle Plugin, int numArgs) {
     if (ply.class.doors)
         if (ply.class.GetInt("doorsdelay") == 0)
             for (int i=0; i < ply.class.doors.Length; i++)
-                AcceptEntityInput(ply.class.doors.GetInt(i), "Open");
+            {
+                char entclass[32];
+                GetEntityClassname(ply.class.doors.GetInt(i), entclass, sizeof(entclass))
+
+                if (StrEqual(entclass, "func_button")) AcceptEntityInput(ply.class.doors.GetInt(i), "Use");
+                else if (StrEqual(entclass, "func_door")) AcceptEntityInput(ply.class.doors.GetInt(i), "Open");
+            }
         else
             ply.TimerSimple(ply.class.GetInt("doorsdelay") * 1000, "OpenCameraDoors", ply.class.doors);
 
@@ -679,7 +685,7 @@ public int NativePlayer_DropWeapons(Handle Plugin, int numArgs) {
 
         if(itemid != -1)
         {
-            char wepclass[128];
+            char wepclass[64];
             GetEntityClassname(itemid, wepclass, sizeof(wepclass));
             
             if (!StrEqual(wepclass, "weapon_fists"))
@@ -700,7 +706,7 @@ public int NativePlayer_RestrictWeapons(Handle Plugin, int numArgs) {
 
         if(itemid != -1)
         {
-            char wepclass[128];
+            char wepclass[64];
             GetEntityClassname(itemid, wepclass, sizeof(wepclass));
             
             if (!StrEqual(wepclass, "weapon_fists")) ents.RemoveByID(itemid);

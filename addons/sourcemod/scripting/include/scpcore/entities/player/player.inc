@@ -52,6 +52,10 @@ methodmap Player < Entity {
         ply.SetBase("sel", new StatusEffectList(ply));
         ply.SetBool("spawned", false);
 
+        char targetname[32];
+        FormatEx(targetname, sizeof(targetname), "player-%i", ply.id);
+        ply.SetTargetName(targetname);
+
         return ply;
     }
 

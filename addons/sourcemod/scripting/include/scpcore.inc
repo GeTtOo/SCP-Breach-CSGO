@@ -58,6 +58,7 @@ StatusEffectSingleton statuseffect;
 
 #include "scpcore\entities\entity\entity"
 #include "scpcore\entities\player\player"
+#include "scpcore\entities\ambient"
 #include "scpcore\entities\worldtext"
 #include "scpcore\classes\singletons"
 
