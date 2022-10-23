@@ -654,3 +654,8 @@ public Action OnPlayerPing(int client, const char[] command, int args)
 {
 	return Plugin_Stop;
 }
+
+public Action RadioMsg(UserMsg msg_id, Protobuf msg, const int[] players, int playersNum, bool reliable, bool init)
+{
+	return Plugin_Handled;
+}

@@ -91,6 +91,11 @@ public void OnPluginStart()
     LoadTranslations("scpcore.entities");
     LoadTranslations("scpcore.logs");
 
+    if (GetUserMessageType() == UM_Protobuf)
+    {
+        HookUserMessage(GetUserMessageId("RadioText"),  RadioMsg, true);
+    }
+
     AddCommandListener(OnPlayerPing, "player_ping");
     AddCommandListener(OnPlayerPing, "chatwheel_ping");
     
