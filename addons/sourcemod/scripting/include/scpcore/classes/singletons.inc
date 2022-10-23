@@ -204,7 +204,7 @@ methodmap EntitySingleton < Base {
         {
             Entity entity = entarr.Get(i);
 
-            if (isplayer) view_as<Player>(entity).EyePos().GetArrD(secondentpos); else entity.GetPos().GetArrD(secondentpos);
+            if (entity.IsClass("player")) view_as<Player>(entity).EyePos().GetArrD(secondentpos); else entity.GetPos().GetArrD(secondentpos);
             
             ArrayList trargs = new ArrayList();
             trargs.Push(ent.id);
@@ -310,6 +310,20 @@ methodmap PlayerSingleton < Base {
     public int InGame()
     {
         ArrayList players = this.GetAll();
+        int len = players.Length;
+        delete players;
+        return len;
+    }
+
+    public int InSpec()
+    {
+        ArrayList players = this.GetAll();
+        for (int i=0; i < players.Length; i++)
+            if (view_as<Player>(players.Get(i)).ready)
+            {
+                players.Erase(i);
+                i--;
+            }
         int len = players.Length;
         delete players;
         return len;

@@ -300,9 +300,9 @@ methodmap Manager < Base {
         if (this.RoundLock || this.RoundComplete) return;
         
         char winteam[32];
-        if(player.InGame() > 1 && player.Alive() > 0 && this.CheckTeamStatus(winteam, sizeof(winteam)))
+        if(player.InGame() - player.InSpec() > 1 && player.Alive() > 0 && this.CheckTeamStatus(winteam, sizeof(winteam)))
             this.EndGame(winteam);
-        else if (player.InGame() > 0 && player.Alive() == 0)
+        else if (player.InGame() - player.InSpec() > 0 && player.Alive() == 0)
             this.EndGame("nobody");
     }
 

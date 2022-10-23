@@ -81,7 +81,13 @@ public void GameController()
 public void OpenCameraDoors(JSON_ARRAY doors)
 {
     for (int i=0; i < doors.Length; i++)
-        AcceptEntityInput(doors.GetInt(i), "Open");
+    {
+        char entclass[32];
+        GetEntityClassname(doors.GetInt(i), entclass, sizeof(entclass))
+
+        if (StrEqual(entclass, "func_button")) AcceptEntityInput(doors.GetInt(i), "Use");
+        else if (StrEqual(entclass, "func_door")) AcceptEntityInput(doors.GetInt(i), "Open");
+    }
 }
 
 public void PlyHideOverlay(Player ply)

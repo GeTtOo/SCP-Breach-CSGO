@@ -313,7 +313,7 @@ public Action OnTakeDamage(int victim, int &attacker, int &inflictor, float &dam
         }
 
         //if (atk == null || atk.class == null) return Plugin_Continue;
-        if (vic == null || vic.class == null) return Plugin_Continue;
+        if (!vic || !vic.class) return Plugin_Continue;
         
         Call_StartForward(OnTakeDamageForward);
         Call_PushCellRef(vic);
