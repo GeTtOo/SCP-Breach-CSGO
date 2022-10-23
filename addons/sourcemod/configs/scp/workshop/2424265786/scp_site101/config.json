@@ -23,11 +23,11 @@
             "stop":"eternity/scp/other/{lang}/warhead_canceled.mp3"
         },
         "buttons":{
-            "ready":900,
-            "active":245,
-            "cancel":900
+            "ready":296,
+            "active":986,
+            "cancel":296
         },
-        "immunedoors":[108,533],
+        "immunedoors":[80,812,955,449],
         "spawnlist":[]
     },
     "reinforce":{
@@ -106,12 +106,12 @@
         },
         "arrestedesc": {
             "D Class": {
-                "trigger":384,
+                "trigger":592,
                 "team":"MTF",
                 "class":"Cadet"
             },
             "Scientist": {
-                "trigger":1123,
+                "trigger":1250,
                 "team":"Chaos",
                 "class":"Beta"
             }
@@ -121,7 +121,7 @@
         "wtid":8,
         "transmissiontime":20,
         "cooldown":30,
-        "buttonid":872,
+        "buttonid":789,
         "localdistance":800,
         "sound": {
             "start":"eternity/scp/other/intercom_start.mp3",
@@ -131,8 +131,8 @@
     "[SCP] 914": {
         "usemathcounter":false,
         "countername": "scp_914_logic_counter",
-        "switchbutton": 324,
-        "runbutton": 334,
+        "switchbutton": 854,
+        "runbutton": 1084,
         "runtime": 8,
         "searchzone":[[3630, -2072, 20],[3762, -1947, 90]],
         "distance":[0, 425, -1],
@@ -185,7 +185,7 @@
         "timeforcedpocketexit":0,
         "exitposafternuke":{"vec":[-7351,-4148,1872],"ang":[0,-179,0]},
         "escapechanceofpocket":25,
-        "blockdoors":[535,928,1077,1079],
+        "blockdoors":[712,714,1182,1184,955,449,1233],
         "sound": {
             "portal":[
                 "*/eternity/scp/106/portal1.mp3",
