@@ -192,7 +192,7 @@
                 "escape":{
                     "trigger":592,
                     "team":"MTF",
-                    "class":"Cadet"
+                    "class":"Guard"
                 },
                 "ffex":["D Class"]
             }
@@ -241,7 +241,45 @@
                     "skin":0
                 },
                 "pos":{"vec":[-10403,-5813,1736],"ang":[4,154,0]},
-                "comment":"test"
+                "comment":"MTF Commander"
+            },
+            "Guard": {
+                "percent":0,
+                "priority":false,
+                "escape":false,
+                "health":250,
+                "armor":250,
+                "helmet":true,
+                "speed":260,
+                "multipler":1.0,
+                "overlay":"eternity/overlays/cadet_{lang}_fh",
+                "items":[
+                    "card_senior_guard",
+                    "radio",
+                    "visor_nv",
+                    "navigator"
+                ],
+                "weapons":[
+                    ["weapon_negev","weapon_m249","weapon_p90"],
+                    ["weapon_deagle","weapon_revolver"],
+                    "weapon_healthshot",
+                    "weapon_taser"
+                ],
+                "model":{
+                    "id":"mtf",
+                    "bodygroups":{
+                        "base":0,
+                        "eyes":[0,1],
+                        "helmet":2,
+                        "body":3,
+                        "belt":[2,3],
+                        "pl":1,
+                        "pr":1
+                    },
+                    "skin":6
+                },
+                "pos":{"vec":[-10403,-5813,1736],"ang":[4,154,0]},
+                "comment":"Guard Escaped"
             },
             "Lieutenant": {
                 "percent":25,
