@@ -64,7 +64,12 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 	GetEntityClassname(inflictor, clsname, sizeof(clsname));
 
 	if(StrEqual("env_gunfire", clsname))
-		damage = float(vic.class.health / 100 * 15);
+	{
+		if(vic.IsSCP)
+			damage = float(vic.class.health / 100 * 3);
+		else
+			damage = float(vic.class.health / 100 * 15);
+	}
 
 	return Plugin_Changed;
 }
