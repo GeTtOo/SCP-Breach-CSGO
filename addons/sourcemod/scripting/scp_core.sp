@@ -103,9 +103,9 @@ public void OnPluginStart()
     
     RegConsoleCmd("spec", Command_Spec, "Toggle player afk status");
 
-    RegAdminCmd("gm", Command_Base, ADMFLAG_ROOT);
-    RegAdminCmd("ents", Command_Ents, ADMFLAG_ROOT);
-    RegAdminCmd("player", Command_Player, ADMFLAG_ROOT);
+    RegAdminCmd("gm", Command_Base, ADMFLAG_RCON);
+    RegAdminCmd("ents", Command_Ents, ADMFLAG_RCON);
+    RegAdminCmd("player", Command_Player, ADMFLAG_RCON);
     RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_GENERIC);
 }
 
