@@ -634,6 +634,18 @@ public void OnRoundPreStart(Event event, const char[] name, bool dbroadcast)
     }
 }
 
+public Action OnPlayerHurt(Event event, const char[] name, bool dbroadcast)
+{
+    if(!gamemode.mngr.IsWarmup)
+    {
+        Player ply = player.GetByID(GetClientOfUserId(GetEventInt(event, "userid")));
+        SetEntPropFloat(ply.id, Prop_Send, "m_flVelocityModifier", 1.0);
+        return Plugin_Changed;
+    }
+
+    return Plugin_Continue;
+}
+
 public Action CS_OnTerminateRound(float &delay, CSRoundEndReason &reason)
 {
     if(gamemode.mngr.IsWarmup)
@@ -659,3 +671,4 @@ public Action RadioMsg(UserMsg msg_id, Protobuf msg, const int[] players, int pl
 {
 	return Plugin_Handled;
 }
+

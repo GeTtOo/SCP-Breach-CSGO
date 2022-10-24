@@ -101,6 +101,7 @@ public void OnPluginStart()
     HookEvent("round_prestart", OnRoundPreStart);
     HookEvent("player_death", OnKillNotify, EventHookMode_Pre);
     HookEvent("player_team", OnPlayerSwitchTeam);
+    HookEvent("player_hurt", OnPlayerHurt);
     
     HookEntityOutput("func_button", "OnPressed", OnButtonPressed);
     
