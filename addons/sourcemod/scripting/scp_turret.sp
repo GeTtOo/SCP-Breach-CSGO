@@ -66,12 +66,14 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 	if(StrEqual("env_gunfire", clsname))
 	{
 		if(vic.IsSCP)
-			damage = float(vic.class.health / 100 * 3);
+			damage = float(vic.class.health / 100 * 1);
 		else
 			damage = float(vic.class.health / 100 * 15);
+
+		return Plugin_Changed;
 	}
 
-	return Plugin_Changed;
+	return Plugin_Continue;
 }
 
 public void TurretDeploy(Player &ply, InvItem &ent)
