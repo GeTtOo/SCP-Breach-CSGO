@@ -365,6 +365,21 @@ methodmap Player < Entity {
         }
     }
 
+    public void OpenDoors()
+    {
+        if (this.class.GetInt("doorsdelay") == 0)
+            for (int i=0; i < this.class.doors.Length; i++)
+            {
+                char entclass[32];
+                GetEntityClassname(this.class.doors.GetInt(i), entclass, sizeof(entclass));
+
+                if (StrEqual(entclass, "func_button")) AcceptEntityInput(this.class.doors.GetInt(i), "Use");
+                else if (StrEqual(entclass, "func_door")) AcceptEntityInput(this.class.doors.GetInt(i), "Open");
+            }
+        else
+            this.TimerSimple(this.class.GetInt("doorsdelay") * 1000, "OpenCameraDoors", this.class.doors);
+    }
+
     public native void SetupModel();
 
     public native void SetupEquipment();
