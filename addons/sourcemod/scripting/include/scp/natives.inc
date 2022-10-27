@@ -402,8 +402,6 @@ public any NativePlayer_SetupEquipment(Handle Plugin, int numArgs) {
         }
     }
 
-    if (ply.class.fists) EquipPlayerWeapon(ply.id, ply.Give("weapon_fists").id);
-
     if (ply.class.weapons)
         for (int i=0; i < ply.class.weapons.Length; i++) {
             if (ply.class.weapons.GetType(i) == String) {
@@ -443,19 +441,6 @@ public any NativePlayer_SetupEquipment(Handle Plugin, int numArgs) {
                 delete sweapons;
             }
         }
-    
-    if (ply.class.doors)
-        if (ply.class.GetInt("doorsdelay") == 0)
-            for (int i=0; i < ply.class.doors.Length; i++)
-            {
-                char entclass[32];
-                GetEntityClassname(ply.class.doors.GetInt(i), entclass, sizeof(entclass))
-
-                if (StrEqual(entclass, "func_button")) AcceptEntityInput(ply.class.doors.GetInt(i), "Use");
-                else if (StrEqual(entclass, "func_door")) AcceptEntityInput(ply.class.doors.GetInt(i), "Open");
-            }
-        else
-            ply.TimerSimple(ply.class.GetInt("doorsdelay") * 1000, "OpenCameraDoors", ply.class.doors);
 
     return true;
 }
@@ -566,6 +551,8 @@ public any NativePlayer_Spawn(Handle Plugin, int numArgs) {
         Call_PushCellRef(ply);
         Call_Finish();
     }
+    else
+        if (ply.class.fists) EquipPlayerWeapon(ply.id, ply.Give("weapon_fists").id);
 
     ply.SetupPos(setpos);
 
@@ -580,6 +567,8 @@ public any NativePlayer_Spawn(Handle Plugin, int numArgs) {
 
     if (setmdl) ply.SetupModel();
     if (setequip) ply.SetupEquipment();
+
+    if (ply.class.doors) ply.OpenDoors();
 
     char team[32], class[32];
 
@@ -709,8 +698,9 @@ public int NativePlayer_RestrictWeapons(Handle Plugin, int numArgs) {
             char wepclass[64];
             GetEntityClassname(itemid, wepclass, sizeof(wepclass));
             
-            if (!StrEqual(wepclass, "weapon_fists")) ents.RemoveByID(itemid);
-            
+            if (StrEqual(wepclass, "weapon_fists")) continue;
+
+            ents.RemoveByID(itemid);
             RemovePlayerItem(ply.id, itemid);
             AcceptEntityInput(itemid, "Kill");
         }

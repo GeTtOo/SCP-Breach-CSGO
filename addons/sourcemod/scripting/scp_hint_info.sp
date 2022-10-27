@@ -41,26 +41,29 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 
-public void SCP_OnPlayerSpawn(Player &ply)
+public void SCP_OnRoundStart()
 {
-	char timername[64];
-	Format(timername, sizeof(timername), "HintPlayerInfo-%i", ply.id);
-	ply.SetHandle("hint-info-tmr", timer.Create(timername, 1500, 0, "CheckPlayerHint", ply));
+	timer.Create("HintPlayerInfo", 1000, 0, "CheckInfoTargets");
 }
 
-public void SCP_OnPlayerClear(Player &ply)
+public void CheckInfoTargets() 
 {
-	timer.Remove(view_as<Tmr>(ply.GetHandle("hint-info-tmr")));
-}
+	ArrayList players = player.GetAll();
 
-public void CheckPlayerHint(Player ply) 
-{
-	if (!ply || !ply.ready) return;
-	ArrayList entArr = ents.FindInPVS(ply, 125);
-	if (entArr.Length == 0) return;
-	Player target = entArr.Get(0);
-	delete entArr;
+	for (int i=0; i < players.Length; i++)
+	{
+		Player ply = players.Get(i);
+		
+		if (!ply && !ply.ready && !ply.IsAlive()) continue;
 
-	if(target && target.class && target.IsAlive() && ply.id != target.id && !target.IsSCP)
-		ply.PrintNotify("%N", target.id);
+		ArrayList entArr = ents.FindInPVS(ply, 125);
+		if (entArr.Length == 0) continue;
+		Player target = entArr.Get(0);
+		delete entArr;
+
+		if(target && target.class && target.IsAlive() && ply.id != target.id && !target.IsSCP)
+			ply.PrintNotify("%N", target.id);
+	}
+
+	delete players;
 }
