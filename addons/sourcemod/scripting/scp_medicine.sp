@@ -69,6 +69,8 @@ public void Heal_Init(Player ply) {
 }
 
 public void Heal_Update(Player ply) {
+    if (!ply && (!ply.class || !ply.ready)) return;
+
     if (ply.health < ply.class.health)
         if (ply.health + (ply.class.health * 8 / 100) > ply.class.health)
             ply.health = ply.class.health;
