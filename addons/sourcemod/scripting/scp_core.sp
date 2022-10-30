@@ -111,6 +111,9 @@ public void OnPluginStart()
     RegAdminCmd("ents", Command_Ents, ADMFLAG_RCON);
     RegAdminCmd("player", Command_Player, ADMFLAG_RCON);
     RegAdminCmd("scp_admin", Command_AdminMenu, ADMFLAG_GENERIC);
+
+    ConVar atp = FindConVar("sv_allow_thirdperson");
+    if (atp) atp.BoolValue = true;
 }
 
 public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max)
@@ -315,6 +318,7 @@ public void OnClientPostAdminCheck(int id)
     if (!IsFakeClient(ply.id))
     {
         SendConVarValue(ply.id, FindConVar("game_type"), "6");
+        ply.ExecCommand("firstperson");
         ply.SetPropFloat("m_fForceTeam", 0.0);
     }
 }
