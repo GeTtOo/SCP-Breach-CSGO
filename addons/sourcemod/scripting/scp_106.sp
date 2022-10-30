@@ -42,94 +42,93 @@ public Plugin myinfo = {
     url = "https://github.com/GeTtOo/csgo_scp"
 };
 // New door-walk method, but it unstable...
-/*
 
-ArrayList ignoresurfs;
+
+ArrayList doors;
 
 public void SCP_OnLoad() {
     HookEntityOutput("trigger_hurt", "OnStartTouch", OnTriggerActivated);
 
-    ignoresurfs = new ArrayList(1,0);
-    for (int i=0; i < gamemode.plconfig.GetArr("entwalktype").Length; i++)
+    doors = new ArrayList(3,0);
+    ArrayList filter = new ArrayList(64,0);
+    filter.PushString("func_door");
+    filter.PushString("prop_door");
+    filter.PushString("prop_door_rotating");
+
+    for (int i=0; i < filter.Length; i++)
     {
         char type[64];
-        gamemode.plconfig.GetArr("entwalktype").GetString(i, type, sizeof(type));
+        filter.GetString(i, type, sizeof(type));
         
         int entid = -1;
         while ((entid = FindEntityByClassname(entid, type)) != -1)
         {
-            bool valid = true;
+            any door[3];
+            door[0] = entid;
+            door[1] = new Entity(entid);
+            door[2] = false;
 
-            for (int k=0; k < gamemode.plconfig.GetArr("entex").Length; k++)
-                if (entid == gamemode.plconfig.GetArr("entex").GetInt(k))
-                    valid = false;
-
-            if (valid) ignoresurfs.Push(new Entity(entid));
+            doors.PushArray(door);
         }
     }
 }
 
 public void SCP_OnUnload()
 {
-    for (int i=0; i < ignoresurfs.Length; i++)
-        view_as<Entity>(ignoresurfs.Get(i)).Dispose();
+    for (int i=0; i < doors.Length; i++)
+        view_as<Entity>(doors.Get(i, 1)).Dispose();
 
-    ignoresurfs.Clear();
-    delete ignoresurfs;
+    doors.Clear();
+    delete doors;
 }
 
-public void SCP_OnPlayerSpawn(Player &ply) {
-    if (ply.class.Is("106"))
-        for (int i=0; i < ignoresurfs.Length; i++)
-            view_as<Entity>(ignoresurfs.Get(i)).SetHook(SDKHook_ShouldCollide, DoorWalkCheck);
+public void SCP_OnRoundStart() {
+        for (int i=0; i < doors.Length; i++)
+            view_as<Entity>(doors.Get(i, 1)).SetHook(SDKHook_ShouldCollide, DoorWalkCheck);
+}
+
+public void SCP_OnRoundEnd() {
+        for (int i=0; i < doors.Length; i++)
+            view_as<Entity>(doors.Get(i, 1)).RemoveHook(SDKHook_ShouldCollide, DoorWalkCheck);
 }
 
 public bool DoorWalkCheck(int entid, int cg, int cm, bool result)
 {
-    Player ply = player.GetByID(GetPlyBeforeEnt(entid));
-
-    if (ply && ply.class && ply.class.Is("106"))
-    {
-        if (gamemode.config.debug) PrintToChat(ply.id, "Touch ent id: %i", entid);
-
-        return false;
-    }
-
+    int idx = doors.FindValue(entid, 0);
+    if (!DoorIsBlock(entid) && idx != -1 && doors.Get(idx, 2)) return false;
     return true;
 }
 
-public int GetPlyBeforeEnt(int entid)
+public void OnDoorTouched(int client, int entity)
 {
-    float entpos[3];
-    GetEntPropVector(entid, Prop_Data, "m_vecAbsOrigin", entpos);
-
-    float cd = 999999.0;
-    int cp = -1;
-    
-    for (int i=1; i < MaxClients+1; i++)
+    int idx = doors.FindValue(entity, 0);
+    if (idx != -1 && !doors.Get(idx, 2))
     {
-        if (IsClientExist(i) && IsPlayerAlive(i))
-        {
-            float plypos[3];
-            GetClientAbsOrigin(i, plypos);
-            
-            float dist = GetVectorDistance(entpos, plypos);
+        doors.Set(idx, true, 2);
+        view_as<Entity>(doors.Get(idx, 1)).TimerSimple(1000, "DoorCollisionEnable", idx);
 
-            if (dist < cd) cp = i;
-        }
+        if (gamemode.config.debug) PrintToChat(client, "Walking though ent: %i", entity);
     }
-
-    return cp;
 }
 
-*/
+public void DoorCollisionEnable(int idx)
+{
+    doors.Set(idx, false, 2);
+}
 
-public void SCP_OnLoad() {
-    HookEntityOutput("trigger_hurt", "OnStartTouch", OnTriggerActivated);
+public bool DoorIsBlock(int doorid)
+{
+    JSON_ARRAY blockdoors = gamemode.plconfig.GetArr("blockdoors");
+    
+    for (int i=0; i < blockdoors.Length; i++)
+        if (blockdoors.GetInt(i) == doorid)
+            return true;
+
+    return false;
 }
 
 public void SCP_OnPlayerSpawn(Player &ply) {
-    if (ply.class.Is("106")) SDKHook(ply.id, SDKHook_StartTouch, CheckSurface);
+    if (ply.class.Is("106")) SDKHook(ply.id, SDKHook_StartTouch, OnDoorTouched);
 }
 
 public void SCP_PrePlayerClear(Player &ply)
@@ -148,7 +147,7 @@ public void SCP_PrePlayerClear(Player &ply)
 public void SCP_OnPlayerClear(Player &ply) {
     if (ply.class && ply.class.Is("106"))
     {
-        SDKUnhook(ply.id, SDKHook_StartTouch, CheckSurface);
+        SDKUnhook(ply.id, SDKHook_StartTouch, OnDoorTouched);
         if (ply.GetHandle("106_tmrpdfo")) timer.Remove(view_as<Tmr>(ply.GetHandle("106_tmrpdfo")));
         delete ply.GetHandle("106_tp_vec");
         delete ply.GetHandle("106_tp_ang");
@@ -289,78 +288,6 @@ public Action OnTriggerActivated(const char[] output, int caller, int activator,
     else
     {
         return Plugin_Handled;
-    }
-}
-
-public void CheckSurface(int client, int entity)
-{
-    char className[32];
-    GetEntityClassname(entity, className, sizeof(className));
-    
-    if (StrEqual(className, "prop_dynamic"))
-    {
-        int doorid = GetEntPropEnt(entity, Prop_Data, "m_hMoveParent");
-        Entity door = (doorid != -1 && !DoorIsBlock(doorid)) ? new Entity(doorid) : null;
-
-        if (door && (door.IsClass("func_door") || door.IsClass("prop_door_rotating"))) // door.IsClass("func_door_rotating")
-        {
-
-            Player ply = player.GetByID(client);
-            
-            if (!ply.GetArrayList("106_sdw")) // Smooth door walk
-            {
-                ArrayList smoothtp = new ArrayList();
-
-                Vector doorforward;
-                if (!door.IsClass("prop_door_rotating"))
-                {
-                    Vector doordir = door.GetPropVector("m_vecMoveDir", Prop_Data);
-                    doorforward = (FloatAbs(doordir.x) < 0.3) ? new Vector(1.0,0.0,0.0) : new Vector(0.0,1.0,0.0); //Don't judge me for that :d
-                    delete doordir;
-                }
-                else
-                {
-                    Angle doorang = door.GetPropAngle("m_angRotation");
-                    doorforward = (RoundToCeil(doorang.y) % 180 < 45) ? new Vector(1.0,0.0,0.0) : new Vector(0.0,1.0,0.0);
-                    delete doorang;
-                }
-
-                Vector target = ply.GetPos() - doorforward.Clone() * doorforward.DotProduct(ply.GetPos() - door.GetPos());
-
-                for (float i=0.1; i <= 2.2; i+=0.1) smoothtp.Push(ply.GetPos().Lerp(target.Clone(), i));
-
-                delete target;
-
-                ply.SetArrayList("106_sdw", smoothtp);
-
-                char timername[64];
-                FormatEx(timername, sizeof(timername), "SCP-106-DoorWalk-%i", ply.id);
-                timer.Create(timername, 10, 24, "DoorWalk", ply);
-            }
-
-            door.Dispose();
-
-        }
-    }
-}
-
-public void DoorWalk(Player ply)
-{
-    ArrayList list = ply.GetArrayList("106_sdw");
-
-    if (list && list.Length > 0)
-    {
-        Vector vec = list.Get(0);
-        ply.SetPos(vec);
-        list.Erase(0);
-    }
-    else
-    {
-        delete list;
-        char timername[64];
-        FormatEx(timername, sizeof(timername), "SCP-106-DoorWalk-%i", ply.id);
-        timer.RemoveByName(timername);
-        ply.RemoveValue("106_sdw");
     }
 }
 
@@ -508,17 +435,6 @@ public void SCP_106_Locking(Player ply)
     SCP_106_TeleportToPos(ply, gamemode.plconfig.Get("cell").GetVector("vec")- new Vector(0.0,0.0,64.0), gamemode.plconfig.Get("cell").GetAngle("ang"));
 }
 
-public bool DoorIsBlock(int doorid)
-{
-    JSON_ARRAY blockdoors = gamemode.plconfig.GetArr("blockdoors");
-    
-    for (int i=0; i < blockdoors.Length; i++)
-        if (blockdoors.GetInt(i) == doorid)
-            return true;
-
-    return false;
-}
-
 public void ActionsMenu(Player ply) {
     Menu hndl = new Menu(ActionsMenuHandler);
 
@@ -578,4 +494,14 @@ public int ActionsMenuHandler(Menu hMenu, MenuAction action, int client, int idx
     }
 
     return 0;
+}
+
+stock bool IsClientExist(int client)
+{
+    if((0 < client < MaxClients) && IsClientInGame(client) && !IsClientSourceTV(client))
+    {
+        return true;
+    }
+
+    return false;
 }
