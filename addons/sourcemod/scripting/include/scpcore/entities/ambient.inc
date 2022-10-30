@@ -84,7 +84,11 @@ methodmap Ambient < Entity {
 
     public Ambient Play(char[] path = "")
     {
-        if (strlen(path) > 0) this.SetSound(path);
+        if (strlen(path) > 0)
+        {
+            this.Input("StopSound");
+            this.SetSound(path);
+        }
 
         if (!this.spawned)
         {
