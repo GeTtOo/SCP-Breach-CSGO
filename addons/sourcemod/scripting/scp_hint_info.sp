@@ -56,12 +56,12 @@ public void CheckInfoTargets()
 		
 		if (!ply && !ply.ready && !ply.IsAlive()) continue;
 
-		ArrayList entArr = ents.FindInPVS(ply, 125);
+		ArrayList entArr = ents.FindInPVS(ply, 90);
 		if (entArr.Length == 0) continue;
 		Player target = entArr.Get(0);
 		delete entArr;
 
-		if(target && target.class && target.IsAlive() && ply.id != target.id && !target.IsSCP)
+		if(ply.id != target.id && target && target.class && target.IsAlive() && !target.IsSCP)
 			ply.PrintNotify("%N", target.id);
 	}
 
