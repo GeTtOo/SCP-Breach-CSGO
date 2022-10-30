@@ -148,6 +148,18 @@ methodmap NuclearWarhead < Base {
             AcceptEntityInput(ent, "Open");
         }
 
+        while((ent = FindEntityByClassname(ent, "prop_dynamic")) != -1)
+        {
+            char modelpath[256];
+            GetEntPropString(ent, Prop_Data, "m_ModelName", modelpath, sizeof(modelpath));
+            
+            if (StrEqual(modelpath, "models/eternity/map/scp_gate.mdl"))
+            {
+                SetVariantString("open");
+                AcceptEntityInput(ent, "SetAnimation");
+            }
+        }
+
         this.detonationtime = GetGameTime() + float(gamemode.config.nuke.time);
 
         //if (this.resumetime == 0.0)
