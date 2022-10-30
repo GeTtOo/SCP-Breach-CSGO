@@ -210,7 +210,7 @@ methodmap EntitySingleton < Base {
             trargs.Push(ent.id);
             trargs.Push(entity.id);
 
-            tr = TR_TraceRayFilterEx(firstentpos, secondentpos, MASK_VISIBLE, RayType_EndPoint, FindInPVSFilter, trargs);
+            tr = TR_TraceRayFilterEx(firstentpos, secondentpos, MASK_SOLID_BRUSHONLY, RayType_EndPoint, FindInPVSFilter, trargs);
             
             if (TR_DidHit(tr))
             {
