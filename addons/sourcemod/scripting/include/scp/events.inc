@@ -544,16 +544,13 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
             delete classes;
         }
 
-        for (int i = 1; i <= playerscount - extra; i++)
-        {
-            int id = players.Length - 1;
-            if (id < 0) break;
-            Player ply = players.Get(id);
-            players.Erase(id);
-            char team[32], class[32];
-            gamemode.config.DefaultGlobalClass(team, sizeof(team));
-            gamemode.config.DefaultClass(class, sizeof(class));
+        char team[32], class[32];
+        gamemode.config.DefaultGlobalClass(team, sizeof(team));
+        gamemode.config.DefaultClass(class, sizeof(class));
 
+        for (int i = 0; i < players.Length; i++)
+        {
+            Player ply = players.Get(i);
             ply.Team(team);
             ply.class = gamemode.team(team).class(class);
 
@@ -561,7 +558,6 @@ public void OnRoundStart(Event event, const char[] name, bool dbroadcast)
         }
 
         delete teams;
-        
         delete players;
 
         SetupMapRegions();
