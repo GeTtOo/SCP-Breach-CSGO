@@ -46,6 +46,10 @@ methodmap Angle < Vector {
         return ang;
     }
 
+    public Angle Clone() {
+        return new Angle(this.x, this.y, this.z);
+    }
+
     public Vector GetVectors(AngleVectorType type) {
         float angarr[3], vecarr[3];
         this.GetArr(angarr);

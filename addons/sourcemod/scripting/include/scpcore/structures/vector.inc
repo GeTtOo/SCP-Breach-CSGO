@@ -55,6 +55,8 @@ methodmap Vector < Base {
         public get() { return this.GetFloat("z"); }
     }
 
+    public static Vector v(float val) { return new Vector(val, val, val); }
+
     public void SetArr(float vec[3]) {
         this.x = vec[0];
         this.y = vec[1];
@@ -167,6 +169,14 @@ methodmap Vector < Base {
         vecarr3[1] = vecarr1[1] + (vecarr2[1] - vecarr1[1]) * percent;
         vecarr3[2] = vecarr1[2] + (vecarr2[2] - vecarr1[2]) * percent;
         this.SetArr(vecarr3);
+        return this;
+    }
+    
+    public any GetAngles() {
+        float pos[3], ang[3];
+        this.GetArr(pos);
+        GetVectorAngles(pos, ang);
+        this.SetArr(ang);
         return this;
     }
 }
