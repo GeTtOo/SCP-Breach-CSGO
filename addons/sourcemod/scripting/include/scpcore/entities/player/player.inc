@@ -41,6 +41,7 @@
 #include "scpcore/entities/player/inventory"
 #include "scpcore/entities/player/progress"
 #include "scpcore/entities/player/statuseffect"
+#include "scpcore/entities/player/animation"
 
 methodmap Player < Entity {
 
@@ -55,6 +56,8 @@ methodmap Player < Entity {
         char targetname[32];
         FormatEx(targetname, sizeof(targetname), "player-%i", ply.id);
         ply.SetTargetName(targetname);
+
+        ply.SetBase("anim", new PlayerAnimation(ply));
 
         return ply;
     }
@@ -130,6 +133,11 @@ methodmap Player < Entity {
     property StatusEffectList se {
         public set(StatusEffectList val) { this.SetHandle("sel", val); }
         public get() { return view_as<StatusEffectList>(this.GetHandle("sel")); }
+    }
+
+    property PlayerAnimation anim {
+        public set(PlayerAnimation val) { this.SetHandle("anim", val); }
+        public get() { return view_as<PlayerAnimation>(this.GetHandle("anim")); }
     }
 
     public void GetLangInfo(char[] name, int max_size) { GetLanguageInfo(this.lang, name, max_size); }

@@ -32,35 +32,27 @@
 /*----------------------------------------------------Animation class-----------------------------------------------------*/
 /*----------------------------------------------------------------------------------------------------------------------*/
 
-methodmap Animation < Entity {
+methodmap PlayerAnimation < Entity {
     
-    public Animation(Entity ent = null, char[] path = "") {
-        Animation self = view_as<Animation>(new Entity());
+    public PlayerAnimation(Player ply) {
+        PlayerAnimation self = view_as<PlayerAnimation>(new Entity());
         self.SetBool("spawned", false);
 
-        if (ent)
-        {
-            self.Set("parent", ent);
-            if (strlen(path))
-                self.SetString("animsource", path);
-            else
-            {
-                char modelname[256];
-                ent.model.GetPath(modelname, sizeof(modelname));
-                self.SetString("animsource", modelname);
-            }
-        }
+        self.Set("player", ply);
 
         return self;
     }
 
-    property Entity parent {
-        public get() { return this.Get("parent"); }
+    property Player player {
+        public get() { return this.Get("player"); }
     }
 
-    public Animation Play(char[] name = "")
+    public PlayerAnimation SetModel(char[] path) { this.SetString("custommodel", path); return this; }
+
+    public PlayerAnimation Play(char[] name = "")
     {
-        this.parent.SetMoveType(MOVETYPE_NONE);
+        this.player.SetMoveType(MOVETYPE_NONE);
+        this.player.model.SetRenderMode(RENDER_NONE);
         this.Create("prop_dynamic");
 
         char tname[32];
@@ -68,35 +60,39 @@ methodmap Animation < Entity {
         this.SetTargetName(tname);
 
         char modelpath[256];
-        this.GetString("animsource", modelpath, sizeof(modelpath));
+        if (this.HasKey("custommodel"))
+            this.GetString("custommodel", modelpath, sizeof(modelpath));
+        else
+            this.player.model.GetPath(modelpath, sizeof(modelpath));
 
         this.model.SetPath(modelpath);
         this.SetKV("solid", "0");
-        this.SetKV("rendermode", "10");
-        
+        //this.SetKV("rendermode", "10");
+
         this.Activate();
         this.Spawn();
         
-        this.SetPos(this.parent.GetPos(), this.parent.GetAng());
+        this.SetPos(this.player.GetPos(), this.player.GetAng());
 
         SetVariantString(tname);
-        this.parent.Input("SetParent");
+        this.player.Input("SetParent");
 
-        int effects = this.parent.GetProp("m_fEffects");
-        effects |= 721;
-        this.parent.SetProp("m_fEffects", effects);
+        //int effects = this.parent.GetProp("m_fEffects");
+        //effects |= 721;
+        //this.parent.SetProp("m_fEffects", effects);
         
         SetVariantString(name);
         this.Input("SetAnimation");
     }
 
-    public Animation Stop()
+    public PlayerAnimation Stop()
     {
-        this.parent.Input("ClearParent", this.id, this.id);
-        this.SetKV("OnUser1", "!self,Kill,,1.0,-1");
+        this.player.Input("ClearParent", this.id, this.id);
+        this.SetKV("OnUser1", "!self,Kill,,0.0,-1");
         this.Input("FireUser1");
 
-        this.parent.SetMoveType(MOVETYPE_WALK);
+        this.player.SetMoveType(MOVETYPE_WALK);
+        this.player.model.SetRenderMode(RENDER_NORMAL);
     }
 
     public void Dispose()
