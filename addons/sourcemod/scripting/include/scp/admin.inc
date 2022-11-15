@@ -507,7 +507,11 @@ public int MenuHandler_GetClass(Menu hMenu, MenuAction action, int client, int i
             hMenu.GetItem(item, team, sizeof(team), _, class, sizeof(class));
             
             if(IsPlayerAlive(AdminMenu.Get(client).target.id))
-                AdminMenu.Get(client).target.SilenceKill();
+            {
+                AdminMenu.Get(client).target.RestrictWeapons();
+                AdminMenu.Get(client).target.inv.FullClear();
+                AdminMenu.Get(client).target.TakeDamage(_,100000000.0);
+            }
 
             AdminMenu.Get(client).target.Team(team);
             AdminMenu.Get(client).target.class = gamemode.team(team).class(class);
