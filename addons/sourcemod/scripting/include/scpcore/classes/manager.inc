@@ -167,6 +167,14 @@ methodmap Manager < Base {
         EndMessage();
     }
     
+    public void Glow(Entity ent, Entity target, bool disable = false)
+    {
+        Handle umsg = StartMessageOne("EntityOutlineHighlight", ent.id, USERMSG_RELIABLE);
+        PbSetInt(umsg, "entidx", target.id);
+        PbSetBool(umsg, "removehighlight", disable);
+        EndMessage();
+    }
+    
     public bool IsEscapeZone(int id) { return (this.GetArrayList("escapezones").FindValue(id) != -1) ? true : false; }
 
     public bool CreateEscapeZoneList()
