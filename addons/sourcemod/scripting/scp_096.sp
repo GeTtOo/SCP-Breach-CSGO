@@ -45,6 +45,7 @@ public Plugin myinfo = {
 enum State
 {
     Calm = 0,
+    CalmWall,
     Panic,
     Rage,
     Cooldown
@@ -57,7 +58,6 @@ methodmap ClassManager < Base {
         
         self.Set("player", ply);
         self.Set("ambient", new Ambient(ply));
-        self.Set("animation", new Animation(ply));
         self.Set("state", Calm);
         self.CreateArrayList("targets");
 
@@ -74,10 +74,6 @@ methodmap ClassManager < Base {
 
     property Ambient ambient {
         public get() { return this.Get("ambient"); }
-    }
-
-    property Animation anim {
-        public get() { return this.Get("animation"); }
     }
 
     property State state {
@@ -110,10 +106,42 @@ methodmap ClassManager < Base {
 
     public ClassManager Init()
     {
+        this.ply.SetHook(SDKHook_StartTouch, OnDoorTouched);
         this.ply.ExecCommand("thirdperson");
         this.ply.ExecCommand("cam_idealdist 50");
         StartCalmState(this);
         return this;
+    }
+
+    public bool HasTarget(Player ply) { return (this.targets.FindValue(ply) != -1) ? true : false; }
+
+    public void AddTarget(Player ply) { if (!this.HasTarget(ply)) this.targets.Push(ply); }
+    
+    public void RemoveTarget(Player ply) { int idx = this.targets.FindValue(ply); if (idx != -1) this.targets.Erase(idx); }
+
+    public void ForceOpenDoor(Entity door)
+    {
+        Angle entang = door.GetPropAngle("m_angRotation");
+        Vector vfw = (RoundToCeil(entang.y) % 180 > 45) ? new Vector(1.0,0.0,0.0) : new Vector(0.0,1.0,0.0); //Don't judge me for that :d
+        delete entang;
+        Vector target = this.ply.GetPos() - vfw.Clone() * vfw.Clone().DotProduct(this.ply.GetPos() - door.GetPos());
+
+        Angle ang = (target - this.ply.GetPos()).GetAngles();
+        this.ply.SetPos(ang.Clone().GetForwardVectorScaled(door.GetPos(), -24.0), ang);
+
+        target = this.ply.GetPos() - vfw.Clone() * vfw.DotProduct(this.ply.GetPos() - door.GetPos());
+
+        Base data = new Base();
+        data.Set("mngr", this);
+        data.Set("pos", this.ply.GetPos().Lerp(target, 2.4));
+
+        this.ply.TimerSimple(1500, "ForceOpenDoorEnd", data);
+
+        SetVariantString("096_Break");
+        door.Input("SetAnimation");
+        this.ply.anim.Play("Pry");
+
+        gamemode.mngr.PlayAmbient("*/eternity/scp/096/pry_gate.mp3", door);
     }
 
     public void Dispose()
@@ -132,13 +160,12 @@ bool scpfound = false;
 
 public void SCP_OnRoundEnd()
 {
-    if (scpfound) return;
+    if (!scpfound) return;
 
     ArrayList players = player.GetAll();
 
     for (int i=0; i < players.Length; i++)
     {
-        if (!scpfound) break;
         view_as<Player>(players.Get(i)).RemoveHook(SDKHook_SetTransmit, OnEntityTransmit);
     }
 
@@ -152,18 +179,17 @@ public void SCP_OnPlayerSpawn(Player &ply) {
     {
         if (!scpfound)
         {
-            scpfound = true;
-
             ArrayList players = player.GetAll();
 
             for (int i=0; i < players.Length; i++)
             {
-                if (!scpfound) break;
                 if (ply == players.Get(i)) break;
                 view_as<Player>(players.Get(i)).SetHook(SDKHook_SetTransmit, OnEntityTransmit);
             }
 
             delete players;
+
+            scpfound = true;
         }
         
         ply.Set("096_mngr", (new ClassManager(ply)).Init());
@@ -181,16 +207,8 @@ public void SCP_OnPlayerClear(Player &ply)
     ArrayList players = player.GetAll();
 
     for (int i=0; i < players.Length; i++)
-    {
         if (view_as<Player>(players.Get(i)).HasKey("096_mngr"))
-        {
-            ArrayList targets = view_as<ClassManager>(view_as<Player>(players.Get(i)).Get("096_mngr")).targets;
-
-            int idx = targets.FindValue(ply);
-            if (idx != -1)
-                targets.Erase(idx);
-        }
-    }
+            view_as<ClassManager>(view_as<Player>(players.Get(i)).Get("096_mngr")).RemoveTarget(ply);
 
     delete players;
 }
@@ -212,14 +230,19 @@ public Action SCP_OnTakeDamage(Player &vic, Player &atk, float &damage, int &dam
 	return Plugin_Continue;
 }
 
+public void SCP_OnCallAction(Player &ply) {
+    if (ply && ply.class && ply.class.Is("096"))
+    {
+        return;
+    }
+}
+
 public void CheckState(ClassManager mngr)
 {
     if (mngr.state == Cooldown) return;
 
     if (mngr.state == Rage && mngr.targets.Length == 0)
     {
-        mngr.ply.RemoveHook(SDKHook_StartTouch, OnDoorTouched);
-
         mngr.ply.SetProp("m_iHideHUD", 1<<12);
         mngr.ply.speed = mngr.ply.class.speed;
         mngr.ply.multipler = mngr.ply.class.multipler;
@@ -230,7 +253,7 @@ public void CheckState(ClassManager mngr)
 
         if (mngr.ragetmr) timer.Remove(mngr.ragetmr);
 
-        mngr.ambient.Play("*/eternity/scp/096/tranquility.mp3");
+        mngr.ambient.Play("*/eternity/scp/096/rage_end.mp3");
 
         mngr.state = Cooldown;
         return;
@@ -243,13 +266,13 @@ public void CheckState(ClassManager mngr)
     {
         Player target = targets.Get(i);
 
-        if (mngr.state == Cooldown || mngr.targets.FindValue(target) != -1 || mngr.ply == target || target.IsSCP || !target.IsAlive()) continue;
+        if (mngr.state == Cooldown || mngr.HasTarget(target) || mngr.ply == target || target.IsSCP || !target.IsAlive()) continue;
 
         ArrayList checklist = ents.FindInPVS(target, 2000);
 
         if (checklist.FindValue(mngr.ply) != -1)
         {
-            mngr.targets.Push(target);
+            mngr.AddTarget(target);
 
             if (mngr.state == Calm) mngr.state = Panic;
         }
@@ -265,20 +288,21 @@ public void CheckState(ClassManager mngr)
     {
         case Panic:
         {
+            //mngr.ply.anim.Play("Trigger");
             mngr.ply.SetProp("m_iHideHUD", 0);
             mngr.ply.speed = 0.1;
             timer.Remove(mngr.sndtmr);
-            mngr.ambient.Play("*/eternity/scp/096/rage_start.mp3");
+            mngr.ambient.Play("*/eternity/scp/096/rage_init.mp3");
             mngr.ply.TimerSimple(5400, "StartRageState", mngr);
             mngr.lockstate = true;
         }
         case Rage:
         {
+            //mngr.ply.anim.Stop();
             mngr.ply.speed = 260.0;
             mngr.ply.multipler = 2.5;
-            mngr.ply.SetHook(SDKHook_StartTouch, OnDoorTouched);
             mngr.lockstate = true;
-            mngr.ambient.Play("*/eternity/scp/096/rage.mp3");
+            mngr.ambient.Play("*/eternity/scp/096/rage_loop.mp3");
 
             char timername[64];
             Format(timername, sizeof(timername), "scp-096-loopsnd-%i", mngr.ply.id);
@@ -287,6 +311,71 @@ public void CheckState(ClassManager mngr)
         }
     }
 }
+
+//----------------------------------Events----------------------------------
+
+public Action OnEntityTransmit(int entity, int client) // player, player-scp
+{
+    Player ply = player.GetByID(entity);
+    Player target = player.GetByID(client);
+
+    if (ply != target && ply.IsAlive() && target.IsAlive() && target.class.Is("096"))
+    {
+        ClassManager mngr = target.Get("096_mngr");
+        
+        if (mngr.state == Rage && !mngr.HasTarget(player.GetByID(entity))) return Plugin_Handled;
+    }
+
+    return Plugin_Continue;
+}
+
+public void OnDoorTouched(int client, int entity)
+{
+    ClassManager mngr = player.GetByID(client).Get("096_mngr");
+    
+    if (mngr.state != Rage) return;
+
+    char classname[32];
+    GetEntityClassname(entity, classname, sizeof(classname));
+
+    if (!StrEqual(classname, "func_door")) return;
+
+    if (GetEntPropEnt(entity, Prop_Data, "m_hMoveChild") != -1)
+    {
+        char sound[128];
+        JSON_ARRAY nbs = gamemode.plconfig.Get("sound").GetArr("doorbroke");
+        nbs.GetString(GetRandomInt(0, nbs.Length - 1), sound, sizeof(sound));
+
+        float vecarr[3];
+        GetEntPropVector(entity, Prop_Send, "m_vecOrigin", vecarr);
+        EmitAmbientSound(sound, vecarr, entity);
+
+        RemoveEntity(entity);
+        
+        return;
+    }
+
+    char filter[1][32] = {"prop_dynamic"};
+    ArrayList entities = ents.FindInBox(mngr.ply.GetPos() - Vector.v(100.0), mngr.ply.GetPos() + Vector.v(100.0), filter, sizeof(filter));
+
+    for (int i=0; i < entities.Length; i++)
+    {
+        Entity ent = entities.Get(i);
+
+        char modelpath[128];
+        ent.model.GetPath(modelpath, sizeof(modelpath));
+
+        if (StrEqual(modelpath, "models/eternity/map/scp_gate.mdl"))
+            mngr.ForceOpenDoor(ent);
+        
+        if (ents.list.FindValue(ent, 1) == -1)
+            ent.Dispose();
+    }
+
+    delete entities;
+}
+
+//-----------------Timers (need to be replace in future on animation hooks)-----------------
 
 public void StartRageState(ClassManager mngr)
 {
@@ -302,17 +391,17 @@ public void RageClear(ClassManager mngr)
 
 public void RepeatCalmSound(ClassManager mngr)
 {
-    mngr.ambient.Play("*/eternity/scp/096/crying.mp3");
+    mngr.ambient.Play("*/eternity/scp/096/cry_loop.mp3");
 }
 
 public void RepeatRageSound(ClassManager mngr)
 {
-    mngr.ambient.Play("*/eternity/scp/096/rage.mp3");
+    mngr.ambient.Play("*/eternity/scp/096/rage_loop.mp3");
 }
 
 public void StartCalmState(ClassManager mngr)
 {
-    mngr.ambient.Play("*/eternity/scp/096/crying.mp3");
+    mngr.ambient.Play("*/eternity/scp/096/cry_loop.mp3");
 
     char timername[64];
     Format(timername, sizeof(timername), "scp-096-loopsnd-%i", mngr.ply.id);
@@ -326,73 +415,12 @@ public void CooldownEndState(ClassManager mngr)
     timer.Remove(mngr.Get("cooldown"));
 }
 
-public Action OnEntityTransmit(int entity, int client)
+public void ForceOpenDoorEnd(Base data)
 {
-    Player ply = player.GetByID(client);
-    Player target = player.GetByID(entity);
+    ClassManager mngr = data.Get("mngr");
 
-    if (entity != client && ply.IsAlive() && target.IsAlive() && ply.class.Is("096"))
-    {
-        ClassManager mngr = ply.Get("096_mngr");
-        
-        if (mngr.state == Rage && mngr.targets.FindValue(player.GetByID(entity)) == -1) return Plugin_Handled;
-    }
+    mngr.ply.anim.Stop();
+    mngr.ply.SetPos(data.Get("pos"));
 
-    return Plugin_Continue;
-}
-
-public void OnDoorTouched(int client, int entity)
-{
-    ClassManager mngr = player.GetByID(client).Get("096_mngr");
-    
-    char classname[32];
-    GetEntityClassname(entity, classname, sizeof(classname));
-
-    if (!StrEqual(classname, "func_door")) return;
-    
-    int cid = GetEntPropEnt(entity, Prop_Data, "m_hMoveChild");
-
-    if (cid != -1)
-    {
-        char sound[128];
-        JSON_ARRAY nbs = gamemode.plconfig.Get("sound").GetArr("doorbroke");
-        nbs.GetString(GetRandomInt(0, nbs.Length - 1), sound, sizeof(sound));
-
-        float vecarr[3];
-        GetEntPropVector(entity, Prop_Send, "m_vecOrigin", vecarr);
-        EmitAmbientSound(sound, vecarr, entity);
-
-        RemoveEntity(entity);
-    }
-    else
-    {
-        char filter[1][32] = {"prop_dynamic"};
-        ArrayList entities = ents.FindInBox(mngr.ply.GetPos() - new Vector(100.0,100.0,100.0), mngr.ply.GetPos() + new Vector(100.0,100.0,100.0), filter, sizeof(filter));
-
-        for (int i=0; i < entities.Length; i++)
-        {
-            Entity ent = entities.Get(i);
-
-            char modelpath[128];
-            ent.model.GetPath(modelpath, sizeof(modelpath));
-
-            if (StrEqual(modelpath, "models/eternity/map/scp_gate.mdl"))
-            {
-                SetVariantString("096_Break");
-                ent.Input("SetAnimation");
-            }
-            
-            if (ents.list.FindValue(ent, 1) == -1)
-                ent.Dispose();
-        }
-
-        delete entities;
-    }
-}
-
-public void SCP_OnCallAction(Player &ply) {
-    if (ply && ply.class && ply.class.Is("096"))
-    {
-        return;
-    }
+    delete data;
 }
