@@ -158,9 +158,9 @@
         ],
         "sound": {
             "doorbroke":[
-                "*/eternity/scp/096/doorbroke1.mp3",
-                "*/eternity/scp/096/doorbroke2.mp3",
-                "*/eternity/scp/096/doorbroke3.mp3"
+                "*/eternity/scp/096/pry_door1.mp3",
+                "*/eternity/scp/096/pry_door2.mp3",
+                "*/eternity/scp/096/pry_door3.mp3"
             ]
         }
     },
