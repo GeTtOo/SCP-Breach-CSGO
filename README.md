@@ -15,4 +15,6 @@ During these events, you will have to complete a task that will be assigned to y
 
 
 ## Contacts
-If you need support or have questions ask them on our [Discord server](https://discord.gg/axMPU8PUHZ)
+If you need support or have questions ask them on our [Discord server](https://discord.gg/axMPU8PUHZ)  
+  
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/gettoo)
